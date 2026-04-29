@@ -76,9 +76,9 @@ const tableRows = [
 ];
 
 const toolbar = {
-  itemsLabel: 'files',
-  selectedLabel: 'selected',
-  actionLabels: ['Filters', 'Sort', 'Columns'],
+  primaryLabel: 'Primary',
+  secondaryLabel: 'Secondary',
+  tertiaryLabel: 'Tertiary',
 };
 
 const meta: Meta = {
@@ -225,11 +225,9 @@ export const Default: Story = {
         <!-- Design System table -->
         <div style="padding:32px;">
           <app-table-toolbar
-            [total]="tableRows.length"
-            [selected]="countChecked(checked())"
-            [itemsLabel]="toolbar.itemsLabel"
-            [selectedLabel]="toolbar.selectedLabel"
-            [actionLabels]="toolbar.actionLabels"
+            [primaryLabel]="toolbar.primaryLabel"
+            [secondaryLabel]="toolbar.secondaryLabel"
+            [tertiaryLabel]="toolbar.tertiaryLabel"
           />
 
           <ds-table-row>

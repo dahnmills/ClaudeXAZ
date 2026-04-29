@@ -9,9 +9,7 @@ import { ButtonComponent } from '../../shared/ui/button/button.component';
   styleUrl: './table-toolbar.component.scss',
 })
 export class TableToolbarComponent {
-  total = input<number>(0);
-  selected = input<number>(0);
-  itemsLabel = input<string>('items');
-  selectedLabel = input<string>('selected');
-  actionLabels = input<string[]>([]);
+  primaryLabel = input<string>('Primary action');
+  secondaryLabel = input<string>('Secondary action');
+  tertiaryLabel = input<string>('Tertiary action');
 }

@@ -10,9 +10,9 @@ export interface TableRow {
 }
 
 export interface TableToolbarConfig {
-  itemsLabel: string;
-  selectedLabel: string;
-  actionLabels: string[];
+  primaryLabel: string;
+  secondaryLabel: string;
+  tertiaryLabel: string;
 }
 
 export const SECTIONS: PropertySection[] = [
@@ -67,7 +67,7 @@ export const TABLE_ROWS: TableRow[] = [
 ];
 
 export const TABLE_TOOLBAR: TableToolbarConfig = {
-  itemsLabel: 'files',
-  selectedLabel: 'selected',
-  actionLabels: ['Filters', 'Sort', 'Columns'],
+  primaryLabel: 'Primary',
+  secondaryLabel: 'Secondary',
+  tertiaryLabel: 'Tertiary',
 };
