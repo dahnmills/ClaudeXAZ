@@ -1,0 +1,71 @@
+<!-- ══ Top header (Qirin) ════════════════════════════════════════ -->
+<ds-header>
+  <ds-logo slot="logo" [reversed]="true" />
+
+  <ng-container slot="tabs">
+    <ds-tab tone="reversed">Home</ds-tab>
+    <ds-tab tone="reversed" [selected]="true">Buyers</ds-tab>
+    <ds-tab tone="reversed">Policies</ds-tab>
+    <ds-tab tone="reversed">Tools</ds-tab>
+    <ds-tab tone="reversed">Configuration</ds-tab>
+  </ng-container>
+
+  <ng-container slot="actions">
+    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Search">
+      <ds-icon name="search" [size]="16" />
+    </ds-button-icon>
+    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Help">
+      <ds-icon name="help" [size]="16" />
+    </ds-button-icon>
+    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Notifications">
+      <ds-icon name="bell" [size]="16" />
+    </ds-button-icon>
+  </ng-container>
+
+  <ng-container slot="account">
+    <ds-tab tone="reversed">John Doe</ds-tab>
+  </ng-container>
+</ds-header>
+
+<!-- ══ Layout : sidenav + main ══════════════════════════════════ -->
+<div class="ut-layout">
+  <ds-side-nav [collapsed]="true">
+    <ds-side-nav-item>
+      <ds-icon slot="icon" name="home" [size]="24" />
+    </ds-side-nav-item>
+    <ds-side-nav-item>
+      <ds-icon slot="icon" name="mail" [size]="24" />
+    </ds-side-nav-item>
+    <ds-side-nav-item>
+      <ds-icon slot="icon" name="chart" [size]="24" />
+    </ds-side-nav-item>
+    <ds-side-nav-item [selected]="true">
+      <ds-icon slot="icon" name="buyers" [size]="24" />
+    </ds-side-nav-item>
+    <ds-side-nav-item>
+      <ds-icon slot="icon" name="contract" [size]="24" />
+    </ds-side-nav-item>
+    <ds-side-nav-item>
+      <ds-icon slot="icon" name="grid" [size]="24" />
+    </ds-side-nav-item>
+  </ds-side-nav>
+
+  <main class="ut-main">
+    <!-- Topbox (full width au-dessus du page-header) -->
+    <div class="ut-main__topbox">
+      <ng-content select="[slot=topbox]" />
+    </div>
+
+    <!-- Extension optionnelle (accordion expansion, animée) -->
+    <div [class]="extensionClasses()">
+      <div class="ut-main__extension-inner">
+        <ng-content select="[slot=topbox-extension]" />
+      </div>
+    </div>
+
+    <!-- Corps principal (page header + table) -->
+    <div class="ut-main__body">
+      <ng-content />
+    </div>
+  </main>
+</div>

@@ -1,0 +1,59 @@
+// =============================================================
+// Header
+// Source : Figma > -Components--Layout > node 2390:1583
+//
+// Fidélité Figma :
+//   • Hauteur 64px, fond brand (#003781)
+//   • Padding : 12px 16px 12px 12px
+//   • Left : Logo (ds-logo) + gap 72px + Tabs
+//   • Right : Actions (ButtonIcon × 3) + gap + Account tab
+// =============================================================
+
+:host {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  height:          var(--foundation-sizing-64);         // 64px
+  padding:         12px var(--foundation-spacing-16)
+                   12px var(--foundation-spacing-8);    // 12px 16px 12px 8px
+  background:      var(--semantic-color-static-background-brand); // #003781
+  color:           var(--semantic-color-interactive-text-neutral-default); // white
+  flex-shrink:     0;
+}
+
+// ── Left zone ─────────────────────────────────────────────────
+.ds-header__left {
+  display:     flex;
+  align-items: center;
+  gap:         var(--foundation-spacing-40);  // ~72px approx with available token
+  flex:        1;
+  min-width:   0;
+}
+
+// ── Tabs ──────────────────────────────────────────────────────
+.ds-header__tabs {
+  display:     flex;
+  align-items: center;
+  gap:         var(--foundation-spacing-24); // 24px between tabs
+}
+
+// ── Right zone ────────────────────────────────────────────────
+.ds-header__right {
+  display:     flex;
+  align-items: center;
+  gap:         var(--foundation-spacing-24);
+  flex-shrink: 0;
+}
+
+// ── Actions ───────────────────────────────────────────────────
+.ds-header__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--foundation-spacing-4); // 4px between icons
+}
+
+// ── Account ───────────────────────────────────────────────────
+.ds-header__account {
+  display:     flex;
+  align-items: center;
+}

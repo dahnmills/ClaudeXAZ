@@ -1,0 +1,24 @@
+// =============================================================
+// STYLES GLOBAUX — Point d'entrée
+// Ordre d'import : Foundation → Semantic → Typography → Reset
+// =============================================================
+
+@use './tokens';
+@use './semantic';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color: var(--semantic-color-static-text-main-primary);
+  background-color: var(--semantic-color-static-background-main-primary);
+}

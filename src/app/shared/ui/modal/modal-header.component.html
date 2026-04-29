@@ -1,0 +1,12 @@
+<div class="ds-modal-header__inner">
+  <h2 class="ds-modal-header__title">{{ title() }}</h2>
+  <ds-button-icon
+    type="plain"
+    size="m"
+    ariaLabel="Close"
+    class="ds-modal-header__close"
+    (clicked)="closeClicked.emit()"
+  >
+    <ds-icon name="close" [size]="24" />
+  </ds-button-icon>
+</div>

@@ -1,0 +1,16 @@
+<ds-button-icon
+  type="plain"
+  tone="default"
+  [size]="size() === 's' ? 's' : 'm'"
+  [ariaLabel]="ariaLabel()"
+  (click)="$event.stopPropagation()"
+  (clicked)="toggleMenu()"
+>
+  <ds-icon name="context-vertical" [size]="size() === 's' ? 16 : 24" />
+</ds-button-icon>
+
+@if (open()) {
+  <div class="ds-cell-action__menu" (click)="onMenuClick($event)">
+    <ng-content select="[slot=menu]" />
+  </div>
+}

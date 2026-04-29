@@ -1,0 +1,150 @@
+// =============================================================
+// Badge
+// Source : Figma > -Components--Feedback > Badge
+// Variants : Status (info|warning|success|error|neutral)
+//            × Style (light|strong) × Size (s|m)
+// =============================================================
+
+@use 'sass:map';
+
+// --- Tokens locaux (lecture seule, ne pas modifier) ----------
+
+// Light style — couleurs par status
+$badge-light-colors: (
+  info: (
+    bg:   --semantic-color-static-background-subtle-functional-informative,
+    fg:   --semantic-color-static-text-main-functional-informative,
+    icon: --semantic-color-static-icon-main-functional-informative,
+  ),
+  warning: (
+    bg:   --semantic-color-static-background-subtle-functional-warning,
+    fg:   --semantic-color-static-text-main-functional-warning,
+    icon: --semantic-color-static-icon-main-functional-warning,
+  ),
+  success: (
+    bg:   --semantic-color-static-background-subtle-functional-positive,
+    fg:   --semantic-color-static-text-main-functional-positive,
+    icon: --semantic-color-static-icon-main-functional-positive,
+  ),
+  error: (
+    bg:   --semantic-color-static-background-subtle-functional-negative,
+    fg:   --semantic-color-static-text-main-functional-negative,
+    icon: --semantic-color-static-icon-main-functional-negative,
+  ),
+  neutral: (
+    bg:   --semantic-color-static-background-accent-tertiary,
+    fg:   --semantic-color-static-text-main-primary,
+    icon: --semantic-color-static-icon-main-primary,
+  ),
+);
+
+// Strong style — couleurs par status
+$badge-strong-colors: (
+  info: (
+    bg:   --semantic-color-static-background-functional-informative,
+    fg:   --semantic-color-static-text-subtle-primary,
+    icon: --semantic-color-static-icon-subtle-primary,
+  ),
+  warning: (
+    bg:   --semantic-color-static-background-functional-warning,
+    fg:   --semantic-color-static-text-subtle-primary,
+    icon: --semantic-color-static-icon-subtle-primary,
+  ),
+  success: (
+    bg:   --semantic-color-static-background-functional-positive,
+    fg:   --semantic-color-static-text-subtle-primary,
+    icon: --semantic-color-static-icon-subtle-primary,
+  ),
+  error: (
+    bg:   --semantic-color-static-background-functional-negative,
+    fg:   --semantic-color-static-text-subtle-primary,
+    icon: --semantic-color-static-icon-subtle-primary,
+  ),
+  neutral: (
+    bg:   --semantic-color-static-background-accent-primary,
+    fg:   --semantic-color-static-text-subtle-primary,
+    icon: --semantic-color-static-icon-subtle-primary,
+  ),
+);
+
+// --- Base ---------------------------------------------------
+
+:host {
+  display:       inline-flex;
+  align-items:   center;
+  border-radius: var(--semantic-border-radius-round);
+  white-space:   nowrap;
+
+  // --- Taille S (défaut) ---
+  &.ds-badge--size-s {
+    height:  20px;
+    padding: 0 var(--semantic-measurement-spacing-s);
+
+    .ds-badge__content {
+      gap: var(--semantic-measurement-spacing-xxs);
+    }
+
+    .ds-badge__label {
+      font-size:      var(--semantic-font-text-style-size-m);
+      font-weight:    var(--semantic-font-text-style-font-weight-regular);
+      line-height:    var(--semantic-font-text-style-line-height-m);
+      letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+    }
+  }
+
+  // --- Taille M ---
+  &.ds-badge--size-m {
+    height:  24px;
+    padding: 0 var(--semantic-measurement-spacing-s);
+
+    .ds-badge__content {
+      gap: var(--semantic-measurement-spacing-xxs);
+    }
+
+    .ds-badge__label {
+      font-size:      var(--semantic-font-text-style-size-m);
+      font-weight:    var(--semantic-font-text-style-font-weight-regular);
+      line-height:    var(--semantic-font-text-style-line-height-m);
+      letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+    }
+  }
+
+  // --- Style Light : génération par status ---
+  &.ds-badge--style-light {
+    @each $status, $colors in $badge-light-colors {
+      &.ds-badge--status-#{$status} {
+        background-color: var(#{map.get($colors, bg)});
+        color:            var(#{map.get($colors, fg)});
+
+        ::ng-deep [slot='icon'] {
+          color: var(#{map.get($colors, icon)});
+        }
+      }
+    }
+  }
+
+  // --- Style Strong : génération par status ---
+  &.ds-badge--style-strong {
+    @each $status, $colors in $badge-strong-colors {
+      &.ds-badge--status-#{$status} {
+        background-color: var(#{map.get($colors, bg)});
+        color:            var(#{map.get($colors, fg)});
+
+        ::ng-deep [slot='icon'] {
+          color: var(#{map.get($colors, icon)});
+        }
+      }
+    }
+  }
+}
+
+// --- Contenu interne ----------------------------------------
+
+.ds-badge__content {
+  display:     inline-flex;
+  align-items: center;
+}
+
+.ds-badge__label {
+  font-family: var(--semantic-font-family);
+}

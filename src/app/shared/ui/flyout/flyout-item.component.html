@@ -1,0 +1,9 @@
+<div class="ds-flyout-item__main">
+  <p class="ds-flyout-item__title">{{ title() }}</p>
+  @if (reference()) {
+    <p class="ds-flyout-item__reference">{{ reference() }}</p>
+  }
+</div>
+<div class="ds-flyout-item__badge">
+  <ng-content select="[slot=badge]" />
+</div>

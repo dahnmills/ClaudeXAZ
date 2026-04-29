@@ -1,0 +1,159 @@
+// =============================================================
+// Search Bar — avec flyout "Recherches récentes"
+// Source : Figma > Layout cible > node 2865:10459 (barre)
+//                                 node 2865:10380 (flyout)
+//
+// Fidélité Figma :
+//   Barre : fond blanc, bordure Grey/200, radius 4px, shadow/100
+//           padding 8px | icône 24px + input | ds-button primary
+//   Flyout : fond blanc, radius 4px, shadow/100
+//            Section "RECENT" : icône horloge 16px + label + ds-badge
+//            Divider 1px
+//            Footer : ds-link "Advanced search →"
+// =============================================================
+
+// ── Barre ─────────────────────────────────────────────────────
+:host {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--foundation-spacing-8);
+  padding:       var(--foundation-spacing-8);
+  background:    var(--semantic-color-static-background-main-primary);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+  box-shadow:
+    0 1px  4px  rgba(18, 43, 84, 0.16),
+    0 4px  16px rgba(18, 43, 84, 0.12);
+
+  // Ancre pour le flyout positionné en absolu
+  position: relative;
+}
+
+// ── Champ (icône + input) ─────────────────────────────────────
+.ds-search-bar__field {
+  display:     flex;
+  align-items: center;
+  gap:         var(--foundation-spacing-8);
+  flex:        1;
+  min-width:   0;
+}
+
+.ds-search-bar__icon {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+.ds-search-bar__input {
+  flex:        1;
+  min-width:   0;
+  border:      none;
+  outline:     none;
+  background:  transparent;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+
+  &::placeholder { color: var(--semantic-color-static-text-main-tertiary); }
+  &::-webkit-search-cancel-button { display: none; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FLYOUT
+// ═══════════════════════════════════════════════════════════════
+.ds-search-flyout {
+  position:       absolute;
+  top:            calc(100% + 4px);  // 4px sous la barre
+  left:           0;
+  right:          0;
+  z-index:        200;
+
+  background:     var(--semantic-color-static-background-main-primary);
+  border-radius:  var(--semantic-border-radius-s);
+  box-shadow:
+    0 1px  4px  rgba(18, 43, 84, 0.16),
+    0 4px  16px rgba(18, 43, 84, 0.12);
+  overflow:       hidden;
+}
+
+// ── Section "RECENT" ──────────────────────────────────────────
+.ds-search-flyout__section {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--foundation-spacing-8);
+  padding:        var(--foundation-spacing-16);
+}
+
+.ds-search-flyout__section-label {
+  font-family:  var(--semantic-font-family);
+  font-size:    var(--semantic-font-text-style-size-s);       // 12px
+  font-weight:  var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height:  var(--semantic-font-text-style-size-l);       // 16px
+  letter-spacing: 0;
+  color:        var(--semantic-color-static-text-main-tertiary);
+  text-transform: uppercase;
+}
+
+// ── Liste items ───────────────────────────────────────────────
+.ds-search-flyout__list {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--foundation-spacing-8);
+  list-style:     none;
+  margin:         0;
+  padding:        0;
+}
+
+// ── Item ──────────────────────────────────────────────────────
+.ds-search-flyout__item {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--foundation-spacing-8);
+  cursor:        pointer;
+  border-radius: var(--semantic-border-radius-s);
+  padding:       2px var(--foundation-spacing-4);
+  transition:    background 0.12s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--semantic-color-static-background-main-alt-primary); // BlueA/025
+    outline: none;
+  }
+}
+
+.ds-search-flyout__item-left {
+  display:     flex;
+  align-items: center;
+  gap:         var(--foundation-spacing-8);
+  flex:        1;
+  min-width:   0;
+}
+
+.ds-search-flyout__item-icon {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+.ds-search-flyout__item-label {
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-m);        // 14px
+  font-weight:   var(--semantic-font-text-style-font-weight-regular);
+  line-height:   var(--semantic-font-text-style-line-height-m);  // 20px
+  color:         var(--semantic-color-static-text-main-primary);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+}
+
+// ── Divider ───────────────────────────────────────────────────
+.ds-search-flyout__divider {
+  height:     1px;
+  background: var(--semantic-color-static-border-subtle-tertiary);
+}
+
+// ── Footer ────────────────────────────────────────────────────
+.ds-search-flyout__footer {
+  padding: var(--foundation-spacing-8) var(--foundation-spacing-16);
+}

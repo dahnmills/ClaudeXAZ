@@ -1,0 +1,62 @@
+// =============================================================
+// Flyout Section — atom interne
+// Source : Figma > Draft-CU > sections (nodes 247:8600, 8608, 8620)
+//
+// Spec :
+//   • Padding 16px latéral / 16px vertical
+//   • Header (label + icone) : Body S Semibold uppercase, Grey/500
+//   • Variant highlighted : background Grey/050 (active section "YOU ARE VIEWING")
+//   • Border-bottom Grey/200 sur les sections non-finales
+// =============================================================
+
+:host {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m); // 16px header → body
+  padding:        var(--semantic-measurement-spacing-m);
+  width:          100%;
+  box-sizing:     border-box;
+
+  // Divider entre sections
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+  }
+}
+
+// ── Variant Highlighted (gris) ─────────────────────────────────
+:host.ds-flyout-section--highlighted {
+  background-color: var(--semantic-color-static-background-main-secondary);
+  gap:              var(--semantic-measurement-spacing-xs); // 4px (block plus compact)
+}
+
+// ── Header (icon + label) ──────────────────────────────────────
+.ds-flyout-section__header {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs); // 4px
+  height:      16px;
+}
+
+.ds-flyout-section__icon {
+  color:       var(--semantic-color-static-text-main-tertiary); // Grey/500
+  flex-shrink: 0;
+}
+
+.ds-flyout-section__label {
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-s); // 12px
+  line-height:    16px;
+  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-none);
+  text-transform: uppercase;
+  color:          var(--semantic-color-static-text-main-tertiary); // Grey/500
+  white-space:    nowrap;
+}
+
+// ── Body (items list) ──────────────────────────────────────────
+.ds-flyout-section__body {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s); // 8px
+  width:          100%;
+}

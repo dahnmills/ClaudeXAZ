@@ -1,0 +1,218 @@
+// =============================================================
+// Button
+// Source : Figma > -Components--Action > Button
+// Variants : Type (Primary/Secondary/Tertiary/Plain) ×
+//            Tone (Default/Accent) × Reversed (True/False)
+//            × State (Default/Hover/Active/Disabled)
+//
+// Fidélité Figma :
+//   • height 32px (Plain : 24px), padding 0 16px (Plain : 0)
+//   • border-radius 4px (Radius/S)
+//   • gap 8px entre icon et label
+//   • font 16px / 400 / lh 24px / ls 0
+//   • disabled : opacity 0.40 sur le composant entier
+//   • focus-visible : outline 3px BlueA/400, offset 2px
+// =============================================================
+
+:host {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-s);   // 8px
+  padding:         0 var(--semantic-measurement-spacing-m); // 0 16px
+  height:          var(--semantic-measurement-spacing-xl);  // 32px
+  border-radius:   var(--semantic-border-radius-s);         // 4px
+  border:          1px solid transparent;
+  cursor:          pointer;
+  white-space:     nowrap;
+  text-decoration: none;
+  user-select:     none;
+
+  font-size:      var(--semantic-font-text-style-size-l);              // 16px
+  font-weight:    var(--semantic-font-text-style-font-weight-regular);  // 400
+  line-height:    var(--semantic-font-text-style-line-height-l);        // 24px
+  letter-spacing: 0;
+
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+
+  // ── Focus ring ──────────────────────────────────────────────
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+
+  // ── Disabled ────────────────────────────────────────────────
+  &.ds-button--disabled,
+  &:disabled {
+    opacity:        var(--semantic-measurement-opacity-disabled); // 0.40
+    cursor:         not-allowed;
+    pointer-events: none;
+  }
+
+  // ============================================================
+  // TYPE — PRIMARY
+  // ============================================================
+  &.ds-button--type-primary {
+    background:   var(--semantic-color-interactive-background-strong-default);
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    color:        var(--semantic-color-interactive-text-neutral-default); // white
+
+    &:hover:not(.ds-button--disabled) {
+      background:   var(--semantic-color-interactive-background-strong-hover);
+      border-color: var(--semantic-color-interactive-border-strong-hover);
+    }
+    &:active:not(.ds-button--disabled) {
+      background:   var(--semantic-color-interactive-background-strong-active);
+      border-color: var(--semantic-color-interactive-border-strong-active);
+    }
+
+    // Accent
+    &.ds-button--tone-accent {
+      background:   var(--semantic-color-interactive-background-strong-alt-default);
+      border-color: var(--semantic-color-interactive-border-strong-alt-default);
+
+      &:hover:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-strong-alt-hover);
+        border-color: var(--semantic-color-interactive-border-strong-alt-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-strong-alt-active);
+        border-color: var(--semantic-color-interactive-border-strong-alt-active);
+      }
+    }
+
+    // Reversed (white bg, brand text)
+    &.ds-button--reversed {
+      background:   var(--semantic-color-interactive-background-neutral-default);
+      border-color: var(--semantic-color-interactive-border-neutral-default);
+      color:        var(--semantic-color-interactive-text-strong-default);
+
+      &:hover:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-muted-hover);
+        border-color: var(--semantic-color-interactive-border-muted-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-muted-active);
+        border-color: var(--semantic-color-interactive-border-muted-active);
+      }
+    }
+  }
+
+  // ============================================================
+  // TYPE — SECONDARY
+  // ============================================================
+  &.ds-button--type-secondary {
+    background:   var(--semantic-color-interactive-background-muted-default);
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    color:        var(--semantic-color-interactive-text-strong-default);
+
+    &:hover:not(.ds-button--disabled) {
+      background:   var(--semantic-color-interactive-background-muted-hover);
+      border-color: var(--semantic-color-interactive-border-strong-hover);
+      color:        var(--semantic-color-interactive-text-strong-hover);
+    }
+    &:active:not(.ds-button--disabled) {
+      background:   var(--semantic-color-interactive-background-muted-active);
+      border-color: var(--semantic-color-interactive-border-strong-active);
+      color:        var(--semantic-color-interactive-text-strong-active);
+    }
+
+    // Accent
+    &.ds-button--tone-accent {
+      border-color: var(--semantic-color-interactive-border-strong-alt-default);
+      color:        var(--semantic-color-interactive-text-strong-alt-default);
+
+      &:hover:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-muted-alt-hover);
+        border-color: var(--semantic-color-interactive-border-strong-alt-hover);
+        color:        var(--semantic-color-interactive-text-strong-alt-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-muted-alt-active);
+        border-color: var(--semantic-color-interactive-border-strong-alt-active);
+        color:        var(--semantic-color-interactive-text-strong-alt-active);
+      }
+    }
+
+    // Reversed
+    &.ds-button--reversed {
+      background:   transparent;
+      border-color: var(--semantic-color-interactive-border-neutral-default);
+      color:        var(--semantic-color-interactive-text-neutral-default);
+    }
+  }
+
+  // ============================================================
+  // TYPE — TERTIARY
+  // ============================================================
+  &.ds-button--type-tertiary {
+    background:   transparent;
+    border-color: transparent;
+    color:        var(--semantic-color-interactive-text-strong-default);
+
+    &:hover:not(.ds-button--disabled) {
+      color: var(--semantic-color-interactive-text-strong-hover);
+    }
+    &:active:not(.ds-button--disabled) {
+      color: var(--semantic-color-interactive-text-strong-active);
+    }
+
+    // Accent
+    &.ds-button--tone-accent {
+      color: var(--semantic-color-interactive-text-strong-alt-default);
+
+      &:hover:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-alt-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-alt-active);
+      }
+    }
+
+    // Reversed
+    &.ds-button--reversed {
+      color: var(--semantic-color-interactive-text-neutral-default);
+    }
+  }
+
+  // ============================================================
+  // TYPE — PLAIN (inline, no padding, height 24px)
+  // ============================================================
+  &.ds-button--type-plain {
+    padding:      0;
+    height:       var(--semantic-measurement-spacing-l); // 24px
+    background:   transparent;
+    border-color: transparent;
+    color:        var(--semantic-color-interactive-text-strong-default);
+
+    &:hover:not(.ds-button--disabled) {
+      color: var(--semantic-color-interactive-text-strong-hover);
+    }
+    &:active:not(.ds-button--disabled) {
+      color: var(--semantic-color-interactive-text-strong-active);
+    }
+
+    // Accent
+    &.ds-button--tone-accent {
+      color: var(--semantic-color-interactive-text-strong-alt-default);
+
+      &:hover:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-alt-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-alt-active);
+      }
+    }
+
+    // Reversed
+    &.ds-button--reversed {
+      color: var(--semantic-color-interactive-text-neutral-default);
+    }
+  }
+}
+
+// ── Label ───────────────────────────────────────────────────
+.ds-button__label {
+  display:     inline-flex;
+  align-items: center;
+}

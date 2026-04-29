@@ -1,0 +1,92 @@
+// =============================================================
+// Link
+// Source : Figma > -Components--Action > Link
+// Variants : Tone (Default/Neutral/Reversed) × State × Size × Weight × Decoration
+//
+// Fidélité Figma :
+//   • Size M : 16px / lh 24px   — Size S : 14px / lh 20px
+//   • Default : BlueA/500 → 600 (hover) → 700 (active)
+//   • Neutral  : Grey/900 → Grey/800 (hover) → Grey/700 (active)
+//   • Reversed : blanc (tous états)
+//   • Disabled : opacity 0.40
+//   • gap icône/label : 4px
+//   • Underline : text-decoration underline optionnel
+// =============================================================
+
+:host {
+  display:     inline-flex;
+  align-items: center;
+
+  // ── Disabled ──────────────────────────────────────────────────
+  &.ds-link--disabled .ds-link__anchor {
+    opacity:        var(--semantic-measurement-opacity-disabled);
+    cursor:         not-allowed;
+    pointer-events: none;
+  }
+
+  // ── Sizes ─────────────────────────────────────────────────────
+  &.ds-link--size-m .ds-link__anchor {
+    font-size:   var(--semantic-font-text-style-size-l);       // 16px
+    line-height: var(--semantic-font-text-style-line-height-l); // 24px
+  }
+
+  &.ds-link--size-s .ds-link__anchor {
+    font-size:   var(--semantic-font-text-style-size-m);       // 14px
+    line-height: var(--semantic-font-text-style-line-height-m); // 20px
+  }
+
+  // ── Weights ───────────────────────────────────────────────────
+  &.ds-link--weight-regular .ds-link__anchor {
+    font-weight: var(--semantic-font-text-style-font-weight-regular);
+  }
+
+  &.ds-link--weight-semi-bold .ds-link__anchor {
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  }
+
+  // ── Underline ─────────────────────────────────────────────────
+  &.ds-link--underline .ds-link__anchor {
+    text-decoration: underline;
+  }
+
+  // ── Tone — Default (BlueA) ────────────────────────────────────
+  &.ds-link--tone-default .ds-link__anchor {
+    color: var(--semantic-color-interactive-text-strong-default);
+
+    &:hover:not([aria-disabled])  { color: var(--semantic-color-interactive-text-strong-hover); }
+    &:active:not([aria-disabled]) { color: var(--semantic-color-interactive-text-strong-active); }
+  }
+
+  // ── Tone — Neutral (Grey) ─────────────────────────────────────
+  &.ds-link--tone-neutral .ds-link__anchor {
+    color: var(--semantic-color-static-text-main-primary); // Grey/900
+
+    &:hover:not([aria-disabled])  { color: var(--semantic-color-interactive-text-strong-alt-hover); }  // Grey/800
+    &:active:not([aria-disabled]) { color: var(--semantic-color-static-text-main-secondary); }          // Grey/700
+  }
+
+  // ── Tone — Reversed (white, for dark backgrounds) ─────────────
+  &.ds-link--tone-reversed .ds-link__anchor {
+    color: var(--semantic-color-interactive-text-neutral-default); // white
+
+    &:hover:not([aria-disabled])  { color: var(--semantic-color-interactive-text-neutral-default); }
+    &:active:not([aria-disabled]) { color: var(--semantic-color-interactive-text-neutral-default); }
+  }
+}
+
+.ds-link__anchor {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             var(--foundation-spacing-4, 4px);
+  text-decoration: none;
+  cursor:          pointer;
+  font-family:     var(--semantic-font-family);
+  transition:      color 0.15s ease;
+
+  // ── Focus ring ──────────────────────────────────────────────
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+    border-radius:  2px;
+  }
+}

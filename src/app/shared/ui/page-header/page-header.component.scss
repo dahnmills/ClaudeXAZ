@@ -1,0 +1,52 @@
+// =============================================================
+// Page Header — organism
+// Source : Figma > -Components--Data Display > Page Header (node 1709:15404)
+//
+// Spec :
+//   • Composition verticale : Topbox / Breadcrumbs / PageTitle / Tabs
+//   • Gap 8px entre sections, border-bottom Grey/200
+//   • Tous les slots sauf Topbox sont indentés à 32px (px-32)
+//   • Topbox occupe la pleine largeur (sa propre padding 32px est interne)
+// =============================================================
+
+:host {
+  display:        flex;
+  flex-direction: column;
+  align-items:    stretch;
+  gap:            var(--semantic-measurement-spacing-m); // 16px (était 8px — trop serré)
+  width:          100%;
+  border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary); // Grey/200
+  background:     var(--semantic-color-static-background-main-primary); // White
+}
+
+.ds-page-header__topbox {
+  display: flex;
+  width:   100%;
+
+  &:empty { display: none; }
+}
+
+.ds-page-header__breadcrumbs,
+.ds-page-header__title,
+.ds-page-header__tabs {
+  display:     flex;
+  align-items: center;
+  padding:     0 var(--semantic-measurement-spacing-xl); // 32px latéral
+  width:       100%;
+}
+
+// Quand le topbox est rendu en dehors du page-header (User Testing layout),
+// le breadcrumb devient le premier enfant : on lui ajoute un padding-top pour
+// ne pas qu'il colle au composant placé au-dessus.
+.ds-page-header__breadcrumbs:first-child {
+  padding-top: var(--semantic-measurement-spacing-m); // 16px
+}
+
+.ds-page-header__breadcrumbs:empty,
+.ds-page-header__tabs:empty {
+  display: none;
+}
+
+.ds-page-header__tabs {
+  align-items: flex-start;
+}

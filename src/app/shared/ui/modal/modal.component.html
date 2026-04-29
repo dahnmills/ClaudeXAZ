@@ -1,0 +1,21 @@
+@if (open()) {
+  <div class="ds-modal__backdrop" (click)="onBackdropClick()">
+    <div class="ds-modal__box" (click)="$event.stopPropagation()">
+      <ds-modal-header [title]="title()" (closeClicked)="closed.emit()" />
+      <ds-modal-content [height]="contentHeight()">
+        <ng-content />
+      </ds-modal-content>
+      @if (footer()) {
+        <ds-modal-footer
+          [showBack]="showBack()"
+          [backLabel]="backLabel()"
+          (backClicked)="backClicked.emit()"
+        >
+          <div slot="actions">
+            <ng-content select="[slot=actions]" />
+          </div>
+        </ds-modal-footer>
+      }
+    </div>
+  </div>
+}

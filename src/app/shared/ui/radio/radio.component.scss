@@ -1,0 +1,149 @@
+// =============================================================
+// Radio — bouton radio
+// Source : Figma > -Components--Data-Entry > .Radio (node 2044:2569)
+// =============================================================
+
+:host {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            var(--semantic-measurement-spacing-s); // 8px
+  position:       relative;
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-l);
+  line-height:    var(--semantic-font-text-style-line-height-l);
+  font-weight:    var(--semantic-font-text-style-font-weight-regular);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-none);
+  color:          var(--semantic-color-interactive-text-strong-alt-default);
+  cursor:         pointer;
+  user-select:    none;
+  -webkit-user-select: none;
+}
+
+:host:focus-visible {
+  outline: none;
+}
+
+:host:focus-visible .ds-radio__circle {
+  outline:        2px solid var(--semantic-color-interactive-border-focus);
+  outline-offset: 2px;
+}
+
+:host.ds-radio--disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  pointer-events: none;
+  cursor:         not-allowed;
+}
+
+// ── Container ──
+
+.ds-radio__container {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+  position:    relative;
+}
+
+// ── Cercle (outer) ──
+
+.ds-radio__circle {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  width:           20px;
+  height:          20px;
+  border:          2px solid var(--semantic-color-interactive-border-strong-alt-default);
+  border-radius:   50%;
+  background:      var(--semantic-color-static-background-main-primary);
+  transition:      border-color 0.15s ease, background-color 0.15s ease;
+}
+
+// ── Dot ──
+
+.ds-radio__dot {
+  width:            8px;
+  height:           8px;
+  border-radius:    50%;
+  background-color: var(--semantic-color-interactive-icon-strong-default);
+  transition:       background-color 0.15s ease;
+}
+
+// ── States — non sélectionné ──
+
+:host(.ds-radio--state-Hover):not(.ds-radio--selected) .ds-radio__circle,
+:host(:hover):not(.ds-radio--selected):not(.ds-radio--disabled):not(.ds-radio--error) .ds-radio__circle {
+  border-color: var(--semantic-color-interactive-border-strong-alt-hover);
+}
+
+:host(.ds-radio--state-Active):not(.ds-radio--selected) .ds-radio__circle,
+:host(:active):not(.ds-radio--selected):not(.ds-radio--disabled):not(.ds-radio--error) .ds-radio__circle {
+  border-color: var(--semantic-color-interactive-border-strong-alt-active);
+}
+
+// ── States — sélectionné (sans erreur) ──
+
+:host(.ds-radio--selected):not(.ds-radio--error) .ds-radio__circle {
+  border-color: var(--semantic-color-interactive-border-strong-default);
+}
+:host(.ds-radio--selected):not(.ds-radio--error) .ds-radio__dot {
+  background-color: var(--semantic-color-interactive-icon-strong-default);
+}
+
+:host(.ds-radio--state-Hover.ds-radio--selected):not(.ds-radio--error) .ds-radio__circle,
+:host(.ds-radio--selected):not(.ds-radio--error):not(.ds-radio--disabled):hover .ds-radio__circle {
+  border-color: var(--semantic-color-interactive-border-strong-hover);
+}
+:host(.ds-radio--state-Hover.ds-radio--selected):not(.ds-radio--error) .ds-radio__dot,
+:host(.ds-radio--selected):not(.ds-radio--error):not(.ds-radio--disabled):hover .ds-radio__dot {
+  background-color: var(--semantic-color-interactive-icon-strong-hover);
+}
+
+:host(.ds-radio--state-Active.ds-radio--selected):not(.ds-radio--error) .ds-radio__circle,
+:host(.ds-radio--selected):not(.ds-radio--error):not(.ds-radio--disabled):active .ds-radio__circle {
+  border-color: var(--semantic-color-interactive-border-strong-active);
+}
+:host(.ds-radio--state-Active.ds-radio--selected):not(.ds-radio--error) .ds-radio__dot,
+:host(.ds-radio--selected):not(.ds-radio--error):not(.ds-radio--disabled):active .ds-radio__dot {
+  background-color: var(--semantic-color-interactive-icon-strong-active);
+}
+
+// ── States — erreur ──
+
+:host(.ds-radio--error) .ds-radio__circle {
+  border-color: var(--semantic-color-interactive-border-strong-negative-default);
+}
+:host(.ds-radio--error.ds-radio--selected) .ds-radio__dot {
+  background-color: var(--semantic-color-interactive-icon-strong-negative-default);
+}
+
+:host(.ds-radio--state-Hover.ds-radio--error) .ds-radio__circle,
+:host(.ds-radio--error):not(.ds-radio--disabled):hover .ds-radio__circle {
+  border-color: var(--semantic-color-interactive-border-strong-negative-hover);
+}
+:host(.ds-radio--state-Hover.ds-radio--error.ds-radio--selected) .ds-radio__dot,
+:host(.ds-radio--error.ds-radio--selected):not(.ds-radio--disabled):hover .ds-radio__dot {
+  background-color: var(--semantic-color-interactive-icon-strong-negative-hover);
+}
+
+:host(.ds-radio--state-Active.ds-radio--error) .ds-radio__circle,
+:host(.ds-radio--error):not(.ds-radio--disabled):active .ds-radio__circle {
+  border-color: var(--semantic-color-interactive-border-strong-negative-active);
+}
+:host(.ds-radio--state-Active.ds-radio--error.ds-radio--selected) .ds-radio__dot,
+:host(.ds-radio--error.ds-radio--selected):not(.ds-radio--disabled):active .ds-radio__dot {
+  background-color: var(--semantic-color-interactive-icon-strong-negative-active);
+}
+
+// ── Texte selon état (label) ──
+
+:host(.ds-radio--state-Hover) { color: var(--semantic-color-interactive-text-strong-alt-hover); }
+:host(.ds-radio--state-Active) { color: var(--semantic-color-interactive-text-strong-alt-active); }
+
+// ── Label ──
+
+.ds-radio__label {
+  white-space: nowrap;
+  cursor:      inherit;
+  user-select: none;
+  -webkit-user-select: none;
+}

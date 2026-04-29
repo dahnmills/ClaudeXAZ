@@ -1,0 +1,69 @@
+// =============================================================
+// Crumb — atom
+// Source : Figma > -Components--Action > Crumb (node 1709:14619)
+//
+// Variants : Default (link + chevron) / Current page (semibold, brand color, no chevron)
+// Spec :
+//   • Hauteur 20px, gap interne 4px
+//   • Body L (16/24)
+//   • Default  : Regular + Grey/900 (interactive-text-strong-alt-default)
+//   • Current  : SemiBold + BlueA (interactive-text-strong-default)
+//   • Chevron 16px, hérite la couleur du label (currentColor)
+// =============================================================
+
+:host {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs); // 4px
+  height:      20px;
+}
+
+// ── Disabled ────────────────────────────────────────────────────
+:host.ds-crumb--disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  pointer-events: none;
+}
+
+// ── Link variant (non-current) ──────────────────────────────────
+.ds-crumb__link {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             var(--semantic-measurement-spacing-xs);
+  text-decoration: none;
+  cursor:          pointer;
+  color:           var(--semantic-color-interactive-text-strong-alt-default); // Grey/900
+  transition:      color 0.15s ease;
+
+  &:hover  { color: var(--semantic-color-interactive-text-strong-alt-hover); }
+  &:active { color: var(--semantic-color-interactive-text-strong-alt-active); }
+
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+    border-radius:  2px;
+  }
+}
+
+// ── Label ──────────────────────────────────────────────────────
+.ds-crumb__label {
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-l);          // 16px
+  line-height:    var(--semantic-font-text-style-line-height-l);   // 24px
+  font-weight:    var(--semantic-font-text-style-font-weight-regular);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-none);
+  white-space:    nowrap;
+}
+
+// ── Chevron separator ───────────────────────────────────────────
+.ds-crumb__separator {
+  color:     currentColor;
+  flex-shrink: 0;
+}
+
+// ── Current page ────────────────────────────────────────────────
+:host.ds-crumb--current {
+  .ds-crumb__label {
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color:       var(--semantic-color-interactive-text-strong-default); // BlueA/500
+  }
+}

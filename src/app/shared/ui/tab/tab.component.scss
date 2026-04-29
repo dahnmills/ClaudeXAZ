@@ -1,0 +1,154 @@
+// =============================================================
+// Tab
+// Source : Figma > -Components--Action > Tab
+// Variants : Tone (Default/Accent/Reversed) × Selected × State
+//
+// Fidélité Figma :
+//   • Hauteur 32px, pas de padding propre (géré par le parent)
+//   • Layout vertical : Content (24px) + indicateur bas (4px)
+//   • Indicateur : 4px, coloré, visible quand selected
+//   • Default tone : BlueA pour selected, Grey/900 pour unselected
+//   • Accent tone  : Grey/900 pour selected, Grey/900 pour unselected
+//   • Reversed tone : blanc (pour fond sombre — header)
+//   • Disabled : opacity 0.40
+// =============================================================
+
+:host {
+  display:        inline-flex;
+  flex-direction: column;
+  align-items:    stretch;
+  height:         var(--semantic-measurement-spacing-xl); // 32px
+  cursor:         pointer;
+  position:       relative;
+  user-select:    none;
+  white-space:    nowrap;
+
+  // ── Focus ring ──────────────────────────────────────────────
+  &:focus-visible {
+    outline:       3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  // ── Disabled ────────────────────────────────────────────────
+  &.ds-tab--disabled {
+    opacity:        var(--semantic-measurement-opacity-disabled);
+    cursor:         not-allowed;
+    pointer-events: none;
+  }
+
+  // ============================================================
+  // TONE — DEFAULT  (sur fond clair : BlueA selected, gris unselected)
+  // ============================================================
+  &.ds-tab--tone-default {
+    .ds-tab__content { color: var(--semantic-color-static-text-main-primary); }       // Grey/900
+
+    &:hover:not(.ds-tab--disabled) .ds-tab__content {
+      color: var(--semantic-color-interactive-text-strong-hover);                      // BlueA/600
+    }
+    &:active:not(.ds-tab--disabled) .ds-tab__content {
+      color: var(--semantic-color-interactive-text-strong-active);                     // BlueA/700
+    }
+
+    .ds-tab__indicator { background: var(--semantic-color-interactive-border-strong-default); }
+
+    // Selected
+    &.ds-tab--selected {
+      .ds-tab__content { color: var(--semantic-color-interactive-text-strong-default); } // BlueA/500
+      .ds-tab__indicator { opacity: 1; }
+
+      &:hover:not(.ds-tab--disabled) .ds-tab__content {
+        color: var(--semantic-color-interactive-text-strong-hover);
+      }
+      &:hover:not(.ds-tab--disabled) .ds-tab__indicator {
+        background: var(--semantic-color-interactive-border-strong-hover);
+      }
+    }
+
+    // Hover unselected — show faint indicator
+    &:not(.ds-tab--selected):hover:not(.ds-tab--disabled) .ds-tab__indicator {
+      opacity:    0.35;
+      background: var(--semantic-color-interactive-border-strong-hover);
+    }
+  }
+
+  // ============================================================
+  // TONE — ACCENT  (sur fond clair : Grey/900 selected + indicator Grey/900)
+  // ============================================================
+  &.ds-tab--tone-accent {
+    .ds-tab__content { color: var(--semantic-color-static-text-main-primary); }
+
+    &:hover:not(.ds-tab--disabled) .ds-tab__content {
+      color: var(--semantic-color-interactive-text-strong-alt-hover);                  // Grey/800
+    }
+    &:active:not(.ds-tab--disabled) .ds-tab__content {
+      color: var(--semantic-color-static-text-main-secondary);                         // Grey/700
+    }
+
+    .ds-tab__indicator { background: var(--semantic-color-interactive-border-strong-alt-default); }
+
+    &.ds-tab--selected {
+      .ds-tab__content { color: var(--semantic-color-interactive-text-strong-alt-default); } // Grey/900
+      .ds-tab__indicator { opacity: 1; }
+
+      &:hover:not(.ds-tab--disabled) .ds-tab__content {
+        color: var(--semantic-color-interactive-text-strong-alt-hover);
+      }
+    }
+
+    &:not(.ds-tab--selected):hover:not(.ds-tab--disabled) .ds-tab__indicator {
+      opacity: 0.35;
+    }
+  }
+
+  // ============================================================
+  // TONE — REVERSED  (sur fond sombre : blanc partout)
+  // ============================================================
+  &.ds-tab--tone-reversed {
+    .ds-tab__content { color: var(--semantic-color-interactive-text-neutral-default); } // white
+
+    &:hover:not(.ds-tab--disabled) .ds-tab__content {
+      color: var(--semantic-color-static-border-subtle-secondary);                     // Grey/050
+    }
+    &:active:not(.ds-tab--disabled) .ds-tab__content {
+      color: var(--semantic-color-static-border-subtle-tertiary);                      // Grey/100
+    }
+
+    .ds-tab__indicator { background: var(--semantic-color-interactive-text-neutral-default); } // white
+
+    &.ds-tab--selected {
+      .ds-tab__content { color: var(--semantic-color-interactive-text-neutral-default); }
+      .ds-tab__indicator { opacity: 1; }
+    }
+
+    &:not(.ds-tab--selected):hover:not(.ds-tab--disabled) .ds-tab__indicator {
+      opacity: 0.35;
+    }
+  }
+}
+
+// ── Content area ──────────────────────────────────────────────
+.ds-tab__content {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--foundation-spacing-4, 4px);
+  flex:        1;
+  transition:  color 0.15s ease;
+}
+
+.ds-tab__label {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);              // 16px
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-l);       // 24px
+}
+
+// ── Bottom indicator ──────────────────────────────────────────
+.ds-tab__indicator {
+  height:           4px;
+  width:            100%;
+  border-radius:    2px 2px 0 0;
+  transform-origin: bottom;
+  transition:       background 0.15s ease, opacity 0.15s ease;
+  opacity:          0;
+}

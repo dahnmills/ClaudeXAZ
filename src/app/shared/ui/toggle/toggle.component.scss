@@ -1,0 +1,137 @@
+// =============================================================
+// Toggle — switch on/off
+// Source : Figma > -Components--Data-Entry > .Toggle (node 2044:2853)
+// =============================================================
+
+:host {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            var(--semantic-measurement-spacing-s); // 8px
+  position:       relative;
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-l);
+  line-height:    var(--semantic-font-text-style-line-height-l);
+  font-weight:    var(--semantic-font-text-style-font-weight-regular);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-none);
+  color:          var(--semantic-color-interactive-text-strong-alt-default);
+  cursor:         pointer;
+  user-select:    none;
+  -webkit-user-select: none;
+}
+
+:host:focus-visible {
+  outline: none;
+}
+:host:focus-visible .ds-toggle__track {
+  outline:        2px solid var(--semantic-color-interactive-border-focus);
+  outline-offset: 2px;
+}
+
+:host.ds-toggle--disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  pointer-events: none;
+  cursor:         not-allowed;
+}
+
+// ── Container ──
+
+.ds-toggle__container {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+  position:    relative;
+}
+
+// ── Track ──
+
+.ds-toggle__track {
+  display:         inline-flex;
+  align-items:     center;
+  flex-shrink:     0;
+  width:           40px;
+  height:          20px;
+  padding:         0 2px;
+  border-radius:   14px;
+  background-color: var(--semantic-color-interactive-background-medium-alt-default);
+  transition:      background-color 0.15s ease;
+}
+
+// ── Knob ──
+
+.ds-toggle__knob {
+  width:            16px;
+  height:           16px;
+  border-radius:    50%;
+  background-color: var(--semantic-color-interactive-background-neutral-default);
+  transition:       transform 0.18s ease;
+  transform:        translateX(0);
+}
+
+// ── States — OFF (non sélectionné) ──
+
+:host(.ds-toggle--state-Hover):not(.ds-toggle--selected):not(.ds-toggle--error) .ds-toggle__track,
+:host(:hover):not(.ds-toggle--selected):not(.ds-toggle--disabled):not(.ds-toggle--error) .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-medium-alt-hover);
+}
+
+:host(.ds-toggle--state-Active):not(.ds-toggle--selected):not(.ds-toggle--error) .ds-toggle__track,
+:host(:active):not(.ds-toggle--selected):not(.ds-toggle--disabled):not(.ds-toggle--error) .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-medium-alt-active);
+}
+
+:host(.ds-toggle--state-Disabled):not(.ds-toggle--selected):not(.ds-toggle--error) .ds-toggle__track,
+:host(.ds-toggle--disabled):not(.ds-toggle--selected):not(.ds-toggle--error) .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-strong-alt-disabled);
+}
+
+// ── States — ON (sélectionné) ──
+
+:host(.ds-toggle--selected) .ds-toggle__knob {
+  transform: translateX(20px); // 40 − 2 (padding) − 2 (padding) − 16 (knob) = 20
+}
+
+:host(.ds-toggle--selected):not(.ds-toggle--error) .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-strong-default);
+}
+
+:host(.ds-toggle--state-Hover.ds-toggle--selected):not(.ds-toggle--error) .ds-toggle__track,
+:host(.ds-toggle--selected):not(.ds-toggle--error):not(.ds-toggle--disabled):hover .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-strong-hover);
+}
+
+:host(.ds-toggle--state-Active.ds-toggle--selected):not(.ds-toggle--error) .ds-toggle__track,
+:host(.ds-toggle--selected):not(.ds-toggle--error):not(.ds-toggle--disabled):active .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-strong-active);
+}
+
+// ── States — Erreur ──
+
+:host(.ds-toggle--error) .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-strong-negative-default);
+}
+:host(.ds-toggle--state-Hover.ds-toggle--error) .ds-toggle__track,
+:host(.ds-toggle--error):not(.ds-toggle--disabled):hover .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-strong-negative-hover);
+}
+:host(.ds-toggle--state-Active.ds-toggle--error) .ds-toggle__track,
+:host(.ds-toggle--error):not(.ds-toggle--disabled):active .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-strong-negative-active);
+}
+:host(.ds-toggle--state-Disabled.ds-toggle--error) .ds-toggle__track,
+:host(.ds-toggle--disabled.ds-toggle--error) .ds-toggle__track {
+  background-color: var(--semantic-color-interactive-background-strong-negative-disabled);
+}
+
+// ── Texte selon état (label) ──
+
+:host(.ds-toggle--state-Hover) { color: var(--semantic-color-interactive-text-strong-alt-hover); }
+:host(.ds-toggle--state-Active) { color: var(--semantic-color-interactive-text-strong-alt-active); }
+
+// ── Label ──
+
+.ds-toggle__label {
+  white-space: nowrap;
+  cursor:      inherit;
+  user-select: none;
+  -webkit-user-select: none;
+}

@@ -1,0 +1,23 @@
+// =============================================================
+// Flyout — organism (panel)
+// Source : Figma > Draft-CU > Frame 281 (node 247:8598)
+//
+// Spec :
+//   • Background blanc, rounded 4px
+//   • Drop shadow doux (0 4px 12px rgba(0,0,0,0.15))
+//   • Largeur min 290px (ajustable par le consommateur)
+//   • Padding bottom 16px (les sections gèrent leur propre padding)
+//   • overflow:hidden pour clip les coins arrondis sur la section highlighted
+// =============================================================
+
+:host {
+  display:        inline-flex;
+  flex-direction: column;
+  align-items:    stretch;
+  min-width:      290px;
+  background:     var(--semantic-color-static-background-main-primary); // White
+  border-radius:  var(--semantic-border-radius-s);
+  box-shadow:     0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow:       hidden;
+  padding-bottom: var(--semantic-measurement-spacing-m); // 16px
+}

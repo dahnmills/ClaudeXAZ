@@ -1,0 +1,12 @@
+<a
+  class="ds-link__anchor"
+  [href]="disabled() ? null : href()"
+  [attr.target]="external() ? '_blank' : null"
+  [attr.rel]="external() ? 'noopener noreferrer' : null"
+  [attr.aria-disabled]="disabled() || null"
+  [attr.tabindex]="disabled() ? -1 : null"
+>
+  <ng-content select="[slot=icon-left]" />
+  <span class="ds-link__label"><ng-content /></span>
+  <ng-content select="[slot=icon-right]" />
+</a>

@@ -1,0 +1,13 @@
+@for (section of sections(); track section.title) {
+  <section class="ds-properties-panel__section" [class.ds-properties-panel__section--card]="variant() === 'card'">
+    <h3 class="ds-properties-panel__title">{{ section.title }}</h3>
+    <ul class="ds-properties-panel__list">
+      @for (row of section.rows; track row.label) {
+        <li class="ds-properties-panel__row">
+          <span class="ds-properties-panel__label">{{ row.label }}</span>
+          <span class="ds-properties-panel__value">{{ row.value || '-' }}</span>
+        </li>
+      }
+    </ul>
+  </section>
+}

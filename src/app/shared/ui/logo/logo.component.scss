@@ -1,0 +1,64 @@
+// =============================================================
+// Logo Qirin
+// Source : Figma > -Components--Layout > node 2290:9763
+//
+// Fidélité Figma :
+//   • Logo mark 32×32px — SVG Allianz exact (fill="currentColor")
+//   • Divider 1px × 40px
+//   • "Qirin" : Headline Small 24px / 400 / lh 32px / ls 0.2px
+//   • Default  : bleu brand (#003781)
+//   • Reversed : blanc (sur fond sombre — header)
+// =============================================================
+
+:host {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--foundation-spacing-16); // 16px
+  flex-shrink: 0;
+
+  // ── Default (sur fond clair) ───────────────────────────────
+  &:not(.ds-logo--reversed) {
+    color: var(--semantic-color-static-background-brand); // #003781
+
+    .ds-logo__divider {
+      background: var(--semantic-color-static-background-brand);
+      opacity:    0.30;
+    }
+  }
+
+  // ── Reversed (sur fond sombre — header) ───────────────────
+  &.ds-logo--reversed {
+    color: var(--semantic-color-interactive-text-neutral-default); // white
+
+    .ds-logo__divider {
+      background: var(--semantic-color-interactive-text-neutral-default); // white
+      opacity:    0.30;
+    }
+  }
+}
+
+// ── Logo mark ─────────────────────────────────────────────────
+.ds-logo__mark {
+  flex-shrink: 0;
+  width:       32px;
+  height:      32px;
+  // fill="currentColor" dans le SVG → hérite de :host color
+}
+
+// ── Divider ───────────────────────────────────────────────────
+.ds-logo__divider {
+  width:       1px;
+  height:      40px;
+  flex-shrink: 0;
+}
+
+// ── App name ──────────────────────────────────────────────────
+.ds-logo__name {
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--foundation-font-size-24);   // 24px
+  font-weight:    var(--semantic-font-text-style-font-weight-regular);
+  line-height:    32px;
+  letter-spacing: 0.2px;
+  white-space:    nowrap;
+  color:          currentColor;
+}

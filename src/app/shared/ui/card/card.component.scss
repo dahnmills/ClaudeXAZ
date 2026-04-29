@@ -1,0 +1,28 @@
+// =============================================================
+// Card
+// Source : Figma > -Components--Data Display > Card 🟢🟢
+// Variants : Type (Default / Redirect / Slot / Key Info / ...)
+//
+// Fidélité Figma :
+//   • Fond blanc (static-background-main-primary)
+//   • Bordure 1px Grey/200 (static-border-subtle-tertiary)
+//   • border-radius 4px (Radius/S)
+//   • Padding 24px sur les 4 côtés
+//   • Pas de box-shadow dans les tokens Figma
+//   • position: relative → permet aux actions absolues (Button Icon)
+//     d'être positionnées dans la carte
+// =============================================================
+
+:host {
+  display:       block;
+  position:      relative;
+  background:    var(--semantic-color-static-background-main-primary);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+  padding:       var(--semantic-measurement-spacing-l); // 24px
+
+  // Variante sans padding — contenu full-bleed ou gérant son propre espacement
+  &.ds-card--no-padding {
+    padding: 0;
+  }
+}

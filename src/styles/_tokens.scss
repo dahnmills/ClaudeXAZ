@@ -1,0 +1,211 @@
+// =============================================================
+// FOUNDATION TOKENS
+// Source : Figma > Tokens > Collection "Foundation"
+// NE PAS ÉDITER MANUELLEMENT — source de vérité : Figma
+// =============================================================
+
+:root {
+
+  // -----------------------------------------------------------
+  // COULEURS — Red
+  // -----------------------------------------------------------
+  --foundation-color-red-050: #fce4e8;
+  --foundation-color-red-100: #fcbac2;
+  --foundation-color-red-200: #f16472;
+  --foundation-color-red-300: #e12d3c;
+  --foundation-color-red-400: #c51322;
+  --foundation-color-red-500: #b0050c;
+  --foundation-color-red-600: #8d070b;
+  --foundation-color-red-700: #75060a;
+  --foundation-color-red-800: #630306;
+  --foundation-color-red-900: #430a0c;
+
+  // -----------------------------------------------------------
+  // COULEURS — BlueA (bleu primaire marque)
+  // -----------------------------------------------------------
+  --foundation-color-blue-a-025: #f1f9fa;
+  --foundation-color-blue-a-050: #d9eaf2;
+  --foundation-color-blue-a-100: #b7ddf0;
+  --foundation-color-blue-a-200: #86cff4;
+  --foundation-color-blue-a-300: #55c0f6;
+  --foundation-color-blue-a-400: #008ed6;
+  --foundation-color-blue-a-500: #007ab3;
+  --foundation-color-blue-a-600: #006192;
+  --foundation-color-blue-a-700: #075994;
+  --foundation-color-blue-a-800: #003781;
+  --foundation-color-blue-a-900: #002c66;
+
+  // -----------------------------------------------------------
+  // COULEURS — BlueB (bleu secondaire)
+  // -----------------------------------------------------------
+  --foundation-color-blue-b-050: #ecf0f8;
+  --foundation-color-blue-b-100: #dae2f1;
+  --foundation-color-blue-b-200: #b5c5e3;
+  --foundation-color-blue-b-300: #90a8d5;
+  --foundation-color-blue-b-400: #6b8bc7;
+  --foundation-color-blue-b-500: #496ebd;
+  --foundation-color-blue-b-600: #3a5ba2;
+  --foundation-color-blue-b-700: #365496;
+  --foundation-color-blue-b-800: #243966;
+  --foundation-color-blue-b-900: #1e2d52;
+
+  // -----------------------------------------------------------
+  // COULEURS — Green
+  // -----------------------------------------------------------
+  --foundation-color-green-050: #e8f3e9;
+  --foundation-color-green-100: #c4e3c7;
+  --foundation-color-green-200: #9bcfa0;
+  --foundation-color-green-300: #61b367;
+  --foundation-color-green-400: #45a54a;
+  --foundation-color-green-500: #1e8927;
+  --foundation-color-green-600: #1a7521;
+  --foundation-color-green-700: #1a6120;
+  --foundation-color-green-800: #17501d;
+  --foundation-color-green-900: #113b15;
+
+  // -----------------------------------------------------------
+  // COULEURS — Orange
+  // -----------------------------------------------------------
+  --foundation-color-orange-050: #fdf8e9;
+  --foundation-color-orange-100: #fcecbb;
+  --foundation-color-orange-200: #fddb72;
+  --foundation-color-orange-300: #efbe25;
+  --foundation-color-orange-400: #e08d05;
+  --foundation-color-orange-500: #d87b02;
+  --foundation-color-orange-600: #ae6405;
+  --foundation-color-orange-700: #894f01;
+  --foundation-color-orange-800: #693c02;
+  --foundation-color-orange-900: #513005;
+
+  // -----------------------------------------------------------
+  // COULEURS — Grey
+  // -----------------------------------------------------------
+  --foundation-color-grey-050: #f5f5f5;
+  --foundation-color-grey-100: #ececec;
+  --foundation-color-grey-200: #d9d9d9;
+  --foundation-color-grey-300: #c2c2c2;
+  --foundation-color-grey-400: #999999;
+  --foundation-color-grey-500: #767676;
+  --foundation-color-grey-600: #5b5b5b;
+  --foundation-color-grey-700: #414141;
+  --foundation-color-grey-800: #262626;
+  --foundation-color-grey-900: #121212;
+
+  // -----------------------------------------------------------
+  // COULEURS — Black & White
+  // -----------------------------------------------------------
+  --foundation-color-black-000: #000000;
+  --foundation-color-white-1000: #ffffff;
+
+  // -----------------------------------------------------------
+  // SIZING
+  // -----------------------------------------------------------
+  --foundation-sizing-0:  0px;
+  --foundation-sizing-1:  1px;
+  --foundation-sizing-2:  2px;
+  --foundation-sizing-4:  4px;
+  --foundation-sizing-8:  8px;
+  --foundation-sizing-16: 16px;
+  --foundation-sizing-24: 24px;
+  --foundation-sizing-32: 32px;
+  --foundation-sizing-40: 40px;
+  --foundation-sizing-48: 48px;
+  --foundation-sizing-56: 56px;
+  --foundation-sizing-64: 64px;
+  --foundation-sizing-72: 72px;
+  --foundation-sizing-80: 80px;
+  --foundation-sizing-88: 88px;
+  --foundation-sizing-96: 96px;
+
+  // -----------------------------------------------------------
+  // SPACING
+  // -----------------------------------------------------------
+  --foundation-spacing-0:  0px;
+  --foundation-spacing-1:  1px;
+  --foundation-spacing-2:  2px;
+  --foundation-spacing-4:  4px;
+  --foundation-spacing-8:  8px;
+  --foundation-spacing-16: 16px;
+  --foundation-spacing-24: 24px;
+  --foundation-spacing-32: 32px;
+  --foundation-spacing-40: 40px;
+  --foundation-spacing-48: 48px;
+  --foundation-spacing-56: 56px;
+  --foundation-spacing-64: 64px;
+  --foundation-spacing-72: 72px;
+  --foundation-spacing-80: 80px;
+  --foundation-spacing-88: 88px;
+  --foundation-spacing-96: 96px;
+
+  // -----------------------------------------------------------
+  // BORDER RADIUS
+  // -----------------------------------------------------------
+  --foundation-radius-0:   0px;
+  --foundation-radius-2:   2px;
+  --foundation-radius-4:   4px;
+  --foundation-radius-8:   8px;
+  --foundation-radius-16:  16px;
+  --foundation-radius-32:  32px;
+  --foundation-radius-100: 100px;
+
+  // -----------------------------------------------------------
+  // OPACITY (échelle CSS 0–1)
+  // -----------------------------------------------------------
+  --foundation-opacity-0:   0;
+  --foundation-opacity-35:  0.35;
+  --foundation-opacity-40:  0.40;
+  --foundation-opacity-100: 1;
+
+  // -----------------------------------------------------------
+  // TYPOGRAPHIE — Font Family
+  // -----------------------------------------------------------
+  --foundation-font-family: 'Allianz Neo', sans-serif;
+
+  // -----------------------------------------------------------
+  // TYPOGRAPHIE — Font Size
+  // -----------------------------------------------------------
+  --foundation-font-size-12: 12px;
+  --foundation-font-size-14: 14px;
+  --foundation-font-size-16: 16px;
+  --foundation-font-size-18: 18px;
+  --foundation-font-size-20: 20px;
+  --foundation-font-size-24: 24px;
+  --foundation-font-size-28: 28px;
+  --foundation-font-size-32: 32px;
+  --foundation-font-size-48: 48px;
+  --foundation-font-size-64: 64px;
+
+  // -----------------------------------------------------------
+  // TYPOGRAPHIE — Font Weight
+  // -----------------------------------------------------------
+  --foundation-font-weight-thin:        100;
+  --foundation-font-weight-extra-light: 200;
+  --foundation-font-weight-light:       300;
+  --foundation-font-weight-regular:     400;
+  --foundation-font-weight-medium:      500;
+  --foundation-font-weight-semi-bold:   600;
+  --foundation-font-weight-bold:        700;
+  --foundation-font-weight-extra-bold:  800;
+  --foundation-font-weight-black:       900;
+
+  // -----------------------------------------------------------
+  // TYPOGRAPHIE — Line Height
+  // -----------------------------------------------------------
+  --foundation-font-line-height-16: 16px;
+  --foundation-font-line-height-20: 20px;
+  --foundation-font-line-height-24: 24px;
+  --foundation-font-line-height-28: 28px;
+  --foundation-font-line-height-32: 32px;
+  --foundation-font-line-height-40: 40px;
+  --foundation-font-line-height-56: 56px;
+  --foundation-font-line-height-64: 64px;
+  --foundation-font-line-height-72: 72px;
+
+  // -----------------------------------------------------------
+  // TYPOGRAPHIE — Letter Spacing
+  // -----------------------------------------------------------
+  --foundation-font-letter-spacing-0:   0px;
+  --foundation-font-letter-spacing-0-2: 0.2px;
+  --foundation-font-letter-spacing-0-5: 0.5px;
+  --foundation-font-letter-spacing-1:   1px;
+}

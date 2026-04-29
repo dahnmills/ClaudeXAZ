@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design System Preview</title>
+  <style>
+    /* ============================================================
+       FOUNDATION TOKENS
+    ============================================================ */
+    :root {
+      --foundation-color-red-050: #fce4e8; --foundation-color-red-100: #fcbac2;
+      --foundation-color-red-200: #f16472; --foundation-color-red-300: #e12d3c;
+      --foundation-color-red-400: #c51322; --foundation-color-red-500: #b0050c;
+
+      --foundation-color-blue-a-025: #f1f9fa; --foundation-color-blue-a-050: #d9eaf2;
+      --foundation-color-blue-a-100: #b7ddf0; --foundation-color-blue-a-200: #86cff4;
+      --foundation-color-blue-a-400: #008ed6; --foundation-color-blue-a-500: #007ab3;
+      --foundation-color-blue-a-600: #006192; --foundation-color-blue-a-700: #075994;
+      --foundation-color-blue-a-800: #003781; --foundation-color-blue-a-900: #002c66;
+
+      --foundation-color-blue-b-050: #ecf0f8; --foundation-color-blue-b-500: #496ebd;
+
+      --foundation-color-green-050: #e8f3e9; --foundation-color-green-100: #c4e3c7;
+      --foundation-color-green-200: #9bcfa0; --foundation-color-green-500: #1e8927;
+      --foundation-color-green-600: #1a7521; --foundation-color-green-700: #1a6120;
+
+      --foundation-color-orange-050: #fdf8e9; --foundation-color-orange-100: #fcecbb;
+      --foundation-color-orange-200: #fddb72; --foundation-color-orange-400: #e08d05;
+
+      --foundation-color-grey-050: #f5f5f5; --foundation-color-grey-100: #ececec;
+      --foundation-color-grey-200: #d9d9d9; --foundation-color-grey-300: #c2c2c2;
+      --foundation-color-grey-500: #767676; --foundation-color-grey-700: #414141;
+      --foundation-color-grey-900: #121212;
+      --foundation-color-white-1000: #ffffff;
+      --foundation-color-black-000: #000000;
+
+      --foundation-radius-100: 100px;
+      --foundation-font-family: 'Allianz Neo', system-ui, -apple-system, sans-serif;
+      --foundation-font-size-14: 14px;
+      --foundation-font-weight-regular: 400;
+      --foundation-font-line-height-20: 20px;
+      --foundation-font-letter-spacing-0-2: 0.2px;
+      --foundation-spacing-2: 2px;
+      --foundation-spacing-8: 8px;
+    }
+
+    /* ============================================================
+       SEMANTIC TOKENS
+    ============================================================ */
+    :root {
+      --semantic-font-family: var(--foundation-font-family);
+      --semantic-border-radius-round: var(--foundation-radius-100);
+      --semantic-measurement-spacing-xxs: var(--foundation-spacing-2);
+      --semantic-measurement-spacing-s:   var(--foundation-spacing-8);
+      --semantic-font-text-style-size-m:          var(--foundation-font-size-14);
+      --semantic-font-text-style-font-weight-regular: var(--foundation-font-weight-regular);
+      --semantic-font-text-style-line-height-m:   var(--foundation-font-line-height-20);
+      --semantic-font-text-style-letter-spacing-s: var(--foundation-font-letter-spacing-0-2);
+
+      /* Badge Light backgrounds */
+      --semantic-color-static-background-subtle-functional-informative: var(--foundation-color-blue-b-050);
+      --semantic-color-static-background-subtle-functional-warning:     var(--foundation-color-orange-050);
+      --semantic-color-static-background-subtle-functional-positive:    var(--foundation-color-green-050);
+      --semantic-color-static-background-subtle-functional-negative:    var(--foundation-color-red-050);
+      --semantic-color-static-background-accent-tertiary:               var(--foundation-color-grey-200);
+      --semantic-color-static-background-accent-secondary:              var(--foundation-color-grey-500);
+      --semantic-color-static-background-accent-primary:                var(--foundation-color-grey-900);
+
+      /* Badge Light text/icon */
+      --semantic-color-static-text-main-functional-informative: var(--foundation-color-blue-b-500);
+      --semantic-color-static-text-main-functional-warning:     var(--foundation-color-orange-400);
+      --semantic-color-static-text-main-functional-positive:    var(--foundation-color-green-500);
+      --semantic-color-static-text-main-functional-negative:    var(--foundation-color-red-500);
+      --semantic-color-static-text-main-primary:                var(--foundation-color-grey-900);
+      --semantic-color-static-text-subtle-primary:              var(--foundation-color-white-1000);
+
+      /* Badge Strong backgrounds */
+      --semantic-color-static-background-functional-informative: var(--foundation-color-blue-b-500);
+      --semantic-color-static-background-functional-warning:     var(--foundation-color-orange-400);
+      --semantic-color-static-background-functional-positive:    var(--foundation-color-green-500);
+      --semantic-color-static-background-functional-negative:    var(--foundation-color-red-500);
+
+      /* Static backgrounds / borders */
+      --semantic-color-static-background-main-primary:   var(--foundation-color-white-1000);
+      --semantic-color-static-border-subtle-tertiary:    var(--foundation-color-grey-200);
+      --semantic-color-static-text-main-primary:         var(--foundation-color-grey-900);
+      --semantic-color-static-text-main-secondary:       var(--foundation-color-grey-700);
+      --semantic-color-static-text-main-tertiary:        var(--foundation-color-grey-500);
+      --semantic-color-static-background-brand:          var(--foundation-color-blue-a-800);
+      --semantic-color-static-background-main-alt-primary: var(--foundation-color-blue-a-025);
+
+      /* Skeleton */
+      --semantic-color-static-background-main-secondary: var(--foundation-color-grey-050);
+      --semantic-color-static-background-main-tertiary:  var(--foundation-color-grey-100);
+
+      /* Foundation extras */
+      --foundation-spacing-4:  4px;
+      --foundation-spacing-16: 16px;
+      --foundation-spacing-24: 24px;
+      --foundation-spacing-32: 32px;
+      --foundation-spacing-40: 40px;
+      --foundation-spacing-64: 64px;
+      --foundation-sizing-24:  24px;
+      --foundation-sizing-32:  32px;
+      --foundation-sizing-40:  40px;
+      --foundation-sizing-64:  64px;
+      --foundation-radius-4:   4px;
+      --foundation-radius-8:   8px;
+      --foundation-font-size-16: 16px;
+      --foundation-font-line-height-24: 24px;
+      --foundation-color-grey-600: #5b5b5b;
+      --foundation-color-grey-700: #414141;
+      --foundation-opacity-40: 0.40;
+      --semantic-border-radius-s:            var(--foundation-radius-4);
+      --semantic-measurement-spacing-m:      var(--foundation-spacing-16);
+      --semantic-measurement-spacing-l:      var(--foundation-spacing-24);
+      --semantic-measurement-spacing-xl:     var(--foundation-spacing-32);
+      --semantic-measurement-opacity-disabled: var(--foundation-opacity-40);
+      --semantic-font-text-style-size-l:     var(--foundation-font-size-16);
+      --semantic-font-text-style-line-height-l: var(--foundation-font-line-height-24);
+
+      /* Button — interactive background */
+      --semantic-color-interactive-background-strong-default:      var(--foundation-color-blue-a-500);
+      --semantic-color-interactive-background-strong-hover:        var(--foundation-color-blue-a-600);
+      --semantic-color-interactive-background-strong-active:       var(--foundation-color-blue-a-700);
+      --semantic-color-interactive-background-strong-alt-default:  var(--foundation-color-grey-900);
+      --semantic-color-interactive-background-strong-alt-hover:    var(--foundation-color-grey-700);
+      --semantic-color-interactive-background-strong-alt-active:   var(--foundation-color-grey-500);
+      --semantic-color-interactive-background-muted-default:       var(--foundation-color-white-1000);
+      --semantic-color-interactive-background-muted-hover:         var(--foundation-color-blue-a-025);
+      --semantic-color-interactive-background-muted-active:        var(--foundation-color-blue-a-050);
+      --semantic-color-interactive-background-muted-alt-hover:     var(--foundation-color-grey-050);
+      --semantic-color-interactive-background-muted-alt-active:    var(--foundation-color-grey-100);
+      --semantic-color-interactive-background-neutral-default:     var(--foundation-color-white-1000);
+
+      /* Button — interactive border */
+      --semantic-color-interactive-border-strong-default:     var(--foundation-color-blue-a-500);
+      --semantic-color-interactive-border-strong-hover:       var(--foundation-color-blue-a-600);
+      --semantic-color-interactive-border-strong-active:      var(--foundation-color-blue-a-700);
+      --semantic-color-interactive-border-strong-alt-default: var(--foundation-color-grey-900);
+      --semantic-color-interactive-border-strong-alt-hover:   var(--foundation-color-grey-700);
+      --semantic-color-interactive-border-strong-alt-active:  var(--foundation-color-grey-500);
+      --semantic-color-interactive-border-muted-hover:        var(--foundation-color-blue-a-025);
+      --semantic-color-interactive-border-muted-active:       var(--foundation-color-blue-a-050);
+      --semantic-color-interactive-border-neutral-default:    var(--foundation-color-white-1000);
+      --semantic-color-interactive-border-focus:              var(--foundation-color-blue-a-400);
+
+      /* Button — interactive text */
+      --semantic-color-interactive-text-strong-default:      var(--foundation-color-blue-a-500);
+      --semantic-color-interactive-text-strong-hover:        var(--foundation-color-blue-a-600);
+      --semantic-color-interactive-text-strong-active:       var(--foundation-color-blue-a-700);
+      --semantic-color-interactive-text-strong-alt-default:  var(--foundation-color-grey-900);
+      --semantic-color-interactive-text-strong-alt-hover:    var(--foundation-color-grey-700);
+      --semantic-color-interactive-text-strong-alt-active:   var(--foundation-color-grey-500);
+      --semantic-color-interactive-text-neutral-default:     var(--foundation-color-white-1000);
+      --semantic-color-interactive-text-strong-negative-default: var(--foundation-color-red-300);
+
+      /* Input / border tokens */
+      --semantic-color-interactive-border-strong-active:           var(--foundation-color-blue-a-700);
+      --semantic-color-interactive-border-medium-alt-hover:        var(--foundation-color-grey-600);
+      --semantic-color-interactive-border-strong-negative-default: var(--foundation-color-red-300);
+      --semantic-color-interactive-border-neutral-default:         var(--foundation-color-white-1000);
+    }
+
+    /* ============================================================
+       PAGE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--semantic-font-family);
+      background: #f8f9fa;
+      color: #121212;
+      padding: 32px;
+    }
+
+    h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; color: #003781; }
+    h2 { font-size: 16px; font-weight: 600; margin: 32px 0 16px; color: #414141; border-bottom: 1px solid #ececec; padding-bottom: 8px; }
+    p  { font-size: 12px; color: #767676; margin-bottom: 16px; }
+
+    .row  { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .label { font-size: 11px; color: #999; width: 80px; flex-shrink: 0; }
+
+    .section { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .dark-bg  { background: #121212; border-radius: 8px; padding: 16px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ============================================================
+       ds-badge
+    ============================================================ */
+    .ds-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: var(--semantic-border-radius-round);
+      white-space: nowrap;
+      font-family: var(--semantic-font-family);
+      font-size: var(--semantic-font-text-style-size-m);
+      font-weight: var(--semantic-font-text-style-font-weight-regular);
+      line-height: var(--semantic-font-text-style-line-height-m);
+      letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+    }
+    .ds-badge--size-s { height: 20px; padding: 0 var(--semantic-measurement-spacing-s); }
+    .ds-badge--size-m { height: 24px; padding: 0 var(--semantic-measurement-spacing-s); }
+
+    .ds-badge__content { display: inline-flex; align-items: center; gap: var(--semantic-measurement-spacing-xxs); }
+
+    /* Light */
+    .ds-badge--style-light.ds-badge--status-info     { background: var(--semantic-color-static-background-subtle-functional-informative); color: var(--semantic-color-static-text-main-functional-informative); }
+    .ds-badge--style-light.ds-badge--status-warning  { background: var(--semantic-color-static-background-subtle-functional-warning);     color: var(--semantic-color-static-text-main-functional-warning); }
+    .ds-badge--style-light.ds-badge--status-success  { background: var(--semantic-color-static-background-subtle-functional-positive);    color: var(--semantic-color-static-text-main-functional-positive); }
+    .ds-badge--style-light.ds-badge--status-error    { background: var(--semantic-color-static-background-subtle-functional-negative);    color: var(--semantic-color-static-text-main-functional-negative); }
+    .ds-badge--style-light.ds-badge--status-neutral  { background: var(--semantic-color-static-background-accent-tertiary);               color: var(--semantic-color-static-text-main-primary); }
+
+    /* Strong */
+    .ds-badge--style-strong.ds-badge--status-info    { background: var(--semantic-color-static-background-functional-informative); color: var(--semantic-color-static-text-subtle-primary); }
+    .ds-badge--style-strong.ds-badge--status-warning { background: var(--semantic-color-static-background-functional-warning);     color: var(--semantic-color-static-text-subtle-primary); }
+    .ds-badge--style-strong.ds-badge--status-success { background: var(--semantic-color-static-background-functional-positive);    color: var(--semantic-color-static-text-subtle-primary); }
+    .ds-badge--style-strong.ds-badge--status-error   { background: var(--semantic-color-static-background-functional-negative);    color: var(--semantic-color-static-text-subtle-primary); }
+    .ds-badge--style-strong.ds-badge--status-neutral { background: var(--semantic-color-static-background-accent-primary);         color: var(--semantic-color-static-text-subtle-primary); }
+
+    /* ============================================================
+       ds-skeleton-item
+    ============================================================ */
+    @keyframes ds-skeleton-shimmer {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(150%); }
+    }
+
+    .ds-skeleton-item {
+      display:          block;
+      position:         relative;
+      overflow:         hidden;
+      background-color: var(--semantic-color-static-background-main-secondary);
+    }
+    .ds-skeleton-item::after {
+      content:  '';
+      position: absolute;
+      inset:    0;
+      background: linear-gradient(
+        90deg,
+        var(--semantic-color-static-background-main-tertiary) 0%,
+        var(--semantic-color-static-background-main-secondary) 25%,
+        var(--semantic-color-static-background-main-secondary) 65%,
+        var(--semantic-color-static-background-main-tertiary) 100%
+      );
+      animation: ds-skeleton-shimmer 1.5s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       ds-spinner
+    ============================================================ */
+    @keyframes ds-spinner-rotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ============================================================
+       ds-button
+    ============================================================ */
+    .ds-button {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--semantic-measurement-spacing-s);
+      padding: 0 var(--semantic-measurement-spacing-m);
+      height: var(--semantic-measurement-spacing-xl);
+      border-radius: var(--semantic-border-radius-s);
+      border: 1px solid transparent;
+      cursor: pointer; white-space: nowrap; text-decoration: none; user-select: none;
+      font-family: var(--semantic-font-family);
+      font-size: var(--semantic-font-text-style-size-l);
+      font-weight: var(--semantic-font-text-style-font-weight-regular);
+      line-height: var(--semantic-font-text-style-line-height-l);
+      letter-spacing: 0;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .ds-button:focus-visible {
+      outline: 3px solid var(--semantic-color-interactive-border-focus);
+      outline-offset: 2px;
+    }
+    .ds-button--disabled { opacity: var(--semantic-measurement-opacity-disabled); cursor: not-allowed; pointer-events: none; }
+    .ds-button__label { display: inline-flex; align-items: center; }
+
+    /* Primary */
+    .ds-button--type-primary { background: var(--semantic-color-interactive-background-strong-default); border-color: var(--semantic-color-interactive-border-strong-default); color: var(--semantic-color-interactive-text-neutral-default); }
+    .ds-button--type-primary:hover:not(.ds-button--disabled) { background: var(--semantic-color-interactive-background-strong-hover); border-color: var(--semantic-color-interactive-border-strong-hover); }
+    .ds-button--type-primary:active:not(.ds-button--disabled) { background: var(--semantic-color-interactive-background-strong-active); border-color: var(--semantic-color-interactive-border-strong-active); }
+    .ds-button--type-primary.ds-button--tone-accent { background: var(--semantic-color-interactive-background-strong-alt-default); border-color: var(--semantic-color-interactive-border-strong-alt-default); }
+    .ds-button--type-primary.ds-button--tone-accent:hover:not(.ds-button--disabled) { background: var(--semantic-color-interactive-background-strong-alt-hover); }
+    .ds-button--type-primary.ds-button--reversed { background: var(--semantic-color-interactive-background-neutral-default); border-color: var(--semantic-color-interactive-border-neutral-default); color: var(--semantic-color-interactive-text-strong-default); }
+    .ds-button--type-primary.ds-button--reversed:hover:not(.ds-button--disabled) { background: var(--semantic-color-interactive-background-muted-hover); }
+
+    /* Secondary */
+    .ds-button--type-secondary { background: var(--semantic-color-interactive-background-muted-default); border-color: var(--semantic-color-interactive-border-strong-default); color: var(--semantic-color-interactive-text-strong-default); }
+    .ds-button--type-secondary:hover:not(.ds-button--disabled) { background: var(--semantic-color-interactive-background-muted-hover); border-color: var(--semantic-color-interactive-border-strong-hover); color: var(--semantic-color-interactive-text-strong-hover); }
+    .ds-button--type-secondary:active:not(.ds-button--disabled) { background: var(--semantic-color-interactive-background-muted-active); border-color: var(--semantic-color-interactive-border-strong-active); color: var(--semantic-color-interactive-text-strong-active); }
+    .ds-button--type-secondary.ds-button--tone-accent { border-color: var(--semantic-color-interactive-border-strong-alt-default); color: var(--semantic-color-interactive-text-strong-alt-default); }
+    .ds-button--type-secondary.ds-button--tone-accent:hover:not(.ds-button--disabled) { background: var(--semantic-color-interactive-background-muted-alt-hover); border-color: var(--semantic-color-interactive-border-strong-alt-hover); color: var(--semantic-color-interactive-text-strong-alt-hover); }
+    .ds-button--type-secondary.ds-button--reversed { background: transparent; border-color: var(--semantic-color-interactive-border-neutral-default); color: var(--semantic-color-interactive-text-neutral-default); }
+
+    /* Tertiary */
+    .ds-button--type-tertiary { background: transparent; border-color: transparent; color: var(--semantic-color-interactive-text-strong-default); }
+    .ds-button--type-tertiary:hover:not(.ds-button--disabled) { color: var(--semantic-color-interactive-text-strong-hover); }
+    .ds-button--type-tertiary:active:not(.ds-button--disabled) { color: var(--semantic-color-interactive-text-strong-active); }
+    .ds-button--type-tertiary.ds-button--tone-accent { color: var(--semantic-color-interactive-text-strong-alt-default); }
+    .ds-button--type-tertiary.ds-button--reversed { color: var(--semantic-color-interactive-text-neutral-default); }
+
+    /* Plain */
+    .ds-button--type-plain { padding: 0; height: var(--semantic-measurement-spacing-l); background: transparent; border-color: transparent; color: var(--semantic-color-interactive-text-strong-default); }
+    .ds-button--type-plain:hover:not(.ds-button--disabled) { color: var(--semantic-color-interactive-text-strong-hover); }
+    .ds-button--type-plain.ds-button--tone-accent { color: var(--semantic-color-interactive-text-strong-alt-default); }
+    .ds-button--type-plain.ds-button--reversed { color: var(--semantic-color-interactive-text-neutral-default); }
+
+    /* ============================================================
+       ds-button-icon
+    ============================================================ */
+    :root {
+      --foundation-spacing-16: 16px;
+      --foundation-spacing-40: 40px;
+      --semantic-color-interactive-background-strong-positive-default: var(--foundation-color-green-400);
+      --semantic-color-interactive-background-strong-positive-hover:   var(--foundation-color-green-500);
+      --semantic-color-interactive-background-strong-negative-default: var(--foundation-color-red-300);
+      --semantic-color-interactive-background-strong-negative-hover:   var(--foundation-color-red-400);
+      --semantic-color-interactive-border-strong-positive-default:     var(--foundation-color-green-400);
+      --semantic-color-interactive-border-strong-positive-hover:       var(--foundation-color-green-500);
+      --semantic-color-interactive-border-strong-negative-default:     var(--foundation-color-red-300);
+      --semantic-color-interactive-border-strong-negative-hover:       var(--foundation-color-red-400);
+      --semantic-color-interactive-text-strong-positive-default:       var(--foundation-color-green-400);
+      --semantic-color-interactive-text-strong-positive-hover:         var(--foundation-color-green-500);
+      --semantic-color-interactive-text-strong-negative-default:       var(--foundation-color-red-300);
+      --semantic-color-interactive-text-strong-negative-hover:         var(--foundation-color-red-400);
+      --foundation-color-green-400: #45a54a;
+    }
+    .ds-button-icon {
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+      border-radius: var(--semantic-border-radius-s); border: 1px solid transparent;
+      cursor: pointer; user-select: none;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .ds-button-icon:focus-visible { outline: 3px solid var(--semantic-color-interactive-border-focus); outline-offset: 2px; }
+    .ds-button-icon--disabled { opacity: var(--semantic-measurement-opacity-disabled); cursor: not-allowed; pointer-events: none; }
+    .ds-button-icon--size-s { width: var(--semantic-measurement-spacing-xl); height: var(--semantic-measurement-spacing-xl); }
+    .ds-button-icon--size-m { width: var(--foundation-spacing-40); height: var(--foundation-spacing-40); }
+
+    /* Primary */
+    .ds-button-icon--type-primary { background: var(--semantic-color-interactive-background-strong-default); border-color: var(--semantic-color-interactive-border-strong-default); color: var(--semantic-color-interactive-text-neutral-default); }
+    .ds-button-icon--type-primary:hover:not(.ds-button-icon--disabled) { background: var(--semantic-color-interactive-background-strong-hover); }
+    .ds-button-icon--type-primary.ds-button-icon--tone-accent { background: var(--semantic-color-interactive-background-strong-alt-default); border-color: var(--semantic-color-interactive-border-strong-alt-default); }
+    .ds-button-icon--type-primary.ds-button-icon--tone-positive { background: var(--semantic-color-interactive-background-strong-positive-default); border-color: var(--semantic-color-interactive-border-strong-positive-default); }
+    .ds-button-icon--type-primary.ds-button-icon--tone-negative { background: var(--semantic-color-interactive-background-strong-negative-default); border-color: var(--semantic-color-interactive-border-strong-negative-default); }
+
+    /* Secondary */
+    .ds-button-icon--type-secondary { background: var(--semantic-color-interactive-background-muted-default); border-color: var(--semantic-color-interactive-border-strong-default); color: var(--semantic-color-interactive-text-strong-default); }
+    .ds-button-icon--type-secondary:hover:not(.ds-button-icon--disabled) { background: var(--semantic-color-interactive-background-muted-hover); border-color: var(--semantic-color-interactive-border-strong-hover); color: var(--semantic-color-interactive-text-strong-hover); }
+    .ds-button-icon--type-secondary.ds-button-icon--tone-accent { border-color: var(--semantic-color-interactive-border-strong-alt-default); color: var(--semantic-color-interactive-text-strong-alt-default); }
+    .ds-button-icon--type-secondary.ds-button-icon--tone-positive { border-color: var(--semantic-color-interactive-border-strong-positive-default); color: var(--semantic-color-interactive-text-strong-positive-default); }
+    .ds-button-icon--type-secondary.ds-button-icon--tone-negative { border-color: var(--semantic-color-interactive-border-strong-negative-default); color: var(--semantic-color-interactive-text-strong-negative-default); }
+
+    /* Tertiary */
+    .ds-button-icon--type-tertiary { background: transparent; border-color: transparent; color: var(--semantic-color-interactive-text-strong-default); }
+    .ds-button-icon--type-tertiary:hover:not(.ds-button-icon--disabled) { color: var(--semantic-color-interactive-text-strong-hover); }
+    .ds-button-icon--type-tertiary.ds-button-icon--tone-accent { color: var(--semantic-color-interactive-text-strong-alt-default); }
+    .ds-button-icon--type-tertiary.ds-button-icon--tone-positive { color: var(--semantic-color-interactive-text-strong-positive-default); }
+    .ds-button-icon--type-tertiary.ds-button-icon--tone-negative { color: var(--semantic-color-interactive-text-strong-negative-default); }
+
+    /* Plain */
+    .ds-button-icon--type-plain { background: transparent; border-color: transparent; color: var(--semantic-color-interactive-text-strong-default); border-radius: 0; }
+    .ds-button-icon--type-plain.ds-button-icon--size-s { width: var(--foundation-spacing-16); height: var(--foundation-spacing-16); }
+    .ds-button-icon--type-plain.ds-button-icon--size-m { width: var(--semantic-measurement-spacing-l); height: var(--semantic-measurement-spacing-l); }
+    .ds-button-icon--type-plain:hover:not(.ds-button-icon--disabled) { color: var(--semantic-color-interactive-text-strong-hover); }
+    .ds-button-icon--type-plain.ds-button-icon--tone-positive { color: var(--semantic-color-interactive-text-strong-positive-default); }
+    .ds-button-icon--type-plain.ds-button-icon--tone-negative { color: var(--semantic-color-interactive-text-strong-negative-default); }
+
+    /* ============================================================
+       ds-card
+    ============================================================ */
+    .ds-card {
+      display: block;
+      position: relative;
+      background: var(--semantic-color-static-background-main-primary);
+      border: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+      border-radius: var(--semantic-border-radius-s);
+      padding: var(--semantic-measurement-spacing-l);
+    }
+    .ds-card--no-padding { padding: 0; }
+
+    .ds-spinner { display: inline-flex; align-items: center; justify-content: center; }
+
+    .ds-spinner__ring {
+      display: block;
+      width:  14px;
+      height: 14px;
+      border-radius: 50%;
+      border-top:    2px solid var(--semantic-color-static-background-accent-secondary);
+      border-left:   2px solid var(--semantic-color-static-background-accent-secondary);
+      border-right:  2px solid var(--semantic-color-static-background-accent-secondary);
+      border-bottom: 2px solid var(--semantic-color-static-background-accent-tertiary);
+      animation: ds-spinner-rotate 0.75s linear infinite;
+    }
+
+    /* ============================================================
+       ds-link
+    ============================================================ */
+    .ds-link { display: inline; }
+    .ds-link__anchor {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--semantic-font-family);
+      font-size: var(--semantic-font-text-style-size-l);
+      font-weight: var(--semantic-font-text-style-font-weight-regular);
+      line-height: var(--semantic-font-text-style-line-height-l);
+      text-decoration: none; cursor: pointer;
+      transition: color 0.15s ease;
+    }
+    .ds-link__anchor:focus-visible { outline: 3px solid var(--semantic-color-interactive-border-focus); outline-offset: 2px; border-radius: 2px; }
+    .ds-link--disabled .ds-link__anchor { opacity: var(--semantic-measurement-opacity-disabled); pointer-events: none; }
+    .ds-link--size-s .ds-link__anchor { font-size: 14px; line-height: 20px; }
+
+    /* Default (BlueA) */
+    .ds-link--tone-default .ds-link__anchor { color: var(--semantic-color-interactive-text-strong-default); }
+    .ds-link--tone-default .ds-link__anchor:hover { color: var(--semantic-color-interactive-text-strong-hover); }
+    .ds-link--tone-default .ds-link__anchor:active { color: var(--semantic-color-interactive-text-strong-active); }
+    .ds-link--underline .ds-link__anchor { text-decoration: underline; }
+
+    /* Neutral (Grey) */
+    .ds-link--tone-neutral .ds-link__anchor { color: var(--semantic-color-interactive-text-strong-alt-default); }
+    .ds-link--tone-neutral .ds-link__anchor:hover { color: var(--semantic-color-interactive-text-strong-alt-hover); }
+    .ds-link--tone-neutral .ds-link__anchor:active { color: var(--semantic-color-interactive-text-strong-alt-active); }
+
+    /* Reversed (white) */
+    .ds-link--tone-reversed .ds-link__anchor { color: var(--semantic-color-interactive-text-neutral-default); }
+
+    /* ============================================================
+       ds-tab
+    ============================================================ */
+    .ds-tab {
+      display: inline-flex; flex-direction: column; align-items: stretch;
+      height: var(--semantic-measurement-spacing-xl);
+      cursor: pointer; position: relative; user-select: none; white-space: nowrap;
+    }
+    .ds-tab:focus-visible { outline: 3px solid var(--semantic-color-interactive-border-focus); outline-offset: 2px; border-radius: 2px; }
+    .ds-tab--disabled { opacity: var(--semantic-measurement-opacity-disabled); cursor: not-allowed; pointer-events: none; }
+
+    .ds-tab__content {
+      display: inline-flex; align-items: center; gap: 4px;
+      flex: 1; transition: color 0.15s ease;
+    }
+    .ds-tab__label {
+      font-family: var(--semantic-font-family);
+      font-size: var(--semantic-font-text-style-size-l);
+      font-weight: var(--semantic-font-text-style-font-weight-regular);
+      line-height: var(--semantic-font-text-style-line-height-l);
+    }
+    .ds-tab__indicator {
+      height: 4px; width: 100%; border-radius: 2px 2px 0 0;
+      transition: background 0.15s ease, opacity 0.15s ease; opacity: 0;
+    }
+
+    /* Default tone */
+    .ds-tab--tone-default .ds-tab__content { color: var(--semantic-color-static-text-main-primary); }
+    .ds-tab--tone-default .ds-tab__indicator { background: var(--semantic-color-interactive-border-strong-default); }
+    .ds-tab--tone-default:hover:not(.ds-tab--disabled) .ds-tab__content { color: var(--semantic-color-interactive-text-strong-hover); }
+    .ds-tab--tone-default.ds-tab--selected .ds-tab__content { color: var(--semantic-color-interactive-text-strong-default); }
+    .ds-tab--tone-default.ds-tab--selected .ds-tab__indicator { opacity: 1; }
+    .ds-tab--tone-default:not(.ds-tab--selected):hover:not(.ds-tab--disabled) .ds-tab__indicator { opacity: 0.35; }
+
+    /* Reversed tone */
+    .ds-tab--tone-reversed .ds-tab__content { color: var(--semantic-color-interactive-text-neutral-default); }
+    .ds-tab--tone-reversed .ds-tab__indicator { background: var(--semantic-color-interactive-text-neutral-default); }
+    .ds-tab--tone-reversed.ds-tab--selected .ds-tab__indicator { opacity: 1; }
+    .ds-tab--tone-reversed:not(.ds-tab--selected):hover:not(.ds-tab--disabled) .ds-tab__indicator { opacity: 0.35; }
+
+    /* Accent tone */
+    .ds-tab--tone-accent .ds-tab__content { color: var(--semantic-color-static-text-main-primary); }
+    .ds-tab--tone-accent .ds-tab__indicator { background: var(--semantic-color-interactive-text-strong-alt-default); }
+    .ds-tab--tone-accent.ds-tab--selected .ds-tab__indicator { opacity: 1; }
+    .ds-tab--tone-accent:not(.ds-tab--selected):hover:not(.ds-tab--disabled) .ds-tab__indicator { opacity: 0.35; }
+
+    /* ============================================================
+       ds-input-text
+    ============================================================ */
+    .ds-input-text { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+
+    .ds-input-text__label {
+      display: flex; align-items: center; gap: 4px;
+      font-family: var(--semantic-font-family);
+      font-size: var(--semantic-font-text-style-size-l);
+      font-weight: var(--semantic-font-text-style-font-weight-regular);
+      line-height: var(--semantic-font-text-style-line-height-l);
+      color: var(--semantic-color-static-text-main-primary); cursor: pointer;
+    }
+    .ds-input-text__optional { color: var(--semantic-color-static-text-main-tertiary); font-size: 14px; }
+
+    .ds-input-text__container {
+      display: flex; align-items: center; height: var(--semantic-measurement-spacing-xl);
+      padding: 0 var(--semantic-measurement-spacing-s); gap: var(--semantic-measurement-spacing-s);
+      border-radius: var(--semantic-border-radius-s);
+      border: 1px solid var(--semantic-color-static-text-main-tertiary);
+      background: var(--semantic-color-static-background-main-primary);
+      transition: border-color 0.15s ease;
+    }
+    .ds-input-text__container:hover { border-color: var(--semantic-color-interactive-border-medium-alt-hover); }
+    .ds-input-text__container:focus-within {
+      border-color: var(--semantic-color-interactive-border-strong-active);
+      outline: 2px solid var(--semantic-color-interactive-border-focus);
+      outline-offset: 1px;
+    }
+
+    .ds-input-text__input {
+      flex: 1; min-width: 0; border: none; outline: none; background: transparent;
+      font-family: var(--semantic-font-family);
+      font-size: var(--semantic-font-text-style-size-l);
+      font-weight: var(--semantic-font-text-style-font-weight-regular);
+      line-height: var(--semantic-font-text-style-line-height-l);
+      color: var(--semantic-color-static-text-main-primary);
+    }
+    .ds-input-text__input::placeholder { color: var(--semantic-color-static-text-main-tertiary); }
+
+    .ds-input-text--error .ds-input-text__container { border-color: var(--semantic-color-interactive-border-strong-negative-default); }
+    .ds-input-text__error-msg { font-size: 14px; line-height: 20px; color: var(--semantic-color-interactive-text-strong-negative-default); }
+
+    .ds-input-text--readonly .ds-input-text__container { background: var(--semantic-color-static-background-main-secondary); pointer-events: none; }
+    .ds-input-text--readonly .ds-input-text__container:hover { border-color: var(--semantic-color-static-text-main-tertiary); }
+    .ds-input-text--disabled { opacity: var(--semantic-measurement-opacity-disabled); pointer-events: none; }
+
+    /* ============================================================
+       ds-side-nav + ds-side-nav-item
+    ============================================================ */
+    .ds-side-nav {
+      display: flex; flex-direction: column;
+      width: 280px; min-height: 100%;
+      background: var(--semantic-color-static-background-main-secondary);
+      border-right: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+    }
+    .ds-side-nav__items {
+      display: flex; flex-direction: column;
+      gap: var(--foundation-spacing-8); padding: var(--foundation-spacing-8);
+      flex: 1;
+    }
+    .ds-side-nav-item {
+      display: flex; align-items: center; gap: var(--foundation-spacing-8);
+      height: var(--foundation-sizing-40); padding: 0 var(--foundation-spacing-8);
+      border-radius: var(--foundation-radius-8);
+      cursor: pointer; user-select: none;
+      transition: background 0.15s ease, color 0.15s ease;
+      background: var(--semantic-color-static-background-main-secondary);
+      color: var(--semantic-color-static-text-main-secondary);
+    }
+    .ds-side-nav-item:focus-visible { outline: 3px solid var(--semantic-color-interactive-border-focus); outline-offset: 2px; }
+    .ds-side-nav-item:hover:not(.ds-side-nav-item--disabled):not(.ds-side-nav-item--selected) {
+      background: var(--semantic-color-static-background-main-alt-primary);
+      color: var(--semantic-color-interactive-text-strong-default);
+    }
+    .ds-side-nav-item--selected {
+      background: var(--semantic-color-interactive-background-strong-default);
+      color: var(--semantic-color-interactive-text-neutral-default);
+    }
+    .ds-side-nav-item--selected:hover { background: var(--semantic-color-interactive-background-strong-hover); }
+    .ds-side-nav-item--disabled { opacity: var(--semantic-measurement-opacity-disabled); cursor: not-allowed; pointer-events: none; }
+
+    .ds-side-nav-item__icon { display: inline-flex; align-items: center; width: var(--foundation-sizing-24); height: var(--foundation-sizing-24); flex-shrink: 0; color: currentColor; }
+    .ds-side-nav-item__label {
+      font-family: var(--semantic-font-family);
+      font-size: var(--semantic-font-text-style-size-l);
+      font-weight: var(--semantic-font-text-style-font-weight-regular);
+      line-height: var(--semantic-font-text-style-line-height-l);
+    }
+
+    /* ============================================================
+       ds-header
+    ============================================================ */
+    .ds-header {
+      display: flex; align-items: center; justify-content: space-between;
+      height: var(--foundation-sizing-64);
+      padding: var(--foundation-spacing-8) var(--foundation-spacing-16) var(--foundation-spacing-8) var(--foundation-spacing-8);
+      background: var(--semantic-color-static-background-brand);
+      color: var(--semantic-color-interactive-text-neutral-default);
+    }
+    .ds-header__left { display: flex; align-items: center; gap: var(--foundation-spacing-8); flex: 1; min-width: 0; }
+    .ds-header__logo { display: inline-flex; align-items: center; height: var(--foundation-sizing-32); flex-shrink: 0; color: var(--semantic-color-interactive-text-neutral-default); }
+    .ds-header__divider { width: 1px; height: var(--foundation-sizing-32); background: var(--semantic-color-interactive-border-neutral-default); opacity: 0.30; flex-shrink: 0; }
+    .ds-header__app-name {
+      font-family: var(--semantic-font-family);
+      font-size: var(--semantic-font-text-style-size-l);
+      font-weight: var(--semantic-font-text-style-font-weight-regular);
+      line-height: var(--semantic-font-text-style-line-height-l);
+      color: var(--semantic-color-interactive-text-neutral-default);
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .ds-header__tabs { display: flex; align-items: center; gap: var(--foundation-spacing-16); }
+    .ds-header__right { display: flex; align-items: center; gap: var(--foundation-spacing-8); flex-shrink: 0; }
+    .ds-header__actions { display: flex; align-items: center; gap: var(--foundation-spacing-4); }
+    .ds-header__account { display: flex; align-items: center; }
+  </style>
+</head>
+<body>
+
+  <h1>Design System Preview</h1>
+  <p>Fichier de prévisualisation standalone — pas besoin d'Angular. Ouvrir dans un navigateur.</p>
+
+  <!-- =========================================================
+       BADGE
+  ========================================================== -->
+  <div class="section">
+    <h2>Badge — Style Light, Size S</h2>
+    <div class="row">
+      <span class="label">Info</span>
+      <span class="ds-badge ds-badge--style-light ds-badge--status-info ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">En cours</span></span>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Warning</span>
+      <span class="ds-badge ds-badge--style-light ds-badge--status-warning ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">Attention</span></span>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Success</span>
+      <span class="ds-badge ds-badge--style-light ds-badge--status-success ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">Validé</span></span>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Error</span>
+      <span class="ds-badge ds-badge--style-light ds-badge--status-error ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">Erreur</span></span>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Neutral</span>
+      <span class="ds-badge ds-badge--style-light ds-badge--status-neutral ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">Brouillon</span></span>
+      </span>
+    </div>
+
+    <h2>Badge — Style Strong, Size S</h2>
+    <div class="row">
+      <span class="label">Info</span>
+      <span class="ds-badge ds-badge--style-strong ds-badge--status-info ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">En cours</span></span>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Warning</span>
+      <span class="ds-badge ds-badge--style-strong ds-badge--status-warning ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">Attention</span></span>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Success</span>
+      <span class="ds-badge ds-badge--style-strong ds-badge--status-success ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">Validé</span></span>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Error</span>
+      <span class="ds-badge ds-badge--style-strong ds-badge--status-error ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">Erreur</span></span>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Neutral</span>
+      <span class="ds-badge ds-badge--style-strong ds-badge--status-neutral ds-badge--size-s">
+        <span class="ds-badge__content"><span class="ds-badge__label">Brouillon</span></span>
+      </span>
+    </div>
+
+    <h2>Badge — Size M (Light)</h2>
+    <div class="row">
+      <span class="ds-badge ds-badge--style-light ds-badge--status-info ds-badge--size-m">
+        <span class="ds-badge__content"><span class="ds-badge__label">En cours</span></span>
+      </span>
+      <span class="ds-badge ds-badge--style-light ds-badge--status-success ds-badge--size-m">
+        <span class="ds-badge__content"><span class="ds-badge__label">Validé</span></span>
+      </span>
+      <span class="ds-badge ds-badge--style-light ds-badge--status-error ds-badge--size-m">
+        <span class="ds-badge__content"><span class="ds-badge__label">Erreur</span></span>
+      </span>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       BUTTON
+  ========================================================== -->
+  <div class="section">
+    <h2>Button — Type × Tone × Reversed</h2>
+
+    <div class="row">
+      <span class="label">Primary</span>
+      <button class="ds-button ds-button--type-primary ds-button--tone-default"><span class="ds-button__label">Valider</span></button>
+      <button class="ds-button ds-button--type-primary ds-button--tone-accent"><span class="ds-button__label">Valider</span></button>
+      <button class="ds-button ds-button--type-primary ds-button--tone-default ds-button--disabled"><span class="ds-button__label">Désactivé</span></button>
+    </div>
+
+    <div class="row">
+      <span class="label">Secondary</span>
+      <button class="ds-button ds-button--type-secondary ds-button--tone-default"><span class="ds-button__label">Annuler</span></button>
+      <button class="ds-button ds-button--type-secondary ds-button--tone-accent"><span class="ds-button__label">Annuler</span></button>
+      <button class="ds-button ds-button--type-secondary ds-button--tone-default ds-button--disabled"><span class="ds-button__label">Désactivé</span></button>
+    </div>
+
+    <div class="row">
+      <span class="label">Tertiary</span>
+      <button class="ds-button ds-button--type-tertiary ds-button--tone-default"><span class="ds-button__label">En savoir plus</span></button>
+      <button class="ds-button ds-button--type-tertiary ds-button--tone-accent"><span class="ds-button__label">En savoir plus</span></button>
+      <button class="ds-button ds-button--type-tertiary ds-button--tone-default ds-button--disabled"><span class="ds-button__label">Désactivé</span></button>
+    </div>
+
+    <div class="row">
+      <span class="label">Plain</span>
+      <button class="ds-button ds-button--type-plain ds-button--tone-default"><span class="ds-button__label">Voir détail</span></button>
+      <button class="ds-button ds-button--type-plain ds-button--tone-accent"><span class="ds-button__label">Voir détail</span></button>
+      <button class="ds-button ds-button--type-plain ds-button--tone-default ds-button--disabled"><span class="ds-button__label">Désactivé</span></button>
+    </div>
+
+    <h2>Button — Reversed (sur fond sombre)</h2>
+    <div class="dark-bg">
+      <button class="ds-button ds-button--type-primary ds-button--reversed"><span class="ds-button__label">Primary</span></button>
+      <button class="ds-button ds-button--type-secondary ds-button--reversed"><span class="ds-button__label">Secondary</span></button>
+      <button class="ds-button ds-button--type-tertiary ds-button--reversed"><span class="ds-button__label">Tertiary</span></button>
+      <button class="ds-button ds-button--type-plain ds-button--reversed"><span class="ds-button__label">Plain</span></button>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       BUTTON ICON
+  ========================================================== -->
+  <div class="section">
+    <h2>Button Icon — Type × Tone, Size S</h2>
+    <div class="row">
+      <span class="label">Primary</span>
+      <!-- SVG inline avec currentColor -->
+      <button class="ds-button-icon ds-button-icon--type-primary ds-button-icon--tone-default ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-primary ds-button-icon--tone-accent ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-primary ds-button-icon--tone-positive ds-button-icon--size-s" aria-label="Valider">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-primary ds-button-icon--tone-negative ds-button-icon--size-s" aria-label="Supprimer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-primary ds-button-icon--tone-default ds-button-icon--size-s ds-button-icon--disabled" aria-label="Désactivé">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="row">
+      <span class="label">Secondary</span>
+      <button class="ds-button-icon ds-button-icon--type-secondary ds-button-icon--tone-default ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-secondary ds-button-icon--tone-accent ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-secondary ds-button-icon--tone-positive ds-button-icon--size-s" aria-label="Valider">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-secondary ds-button-icon--tone-negative ds-button-icon--size-s" aria-label="Supprimer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="row">
+      <span class="label">Tertiary / Plain</span>
+      <button class="ds-button-icon ds-button-icon--type-tertiary ds-button-icon--tone-default ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-tertiary ds-button-icon--tone-positive ds-button-icon--size-s" aria-label="Valider">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-tertiary ds-button-icon--tone-negative ds-button-icon--size-s" aria-label="Supprimer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-plain ds-button-icon--tone-default ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="row">
+      <span class="label">Size M</span>
+      <button class="ds-button-icon ds-button-icon--type-primary ds-button-icon--tone-default ds-button-icon--size-m" aria-label="Fermer">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-secondary ds-button-icon--tone-default ds-button-icon--size-m" aria-label="Fermer">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-tertiary ds-button-icon--tone-default ds-button-icon--size-m" aria-label="Fermer">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <h2>Button Icon — Reversed (fond sombre)</h2>
+    <div class="dark-bg">
+      <button class="ds-button-icon ds-button-icon--type-primary ds-button-icon--reversed ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-secondary ds-button-icon--reversed ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-tertiary ds-button-icon--reversed ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="ds-button-icon ds-button-icon--type-plain ds-button-icon--reversed ds-button-icon--size-s" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       CARD
+  ========================================================== -->
+  <div class="section">
+    <h2>Card — Conteneur avec padding</h2>
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+
+      <!-- Card simple avec texte -->
+      <div class="ds-card">
+        <div style="font-size:12px; font-weight:600; color: var(--semantic-color-static-text-main-primary); margin-bottom:4px;">Titre de la carte</div>
+        <div style="font-size:12px; color: var(--semantic-color-static-text-main-secondary);">Contenu libre — ng-content projeté ici.</div>
+      </div>
+
+      <!-- Card avec Badge -->
+      <div class="ds-card" style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:12px; font-weight:600; color: var(--semantic-color-static-text-main-primary);">Polices actives</div>
+          <span class="ds-badge ds-badge--style-light ds-badge--status-success ds-badge--size-s">
+            <span class="ds-badge__content"><span class="ds-badge__label">Actif</span></span>
+          </span>
+        </div>
+        <div style="font-size:12px; color: var(--semantic-color-static-text-main-secondary);">Données métier projetées dans le slot.</div>
+        <button class="ds-button ds-button--type-secondary ds-button--tone-default" style="align-self:flex-start"><span class="ds-button__label">Voir détail</span></button>
+      </div>
+
+      <!-- Card avec Button Icon en action absolue -->
+      <div class="ds-card" style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div style="font-size:12px; font-weight:600; color: var(--semantic-color-static-text-main-primary);">Find a buyer</div>
+          <button class="ds-button-icon ds-button-icon--type-tertiary ds-button-icon--tone-default ds-button-icon--size-s" aria-label="Options">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3" r="1.5" fill="currentColor"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="13" r="1.5" fill="currentColor"/></svg>
+          </button>
+        </div>
+        <div style="font-size:12px; color: var(--semantic-color-static-text-main-secondary);">Search and identify a buyer from your portfolio.</div>
+      </div>
+    </div>
+
+    <h2>Card — Sans padding (noPadding)</h2>
+    <div style="max-width: 340px;">
+      <div class="ds-card ds-card--no-padding" style="overflow:hidden;">
+        <div style="background: var(--semantic-color-interactive-background-strong-default); padding: 16px; color:white; font-size:12px; font-weight:600;">Header full-bleed</div>
+        <div style="padding: 16px; font-size:12px; color: var(--semantic-color-static-text-main-secondary);">Contenu avec padding géré manuellement.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       LINK
+  ========================================================== -->
+  <div class="section">
+    <h2>Link — Tones</h2>
+    <div class="row">
+      <span class="label">Default</span>
+      <span class="ds-link ds-link--tone-default">
+        <a class="ds-link__anchor" href="#">
+          <span class="ds-link__label">Voir le contrat</span>
+        </a>
+      </span>
+      <span class="ds-link ds-link--tone-default ds-link--underline">
+        <a class="ds-link__anchor" href="#">
+          <span class="ds-link__label">Avec soulignement</span>
+        </a>
+      </span>
+      <span class="ds-link ds-link--tone-default ds-link--disabled">
+        <a class="ds-link__anchor" href="#" tabindex="-1" aria-disabled="true">
+          <span class="ds-link__label">Désactivé</span>
+        </a>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Neutral</span>
+      <span class="ds-link ds-link--tone-neutral">
+        <a class="ds-link__anchor" href="#">
+          <span class="ds-link__label">Voir le contrat</span>
+        </a>
+      </span>
+    </div>
+    <div class="row">
+      <span class="label">Size S</span>
+      <span class="ds-link ds-link--tone-default ds-link--size-s">
+        <a class="ds-link__anchor" href="#">
+          <span class="ds-link__label">Lien petite taille</span>
+        </a>
+      </span>
+    </div>
+    <h2>Link — Reversed (fond sombre)</h2>
+    <div class="dark-bg">
+      <span class="ds-link ds-link--tone-reversed">
+        <a class="ds-link__anchor" href="#">
+          <span class="ds-link__label">Lien sur fond sombre</span>
+        </a>
+      </span>
+    </div>
+
+    <h2>Link — Composition dans une Card</h2>
+    <div style="max-width: 400px;">
+      <div class="ds-card" style="display:flex; flex-direction:column; gap:12px;">
+        <div style="font-size:14px; font-weight:600; color: var(--semantic-color-static-text-main-primary);">Votre police auto</div>
+        <div style="font-size:14px; color: var(--semantic-color-static-text-main-secondary);">Contrat n° 12345678 — expire le 01/12/2026</div>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <button class="ds-button ds-button--type-primary ds-button--tone-default"><span class="ds-button__label">Déclarer un sinistre</span></button>
+          <span class="ds-link ds-link--tone-default">
+            <a class="ds-link__anchor" href="#"><span class="ds-link__label">Voir le détail</span></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       TAB
+  ========================================================== -->
+  <div class="section">
+    <h2>Tab — Tone Default (fond clair)</h2>
+    <div class="row" style="align-items:stretch; border-bottom: 1px solid var(--semantic-color-static-border-subtle-tertiary);">
+      <div class="ds-tab ds-tab--tone-default ds-tab--selected" role="tab" aria-selected="true" tabindex="0">
+        <span class="ds-tab__content"><span class="ds-tab__label">Tableau de bord</span></span>
+        <span class="ds-tab__indicator"></span>
+      </div>
+      <div class="ds-tab ds-tab--tone-default" role="tab" aria-selected="false" tabindex="-1">
+        <span class="ds-tab__content"><span class="ds-tab__label">Contrats</span></span>
+        <span class="ds-tab__indicator"></span>
+      </div>
+      <div class="ds-tab ds-tab--tone-default" role="tab" aria-selected="false" tabindex="-1">
+        <span class="ds-tab__content"><span class="ds-tab__label">Rapports</span></span>
+        <span class="ds-tab__indicator"></span>
+      </div>
+      <div class="ds-tab ds-tab--tone-default ds-tab--disabled" role="tab" aria-disabled="true" tabindex="-1">
+        <span class="ds-tab__content"><span class="ds-tab__label">Désactivé</span></span>
+        <span class="ds-tab__indicator"></span>
+      </div>
+    </div>
+
+    <h2>Tab — Tone Reversed (dans un header sombre)</h2>
+    <div style="background: var(--semantic-color-static-background-brand); padding: 0 16px; display:flex; gap:16px; align-items:stretch;">
+      <div class="ds-tab ds-tab--tone-reversed ds-tab--selected" role="tab" aria-selected="true" tabindex="0">
+        <span class="ds-tab__content"><span class="ds-tab__label">Accueil</span></span>
+        <span class="ds-tab__indicator"></span>
+      </div>
+      <div class="ds-tab ds-tab--tone-reversed" role="tab" aria-selected="false" tabindex="-1">
+        <span class="ds-tab__content"><span class="ds-tab__label">Portefeuille</span></span>
+        <span class="ds-tab__indicator"></span>
+      </div>
+      <div class="ds-tab ds-tab--tone-reversed" role="tab" aria-selected="false" tabindex="-1">
+        <span class="ds-tab__content"><span class="ds-tab__label">Opérations</span></span>
+        <span class="ds-tab__indicator"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       INPUT TEXT
+  ========================================================== -->
+  <div class="section">
+    <h2>Input Text — États</h2>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; max-width:720px;">
+
+      <!-- Default -->
+      <div class="ds-input-text">
+        <label class="ds-input-text__label" for="inp-default">Nom du titulaire</label>
+        <div class="ds-input-text__container">
+          <input id="inp-default" class="ds-input-text__input" type="text" placeholder="Jean Dupont" />
+        </div>
+      </div>
+
+      <!-- Avec valeur -->
+      <div class="ds-input-text">
+        <label class="ds-input-text__label" for="inp-value">Prénom <span class="ds-input-text__optional">(optionnel)</span></label>
+        <div class="ds-input-text__container">
+          <input id="inp-value" class="ds-input-text__input" type="text" value="Marie" />
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="ds-input-text ds-input-text--error">
+        <label class="ds-input-text__label" for="inp-error">Email</label>
+        <div class="ds-input-text__container">
+          <input id="inp-error" class="ds-input-text__input" type="text" value="utilisateur@" aria-invalid="true" />
+        </div>
+        <span class="ds-input-text__error-msg" role="alert">Format d'email invalide</span>
+      </div>
+
+      <!-- Read Only -->
+      <div class="ds-input-text ds-input-text--readonly">
+        <label class="ds-input-text__label" for="inp-ro">Numéro de contrat</label>
+        <div class="ds-input-text__container">
+          <input id="inp-ro" class="ds-input-text__input" type="text" value="POL-2024-001234" readonly />
+        </div>
+      </div>
+
+      <!-- Disabled -->
+      <div class="ds-input-text ds-input-text--disabled">
+        <label class="ds-input-text__label" for="inp-dis">Champ désactivé</label>
+        <div class="ds-input-text__container">
+          <input id="inp-dis" class="ds-input-text__input" type="text" placeholder="Non disponible" disabled />
+        </div>
+      </div>
+
+      <!-- Composition dans une Card -->
+      <div class="ds-card" style="display:flex; flex-direction:column; gap:12px;">
+        <div style="font-size:14px; font-weight:600; color: var(--semantic-color-static-text-main-primary);">Recherche</div>
+        <div class="ds-input-text">
+          <label class="ds-input-text__label" for="inp-card">Numéro de police</label>
+          <div class="ds-input-text__container">
+            <input id="inp-card" class="ds-input-text__input" type="text" placeholder="Ex: POL-2024-..." />
+          </div>
+        </div>
+        <button class="ds-button ds-button--type-primary ds-button--tone-default" style="align-self:flex-start">
+          <span class="ds-button__label">Rechercher</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SIDE NAVIGATION
+  ========================================================== -->
+  <div class="section">
+    <h2>Side Navigation</h2>
+    <div style="display:flex; gap:0; height:360px; border: 1px solid var(--semantic-color-static-border-subtle-tertiary); border-radius:4px; overflow:hidden;">
+
+      <!-- Shell -->
+      <div class="ds-side-nav" role="navigation">
+        <div class="ds-side-nav__items" role="menu">
+
+          <div class="ds-side-nav-item ds-side-nav-item--selected" role="menuitem" aria-current="page" tabindex="0">
+            <span class="ds-side-nav-item__icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="13" y="3" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="13" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="13" y="13" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+            </span>
+            <span class="ds-side-nav-item__label">Tableau de bord</span>
+          </div>
+
+          <div class="ds-side-nav-item" role="menuitem" tabindex="0">
+            <span class="ds-side-nav-item__icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 12h6M9 16h6M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="ds-side-nav-item__label">Contrats</span>
+          </div>
+
+          <div class="ds-side-nav-item" role="menuitem" tabindex="0">
+            <span class="ds-side-nav-item__icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12l9-9 9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="ds-side-nav-item__label">Portefeuille</span>
+          </div>
+
+          <div class="ds-side-nav-item" role="menuitem" tabindex="0">
+            <span class="ds-side-nav-item__icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="ds-side-nav-item__label">Rapports</span>
+          </div>
+
+          <div class="ds-side-nav-item ds-side-nav-item--disabled" role="menuitem" aria-disabled="true" tabindex="-1">
+            <span class="ds-side-nav-item__icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <span class="ds-side-nav-item__label">Historique (bientôt)</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Contenu principal à droite -->
+      <div style="flex:1; padding:24px; background: var(--semantic-color-static-background-main-primary);">
+        <div style="font-size:14px; font-weight:600; color: var(--semantic-color-static-text-main-primary); margin-bottom:8px;">Tableau de bord</div>
+        <div style="font-size:13px; color: var(--semantic-color-static-text-main-secondary);">Contenu de la page projeté à droite de la navigation.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+  <div class="section">
+    <h2>Header — Barre de navigation principale</h2>
+
+    <div class="ds-header" role="banner" style="border-radius:4px;">
+
+      <!-- Left -->
+      <div class="ds-header__left">
+        <!-- Logo -->
+        <div class="ds-header__logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="4" fill="white" fill-opacity="0.15"/>
+            <path d="M8 16L13 11L16 14L21 9L24 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 22L13 17L16 20L21 15L24 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+          </svg>
+        </div>
+
+        <!-- Divider -->
+        <div class="ds-header__divider"></div>
+
+        <!-- App name -->
+        <span class="ds-header__app-name">MonApp Pro</span>
+
+        <!-- Tabs (reversed) -->
+        <nav class="ds-header__tabs" role="tablist">
+          <div class="ds-tab ds-tab--tone-reversed ds-tab--selected" role="tab" aria-selected="true" tabindex="0">
+            <span class="ds-tab__content"><span class="ds-tab__label">Accueil</span></span>
+            <span class="ds-tab__indicator"></span>
+          </div>
+          <div class="ds-tab ds-tab--tone-reversed" role="tab" aria-selected="false" tabindex="-1">
+            <span class="ds-tab__content"><span class="ds-tab__label">Portefeuille</span></span>
+            <span class="ds-tab__indicator"></span>
+          </div>
+          <div class="ds-tab ds-tab--tone-reversed" role="tab" aria-selected="false" tabindex="-1">
+            <span class="ds-tab__content"><span class="ds-tab__label">Opérations</span></span>
+            <span class="ds-tab__indicator"></span>
+          </div>
+          <div class="ds-tab ds-tab--tone-reversed" role="tab" aria-selected="false" tabindex="-1">
+            <span class="ds-tab__content"><span class="ds-tab__label">Rapports</span></span>
+            <span class="ds-tab__indicator"></span>
+          </div>
+          <div class="ds-tab ds-tab--tone-reversed" role="tab" aria-selected="false" tabindex="-1">
+            <span class="ds-tab__content"><span class="ds-tab__label">Admin</span></span>
+            <span class="ds-tab__indicator"></span>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Right -->
+      <div class="ds-header__right">
+        <!-- Actions -->
+        <div class="ds-header__actions">
+          <button class="ds-button-icon ds-button-icon--type-tertiary ds-button-icon--reversed ds-button-icon--size-s" aria-label="Notifications">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 015 5v3l1 1H2l1-1V7a5 5 0 015-5z" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 13.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <button class="ds-button-icon ds-button-icon--type-tertiary ds-button-icon--reversed ds-button-icon--size-s" aria-label="Paramètres">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M8 2v1M8 13v1M2 8h1M13 8h1M3.5 3.5l.7.7M11.8 11.8l.7.7M3.5 12.5l.7-.7M11.8 4.2l.7-.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <button class="ds-button-icon ds-button-icon--type-tertiary ds-button-icon--reversed ds-button-icon--size-s" aria-label="Aide">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M6 6.5a2 2 0 114 0c0 1-1 1.5-2 2v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="12" r="0.75" fill="currentColor"/></svg>
+          </button>
+        </div>
+
+        <!-- Account tab -->
+        <div class="ds-header__account">
+          <div class="ds-tab ds-tab--tone-reversed" role="tab" tabindex="0">
+            <span class="ds-tab__content">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span class="ds-tab__label">Mon compte</span>
+            </span>
+            <span class="ds-tab__indicator"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========================================================
+       SPINNER
+  ========================================================== -->
+  <div class="section">
+    <h2>Spinner</h2>
+    <div class="row">
+      <span class="label">Default</span>
+      <div class="ds-spinner" role="status" aria-label="Chargement en cours">
+        <span class="ds-spinner__ring" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p>Arc 270° (Grey/500) + creux 90° (Grey/200) — animation 0.75s</p>
+  </div>
+
+  <!-- =========================================================
+       SKELETON ITEM
+  ========================================================== -->
+  <div class="section">
+    <h2>Skeleton Item</h2>
+    <p>Composant générique — width/height/radius configurables. Shimmer animé.</p>
+
+    <div style="display:flex; flex-direction:column; gap:8px; max-width:400px;">
+      <!-- Lignes de texte (défaut Figma : 12px) -->
+      <div class="ds-skeleton-item" style="width:100%; height:12px; border-radius:4px;"></div>
+      <div class="ds-skeleton-item" style="width:75%; height:12px; border-radius:4px;"></div>
+      <div class="ds-skeleton-item" style="width:85%; height:12px; border-radius:4px;"></div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-top:16px;">
+      <!-- Avatar circulaire -->
+      <div class="ds-skeleton-item" style="width:40px; height:40px; border-radius:50%; flex-shrink:0;"></div>
+      <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+        <div class="ds-skeleton-item" style="width:60%; height:12px; border-radius:4px;"></div>
+        <div class="ds-skeleton-item" style="width:40%; height:12px; border-radius:4px;"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <!-- Card placeholder -->
+      <div class="ds-skeleton-item" style="width:100%; height:80px; border-radius:8px; max-width:400px;"></div>
+    </div>
+  </div>
+
+</body>
+</html>

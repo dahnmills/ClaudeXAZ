@@ -1,0 +1,19 @@
+<!-- ══ Left : logo + navigation ════════════════════════════════ -->
+<div class="ds-header__left">
+  <ng-content select="[slot=logo]" />
+
+  <nav class="ds-header__tabs" role="tablist" aria-label="Navigation principale">
+    <ng-content select="[slot=tabs]" />
+  </nav>
+</div>
+
+<!-- ══ Right : actions + account ════════════════════════════════ -->
+<div class="ds-header__right">
+  <div class="ds-header__actions">
+    <ng-content select="[slot=actions]" />
+  </div>
+
+  <div class="ds-header__account">
+    <ng-content select="[slot=account]" />
+  </div>
+</div>

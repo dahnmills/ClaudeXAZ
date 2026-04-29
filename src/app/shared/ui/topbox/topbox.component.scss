@@ -1,0 +1,228 @@
+// =============================================================
+// Topbox — atom
+// Source : Figma > -Components--Data Display > .Topbox (node 1704:15463)
+//
+// Spec :
+//   • Bande grise (grey-100) en pleine largeur, padding 4px / 32px
+//   • Hauteur 32px (contenu)
+//   • Affiche : icône + label + grade + ID + flags (HIGH RISK / SRU / SANCTION)
+//   • Action à droite : bouton plain (icon + label)
+// =============================================================
+
+@use 'sass:map';
+
+// Mapping grade → token de couleur
+$grade-bg: (
+  grade-1:    --semantic-color-static-background-grade-1,
+  grade-2:    --semantic-color-static-background-grade-2,
+  grade-3:    --semantic-color-static-background-grade-3,
+  grade-4:    --semantic-color-static-background-grade-4,
+  grade-5:    --semantic-color-static-background-grade-5,
+  grade-6:    --semantic-color-static-background-grade-6,
+  grade-7:    --semantic-color-static-background-grade-7,
+  grade-8:    --semantic-color-static-background-grade-8,
+  grade-9:    --semantic-color-static-background-grade-9,
+  grade-10:   --semantic-color-static-background-grade-10,
+  grade-none: --semantic-color-static-background-grade-none,
+);
+
+:host {
+  display:          flex;
+  align-items:      center;
+  width:            100%;
+  // Aligné sur sidenav + modal-header/footer pour cohérence des surfaces gris-clair
+  background-color: var(--semantic-color-static-background-main-secondary); // Grey/050
+  padding:          var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-xl); // 4px 32px
+}
+
+// ── Conteneur global ───────────────────────────────────────────
+.ds-topbox__content {
+  display:         flex;
+  flex:            1 1 0;
+  align-items:     center;
+  justify-content: space-between;
+  min-width:       0;
+}
+
+// ── Bloc principal (gauche) ────────────────────────────────────
+.ds-topbox__main {
+  display:     flex;
+  flex:        1 1 0;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s); // 8px
+  min-width:   0;
+}
+
+// ── Icône produit / résumé ─────────────────────────────────────
+.ds-topbox__icon {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-text-main-secondary); // Grey/700
+}
+
+// ── Label ──────────────────────────────────────────────────────
+.ds-topbox__label {
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-l);          // 16px
+  line-height:    var(--semantic-font-text-style-line-height-l);   // 24px
+  font-weight:    var(--semantic-font-text-style-font-weight-bold);
+  color:          var(--semantic-color-static-text-main-secondary); // Grey/700
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-none);
+  white-space:    nowrap;
+}
+
+// ── Séparateur vertical ────────────────────────────────────────
+.ds-topbox__separator {
+  width:            1px;
+  height:           16px;
+  background-color: var(--semantic-color-static-border-subtle-tertiary); // Grey/200
+  flex-shrink:      0;
+}
+
+// ── Grade pill ────────────────────────────────────────────────
+.ds-topbox__grade {
+  display:          inline-flex;
+  align-items:      center;
+  justify-content:  center;
+  min-width:        24px;
+  height:           24px;
+  padding:          0 var(--semantic-measurement-spacing-s);
+  border-radius:    var(--semantic-border-radius-l); // 16px (radius pill)
+  font-family:      var(--semantic-font-family);
+  font-size:        var(--semantic-font-text-style-size-l);
+  line-height:      var(--semantic-font-text-style-line-height-l);
+  font-weight:      var(--semantic-font-text-style-font-weight-semi-bold);
+  color:            var(--semantic-color-static-text-main-primary);
+  flex-shrink:      0;
+
+  @each $name, $token in $grade-bg {
+    &.ds-topbox__grade--#{$name} {
+      background-color: var(#{$token});
+    }
+  }
+}
+
+// ── ID (#XXXXX) ───────────────────────────────────────────────
+.ds-topbox__id {
+  display:          inline-flex;
+  align-items:      center;
+  gap:              var(--semantic-measurement-spacing-s);
+  height:           24px;
+  padding:          0 var(--semantic-measurement-spacing-s);
+  background-color: var(--semantic-color-static-background-main-primary); // White
+  border:           1px solid var(--semantic-color-static-border-subtle-tertiary); // Grey/200
+  border-radius:    var(--semantic-border-radius-s); // 4px
+  color:            var(--semantic-color-static-text-main-tertiary); // Grey/500
+  flex-shrink:      0;
+}
+
+.ds-topbox__id-value {
+  font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
+  font-size:   var(--semantic-font-text-style-size-s); // 12px
+  line-height: var(--semantic-font-text-style-line-height-l);
+}
+
+// ── Flag badges (HIGH RISK / SRU / SANCTION) ──────────────────
+.ds-topbox__flag {
+  display:          inline-flex;
+  align-items:      center;
+  height:           24px;
+  padding:          0 var(--semantic-measurement-spacing-s);
+  background-color: var(--semantic-color-static-background-subtle-functional-negative);
+  color:            var(--semantic-color-static-text-main-functional-negative);
+  border-radius:    var(--semantic-border-radius-round);
+  font-family:      var(--semantic-font-family);
+  font-size:        var(--semantic-font-text-style-size-l);
+  line-height:      var(--semantic-font-text-style-line-height-l);
+  font-weight:      var(--semantic-font-text-style-font-weight-semi-bold);
+  white-space:      nowrap;
+  flex-shrink:      0;
+}
+
+// ── Action (droite) ───────────────────────────────────────────
+.ds-topbox__action {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             var(--semantic-measurement-spacing-s);
+  height:          32px;
+  padding:         0 var(--semantic-measurement-spacing-s);
+  background:      transparent;
+  border:          0;
+  border-radius:   var(--semantic-border-radius-s);
+  cursor:          pointer;
+  color:           var(--semantic-color-interactive-text-strong-alt-default); // Grey/900
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-l);
+  line-height:     var(--semantic-font-text-style-line-height-l);
+  font-weight:     var(--semantic-font-text-style-font-weight-semi-bold);
+  flex-shrink:     0;
+  transition:      background-color 0.15s ease, color 0.15s ease;
+
+  // Hover/active visibles sur fond Grey/050 (token light-alt = 050 → 100 → 200)
+  &:hover {
+    background-color: var(--semantic-color-interactive-background-light-alt-hover); // Grey/100
+    color:            var(--semantic-color-interactive-text-strong-alt-hover);      // Grey/800
+  }
+  &:active {
+    background-color: var(--semantic-color-interactive-background-light-alt-active); // Grey/200
+    color:            var(--semantic-color-interactive-text-strong-alt-active);      // Grey/700
+  }
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.ds-topbox__action-icon {
+  flex-shrink: 0;
+}
+
+.ds-topbox__action-label {
+  white-space: nowrap;
+}
+
+// ── Action — chevron variant (accordion toggle) ────────────────
+.ds-topbox__chevron {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             var(--semantic-measurement-spacing-s);
+  height:          32px;
+  padding:         0 var(--semantic-measurement-spacing-s);
+  background:      transparent;
+  border:          0;
+  border-radius:   var(--semantic-border-radius-s);
+  cursor:          pointer;
+  color:           var(--semantic-color-interactive-text-strong-alt-default);
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-l);
+  line-height:     var(--semantic-font-text-style-line-height-l);
+  font-weight:     var(--semantic-font-text-style-font-weight-semi-bold);
+  flex-shrink:     0;
+  transition:      background-color 0.15s ease;
+
+  // Même logique que .ds-topbox__action — visible sur fond Grey/050
+  &:hover  {
+    background-color: var(--semantic-color-interactive-background-light-alt-hover);
+    color:            var(--semantic-color-interactive-text-strong-alt-hover);
+  }
+  &:active {
+    background-color: var(--semantic-color-interactive-background-light-alt-active);
+    color:            var(--semantic-color-interactive-text-strong-alt-active);
+  }
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.ds-topbox__chevron-label {
+  white-space: nowrap;
+}
+
+.ds-topbox__chevron-icon {
+  flex-shrink: 0;
+  transition:  transform 0.2s ease;
+}
+
+:host.ds-topbox--expanded .ds-topbox__chevron-icon {
+  transform: rotate(180deg);
+}

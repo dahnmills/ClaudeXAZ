@@ -1,0 +1,44 @@
+// =============================================================
+// Modal — organism
+// Source : Figma > -Components--Layout > Modal (node 2256:1556)
+//
+// Spec :
+//   • Overlay full-viewport bg black/35
+//   • Box rounded 4px, drop-shadow Bottom/800
+//   • 4 tailles : small 400 / medium 780 / large 1080 / xlarge 1280
+//   • Compose <ds-modal-header>, <ds-modal-content>, <ds-modal-footer>
+// =============================================================
+
+:host {
+  // hôte invisible quand fermé — l'overlay n'existe que via @if dans le template
+  display: contents;
+}
+
+.ds-modal__backdrop {
+  position:        fixed;
+  inset:           0;
+  z-index:         1000;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         var(--semantic-measurement-spacing-xl);
+  background:      rgba(0, 0, 0, 0.35);
+}
+
+.ds-modal__box {
+  display:        flex;
+  flex-direction: column;
+  align-items:    stretch;
+  width:          100%;
+  max-height:     calc(100vh - var(--semantic-measurement-spacing-3xl));
+  background:     var(--semantic-color-static-background-main-primary);
+  border-radius:  var(--semantic-border-radius-s);
+  box-shadow:     0 8px 24px rgba(65, 65, 65, 0.35); // Shadows/Bottom/800
+  overflow:       hidden;
+}
+
+// ── Tailles ───────────────────────────────────────────────────
+:host.ds-modal--small  .ds-modal__box { max-width: 400px; }
+:host.ds-modal--medium .ds-modal__box { max-width: 780px; }
+:host.ds-modal--large  .ds-modal__box { max-width: 1080px; }
+:host.ds-modal--xlarge .ds-modal__box { max-width: 1280px; }

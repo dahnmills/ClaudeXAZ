@@ -1,0 +1,52 @@
+// =============================================================
+// Modal Header — atom interne
+// Source : Figma > -Components--Layout > .Header (node 2076:7800)
+//
+// Spec :
+//   • Background Grey/050 (static-background-main-secondary)
+//   • Border-bottom Grey/200
+//   • Padding : pl 32px / pr 16px / py 16px
+//   • Rounded top 4px
+//   • Titre H1 (24/32 regular, Grey/900)
+//   • Close button-icon plain size M (24px)
+// =============================================================
+
+:host {
+  display:          flex;
+  flex-direction:   column;
+  align-items:      flex-end;
+  width:            100%;
+  background-color: var(--semantic-color-static-background-main-secondary);
+  border-bottom:    1px solid var(--semantic-color-static-border-subtle-tertiary);
+  padding:          var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-m)
+                    var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-xl);
+  border-top-left-radius:  var(--semantic-border-radius-s);
+  border-top-right-radius: var(--semantic-border-radius-s);
+}
+
+.ds-modal-header__inner {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  width:           100%;
+  gap:             var(--semantic-measurement-spacing-m);
+}
+
+.ds-modal-header__title {
+  margin:         0;
+  flex:           1 1 0;
+  min-width:      0;
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--foundation-font-size-24, 24px);
+  line-height:    32px;
+  font-weight:    var(--semantic-font-text-style-font-weight-regular);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-none);
+  color:          var(--semantic-color-static-text-main-primary);
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+}
+
+.ds-modal-header__close {
+  flex-shrink: 0;
+}

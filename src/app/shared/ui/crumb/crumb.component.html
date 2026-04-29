@@ -1,0 +1,14 @@
+@if (currentPage()) {
+  <span class="ds-crumb__label" aria-current="page">{{ label() }}</span>
+} @else {
+  <a
+    class="ds-crumb__link"
+    [href]="disabled() ? null : href()"
+    [attr.aria-disabled]="disabled() || null"
+    [attr.tabindex]="disabled() ? -1 : null"
+    (click)="!disabled() && clicked.emit()"
+  >
+    <span class="ds-crumb__label">{{ label() }}</span>
+  </a>
+  <ds-icon class="ds-crumb__separator" name="chevron-right" [size]="16" />
+}

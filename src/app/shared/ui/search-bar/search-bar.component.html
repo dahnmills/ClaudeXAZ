@@ -1,0 +1,83 @@
+<!-- ── Barre de recherche ─────────────────────────────────────── -->
+<div class="ds-search-bar__field">
+  <svg class="ds-search-bar__icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+
+  <input
+    class="ds-search-bar__input"
+    type="search"
+    [placeholder]="placeholder()"
+    [(ngModel)]="value"
+    (focus)="onInputFocus()"
+    (keydown)="onKeydown($event)"
+    aria-label="Search"
+    [attr.aria-expanded]="flyoutOpen()"
+    aria-haspopup="listbox"
+  />
+</div>
+
+<ds-button type="primary" (click)="onSearch()">{{ buttonLabel() }}</ds-button>
+
+<!-- ── Flyout — recherches récentes ──────────────────────────── -->
+@if (flyoutOpen() && recentSearches().length > 0) {
+  <div class="ds-search-flyout" role="listbox" aria-label="Recherches récentes">
+
+    <!-- Section RECENT -->
+    <div class="ds-search-flyout__section">
+      <p class="ds-search-flyout__section-label">RECENT</p>
+
+      <ul class="ds-search-flyout__list">
+        @for (item of recentSearches(); track item.label) {
+          <li class="ds-search-flyout__item"
+              role="option"
+              (click)="selectRecent(item)"
+              (keydown.enter)="selectRecent(item)"
+              tabindex="0">
+            <div class="ds-search-flyout__item-left">
+              <!-- Icône horloge / historique -->
+              <svg class="ds-search-flyout__item-icon" width="16" height="16" viewBox="0 0 16 16"
+                   fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.25"/>
+                <path d="M8 5.5V8.5L9.5 9.5" stroke="currentColor" stroke-width="1.25"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="ds-search-flyout__item-label">{{ item.label }}</span>
+            </div>
+
+            <ds-badge
+              [label]="item.badgeLabel"
+              [status]="item.badgeStatus"
+              [variant]="'light'"
+              [size]="'s'"
+            />
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Séparateur -->
+    <div class="ds-search-flyout__divider" aria-hidden="true"></div>
+
+    <!-- Footer : Advanced search -->
+    <div class="ds-search-flyout__footer">
+      <ds-link
+        [href]="advancedSearchHref()"
+        size="s"
+        weight="semi-bold"
+        tone="default"
+      >
+        Advanced search
+        <svg slot="icon-right" width="16" height="16" viewBox="0 0 16 16" fill="none"
+             xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 8h10M9 4l4 4-4 4"
+                stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </ds-link>
+    </div>
+
+  </div>
+}

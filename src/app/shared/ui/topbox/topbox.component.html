@@ -1,0 +1,66 @@
+<div class="ds-topbox__content">
+  <div class="ds-topbox__main">
+    <ds-icon class="ds-topbox__icon" [name]="icon()" [size]="24" />
+
+    <span class="ds-topbox__label">{{ label() }}</span>
+
+    @if (grade()) {
+      <span class="ds-topbox__separator" aria-hidden="true"></span>
+      <span class="ds-topbox__grade" [class]="'ds-topbox__grade--' + gradeColor()">
+        {{ grade() }}
+      </span>
+    }
+
+    @if (id()) {
+      <span class="ds-topbox__separator" aria-hidden="true"></span>
+      <span class="ds-topbox__id">
+        <ds-icon name="hash" [size]="16" aria-hidden="true" />
+        <span class="ds-topbox__id-value">{{ id() }}</span>
+      </span>
+    }
+
+    @if (highRisk()) {
+      <span class="ds-topbox__separator" aria-hidden="true"></span>
+      <span class="ds-topbox__flag">HIGH RISK</span>
+    }
+
+    @if (sru()) {
+      <span class="ds-topbox__separator" aria-hidden="true"></span>
+      <span class="ds-topbox__flag">SRU</span>
+    }
+
+    @if (sanction()) {
+      <span class="ds-topbox__separator" aria-hidden="true"></span>
+      <span class="ds-topbox__flag">SANCTION</span>
+    }
+  </div>
+
+  @if (actionType() === 'chevron') {
+    <button
+      type="button"
+      class="ds-topbox__chevron"
+      [attr.aria-expanded]="expanded()"
+      [attr.aria-label]="actionLabel() || 'Toggle details'"
+      (click)="actionClicked.emit()"
+    >
+      @if (actionLabel()) {
+        <span class="ds-topbox__chevron-label">{{ actionLabel() }}</span>
+      }
+      <ds-icon class="ds-topbox__chevron-icon" name="chevron-down" [size]="16" />
+    </button>
+  } @else if (actionLabel()) {
+    <button
+      type="button"
+      class="ds-topbox__action"
+      (click)="actionClicked.emit()"
+    >
+      @if (actionIconPosition() === 'left') {
+        <ds-icon class="ds-topbox__action-icon" [name]="actionIcon()" [size]="16" />
+      }
+      <span class="ds-topbox__action-label">{{ actionLabel() }}</span>
+      @if (actionIconPosition() === 'right') {
+        <ds-icon class="ds-topbox__action-icon" [name]="actionIcon()" [size]="16" />
+      }
+    </button>
+  }
+</div>

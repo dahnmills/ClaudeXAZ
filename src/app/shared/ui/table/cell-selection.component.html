@@ -1,0 +1,28 @@
+<div class="ds-cell-selection__inner" (click)="$event.stopPropagation()">
+  @if (hasDrag()) {
+    <span
+      class="ds-cell-selection__drag"
+      role="button"
+      aria-label="Drag to reorder"
+      [attr.aria-disabled]="disabled() || null"
+      [attr.tabindex]="disabled() ? -1 : 0"
+      (mousedown)="onDragMouseDown($event)"
+    >
+      <ds-icon name="drag-handle" [size]="24" />
+    </span>
+  }
+
+  @if (hasCheck()) {
+    <ds-checkbox
+      [checked]="checked()"
+      (checkedChange)="onCheckedChange($event)"
+    />
+  }
+
+  @if (hasToggle()) {
+    <ds-toggle
+      [selected]="toggleValue()"
+      (selectedChange)="onToggleChange($event)"
+    />
+  }
+</div>

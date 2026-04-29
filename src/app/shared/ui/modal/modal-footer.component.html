@@ -1,0 +1,13 @@
+<div class="ds-modal-footer__inner">
+  <div class="ds-modal-footer__back">
+    @if (showBack()) {
+      <ds-button type="plain" (clicked)="backClicked.emit()">
+        <ds-icon slot="icon-left" name="arrow-left" [size]="16" />
+        {{ backLabel() }}
+      </ds-button>
+    }
+  </div>
+  <div class="ds-modal-footer__actions">
+    <ng-content select="[slot=actions]" />
+  </div>
+</div>

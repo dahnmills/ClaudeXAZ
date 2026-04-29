@@ -1,0 +1,53 @@
+// =============================================================
+// Topbox Test Shell — User Testing layout
+// =============================================================
+
+:host {
+  display:        flex;
+  flex-direction: column;
+  height:         100vh;
+  overflow:       hidden;
+  background:     var(--semantic-color-static-background-main-primary);
+  font-family:    var(--semantic-font-family);
+}
+
+.ut-layout {
+  display:  flex;
+  flex:     1;
+  overflow: hidden;
+}
+
+.ut-main {
+  flex:           1;
+  display:        flex;
+  flex-direction: column;
+  overflow:       auto;
+  background:     var(--semantic-color-static-background-main-primary);
+}
+
+.ut-main__topbox {
+  &:empty { display: none; }
+}
+
+// ── Accordion expansion (animation grid-rows) ────────────────
+// Trick CSS moderne : grid-template-rows 0fr → 1fr est interpolable
+// par les navigateurs récents et permet d'animer une hauteur "auto".
+.ut-main__extension {
+  display:               grid;
+  grid-template-rows:    0fr;
+  transition:            grid-template-rows 0.25s ease;
+
+  &--expanded {
+    grid-template-rows: 1fr;
+  }
+}
+
+.ut-main__extension-inner {
+  overflow:   hidden;
+  min-height: 0;
+}
+
+.ut-main__body {
+  display:        flex;
+  flex-direction: column;
+}

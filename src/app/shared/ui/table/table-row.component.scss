@@ -1,0 +1,58 @@
+// =============================================================
+// Table Row — rangée de tableau interactive
+// Source : Figma > -Components--Data Display > .Line Data (33:1805)
+//
+// États :
+//   • default  : bg white
+//   • hover    : bg Grey/050 (sur rangée interactive uniquement)
+//   • active   : bg BlueA/025
+//   • disabled : opacity 0.4
+//
+// "New" : bg subtil + cells passées en bold (via attribute selector)
+// =============================================================
+
+:host {
+  display:        flex;
+  align-items:    stretch;
+  width:          100%;
+  background:     var(--semantic-color-static-background-main-primary); // White
+  border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary); // Grey/200
+  transition:     background-color 0.15s ease;
+  outline:        0;
+}
+
+// ── Interactive : hover + cursor pointer ─────────────────────
+:host.ds-table-row--interactive {
+  cursor: pointer;
+
+  &:not(.ds-table-row--state-disabled):not(.ds-table-row--state-active):hover {
+    background-color: var(--semantic-color-static-background-main-secondary); // Grey/050
+  }
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: -2px;
+  }
+}
+
+// ── Active (sélectionnée) ────────────────────────────────────
+:host.ds-table-row--state-active {
+  background-color: var(--semantic-color-static-background-main-alt-primary); // BlueA/025
+}
+
+// ── Disabled ─────────────────────────────────────────────────
+:host.ds-table-row--state-disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  cursor:         not-allowed;
+  pointer-events: none;
+}
+
+// ── New : bg subtle BlueA/025 + cells en gras ────────────────
+:host.ds-table-row--new {
+  background-color: var(--semantic-color-static-background-main-alt-primary); // BlueA/025
+
+  // Met les ds-cell en gras (équivalent à [emphasized])
+  ::ng-deep .ds-cell .ds-cell__content {
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+  }
+}

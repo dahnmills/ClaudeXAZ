@@ -1,0 +1,79 @@
+<!-- ══ Header ══════════════════════════════════════════════════ -->
+<ds-header>
+
+  <!-- Logo Qirin (reversed = blanc sur fond brand) -->
+  <ds-logo slot="logo" [reversed]="true" />
+
+  <!-- Navigation tabs -->
+  <ng-container slot="tabs">
+    <ds-tab tone="reversed" [selected]="true">Home</ds-tab>
+    <ds-tab tone="reversed">Buyers</ds-tab>
+    <ds-tab tone="reversed">Policies</ds-tab>
+    <ds-tab tone="reversed">Tools</ds-tab>
+    <ds-tab tone="reversed">Configuration</ds-tab>
+  </ng-container>
+
+  <!-- Action icons -->
+  <ng-container slot="actions">
+    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Rechercher">
+      <ds-icon name="search" [size]="16" />
+    </ds-button-icon>
+    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Aide">
+      <ds-icon name="help" [size]="16" />
+    </ds-button-icon>
+    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Notifications">
+      <ds-icon name="bell" [size]="16" />
+    </ds-button-icon>
+  </ng-container>
+
+  <!-- Account -->
+  <ng-container slot="account">
+    <ds-tab tone="reversed">John Doe</ds-tab>
+  </ng-container>
+
+</ds-header>
+
+<!-- ══ Layout principal ════════════════════════════════════════ -->
+<div class="home-layout">
+
+  <!-- ── Main content ────────────────────────────────────────── -->
+  <main class="home-main">
+
+    <!-- Hero section -->
+    <section class="home-hero">
+      <div class="home-hero__content">
+        <p class="home-hero__welcome">Welcome back, John</p>
+        <h1 class="home-hero__title">What would you like<br>to work on today?</h1>
+        <p class="home-hero__subtitle">
+          Pick an action below to get started, or explore your dashboard
+          for a complete overview of your activity.
+        </p>
+        <ds-search-bar
+          placeholder="Search for a buyer"
+          buttonLabel="Search"
+          [(value)]="searchValue"
+          [recentSearches]="recentSearches"
+          (search)="onSearch($event)"
+          (recentSelect)="onRecentSelect($event)"
+        />
+      </div>
+
+      <!-- Illustration décorative -->
+      <app-hero-illustration />
+    </section>
+
+    <!-- Action cards -->
+    <section class="home-actions">
+      @for (card of actionCards; track card.title) {
+        <ds-action-card
+          [title]="card.title"
+          [description]="card.description"
+          [linkLabel]="card.linkLabel"
+        >
+          <ds-icon slot="icon" [name]="card.icon" [size]="24" />
+        </ds-action-card>
+      }
+    </section>
+
+  </main>
+</div>

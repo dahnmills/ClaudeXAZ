@@ -1,0 +1,85 @@
+// =============================================================
+// Properties Panel
+// Source : Figma > -Components--Data Display > Modal "Full properties"
+//          + accordion expansion (Topbox V2)
+//
+// Spec :
+//   • Grille 1 à 4 colonnes
+//   • Section : titre (Body L Bold) + list de rows (label gauche / value droite)
+//   • Variant card : section bordée ; flat : sans border (utilisé en accordéon)
+// =============================================================
+
+:host {
+  display:        grid;
+  gap:            var(--semantic-measurement-spacing-l); // 24px
+  width:          100%;
+}
+
+:host.ds-properties-panel--cols-1 { grid-template-columns: 1fr; }
+:host.ds-properties-panel--cols-2 { grid-template-columns: repeat(2, 1fr); }
+:host.ds-properties-panel--cols-3 { grid-template-columns: repeat(3, 1fr); }
+:host.ds-properties-panel--cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+// ── Section ───────────────────────────────────────────────────
+.ds-properties-panel__section {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s); // 8px
+  min-width:      0;
+}
+
+.ds-properties-panel__section--card {
+  padding:       var(--semantic-measurement-spacing-m); // 16px
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+  background:    var(--semantic-color-static-background-main-primary);
+}
+
+// ── Title ─────────────────────────────────────────────────────
+.ds-properties-panel__title {
+  margin:         0;
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-l);          // 16px
+  line-height:    var(--semantic-font-text-style-line-height-l);   // 24px
+  font-weight:    var(--semantic-font-text-style-font-weight-bold);
+  color:          var(--semantic-color-static-text-main-primary);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-none);
+}
+
+// ── List ──────────────────────────────────────────────────────
+.ds-properties-panel__list {
+  margin:         0;
+  padding:        0;
+  list-style:     none;
+  display:        flex;
+  flex-direction: column;
+}
+
+.ds-properties-panel__row {
+  display:         flex;
+  align-items:     baseline;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-s);
+  padding:         var(--semantic-measurement-spacing-xs) 0; // 4px vertical
+  min-width:       0;
+}
+
+.ds-properties-panel__label {
+  font-family:  var(--semantic-font-family);
+  font-size:    var(--semantic-font-text-style-size-m); // 14px
+  line-height:  var(--semantic-font-text-style-line-height-m);
+  font-weight:  var(--semantic-font-text-style-font-weight-regular);
+  color:        var(--semantic-color-static-text-main-tertiary); // Grey/500
+  flex-shrink:  0;
+}
+
+.ds-properties-panel__value {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+  text-align:  right;
+  word-break:  break-word;
+  min-width:   0;
+}

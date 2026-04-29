@@ -1,0 +1,39 @@
+@switch (type()) {
+  @case ('default') {
+    <button
+      type="button"
+      class="ds-cell-header__content"
+      [class.ds-cell-header__content--sortable]="sortable()"
+      [attr.aria-label]="sortable() ? 'Sort by ' + title() : null"
+      [attr.aria-sort]="sortDirection() === 'asc' ? 'ascending' : sortDirection() === 'desc' ? 'descending' : 'none'"
+      [disabled]="!sortable()"
+      (click)="sortable() && sortClicked.emit()"
+    >
+      <div class="ds-cell-header__titles">
+        <span class="ds-cell-header__title">{{ title() }}</span>
+        @if (subTitle()) {
+          <span class="ds-cell-header__subtitle">{{ subTitle() }}</span>
+        }
+      </div>
+      @if (sortable()) {
+        <ds-icon
+          [class]="'ds-cell-header__sort-icon ds-cell-header__sort-icon--' + (sortDirection() ?? 'none')"
+          [name]="sortIconName()"
+          [size]="16"
+        />
+      }
+    </button>
+  }
+  @case ('action') {
+    <!-- Header colonne action : vide (juste les borders gérées par le row) -->
+    <span class="ds-cell-header__spacer" aria-hidden="true"></span>
+  }
+  @case ('selection') {
+    <ds-checkbox
+      [checked]="allSelected() || allIndeterminate()"
+      [indeterminate]="allIndeterminate()"
+      (checkedChange)="allSelectedChange.emit($event)"
+      (indeterminateChange)="allSelectedChange.emit(true)"
+    />
+  }
+}

@@ -1,0 +1,11 @@
+@if (label()) {
+  <div class="ds-flyout-section__header">
+    @if (icon()) {
+      <ds-icon class="ds-flyout-section__icon" [name]="icon()!" [size]="16" />
+    }
+    <span class="ds-flyout-section__label">{{ label() }}</span>
+  </div>
+}
+<div class="ds-flyout-section__body">
+  <ng-content />
+</div>

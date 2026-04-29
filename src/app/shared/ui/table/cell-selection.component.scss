@@ -1,0 +1,53 @@
+// =============================================================
+// Cell Selection — drag / check / toggle (et combos)
+// Source : Figma > -Components--Data Display > .Cell Selection (30:883)
+//
+// Spec :
+//   • Size M : padding p-16, gap-16 entre controls
+//   • Size S : padding py-8, gap-16
+//   • Drag handle : icône 24px, cursor grab
+//   • Checkbox    : <ds-checkbox> (Data Entry)
+//   • Toggle      : <ds-toggle>   (Data Entry)
+// =============================================================
+
+:host {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  background-color: inherit;
+  box-sizing:      border-box;
+}
+
+:host.ds-cell-selection--size-m { padding: var(--semantic-measurement-spacing-m); }
+:host.ds-cell-selection--size-s { padding: var(--semantic-measurement-spacing-s) 0; }
+
+:host.ds-cell-selection--disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  pointer-events: none;
+}
+
+.ds-cell-selection__inner {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m); // 16px
+}
+
+// ── Drag handle ─────────────────────────────────────────────────
+.ds-cell-selection__drag {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           24px;
+  height:          24px;
+  cursor:          grab;
+  color:           var(--semantic-color-interactive-text-strong-alt-default); // Grey/900
+  border-radius:   var(--semantic-border-radius-s);
+
+  &:hover { color: var(--semantic-color-interactive-text-strong-alt-hover); }
+  &:active { cursor: grabbing; }
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 1px;
+  }
+}

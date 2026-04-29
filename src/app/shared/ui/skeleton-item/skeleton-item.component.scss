@@ -1,0 +1,46 @@
+// =============================================================
+// Skeleton Item
+// Source : Figma > -Components--Feedback > Skeleton Item
+// Variants : State=Start / State=End → 2 keyframes du shimmer
+//
+// Fidélité Figma :
+//   • height 12px, border-radius 4px (Radius/S)
+//   • Fond : Grey/050 (#f5f5f5) → semantic-color-static-background-main-secondary
+//   • Shimmer gradient : Grey/100 → Grey/050 → Grey/050 → Grey/100
+//     stops : 0% / 25% / 65% / 100%
+//   • .Animation (151px wide) se déplace de gauche à droite
+//     → implémenté via translateX(-100%) → translateX(200%) sur ::after
+// =============================================================
+
+@keyframes ds-skeleton-shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(150%); }
+}
+
+:host,
+.ds-skeleton-item {
+  display:   block;
+  position:  relative;
+  overflow:  hidden;
+
+  // Fond de base — Grey/050
+  background-color: var(--semantic-color-static-background-main-secondary);
+
+  // Shimmer highlight
+  &::after {
+    content:  '';
+    position: absolute;
+    inset:    0;
+
+    // Gradient Figma : Grey/100(0%) → Grey/050(25%) → Grey/050(65%) → Grey/100(100%)
+    background: linear-gradient(
+      90deg,
+      var(--semantic-color-static-background-main-tertiary) 0%,
+      var(--semantic-color-static-background-main-secondary) 25%,
+      var(--semantic-color-static-background-main-secondary) 65%,
+      var(--semantic-color-static-background-main-tertiary) 100%
+    );
+
+    animation: ds-skeleton-shimmer 1.5s ease-in-out infinite;
+  }
+}

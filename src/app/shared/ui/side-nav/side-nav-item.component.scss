@@ -1,0 +1,90 @@
+// =============================================================
+// Side Nav Item
+// Source : Figma > -Components--Navigation > Side Navigation
+// States : Default / Hover / Selected / Disabled
+//
+// Fidélité Figma :
+//   • Hauteur 40px, radius 8px, padding 8px
+//   • Default  : fond Grey/050, texte Grey/700
+//   • Hover    : fond BlueA/025, texte BlueA/500
+//   • Selected : fond BlueA/500, texte white
+//   • Disabled : opacity 0.40
+// =============================================================
+
+:host {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--foundation-spacing-8);
+  height:        var(--foundation-sizing-40);      // 40px
+  padding:       0 var(--foundation-spacing-8);    // 0 8px
+  border-radius: var(--foundation-radius-8);       // 8px
+  cursor:        pointer;
+  user-select:   none;
+  transition:    background 0.15s ease, color 0.15s ease;
+
+  // Default — Grey/050 bg, Grey/700 text
+  background: var(--semantic-color-static-background-main-secondary);
+  color:      var(--semantic-color-static-text-main-secondary);
+
+  // ── Hover ─────────────────────────────────────────────────
+  &:hover:not(.ds-side-nav-item--disabled):not(.ds-side-nav-item--selected) {
+    background: var(--semantic-color-static-background-main-alt-primary);   // BlueA/025
+    color:      var(--semantic-color-interactive-text-strong-default);       // BlueA/500
+  }
+
+  // ── Selected ──────────────────────────────────────────────
+  &.ds-side-nav-item--selected {
+    background: var(--semantic-color-interactive-background-strong-default); // BlueA/500
+    color:      var(--semantic-color-interactive-text-neutral-default);      // white
+
+    &:hover:not(.ds-side-nav-item--disabled) {
+      background: var(--semantic-color-interactive-background-strong-hover); // BlueA/600
+    }
+  }
+
+  // ── Disabled ──────────────────────────────────────────────
+  &.ds-side-nav-item--disabled {
+    opacity:        var(--semantic-measurement-opacity-disabled);
+    cursor:         not-allowed;
+    pointer-events: none;
+  }
+
+  // ── Focus ring ────────────────────────────────────────────
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+// ── Icon ──────────────────────────────────────────────────────
+.ds-side-nav-item__icon {
+  display:     inline-flex;
+  align-items: center;
+  width:       var(--foundation-sizing-24);   // 24px
+  height:      var(--foundation-sizing-24);
+  flex-shrink: 0;
+  color:       currentColor;
+}
+
+// ── Label ─────────────────────────────────────────────────────
+.ds-side-nav-item__label {
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-l);             // 16px
+  font-weight:   var(--semantic-font-text-style-font-weight-regular);
+  line-height:   var(--semantic-font-text-style-line-height-l);      // 24px
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+// ── Collapsed (état géré par le parent via :host-context) ─────
+:host-context(.ds-side-nav--collapsed) {
+  justify-content: center;
+  padding:         0;
+  width:           40px;
+  align-self:      center;
+
+  .ds-side-nav-item__label {
+    display: none;
+  }
+}

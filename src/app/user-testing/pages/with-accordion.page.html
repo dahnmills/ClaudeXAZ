@@ -1,0 +1,120 @@
+<app-topbox-test-shell [extensionExpanded]="isExpanded()">
+  <ds-topbox
+    slot="topbox"
+    dataType="buyer"
+    icon="buyers"
+    label="CANDY HOSS KAFFEEVERTRIEB (DE)"
+    id="137381425"
+    grade="A3"
+    gradeColor="grade-2"
+    [highRisk]="true"
+    [sru]="true"
+    [sanction]="true"
+    actionLabel="View full properties"
+    actionType="chevron"
+    [expanded]="isExpanded()"
+    (actionClicked)="isExpanded.set(!isExpanded())"
+  />
+
+  <div slot="topbox-extension"
+       style="background:var(--semantic-color-static-background-main-secondary);padding:16px 32px;border-bottom:1px solid var(--semantic-color-static-border-subtle-tertiary);">
+    <ds-properties-panel [sections]="sections" [columns]="4" variant="flat" />
+  </div>
+
+  <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="true">
+    <ds-breadcrumbs slot="breadcrumbs">
+      <ds-crumb label="Home" href="#" />
+      <ds-crumb label="Crumb" href="#" />
+      <ds-crumb label="Current page" [currentPage]="true" />
+    </ds-breadcrumbs>
+
+    <ds-page-title slot="title" title="Current page">
+      <div slot="actions" style="display:flex;gap:16px;align-items:center;">
+        <ds-link href="#" weight="semi-bold">
+          <ds-icon slot="icon-left" name="arrow-right" [size]="16" />
+          Go to documents
+        </ds-link>
+        <ds-link href="#" weight="semi-bold">
+          <ds-icon slot="icon-left" name="edit" [size]="16" />
+          Edit something
+        </ds-link>
+
+        <div style="position:relative;">
+          <ds-button-icon
+            type="plain"
+            ariaLabel="More actions"
+            (clicked)="menuOpen.set(!menuOpen())"
+          >
+            <ds-icon name="context-vertical" [size]="16" />
+          </ds-button-icon>
+
+          @if (menuOpen()) {
+            <ds-flyout-menu style="position:absolute;right:0;top:calc(100% + 4px);z-index:50;">
+              <ds-flyout-menu-item label="Duplicate" icon="duplicate" (clicked)="menuOpen.set(false)" />
+              <ds-flyout-menu-item label="Archive"   icon="archive"   (clicked)="menuOpen.set(false)" />
+              <ds-flyout-menu-item label="Share"     icon="share"     (clicked)="menuOpen.set(false)" />
+              <ds-flyout-menu-item label="Delete"    icon="trash"     [disabled]="true" />
+            </ds-flyout-menu>
+          }
+        </div>
+      </div>
+    </ds-page-title>
+
+    <div slot="tabs" style="display:flex;gap:32px;">
+      <ds-tab [selected]="true">Label</ds-tab>
+      <ds-tab>Label</ds-tab>
+      <ds-tab>Label</ds-tab>
+      <ds-tab>Label</ds-tab>
+      <ds-tab>Label</ds-tab>
+      <ds-tab>Label</ds-tab>
+      <ds-tab>Label</ds-tab>
+      <ds-tab>Label</ds-tab>
+      <ds-tab>Label</ds-tab>
+    </div>
+  </ds-page-header>
+
+  <div style="padding:32px;">
+    <ds-table-row>
+      <ds-cell-header
+        type="selection"
+        [allSelected]="countChecked(checked()) === tableRows.length"
+        [allIndeterminate]="countChecked(checked()) > 0 && countChecked(checked()) < tableRows.length"
+        (allSelectedChange)="toggleAll(tableRows, $event)"
+      />
+      <ds-cell-header style="flex:1;" type="default" title="File name"
+        [sortable]="true" [sortDirection]="sortDir()"
+        (sortClicked)="sortDir.set(sortDir() === 'asc' ? 'desc' : 'asc')" />
+      <ds-cell-header style="flex:1;" type="default" title="Status" />
+      <ds-cell-header style="flex:1;" type="default" title="Initial upload" [sortable]="true" />
+      <ds-cell-header type="action" />
+    </ds-table-row>
+
+    @for (row of tableRows; track row.id) {
+      <ds-table-row
+        [state]="activeId() === row.id ? 'active' : 'default'"
+        [interactive]="true"
+        [new]="row.isNew"
+        (clicked)="activeId.set(row.id)"
+      >
+        <ds-cell-selection
+          control="check"
+          [checked]="!!checked()[row.id]"
+          (checkedChange)="toggleRow(row.id, $event)"
+        />
+        <ds-cell style="flex:1;">{{ row.name }}</ds-cell>
+        <ds-cell style="flex:1;">
+          <ds-badge [label]="row.status" [status]="row.statusColor" variant="strong" size="s" />
+        </ds-cell>
+        <ds-cell style="flex:1;">{{ row.upload }}</ds-cell>
+        <ds-cell-action ariaLabel="Row actions">
+          <ds-flyout-menu slot="menu">
+            <ds-flyout-menu-item label="Edit"      icon="edit" />
+            <ds-flyout-menu-item label="Duplicate" icon="duplicate" />
+            <ds-flyout-menu-item label="Archive"   icon="archive" />
+            <ds-flyout-menu-item label="Delete"    icon="trash" />
+          </ds-flyout-menu>
+        </ds-cell-action>
+      </ds-table-row>
+    }
+  </div>
+</app-topbox-test-shell>

@@ -1,0 +1,49 @@
+// =============================================================
+// Modal Footer — atom interne
+// Source : Figma > -Components--Layout > .Footer (node 2076:7806)
+//
+// Spec :
+//   • Background Grey/050, border-top Grey/200
+//   • Padding 16px
+//   • Rounded bottom 4px
+//   • Layout : Back (gauche) + Actions (droite)
+// =============================================================
+
+:host {
+  display:          flex;
+  flex-direction:   column;
+  align-items:      center;
+  width:            100%;
+  background-color: var(--semantic-color-static-background-main-secondary);
+  border-top:       1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-bottom-left-radius:  var(--semantic-border-radius-s);
+  border-bottom-right-radius: var(--semantic-border-radius-s);
+}
+
+.ds-modal-footer__inner {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  width:           100%;
+  padding:         var(--semantic-measurement-spacing-m); // 16px
+  gap:             var(--semantic-measurement-spacing-m);
+}
+
+.ds-modal-footer__back {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  flex-shrink:    0;
+
+  &:empty { display: none; }
+}
+
+.ds-modal-footer__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m); // 16px
+  flex-shrink: 0;
+  margin-left: auto;
+
+  &:empty { display: none; }
+}

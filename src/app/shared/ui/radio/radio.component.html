@@ -1,0 +1,10 @@
+<div class="ds-radio__container">
+  <div class="ds-radio__circle">
+    @if (selected()) {
+      <div class="ds-radio__dot"></div>
+    }
+  </div>
+  @if (label()) {
+    <span class="ds-radio__label">{{ label() }}</span>
+  }
+</div>

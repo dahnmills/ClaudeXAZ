@@ -1,0 +1,15 @@
+<div class="ds-action-card__icon-wrap" aria-hidden="true">
+  <ng-content select="[slot=icon]" />
+</div>
+
+<div class="ds-action-card__body">
+  <p class="ds-action-card__title">{{ title() }}</p>
+  @if (description()) {
+    <p class="ds-action-card__description">{{ description() }}</p>
+  }
+</div>
+
+<a class="ds-action-card__link" [href]="linkHref()">
+  {{ linkLabel() }}
+  <span class="ds-action-card__arrow" aria-hidden="true">→</span>
+</a>

@@ -1,0 +1,29 @@
+// =============================================================
+// Cell Action — bouton 3 points + flyout menu
+// Source : Figma > -Components--Data Display > .Cell Action (28:21327)
+//
+// Spec :
+//   • Size M : 56×56, button-icon centré (40×40), icône 24px
+//   • Size S : 40×40, button-icon centré (32×32), icône 16px
+//   • Le bouton est délégué à <ds-button-icon type="plain">.
+// =============================================================
+
+:host {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  position:        relative;
+  flex-shrink:     0;
+  background-color: inherit;
+  box-sizing:      border-box;
+}
+
+:host.ds-cell-action--size-m { width: 56px; height: 56px; }
+:host.ds-cell-action--size-s { width: 40px; height: 40px; }
+
+.ds-cell-action__menu {
+  position: absolute;
+  right:    var(--semantic-measurement-spacing-xs);
+  top:      calc(100% - var(--semantic-measurement-spacing-xs));
+  z-index:  50;
+}

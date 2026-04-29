@@ -1,0 +1,108 @@
+// =============================================================
+// Cell Header — en-tête de colonne
+// Source : Figma > -Components--Data Display > Header Type (node 28:21694)
+//
+// Spec :
+//   • h-56 partout
+//   • Type Default  : titre Body L SemiBold + sort icon, padding p-8/2
+//                     Border-top 1px Grey/200, border-bottom 2px Grey/900
+//   • Type Action   : vide, h-56, mêmes borders
+//   • Type Selection: 56x56, checkbox 20x20 centrée, mêmes borders
+// =============================================================
+
+:host {
+  display:        flex;
+  flex-direction: column;
+  align-items:    stretch;
+  height:         56px;
+  width:          100%;
+  min-width:      0;
+  background:     var(--semantic-color-static-background-main-primary);
+  border-top:     1px solid var(--semantic-color-static-border-subtle-tertiary);  // Grey/200
+  border-bottom:  2px solid var(--semantic-color-static-background-accent-primary); // Grey/900
+  box-sizing:     border-box;
+}
+
+// ── Type=Action : largeur fixe 56px ─────────────────────────────
+:host.ds-cell-header--type-action {
+  width:           56px;
+  flex-shrink:     0;
+}
+.ds-cell-header__spacer { flex: 1; }
+
+// ── Type=Selection : largeur fixe 56px, checkbox centrée ────────
+:host.ds-cell-header--type-selection {
+  width:           56px;
+  flex-shrink:     0;
+  align-items:     center;
+  justify-content: center;
+}
+
+// ── Default : layout titre + sort ───────────────────────────────
+:host.ds-cell-header--type-default .ds-cell-header__content {
+  display:         inline-flex;
+  flex:            1;
+  align-items:     center;
+  justify-content: flex-start;
+  gap:             var(--semantic-measurement-spacing-xxs); // 4px — icône collée au libellé
+  padding:         var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-s);
+  min-width:       0;
+  background:      transparent;
+  border:          0;
+  text-align:      left;
+  color:           inherit;
+  cursor:          default;
+  border-radius:   var(--semantic-border-radius-s);
+}
+
+:host.ds-cell-header--type-default .ds-cell-header__content--sortable {
+  cursor: pointer;
+
+  &:hover .ds-cell-header__title { color: var(--semantic-color-interactive-text-strong-alt-hover); }
+  &:hover .ds-cell-header__sort-icon { color: var(--semantic-color-interactive-text-strong-alt-hover); }
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.ds-cell-header__titles {
+  display:        flex;
+  flex-direction: column;
+  min-width:      0;
+}
+
+.ds-cell-header__title {
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-l);
+  line-height:    var(--semantic-font-text-style-line-height-l);
+  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-none);
+  color:          var(--semantic-color-interactive-text-strong-alt-default); // Grey/900
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+}
+
+.ds-cell-header__subtitle {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: 20px;
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-tertiary); // Grey/500
+}
+
+// ── Sort icon (inline avec le titre) ───────────────────────────
+.ds-cell-header__sort-icon {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-text-main-tertiary); // Grey/500 (non trié)
+
+  // Sort actif (asc/desc) : couleur Grey/900
+  &.ds-cell-header__sort-icon--asc,
+  &.ds-cell-header__sort-icon--desc {
+    color: var(--semantic-color-interactive-text-strong-alt-default);
+  }
+}
+
+// ── Checkbox (select all) — délégué à <ds-checkbox> ────────────

@@ -1,0 +1,631 @@
+// =============================================================
+// SEMANTIC TOKENS
+// Source : Figma > Tokens > Collection "Semantic"
+// Tous les tokens sont des alias vers Foundation.
+// NE PAS ÉDITER MANUELLEMENT — source de vérité : Figma
+// =============================================================
+
+:root {
+
+  // ===========================================================
+  // COLOR — INTERACTIVE — BACKGROUND
+  // ===========================================================
+
+  // Strong / Default
+  --semantic-color-interactive-background-strong-default:          var(--foundation-color-blue-a-500);
+  --semantic-color-interactive-background-strong-hover:            var(--foundation-color-blue-a-600);
+  --semantic-color-interactive-background-strong-active:           var(--foundation-color-blue-a-700);
+  --semantic-color-interactive-background-strong-disabled:         var(--foundation-color-blue-a-500);
+
+  // Strong / Alt
+  --semantic-color-interactive-background-strong-alt-default:      var(--foundation-color-grey-900);
+  --semantic-color-interactive-background-strong-alt-hover:        var(--foundation-color-grey-800);
+  --semantic-color-interactive-background-strong-alt-active:       var(--foundation-color-grey-700);
+  --semantic-color-interactive-background-strong-alt-disabled:     var(--foundation-color-grey-900);
+
+  // Strong / Negative
+  --semantic-color-interactive-background-strong-negative-default:  var(--foundation-color-red-300);
+  --semantic-color-interactive-background-strong-negative-hover:    var(--foundation-color-red-400);
+  --semantic-color-interactive-background-strong-negative-active:   var(--foundation-color-red-500);
+  --semantic-color-interactive-background-strong-negative-disabled: var(--foundation-color-red-300);
+
+  // Strong / Positive
+  --semantic-color-interactive-background-strong-positive-default:  var(--foundation-color-green-500);
+  --semantic-color-interactive-background-strong-positive-hover:    var(--foundation-color-green-600);
+  --semantic-color-interactive-background-strong-positive-active:   var(--foundation-color-green-700);
+  --semantic-color-interactive-background-strong-positive-disabled: var(--foundation-color-green-500);
+
+  // Medium / Default
+  --semantic-color-interactive-background-medium-default:          var(--foundation-color-blue-a-200);
+  --semantic-color-interactive-background-medium-hover:            var(--foundation-color-blue-a-300);
+  --semantic-color-interactive-background-medium-active:           var(--foundation-color-blue-a-400);
+  --semantic-color-interactive-background-medium-disabled:         var(--foundation-color-blue-a-200);
+
+  // Medium / Alt
+  --semantic-color-interactive-background-medium-alt-default:      var(--foundation-color-grey-500);
+  --semantic-color-interactive-background-medium-alt-hover:        var(--foundation-color-grey-600);
+  --semantic-color-interactive-background-medium-alt-active:       var(--foundation-color-grey-700);
+  --semantic-color-interactive-background-medium-alt-disabled:     var(--foundation-color-grey-500);
+
+  // Light / Default
+  --semantic-color-interactive-background-light-default:           var(--foundation-color-blue-a-025);
+  --semantic-color-interactive-background-light-hover:             var(--foundation-color-blue-a-050);
+  --semantic-color-interactive-background-light-active:            var(--foundation-color-blue-a-100);
+  --semantic-color-interactive-background-light-disabled:          var(--foundation-color-blue-a-025);
+
+  // Light / Alt
+  --semantic-color-interactive-background-light-alt-default:       var(--foundation-color-grey-050);
+  --semantic-color-interactive-background-light-alt-hover:         var(--foundation-color-grey-100);
+  --semantic-color-interactive-background-light-alt-active:        var(--foundation-color-grey-200);
+  --semantic-color-interactive-background-light-alt-disabled:      var(--foundation-color-grey-050);
+
+  // Light / Negative
+  --semantic-color-interactive-background-light-negative-default:  var(--foundation-color-red-050);
+  --semantic-color-interactive-background-light-negative-hover:    var(--foundation-color-red-100);
+  --semantic-color-interactive-background-light-negative-active:   var(--foundation-color-red-200);
+  --semantic-color-interactive-background-light-negative-disabled: var(--foundation-color-red-050);
+
+  // Light / Positive
+  --semantic-color-interactive-background-light-positive-default:  var(--foundation-color-green-050);
+  --semantic-color-interactive-background-light-positive-hover:    var(--foundation-color-green-100);
+  --semantic-color-interactive-background-light-positive-active:   var(--foundation-color-green-200);
+  --semantic-color-interactive-background-light-positive-disabled: var(--foundation-color-green-050);
+
+  // Muted / Default
+  --semantic-color-interactive-background-muted-default:           var(--foundation-color-white-1000);
+  --semantic-color-interactive-background-muted-hover:             var(--foundation-color-blue-a-025);
+  --semantic-color-interactive-background-muted-active:            var(--foundation-color-blue-a-050);
+  --semantic-color-interactive-background-muted-disabled:          var(--foundation-color-white-1000);
+
+  // Muted / Alt
+  --semantic-color-interactive-background-muted-alt-default:       var(--foundation-color-white-1000);
+  --semantic-color-interactive-background-muted-alt-hover:         var(--foundation-color-grey-050);
+  --semantic-color-interactive-background-muted-alt-active:        var(--foundation-color-grey-100);
+  --semantic-color-interactive-background-muted-alt-disabled:      var(--foundation-color-white-1000);
+
+  // Neutral
+  --semantic-color-interactive-background-neutral-default:         var(--foundation-color-white-1000);
+  --semantic-color-interactive-background-neutral-hover:           var(--foundation-color-white-1000);
+  --semantic-color-interactive-background-neutral-active:          var(--foundation-color-white-1000);
+  --semantic-color-interactive-background-neutral-disabled:        var(--foundation-color-white-1000);
+
+
+  // ===========================================================
+  // COLOR — INTERACTIVE — TEXT
+  // ===========================================================
+
+  // Strong
+  --semantic-color-interactive-text-strong-default:                var(--foundation-color-blue-a-500);
+  --semantic-color-interactive-text-strong-hover:                  var(--foundation-color-blue-a-600);
+  --semantic-color-interactive-text-strong-active:                 var(--foundation-color-blue-a-700);
+  --semantic-color-interactive-text-strong-disabled:               var(--foundation-color-blue-a-500);
+
+  // Strong / Alt
+  --semantic-color-interactive-text-strong-alt-default:            var(--foundation-color-grey-900);
+  --semantic-color-interactive-text-strong-alt-hover:              var(--foundation-color-grey-800);
+  --semantic-color-interactive-text-strong-alt-active:             var(--foundation-color-grey-700);
+  --semantic-color-interactive-text-strong-alt-disabled:           var(--foundation-color-grey-900);
+
+  // Strong / Negative
+  --semantic-color-interactive-text-strong-negative-default:       var(--foundation-color-red-300);
+  --semantic-color-interactive-text-strong-negative-hover:         var(--foundation-color-red-400);
+  --semantic-color-interactive-text-strong-negative-active:        var(--foundation-color-red-500);
+  --semantic-color-interactive-text-strong-negative-disabled:      var(--foundation-color-red-300);
+
+  // Strong / Positive
+  --semantic-color-interactive-text-strong-positive-default:       var(--foundation-color-green-500);
+  --semantic-color-interactive-text-strong-positive-hover:         var(--foundation-color-green-600);
+  --semantic-color-interactive-text-strong-positive-active:        var(--foundation-color-green-700);
+  --semantic-color-interactive-text-strong-positive-disabled:      var(--foundation-color-green-500);
+
+  // Medium
+  --semantic-color-interactive-text-medium-default:                var(--foundation-color-blue-a-200);
+  --semantic-color-interactive-text-medium-hover:                  var(--foundation-color-blue-a-300);
+  --semantic-color-interactive-text-medium-active:                 var(--foundation-color-blue-a-400);
+  --semantic-color-interactive-text-medium-disabled:               var(--foundation-color-blue-a-200);
+
+  // Medium / Alt
+  --semantic-color-interactive-text-medium-alt-default:            var(--foundation-color-grey-500);
+  --semantic-color-interactive-text-medium-alt-hover:              var(--foundation-color-grey-600);
+  --semantic-color-interactive-text-medium-alt-active:             var(--foundation-color-grey-700);
+  --semantic-color-interactive-text-medium-alt-disabled:           var(--foundation-color-grey-500);
+
+  // Light
+  --semantic-color-interactive-text-light-default:                 var(--foundation-color-blue-a-025);
+  --semantic-color-interactive-text-light-hover:                   var(--foundation-color-blue-a-050);
+  --semantic-color-interactive-text-light-active:                  var(--foundation-color-blue-a-100);
+  --semantic-color-interactive-text-light-disabled:                var(--foundation-color-blue-a-025);
+
+  // Light / Alt
+  --semantic-color-interactive-text-light-alt-default:             var(--foundation-color-grey-050);
+  --semantic-color-interactive-text-light-alt-hover:               var(--foundation-color-grey-100);
+  --semantic-color-interactive-text-light-alt-active:              var(--foundation-color-grey-200);
+  --semantic-color-interactive-text-light-alt-disabled:            var(--foundation-color-grey-050);
+
+  // Light / Negative
+  --semantic-color-interactive-text-light-negative-default:        var(--foundation-color-red-050);
+  --semantic-color-interactive-text-light-negative-hover:          var(--foundation-color-red-100);
+  --semantic-color-interactive-text-light-negative-active:         var(--foundation-color-red-200);
+  --semantic-color-interactive-text-light-negative-disabled:       var(--foundation-color-red-050);
+
+  // Light / Positive
+  --semantic-color-interactive-text-light-positive-default:        var(--foundation-color-green-050);
+  --semantic-color-interactive-text-light-positive-hover:          var(--foundation-color-green-100);
+  --semantic-color-interactive-text-light-positive-active:         var(--foundation-color-green-200);
+  --semantic-color-interactive-text-light-positive-disabled:       var(--foundation-color-green-050);
+
+  // Muted
+  --semantic-color-interactive-text-muted-default:                 var(--foundation-color-white-1000);
+  --semantic-color-interactive-text-muted-hover:                   var(--foundation-color-blue-a-025);
+  --semantic-color-interactive-text-muted-active:                  var(--foundation-color-blue-a-050);
+  --semantic-color-interactive-text-muted-disabled:                var(--foundation-color-white-1000);
+
+  // Muted / Alt
+  --semantic-color-interactive-text-muted-alt-default:             var(--foundation-color-white-1000);
+  --semantic-color-interactive-text-muted-alt-hover:               var(--foundation-color-grey-050);
+  --semantic-color-interactive-text-muted-alt-active:              var(--foundation-color-grey-100);
+  --semantic-color-interactive-text-muted-alt-disabled:            var(--foundation-color-white-1000);
+
+  // Neutral
+  --semantic-color-interactive-text-neutral-default:               var(--foundation-color-white-1000);
+  --semantic-color-interactive-text-neutral-hover:                 var(--foundation-color-white-1000);
+  --semantic-color-interactive-text-neutral-active:                var(--foundation-color-white-1000);
+  --semantic-color-interactive-text-neutral-disabled:              var(--foundation-color-white-1000);
+
+
+  // ===========================================================
+  // COLOR — INTERACTIVE — BORDER
+  // ===========================================================
+
+  // Strong
+  --semantic-color-interactive-border-strong-default:              var(--foundation-color-blue-a-500);
+  --semantic-color-interactive-border-strong-hover:                var(--foundation-color-blue-a-600);
+  --semantic-color-interactive-border-strong-active:               var(--foundation-color-blue-a-700);
+  --semantic-color-interactive-border-strong-disabled:             var(--foundation-color-blue-a-500);
+
+  // Strong / Alt
+  --semantic-color-interactive-border-strong-alt-default:          var(--foundation-color-grey-900);
+  --semantic-color-interactive-border-strong-alt-hover:            var(--foundation-color-grey-800);
+  --semantic-color-interactive-border-strong-alt-active:           var(--foundation-color-grey-700);
+  --semantic-color-interactive-border-strong-alt-disabled:         var(--foundation-color-grey-900);
+
+  // Strong / Negative
+  --semantic-color-interactive-border-strong-negative-default:     var(--foundation-color-red-300);
+  --semantic-color-interactive-border-strong-negative-hover:       var(--foundation-color-red-400);
+  --semantic-color-interactive-border-strong-negative-active:      var(--foundation-color-red-500);
+  --semantic-color-interactive-border-strong-negative-disabled:    var(--foundation-color-red-300);
+
+  // Strong / Positive
+  --semantic-color-interactive-border-strong-positive-default:     var(--foundation-color-green-500);
+  --semantic-color-interactive-border-strong-positive-hover:       var(--foundation-color-green-600);
+  --semantic-color-interactive-border-strong-positive-active:      var(--foundation-color-green-700);
+  --semantic-color-interactive-border-strong-positive-disabled:    var(--foundation-color-green-500);
+
+  // Medium
+  --semantic-color-interactive-border-medium-default:              var(--foundation-color-blue-a-200);
+  --semantic-color-interactive-border-medium-hover:                var(--foundation-color-blue-a-300);
+  --semantic-color-interactive-border-medium-active:               var(--foundation-color-blue-a-400);
+  --semantic-color-interactive-border-medium-disabled:             var(--foundation-color-blue-a-200);
+
+  // Medium / Alt
+  --semantic-color-interactive-border-medium-alt-default:          var(--foundation-color-grey-500);
+  --semantic-color-interactive-border-medium-alt-hover:            var(--foundation-color-grey-600);
+  --semantic-color-interactive-border-medium-alt-active:           var(--foundation-color-grey-700);
+  --semantic-color-interactive-border-medium-alt-disabled:         var(--foundation-color-grey-500);
+
+  // Light
+  --semantic-color-interactive-border-light-default:               var(--foundation-color-blue-a-025);
+  --semantic-color-interactive-border-light-hover:                 var(--foundation-color-blue-a-050);
+  --semantic-color-interactive-border-light-active:                var(--foundation-color-blue-a-100);
+  --semantic-color-interactive-border-light-disabled:              var(--foundation-color-blue-a-025);
+
+  // Light / Alt
+  --semantic-color-interactive-border-light-alt-default:           var(--foundation-color-grey-050);
+  --semantic-color-interactive-border-light-alt-hover:             var(--foundation-color-grey-100);
+  --semantic-color-interactive-border-light-alt-active:            var(--foundation-color-grey-200);
+  --semantic-color-interactive-border-light-alt-disabled:          var(--foundation-color-grey-050);
+
+  // Light / Negative
+  --semantic-color-interactive-border-light-negative-default:      var(--foundation-color-red-050);
+  --semantic-color-interactive-border-light-negative-hover:        var(--foundation-color-red-100);
+  --semantic-color-interactive-border-light-negative-active:       var(--foundation-color-red-200);
+  --semantic-color-interactive-border-light-negative-disabled:     var(--foundation-color-red-050);
+
+  // Light / Positive
+  --semantic-color-interactive-border-light-positive-default:      var(--foundation-color-green-050);
+  --semantic-color-interactive-border-light-positive-hover:        var(--foundation-color-green-100);
+  --semantic-color-interactive-border-light-positive-active:       var(--foundation-color-green-200);
+  --semantic-color-interactive-border-light-positive-disabled:     var(--foundation-color-green-050);
+
+  // Muted
+  --semantic-color-interactive-border-muted-default:               var(--foundation-color-white-1000);
+  --semantic-color-interactive-border-muted-hover:                 var(--foundation-color-blue-a-025);
+  --semantic-color-interactive-border-muted-active:                var(--foundation-color-blue-a-050);
+  --semantic-color-interactive-border-muted-disabled:              var(--foundation-color-white-1000);
+
+  // Muted / Alt
+  --semantic-color-interactive-border-muted-alt-default:           var(--foundation-color-white-1000);
+  --semantic-color-interactive-border-muted-alt-hover:             var(--foundation-color-grey-050);
+  --semantic-color-interactive-border-muted-alt-active:            var(--foundation-color-grey-100);
+  --semantic-color-interactive-border-muted-alt-disabled:          var(--foundation-color-white-1000);
+
+  // Neutral
+  --semantic-color-interactive-border-neutral-default:             var(--foundation-color-white-1000);
+  --semantic-color-interactive-border-neutral-hover:               var(--foundation-color-white-1000);
+  --semantic-color-interactive-border-neutral-active:              var(--foundation-color-white-1000);
+  --semantic-color-interactive-border-neutral-disabled:            var(--foundation-color-white-1000);
+
+  // Focus (ring)
+  --semantic-color-interactive-border-focus:                       var(--foundation-color-blue-a-400);
+
+
+  // ===========================================================
+  // COLOR — INTERACTIVE — ICON
+  // ===========================================================
+
+  // Strong
+  --semantic-color-interactive-icon-strong-default:                var(--foundation-color-blue-a-500);
+  --semantic-color-interactive-icon-strong-hover:                  var(--foundation-color-blue-a-600);
+  --semantic-color-interactive-icon-strong-active:                 var(--foundation-color-blue-a-700);
+  --semantic-color-interactive-icon-strong-disabled:               var(--foundation-color-blue-a-500);
+
+  // Strong / Alt
+  --semantic-color-interactive-icon-strong-alt-default:            var(--foundation-color-grey-900);
+  --semantic-color-interactive-icon-strong-alt-hover:              var(--foundation-color-grey-800);
+  --semantic-color-interactive-icon-strong-alt-active:             var(--foundation-color-grey-700);
+  --semantic-color-interactive-icon-strong-alt-disabled:           var(--foundation-color-grey-900);
+
+  // Strong / Negative
+  --semantic-color-interactive-icon-strong-negative-default:       var(--foundation-color-red-300);
+  --semantic-color-interactive-icon-strong-negative-hover:         var(--foundation-color-red-400);
+  --semantic-color-interactive-icon-strong-negative-active:        var(--foundation-color-red-500);
+  --semantic-color-interactive-icon-strong-negative-disabled:      var(--foundation-color-red-300);
+
+  // Strong / Positive
+  --semantic-color-interactive-icon-strong-positive-default:       var(--foundation-color-green-500);
+  --semantic-color-interactive-icon-strong-positive-hover:         var(--foundation-color-green-600);
+  --semantic-color-interactive-icon-strong-positive-active:        var(--foundation-color-green-700);
+  --semantic-color-interactive-icon-strong-positive-disabled:      var(--foundation-color-green-500);
+
+  // Medium
+  --semantic-color-interactive-icon-medium-default:                var(--foundation-color-blue-a-200);
+  --semantic-color-interactive-icon-medium-hover:                  var(--foundation-color-blue-a-300);
+  --semantic-color-interactive-icon-medium-active:                 var(--foundation-color-blue-a-400);
+  --semantic-color-interactive-icon-medium-disabled:               var(--foundation-color-blue-a-200);
+
+  // Medium / Alt
+  --semantic-color-interactive-icon-medium-alt-default:            var(--foundation-color-grey-500);
+  --semantic-color-interactive-icon-medium-alt-hover:              var(--foundation-color-grey-600);
+  --semantic-color-interactive-icon-medium-alt-active:             var(--foundation-color-grey-700);
+  --semantic-color-interactive-icon-medium-alt-disabled:           var(--foundation-color-grey-500);
+
+  // Light
+  --semantic-color-interactive-icon-light-default:                 var(--foundation-color-blue-a-025);
+  --semantic-color-interactive-icon-light-hover:                   var(--foundation-color-blue-a-050);
+  --semantic-color-interactive-icon-light-active:                  var(--foundation-color-blue-a-100);
+  --semantic-color-interactive-icon-light-disabled:                var(--foundation-color-blue-a-025);
+
+  // Light / Alt
+  --semantic-color-interactive-icon-light-alt-default:             var(--foundation-color-grey-050);
+  --semantic-color-interactive-icon-light-alt-hover:               var(--foundation-color-grey-100);
+  --semantic-color-interactive-icon-light-alt-active:              var(--foundation-color-grey-200);
+  --semantic-color-interactive-icon-light-alt-disabled:            var(--foundation-color-grey-050);
+
+  // Light / Negative
+  --semantic-color-interactive-icon-light-negative-default:        var(--foundation-color-red-050);
+  --semantic-color-interactive-icon-light-negative-hover:          var(--foundation-color-red-100);
+  --semantic-color-interactive-icon-light-negative-active:         var(--foundation-color-red-200);
+  --semantic-color-interactive-icon-light-negative-disabled:       var(--foundation-color-red-050);
+
+  // Light / Positive
+  --semantic-color-interactive-icon-light-positive-default:        var(--foundation-color-green-050);
+  --semantic-color-interactive-icon-light-positive-hover:          var(--foundation-color-green-100);
+  --semantic-color-interactive-icon-light-positive-active:         var(--foundation-color-green-200);
+  --semantic-color-interactive-icon-light-positive-disabled:       var(--foundation-color-green-050);
+
+  // Muted
+  --semantic-color-interactive-icon-muted-default:                 var(--foundation-color-white-1000);
+  --semantic-color-interactive-icon-muted-hover:                   var(--foundation-color-blue-a-025);
+  --semantic-color-interactive-icon-muted-active:                  var(--foundation-color-blue-a-050);
+  --semantic-color-interactive-icon-muted-disabled:                var(--foundation-color-white-1000);
+
+  // Muted / Alt
+  --semantic-color-interactive-icon-muted-alt-default:             var(--foundation-color-white-1000);
+  --semantic-color-interactive-icon-muted-alt-hover:               var(--foundation-color-grey-050);
+  --semantic-color-interactive-icon-muted-alt-active:              var(--foundation-color-grey-100);
+  --semantic-color-interactive-icon-muted-alt-disabled:            var(--foundation-color-white-1000);
+
+  // Neutral
+  --semantic-color-interactive-icon-neutral-default:               var(--foundation-color-white-1000);
+  --semantic-color-interactive-icon-neutral-hover:                 var(--foundation-color-white-1000);
+  --semantic-color-interactive-icon-neutral-active:                var(--foundation-color-white-1000);
+  --semantic-color-interactive-icon-neutral-disabled:              var(--foundation-color-white-1000);
+
+
+  // ===========================================================
+  // COLOR — STATIC — BACKGROUND
+  // ===========================================================
+
+  // Brand (BlueA/800 — non aliasé dans Figma)
+  --semantic-color-static-background-brand:                        var(--foundation-color-blue-a-800);
+
+  // Main
+  --semantic-color-static-background-main-primary:                 var(--foundation-color-white-1000);
+  --semantic-color-static-background-main-secondary:               var(--foundation-color-grey-050);
+  --semantic-color-static-background-main-tertiary:                var(--foundation-color-grey-100);
+
+  // Main / Alt
+  --semantic-color-static-background-main-alt-primary:             var(--foundation-color-blue-a-025);
+  --semantic-color-static-background-main-alt-secondary:           var(--foundation-color-blue-a-050);
+  --semantic-color-static-background-main-alt-tertiary:            var(--foundation-color-blue-a-100);
+
+  // Subtle
+  --semantic-color-static-background-subtle-primary:               var(--foundation-color-white-1000);
+  --semantic-color-static-background-subtle-secondary:             var(--foundation-color-grey-050);
+  --semantic-color-static-background-subtle-tertiary:              var(--foundation-color-blue-a-025);
+
+  // Subtle / Functional
+  --semantic-color-static-background-subtle-functional-positive:   var(--foundation-color-green-050);
+  --semantic-color-static-background-subtle-functional-negative:   var(--foundation-color-red-050);
+  --semantic-color-static-background-subtle-functional-warning:    var(--foundation-color-orange-050);
+  --semantic-color-static-background-subtle-functional-informative: var(--foundation-color-blue-b-050);
+
+  // Functional
+  --semantic-color-static-background-functional-positive:          var(--foundation-color-green-500);
+  --semantic-color-static-background-functional-negative:          var(--foundation-color-red-500);
+  --semantic-color-static-background-functional-warning:           var(--foundation-color-orange-400);
+  --semantic-color-static-background-functional-informative:       var(--foundation-color-blue-b-500);
+  --semantic-color-static-background-functional-signal:            var(--foundation-color-red-300);
+
+  // Functional / Subtle
+  --semantic-color-static-background-functional-subtle-positive:   var(--foundation-color-green-050);
+  --semantic-color-static-background-functional-subtle-negative:   var(--foundation-color-red-050);
+  --semantic-color-static-background-functional-subtle-warning:    var(--foundation-color-orange-050);
+  --semantic-color-static-background-functional-subtle-informative: var(--foundation-color-blue-b-050);
+  --semantic-color-static-background-functional-subtle-signal:     var(--foundation-color-red-100);
+
+  // Accent
+  --semantic-color-static-background-accent-primary:               var(--foundation-color-grey-900);
+  --semantic-color-static-background-accent-secondary:             var(--foundation-color-grey-500);
+  --semantic-color-static-background-accent-tertiary:              var(--foundation-color-grey-200);
+
+  // Grade
+  --semantic-color-static-background-grade-1:                      var(--foundation-color-green-600);
+  --semantic-color-static-background-grade-2:                      var(--foundation-color-green-400);
+  --semantic-color-static-background-grade-3:                      var(--foundation-color-green-300);
+  --semantic-color-static-background-grade-4:                      var(--foundation-color-orange-200);
+  --semantic-color-static-background-grade-5:                      var(--foundation-color-orange-300);
+  --semantic-color-static-background-grade-6:                      var(--foundation-color-orange-400);
+  --semantic-color-static-background-grade-7:                      var(--foundation-color-red-400);
+  --semantic-color-static-background-grade-8:                      var(--foundation-color-red-600);
+  --semantic-color-static-background-grade-9:                      var(--foundation-color-red-700);
+  --semantic-color-static-background-grade-10:                     var(--foundation-color-red-900);
+  --semantic-color-static-background-grade-none:                   var(--foundation-color-grey-300);
+
+
+  // ===========================================================
+  // COLOR — STATIC — TEXT
+  // ===========================================================
+
+  --semantic-color-static-text-brand:                              var(--foundation-color-blue-a-800);
+
+  // Main
+  --semantic-color-static-text-main-primary:                       var(--foundation-color-grey-900);
+  --semantic-color-static-text-main-secondary:                     var(--foundation-color-grey-700);
+  --semantic-color-static-text-main-tertiary:                      var(--foundation-color-grey-500);
+
+  // Main / Alt
+  --semantic-color-static-text-main-alt-primary:                   var(--foundation-color-blue-a-500);
+  --semantic-color-static-text-main-alt-secondary:                 var(--foundation-color-blue-a-600);
+  --semantic-color-static-text-main-alt-tertiary:                  var(--foundation-color-blue-a-700);
+
+  // Main / Functional
+  --semantic-color-static-text-main-functional-positive:           var(--foundation-color-green-500);
+  --semantic-color-static-text-main-functional-negative:           var(--foundation-color-red-500);
+  --semantic-color-static-text-main-functional-warning:            var(--foundation-color-orange-400);
+  --semantic-color-static-text-main-functional-informative:        var(--foundation-color-blue-b-500);
+
+  // Subtle
+  --semantic-color-static-text-subtle-primary:                     var(--foundation-color-white-1000);
+  --semantic-color-static-text-subtle-secondary:                   var(--foundation-color-grey-050);
+  --semantic-color-static-text-subtle-tertiary:                    var(--foundation-color-grey-200);
+
+  // Subtle / Functional
+  --semantic-color-static-text-subtle-functional-positive:         var(--foundation-color-green-050);
+  --semantic-color-static-text-subtle-functional-negative:         var(--foundation-color-red-050);
+  --semantic-color-static-text-subtle-functional-warning:          var(--foundation-color-orange-050);
+  --semantic-color-static-text-subtle-functional-informative:      var(--foundation-color-blue-b-050);
+
+
+  // ===========================================================
+  // COLOR — STATIC — BORDER
+  // ===========================================================
+
+  --semantic-color-static-border-brand:                            var(--foundation-color-blue-a-800);
+
+  // Main
+  --semantic-color-static-border-main-primary:                     var(--foundation-color-grey-900);
+  --semantic-color-static-border-main-secondary:                   var(--foundation-color-grey-700);
+  --semantic-color-static-border-main-tertiary:                    var(--foundation-color-grey-500);
+
+  // Main / Functional
+  --semantic-color-static-border-main-functional-positive:         var(--foundation-color-green-500);
+  --semantic-color-static-border-main-functional-negative:         var(--foundation-color-red-500);
+  --semantic-color-static-border-main-functional-warning:          var(--foundation-color-orange-400);
+  --semantic-color-static-border-main-functional-informative:      var(--foundation-color-blue-b-500);
+
+  // Subtle
+  --semantic-color-static-border-subtle-primary:                   var(--foundation-color-white-1000);
+  --semantic-color-static-border-subtle-secondary:                 var(--foundation-color-grey-050);
+  --semantic-color-static-border-subtle-tertiary:                  var(--foundation-color-grey-200);
+
+  // Subtle / Functional
+  --semantic-color-static-border-subtle-functional-positive:       var(--foundation-color-green-050);
+  --semantic-color-static-border-subtle-functional-negative:       var(--foundation-color-red-050);
+  --semantic-color-static-border-subtle-functional-warning:        var(--foundation-color-orange-050);
+  --semantic-color-static-border-subtle-functional-informative:    var(--foundation-color-blue-b-050);
+
+
+  // ===========================================================
+  // COLOR — STATIC — ICON
+  // ===========================================================
+
+  --semantic-color-static-icon-brand:                              var(--foundation-color-blue-a-800);
+
+  // Main
+  --semantic-color-static-icon-main-primary:                       var(--foundation-color-grey-900);
+  --semantic-color-static-icon-main-secondary:                     var(--foundation-color-grey-700);
+  --semantic-color-static-icon-main-tertiary:                      var(--foundation-color-grey-500);
+
+  // Main / Functional
+  --semantic-color-static-icon-main-functional-positive:           var(--foundation-color-green-500);
+  --semantic-color-static-icon-main-functional-negative:           var(--foundation-color-red-500);
+  --semantic-color-static-icon-main-functional-warning:            var(--foundation-color-orange-400);
+  --semantic-color-static-icon-main-functional-informative:        var(--foundation-color-blue-b-500);
+
+  // Subtle
+  --semantic-color-static-icon-subtle-primary:                     var(--foundation-color-white-1000);
+  --semantic-color-static-icon-subtle-secondary:                   var(--foundation-color-grey-050);
+  --semantic-color-static-icon-subtle-tertiary:                    var(--foundation-color-grey-200);
+
+  // Subtle / Functional
+  --semantic-color-static-icon-subtle-functional-positive:         var(--foundation-color-green-050);
+  --semantic-color-static-icon-subtle-functional-negative:         var(--foundation-color-red-050);
+  --semantic-color-static-icon-subtle-functional-warning:          var(--foundation-color-orange-050);
+  --semantic-color-static-icon-subtle-functional-informative:      var(--foundation-color-blue-b-050);
+
+
+  // ===========================================================
+  // MEASUREMENT — OPACITY
+  // ===========================================================
+
+  --semantic-measurement-opacity-default:     var(--foundation-opacity-100);
+  --semantic-measurement-opacity-overlay:     var(--foundation-opacity-35);
+  --semantic-measurement-opacity-transparent: var(--foundation-opacity-0);
+  --semantic-measurement-opacity-disabled:    var(--foundation-opacity-40);
+
+
+  // ===========================================================
+  // MEASUREMENT — SIZING
+  // ===========================================================
+
+  --semantic-measurement-sizing-none: var(--foundation-sizing-0);
+  --semantic-measurement-sizing-xxs:  var(--foundation-sizing-2);
+  --semantic-measurement-sizing-xs:   var(--foundation-sizing-4);
+  --semantic-measurement-sizing-s:    var(--foundation-sizing-8);
+  --semantic-measurement-sizing-m:    var(--foundation-sizing-16);
+  --semantic-measurement-sizing-l:    var(--foundation-sizing-24);
+  --semantic-measurement-sizing-xl:   var(--foundation-sizing-32);
+  --semantic-measurement-sizing-2xl:  var(--foundation-sizing-48);
+  --semantic-measurement-sizing-3xl:  var(--foundation-sizing-64);
+
+
+  // ===========================================================
+  // MEASUREMENT — SPACING
+  // ===========================================================
+
+  --semantic-measurement-spacing-none: var(--foundation-spacing-0);
+  --semantic-measurement-spacing-xxs:  var(--foundation-spacing-2);
+  --semantic-measurement-spacing-xs:   var(--foundation-spacing-4);
+  --semantic-measurement-spacing-s:    var(--foundation-spacing-8);
+  --semantic-measurement-spacing-m:    var(--foundation-spacing-16);
+  --semantic-measurement-spacing-l:    var(--foundation-spacing-24);
+  --semantic-measurement-spacing-xl:   var(--foundation-spacing-32);
+  --semantic-measurement-spacing-2xl:  var(--foundation-spacing-48);
+  --semantic-measurement-spacing-3xl:  var(--foundation-spacing-64);
+
+
+  // ===========================================================
+  // BORDER — RADIUS
+  // ===========================================================
+
+  --semantic-border-radius-none:  var(--foundation-radius-0);
+  --semantic-border-radius-xs:    var(--foundation-radius-2);
+  --semantic-border-radius-s:     var(--foundation-radius-4);
+  --semantic-border-radius-m:     var(--foundation-radius-8);
+  --semantic-border-radius-l:     var(--foundation-radius-16);
+  --semantic-border-radius-xl:    var(--foundation-radius-32);
+  --semantic-border-radius-round: var(--foundation-radius-100);
+
+
+  // ===========================================================
+  // BORDER — SIZE
+  // ===========================================================
+
+  --semantic-border-size-none: var(--foundation-sizing-0);
+  --semantic-border-size-s:    var(--foundation-sizing-1);
+  --semantic-border-size-m:    var(--foundation-sizing-2);
+  --semantic-border-size-l:    var(--foundation-sizing-4);
+
+
+  // ===========================================================
+  // FONT — FAMILY
+  // ===========================================================
+
+  --semantic-font-family: var(--foundation-font-family);
+
+
+  // ===========================================================
+  // FONT — DISPLAY
+  // ===========================================================
+
+  --semantic-font-display-size-s:         var(--foundation-font-size-32);
+  --semantic-font-display-size-m:         var(--foundation-font-size-48);
+  --semantic-font-display-size-l:         var(--foundation-font-size-64);
+
+  --semantic-font-display-font-weight-s:  var(--foundation-font-weight-regular);
+  --semantic-font-display-font-weight-m:  var(--foundation-font-weight-semi-bold);
+  --semantic-font-display-font-weight-l:  var(--foundation-font-weight-bold);
+
+  --semantic-font-display-line-height-s:  var(--foundation-font-line-height-40);
+  --semantic-font-display-line-height-m:  var(--foundation-font-line-height-56);
+  --semantic-font-display-line-height-l:  var(--foundation-font-line-height-72);
+
+  --semantic-font-display-letter-spacing-none: var(--foundation-font-letter-spacing-0);
+  --semantic-font-display-letter-spacing-s:    var(--foundation-font-letter-spacing-0-2);
+
+
+  // ===========================================================
+  // FONT — TITLE
+  // ===========================================================
+
+  --semantic-font-title-size-xxs:         var(--foundation-font-size-16);
+  --semantic-font-title-size-xs:          var(--foundation-font-size-18);
+  --semantic-font-title-size-s:           var(--foundation-font-size-20);
+  --semantic-font-title-size-m:           var(--foundation-font-size-24);
+  --semantic-font-title-size-l:           var(--foundation-font-size-28);
+  --semantic-font-title-size-xl:          var(--foundation-font-size-32);
+
+  --semantic-font-title-font-weight-s:    var(--foundation-font-weight-regular);
+  --semantic-font-title-font-weight-m:    var(--foundation-font-weight-semi-bold);
+
+  --semantic-font-title-line-height-xs:   var(--foundation-font-line-height-20);
+  --semantic-font-title-line-height-s:    var(--foundation-font-line-height-24);
+  --semantic-font-title-line-height-m:    var(--foundation-font-line-height-28);
+  --semantic-font-title-line-height-l:    var(--foundation-font-line-height-32);
+
+  --semantic-font-title-letter-spacing-none: var(--foundation-font-letter-spacing-0);
+  --semantic-font-title-letter-spacing-s:    var(--foundation-font-letter-spacing-0-2);
+
+
+  // ===========================================================
+  // FONT — TEXT STYLE (body / UI)
+  // ===========================================================
+
+  --semantic-font-text-style-size-s:      var(--foundation-font-size-12);
+  --semantic-font-text-style-size-m:      var(--foundation-font-size-14);
+  --semantic-font-text-style-size-l:      var(--foundation-font-size-16);
+
+  --semantic-font-text-style-font-weight-regular:   var(--foundation-font-weight-regular);
+  --semantic-font-text-style-font-weight-semi-bold: var(--foundation-font-weight-semi-bold);
+  --semantic-font-text-style-font-weight-bold:      var(--foundation-font-weight-bold);
+
+  --semantic-font-text-style-line-height-s: var(--foundation-font-line-height-16);
+  --semantic-font-text-style-line-height-m: var(--foundation-font-line-height-20);
+  --semantic-font-text-style-line-height-l: var(--foundation-font-line-height-24);
+
+  --semantic-font-text-style-letter-spacing-none: var(--foundation-font-letter-spacing-0);
+  --semantic-font-text-style-letter-spacing-s:    var(--foundation-font-letter-spacing-0-2);
+  --semantic-font-text-style-letter-spacing-m:    var(--foundation-font-letter-spacing-0-5);
+  --semantic-font-text-style-letter-spacing-l:    var(--foundation-font-letter-spacing-1);
+}

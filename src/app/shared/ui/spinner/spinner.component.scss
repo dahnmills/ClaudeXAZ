@@ -1,0 +1,47 @@
+// =============================================================
+// Spinner
+// Source : Figma > -Components--Feedback > Spinner
+// Structure : anneau 14×14px, arc 270°, rotation continue
+//
+// Fidélité Figma :
+//   • 4 variants Figma = 4 keyframes (0°/90°/180°/270°)
+//   • innerRadius 0.76 → épaisseur ring ≈ 2px
+//   • Arc (270°) : Grey/500 → semantic-color-static-background-accent-secondary
+//   • Creux (90°) : Grey/200 → semantic-color-static-background-accent-tertiary
+//
+// Technique CSS : border sur 3 côtés = 270° coloré, côté bas transparent
+// =============================================================
+
+@keyframes ds-spinner-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ds-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-spinner__ring {
+  display:       block;
+  width:         14px;
+  height:        14px;
+  border-radius: 50%;
+
+  // 3 côtés = arc (270°) en Grey/500
+  // côté bas = creux (90°) en Grey/200
+  border-top:    2px solid var(--semantic-color-static-background-accent-secondary);
+  border-left:   2px solid var(--semantic-color-static-background-accent-secondary);
+  border-right:  2px solid var(--semantic-color-static-background-accent-secondary);
+  border-bottom: 2px solid var(--semantic-color-static-background-accent-tertiary);
+
+  animation: ds-spinner-rotate 0.75s linear infinite;
+}

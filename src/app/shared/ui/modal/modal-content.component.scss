@@ -1,0 +1,36 @@
+// =============================================================
+// Modal Content — atom interne
+// Source : Figma > -Components--Layout > .Content (node 2076:7825)
+//
+// Spec :
+//   • Background blanc (static-background-main-primary)
+//   • Padding 32px latéral / 24px vertical
+//   • gap 24px entre enfants
+//   • Hauteur fixe 460px par défaut, scroll vertical
+// =============================================================
+
+:host {
+  display:          flex;
+  flex-direction:   column;
+  align-items:      stretch;
+  gap:              var(--semantic-measurement-spacing-l); // 24px
+  width:            100%;
+  padding:          var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl); // 24/32
+  background-color: var(--semantic-color-static-background-main-primary);
+  overflow-x:       clip;
+  overflow-y:       auto;
+
+  // Scrollbar style aligné Figma (rail Grey/050, thumb Grey/200, arrondi)
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background:    var(--semantic-color-static-background-main-secondary);
+    border-radius: var(--semantic-border-radius-round);
+    margin:        var(--semantic-measurement-spacing-s) 0;
+  }
+  &::-webkit-scrollbar-thumb {
+    background:    var(--semantic-color-static-background-accent-tertiary);
+    border-radius: var(--semantic-border-radius-round);
+  }
+}

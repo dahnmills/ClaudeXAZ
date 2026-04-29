@@ -1,0 +1,91 @@
+// =============================================================
+// Action Card
+// Source : Figma > Layout cible > Homepage > Quick actions
+//
+// Fidélité Figma :
+//   • Bordure Grey/200, radius 4px, padding 16px
+//   • Icon wrap : 56×56px, radius 8px, fond BlueA/025
+//   • Titre : 16px SemiBold Grey/900
+//   • Description : 14px Regular Grey/700
+//   • Lien : BlueA/500, arrow →
+// =============================================================
+
+:host {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--foundation-spacing-16);    // 16px
+  padding:        var(--foundation-spacing-16);
+  border:         1px solid var(--semantic-color-static-border-subtle-tertiary); // Grey/200
+  border-radius:  var(--semantic-border-radius-s);                               // 4px
+  background:     var(--semantic-color-static-background-main-primary);          // white
+  transition:     box-shadow 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+// ── Icon wrap ─────────────────────────────────────────────────
+.ds-action-card__icon-wrap {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           56px;
+  height:          56px;
+  border-radius:   var(--foundation-radius-8);                                   // 8px
+  background:      var(--semantic-color-static-background-main-alt-primary);     // BlueA/025
+  color:           var(--semantic-color-interactive-text-strong-default);        // BlueA/500
+  flex-shrink:     0;
+}
+
+// ── Body ──────────────────────────────────────────────────────
+.ds-action-card__body {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--foundation-spacing-8);
+  flex:           1;
+}
+
+.ds-action-card__title {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);               // 16px
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: var(--semantic-font-text-style-line-height-l);        // 24px
+  color:       var(--semantic-color-static-text-main-primary);       // Grey/900
+}
+
+.ds-action-card__description {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);               // 14px
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-m);        // 20px
+  color:       var(--semantic-color-static-text-main-secondary);     // Grey/700
+}
+
+// ── Link ──────────────────────────────────────────────────────
+.ds-action-card__link {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             var(--foundation-spacing-4);
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-l);
+  font-weight:     var(--semantic-font-text-style-font-weight-regular);
+  line-height:     var(--semantic-font-text-style-line-height-l);
+  color:           var(--semantic-color-interactive-text-strong-default);  // BlueA/500
+  text-decoration: none;
+  transition:      color 0.15s ease;
+  align-self:      flex-start;
+
+  &:hover {
+    color: var(--semantic-color-interactive-text-strong-hover);              // BlueA/600
+  }
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+    border-radius:  2px;
+  }
+}
+
+.ds-action-card__arrow {
+  font-size: 14px;
+}

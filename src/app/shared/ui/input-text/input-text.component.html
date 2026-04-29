@@ -1,0 +1,31 @@
+<div [class]="hostClasses()">
+  @if (label()) {
+    <label class="ds-input-text__label" [for]="inputId()">
+      {{ label() }}
+      @if (optional()) {
+        <span class="ds-input-text__optional">(optional)</span>
+      }
+    </label>
+  }
+
+  <div class="ds-input-text__container">
+    <ng-content select="[slot=prepend]" />
+
+    <input
+      class="ds-input-text__input"
+      [id]="inputId()"
+      type="text"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [readOnly]="readonly()"
+      [attr.aria-invalid]="error() || null"
+      [(ngModel)]="value"
+    />
+
+    <ng-content select="[slot=append]" />
+  </div>
+
+  @if (error() && errorMessage()) {
+    <span class="ds-input-text__error-msg" role="alert">{{ errorMessage() }}</span>
+  }
+</div>

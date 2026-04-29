@@ -1,0 +1,23 @@
+// =============================================================
+// Flyout Menu — organism (dropdown panel)
+// Source : Figma > -Components--Action > Flyout Menu (node 1:21)
+//
+// Spec :
+//   • Background blanc, rounded 4px
+//   • Drop shadow Bottom/400 : 0 2px 4px rgba(65,65,65,0.5)
+//   • Padding 8px vertical, 0 horizontal
+//   • Largeur min 196px, ajustable par le consommateur
+//   • Items empilés (display:flex column)
+// =============================================================
+
+:host {
+  display:        inline-flex;
+  flex-direction: column;
+  align-items:    stretch;
+  min-width:      196px;
+  background:     var(--semantic-color-static-background-main-primary); // White
+  border-radius:  var(--semantic-border-radius-s); // 4px
+  box-shadow:     0 2px 4px rgba(65, 65, 65, 0.5); // Shadows/Bottom/400
+  padding:        var(--semantic-measurement-spacing-s) 0; // 8px vertical
+  overflow:       hidden;
+}

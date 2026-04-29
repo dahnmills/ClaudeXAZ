@@ -1,0 +1,21 @@
+@if (topbox()) {
+  <div class="ds-page-header__topbox">
+    <ng-content select="[slot=topbox]" />
+  </div>
+}
+
+@if (breadcrumb()) {
+  <div class="ds-page-header__breadcrumbs">
+    <ng-content select="[slot=breadcrumbs]" />
+  </div>
+}
+
+<div class="ds-page-header__title">
+  <ng-content select="[slot=title]" />
+</div>
+
+@if (tabs()) {
+  <div class="ds-page-header__tabs">
+    <ng-content select="[slot=tabs]" />
+  </div>
+}
