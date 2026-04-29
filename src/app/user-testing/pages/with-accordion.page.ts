@@ -18,7 +18,8 @@ import { CellHeaderComponent } from '../../shared/ui/table/cell-header.component
 import { CellSelectionComponent } from '../../shared/ui/table/cell-selection.component';
 import { CellActionComponent } from '../../shared/ui/table/cell-action.component';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
-import { SECTIONS, TABLE_ROWS, type TableRow } from '../mocks';
+import { TableToolbarComponent } from '../table-toolbar/table-toolbar.component';
+import { SECTIONS, TABLE_ROWS, TABLE_TOOLBAR, type TableRow } from '../mocks';
 
 @Component({
   selector: 'app-with-accordion-page',
@@ -29,7 +30,7 @@ import { SECTIONS, TABLE_ROWS, type TableRow } from '../mocks';
     TabComponent, LinkComponent, ButtonIconComponent, IconComponent,
     FlyoutMenuComponent, FlyoutMenuItemComponent,
     TableRowComponent, CellComponent, CellHeaderComponent,
-    CellSelectionComponent, CellActionComponent, BadgeComponent,
+    CellSelectionComponent, CellActionComponent, BadgeComponent, TableToolbarComponent,
   ],
   templateUrl: './with-accordion.page.html',
 })
@@ -42,6 +43,7 @@ export class WithAccordionPage {
 
   sections   = SECTIONS;
   tableRows  = TABLE_ROWS;
+  toolbar    = TABLE_TOOLBAR;
 
   countChecked(map: Record<string, boolean>): number {
     return Object.values(map).filter(Boolean).length;

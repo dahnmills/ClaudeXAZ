@@ -1,0 +1,14 @@
+<div class="ut-table-toolbar">
+  <div class="ut-table-toolbar__summary">
+    <span class="ut-table-toolbar__count">{{ total() }} {{ itemsLabel() }}</span>
+    @if (selected() > 0) {
+      <span class="ut-table-toolbar__selected">{{ selected() }} {{ selectedLabel() }}</span>
+    }
+  </div>
+
+  <div class="ut-table-toolbar__actions">
+    @for (actionLabel of actionLabels(); track actionLabel) {
+      <ds-button type="secondary" tone="accent">{{ actionLabel }}</ds-button>
+    }
+  </div>
+</div>

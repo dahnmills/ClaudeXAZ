@@ -22,6 +22,7 @@ import { CellHeaderComponent } from '../../shared/ui/table/cell-header.component
 import { CellSelectionComponent } from '../../shared/ui/table/cell-selection.component';
 import { CellActionComponent } from '../../shared/ui/table/cell-action.component';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
+import { TableToolbarComponent } from '../table-toolbar/table-toolbar.component';
 
 const sections: PropertySection[] = [
   {
@@ -74,6 +75,12 @@ const tableRows = [
   { name: 'Evergrow',                status: 'Uploaded',  statusColor: 'success', upload: '04/05/2023' },
 ];
 
+const toolbar = {
+  itemsLabel: 'files',
+  selectedLabel: 'selected',
+  actionLabels: ['Filters', 'Sort', 'Columns'],
+};
+
 const meta: Meta = {
   title: 'User Testing/Topbox/With Modal',
   parameters: {
@@ -108,6 +115,7 @@ const meta: Meta = {
         CellSelectionComponent,
         CellActionComponent,
         BadgeComponent,
+        TableToolbarComponent,
       ],
     }),
   ],
@@ -125,6 +133,7 @@ export const Default: Story = {
       checked:  signal<Record<string, boolean>>({}),
       activeId: signal<string | null>(null),
       sections,
+      toolbar,
       tableRows: tableRows.map((r, i) => ({ ...r, id: String(i + 1), isNew: i < 2 })),
       toggleCheck(rowId: string, current: Record<string, boolean>, value: boolean, target: ReturnType<typeof signal<Record<string, boolean>>>): void {
         target.set({ ...current, [rowId]: value });
@@ -215,6 +224,14 @@ export const Default: Story = {
 
         <!-- Design System table -->
         <div style="padding:32px;">
+          <app-table-toolbar
+            [total]="tableRows.length"
+            [selected]="countChecked(checked())"
+            [itemsLabel]="toolbar.itemsLabel"
+            [selectedLabel]="toolbar.selectedLabel"
+            [actionLabels]="toolbar.actionLabels"
+          />
+
           <ds-table-row>
             <ds-cell-header
               type="selection"

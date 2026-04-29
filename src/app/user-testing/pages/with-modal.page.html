@@ -68,6 +68,14 @@
   </ds-page-header>
 
   <div style="padding:32px;">
+    <app-table-toolbar
+      [total]="tableRows.length"
+      [selected]="countChecked(checked())"
+      [itemsLabel]="toolbar.itemsLabel"
+      [selectedLabel]="toolbar.selectedLabel"
+      [actionLabels]="toolbar.actionLabels"
+    />
+
     <ds-table-row>
       <ds-cell-header
         type="selection"

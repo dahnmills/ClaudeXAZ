@@ -9,6 +9,12 @@ export interface TableRow {
   isNew: boolean;
 }
 
+export interface TableToolbarConfig {
+  itemsLabel: string;
+  selectedLabel: string;
+  actionLabels: string[];
+}
+
 export const SECTIONS: PropertySection[] = [
   {
     title: 'Buyer information',
@@ -59,3 +65,9 @@ export const TABLE_ROWS: TableRow[] = [
   { id: '6', name: 'My Vegetarian Dinner',    status: 'Uploaded',  statusColor: 'success', upload: '04/05/2023', isNew: false },
   { id: '7', name: 'Evergrow',                status: 'Uploaded',  statusColor: 'success', upload: '04/05/2023', isNew: false },
 ];
+
+export const TABLE_TOOLBAR: TableToolbarConfig = {
+  itemsLabel: 'files',
+  selectedLabel: 'selected',
+  actionLabels: ['Filters', 'Sort', 'Columns'],
+};
