@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
       <h1>User testing scenarios</h1>
       <p>Pick a scenario to open the prototype.</p>
       <ul>
+        <li><a routerLink="/home">Home</a></li>
         <li><a routerLink="/accordion">With Accordion</a></li>
         <li><a routerLink="/modal">With Modal</a></li>
       </ul>
