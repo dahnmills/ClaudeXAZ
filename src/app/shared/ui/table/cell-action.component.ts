@@ -1,4 +1,4 @@
-import { Component, computed, input, output, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, computed, inject, input, output, signal } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
 import { ButtonIconComponent } from '../button-icon/button-icon.component';
 
@@ -27,6 +27,8 @@ export type CellActionSize = 's' | 'm';
   },
 })
 export class CellActionComponent {
+  private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
+
   size      = input<CellActionSize>('m');
   ariaLabel = input<string>('Row actions');
 
@@ -50,6 +52,15 @@ export class CellActionComponent {
   onMenuClick(event: MouseEvent): void {
     // Click sur un item du menu : on ferme. Le clic ne propage pas vers la rangée.
     event.stopPropagation();
+    this.open.set(false);
+    this.menuClosed.emit();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.open()) return;
+    const target = event.target as Node | null;
+    if (target && this.hostRef.nativeElement.contains(target)) return;
     this.open.set(false);
     this.menuClosed.emit();
   }

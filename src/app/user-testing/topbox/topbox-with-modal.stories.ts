@@ -150,7 +150,7 @@ export const Default: Story = {
       },
     },
     template: `
-      <app-topbox-test-shell>
+      <app-topbox-test-shell (click)="menuOpen.set(false)">
         <ds-topbox
           slot="topbox"
           dataType="buyer"
@@ -186,7 +186,7 @@ export const Default: Story = {
               </ds-link>
 
               <!-- More actions : bouton + flyout-menu absolu -->
-              <div style="position:relative;">
+              <div style="position:relative;" (click)="$event.stopPropagation()">
                 <ds-button-icon
                   type="plain"
                   ariaLabel="More actions"
@@ -198,6 +198,7 @@ export const Default: Story = {
                 @if (menuOpen()) {
                   <ds-flyout-menu
                     style="position:absolute;right:0;top:calc(100% + 4px);z-index:50;"
+                    (click)="$event.stopPropagation()"
                   >
                     <ds-flyout-menu-item label="Duplicate" icon="duplicate" (clicked)="menuOpen.set(false)" />
                     <ds-flyout-menu-item label="Archive"   icon="archive"   (clicked)="menuOpen.set(false)" />
