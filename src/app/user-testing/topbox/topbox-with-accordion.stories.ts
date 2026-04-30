@@ -176,9 +176,6 @@ export const Default: Story = {
             <ds-crumb label="Home" href="#" />
             <ds-crumb label="Crumb" href="#" />
             <ds-crumb label="Current page" currentPage />
-          </ds-breadcrumbs>
-
-          <ds-page-title slot="title" title="Current page">
             <div slot="actions" style="display:flex;gap:16px;align-items:center;">
               <ds-link href="#" weight="semi-bold">
                 <ds-icon slot="icon-left" name="arrow-right" [size]="16" />
@@ -212,7 +209,9 @@ export const Default: Story = {
                 }
               </div>
             </div>
-          </ds-page-title>
+          </ds-breadcrumbs>
+
+          <ds-page-title slot="title" title="Current page" />
 
           <div slot="tabs" style="display:flex;gap:32px;">
             <ds-tab [selected]="true">Label</ds-tab>
