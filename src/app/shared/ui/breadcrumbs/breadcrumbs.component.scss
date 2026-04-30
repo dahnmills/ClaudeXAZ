@@ -1,15 +1,30 @@
-// =============================================================
-// Breadcrumbs — atom (container)
-// Source : Figma > -Components--Action > Breadcrumbs (node 1704:16742)
-//
-// Spec :
-//   • Hauteur 20px, items-start (alignement haut), overflow caché
-//   • Reçoit une suite de <ds-crumb> via content projection
-// =============================================================
-
 :host {
+  display:         flex;
+  align-items:     center;
+  justify-content: flex-start;
+  width:           100%;
+  min-height:      32px;
+  gap:             var(--semantic-measurement-spacing-m);
+}
+
+.ds-breadcrumbs__trail {
   display:     flex;
   align-items: center;
   height:      20px;
   overflow:    hidden;
+  flex:        1 1 auto;
+  min-width:   0;
+  order:       1;
+}
+
+.ds-breadcrumbs__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m);
+  height:      32px;
+  flex-shrink: 0;
+  margin-left: auto;
+  order:       2;
+
+  &:empty { display: none; }
 }
