@@ -4,11 +4,11 @@ import { Component } from '@angular/core';
   selector: 'ds-breadcrumbs',
   standalone: true,
   template: `
-    <div class="ds-breadcrumbs__trail">
-      <ng-content select=":not([slot=actions])" />
-    </div>
     <div class="ds-breadcrumbs__actions">
       <ng-content select="[slot=actions]" />
+    </div>
+    <div class="ds-breadcrumbs__trail">
+      <ng-content />
     </div>
   `,
   styleUrl: './breadcrumbs.component.scss',
