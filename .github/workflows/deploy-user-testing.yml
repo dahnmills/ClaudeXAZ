@@ -17,6 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,17 +34,24 @@ jobs:
       - name: Build Angular app for Pages
         run: npm run build -- --configuration production --base-href "/ClaudeXAZ/"
 
+      - name: Debug artifact size
+        run: |
+          du -sh dist/design-system/browser
+          ls -la dist/design-system/browser
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
+          name: github-pages
           path: dist/design-system/browser
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
