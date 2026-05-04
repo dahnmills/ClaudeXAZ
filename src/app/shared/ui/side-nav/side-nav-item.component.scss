@@ -58,12 +58,13 @@
 
 // ── Icon ──────────────────────────────────────────────────────
 .ds-side-nav-item__icon {
-  display:     inline-flex;
-  align-items: center;
-  width:       var(--foundation-sizing-24);   // 24px
-  height:      var(--foundation-sizing-24);
-  flex-shrink: 0;
-  color:       currentColor;
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           var(--foundation-sizing-24);   // 24px
+  height:          var(--foundation-sizing-24);
+  flex-shrink:     0;
+  color:           currentColor;
 }
 
 // ── Label ─────────────────────────────────────────────────────
@@ -86,10 +87,9 @@
   padding:         0;
   width:           40px;
   align-self:      center;
+  gap:             0;
 
   .ds-side-nav-item__label {
-    opacity:    0;
-    max-width:  0;
-    pointer-events: none;
+    display: none;
   }
 }

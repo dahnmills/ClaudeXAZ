@@ -1,12 +1,17 @@
 <div class="ds-side-nav__items" role="menu">
   <ng-content />
 </div>
-<button
-  type="button"
-  class="ds-side-nav__toggle"
-  [attr.aria-expanded]="!collapsed()"
-  [attr.aria-label]="collapsed() ? 'Expand navigation' : 'Collapse navigation'"
-  (click)="toggle()"
->
-  <ds-icon [name]="collapsed() ? 'chevron-double-right' : 'chevron-double-left'" [size]="16" />
-</button>
+<div class="ds-side-nav__bottom">
+  <button
+    type="button"
+    class="ds-side-nav__toggle"
+    [attr.aria-expanded]="!collapsed()"
+    [attr.aria-label]="collapsed() ? 'Open panel' : 'Close panel'"
+    (click)="toggle()"
+  >
+    <span class="ds-side-nav__toggle-icon">
+      <ds-icon name="panel-left" [size]="20" />
+    </span>
+    <span class="ds-side-nav__toggle-label">{{ collapsed() ? 'Open panel' : 'Close panel' }}</span>
+  </button>
+</div>

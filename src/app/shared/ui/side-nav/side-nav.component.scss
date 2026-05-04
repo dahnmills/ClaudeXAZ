@@ -1,7 +1,11 @@
+// =============================================================
+// Side Nav (Figma 2083:6932)
+// =============================================================
+
 :host {
   display:        flex;
   flex-direction: column;
-  width:          240px;
+  width:          280px;
   min-height:     100%;
   background:     var(--semantic-color-static-background-main-secondary);
   border-right:   1px solid var(--semantic-color-static-border-subtle-tertiary);
@@ -19,23 +23,67 @@
   min-width:      0;
 }
 
+// ── Bottom (Close panel) ─────────────────────────────────────
+.ds-side-nav__bottom {
+  padding:    var(--foundation-spacing-8);
+  border-top: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+}
+
+:host(.ds-side-nav--collapsed) .ds-side-nav__bottom {
+  border-top: 0;
+}
+
 .ds-side-nav__toggle {
   display:         flex;
   align-items:     center;
-  justify-content: center;
-  width:           32px;
-  height:          32px;
-  margin:          var(--semantic-measurement-spacing-s) auto var(--semantic-measurement-spacing-m);
+  gap:             var(--foundation-spacing-8);
+  width:           100%;
+  height:          var(--foundation-sizing-40);
+  padding:         0 var(--foundation-spacing-8);
   border:          0;
-  background:      var(--semantic-color-interactive-background-neutral-default);
-  border:          1px solid var(--semantic-color-static-border-subtle-tertiary);
-  border-radius:   var(--semantic-border-radius-round);
+  background:      transparent;
+  border-radius:   var(--foundation-radius-8);
   cursor:          pointer;
-  color:           var(--semantic-color-static-icon-main-secondary);
+  color:           var(--semantic-color-static-text-main-secondary);
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-l);
+  line-height:     var(--semantic-font-text-style-line-height-l);
   transition:      background 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background: var(--semantic-color-interactive-background-muted-hover);
+    background: var(--semantic-color-static-background-main-alt-primary);
     color:      var(--semantic-color-interactive-text-strong-default);
   }
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.ds-side-nav__toggle-icon {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           var(--foundation-sizing-24);
+  height:          var(--foundation-sizing-24);
+  flex-shrink:     0;
+}
+
+.ds-side-nav__toggle-label {
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+// ── Collapsed: hide label, center icon ───────────────────────
+:host(.ds-side-nav--collapsed) .ds-side-nav__toggle {
+  justify-content: center;
+  padding:         0;
+  width:           40px;
+  margin:          0 auto;
+  gap:             0;
+}
+
+:host(.ds-side-nav--collapsed) .ds-side-nav__toggle-label {
+  display: none;
 }

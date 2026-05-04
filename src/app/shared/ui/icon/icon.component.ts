@@ -282,6 +282,12 @@ const ICON_PATHS: Record<string, string> = {
     <path d="M3 12h18M3 6h18M3 18h18"
           stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
 
+  'panel-left': `
+    <rect x="3" y="5" width="18" height="14" rx="2"
+          stroke="currentColor" stroke-width="1.5" fill="none"/>
+    <path d="M9 5v14"
+          stroke="currentColor" stroke-width="1.5"/>`,
+
   grid: `
     <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
     <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
