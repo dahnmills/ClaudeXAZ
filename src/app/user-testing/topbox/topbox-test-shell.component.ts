@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { HeaderComponent } from '../../shared/ui/header/header.component';
 import { LogoComponent } from '../../shared/ui/logo/logo.component';
 import { TabComponent } from '../../shared/ui/tab/tab.component';
@@ -34,6 +34,7 @@ import { SideNavItemComponent } from '../../shared/ui/side-nav/side-nav-item.com
 export class TopboxTestShellComponent {
   /** Pilote l'animation d'ouverture/fermeture du slot [slot=topbox-extension] */
   extensionExpanded = input<boolean>(false);
+  sideNavCollapsed = signal<boolean>(true);
 
   extensionClasses = computed(() => [
     'ut-main__extension',
