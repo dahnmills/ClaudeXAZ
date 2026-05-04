@@ -53,3 +53,47 @@
   display:        flex;
   flex-direction: column;
 }
+
+// ── Account flyout ───────────────────────────────────────────
+.ut-account {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
+
+.ut-account__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 100;
+  color: var(--semantic-color-static-text-main-primary);
+
+  ds-flyout-menu { min-width: 280px; }
+}
+
+.ut-account__header {
+  padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-xl);
+}
+
+.ut-account__name {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color: var(--semantic-color-static-text-main-primary);
+}
+
+.ut-account__mail {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.ut-account__sep {
+  height: 1px;
+  margin: var(--semantic-measurement-spacing-s) 0;
+  background: var(--semantic-color-static-border-subtle-tertiary);
+}

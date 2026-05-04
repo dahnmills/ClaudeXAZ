@@ -6,8 +6,8 @@
     <ds-tab tone="reversed">Home</ds-tab>
     <ds-tab tone="reversed" [selected]="true">Buyers</ds-tab>
     <ds-tab tone="reversed">Policies</ds-tab>
-    <ds-tab tone="reversed">Tools</ds-tab>
-    <ds-tab tone="reversed">Configuration</ds-tab>
+    <ds-tab tone="reversed" [chevron]="true">Tools</ds-tab>
+    <ds-tab tone="reversed" [chevron]="true">Configuration</ds-tab>
   </ng-container>
 
   <ng-container slot="actions">
@@ -23,7 +23,25 @@
   </ng-container>
 
   <ng-container slot="account">
-    <ds-tab tone="reversed">John Doe</ds-tab>
+    <div class="ut-account" (click)="$event.stopPropagation()">
+      <ds-tab tone="reversed" [chevron]="true" (clicked)="toggleAccountMenu()">John Doe</ds-tab>
+      @if (accountMenuOpen()) {
+        <div class="ut-account__menu">
+          <ds-flyout-menu>
+            <div class="ut-account__header">
+              <p class="ut-account__name">John Doe</p>
+              <p class="ut-account__mail">John.doe&#64;allianz-trade.com</p>
+            </div>
+            <div class="ut-account__sep"></div>
+            <ds-flyout-menu-item label="Settings"  icon="settings" />
+            <ds-flyout-menu-item label="Dark mode" icon="eye" />
+            <ds-flyout-menu-item label="Act as"    icon="user" />
+            <div class="ut-account__sep"></div>
+            <ds-flyout-menu-item label="Log out"   icon="lock" />
+          </ds-flyout-menu>
+        </div>
+      }
+    </div>
   </ng-container>
 </ds-header>
 
