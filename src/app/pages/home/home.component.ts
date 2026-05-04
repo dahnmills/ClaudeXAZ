@@ -1,24 +1,18 @@
 import { Component, signal } from '@angular/core';
 import {
-  HeaderComponent,
-  LogoComponent,
-  ButtonIconComponent,
-  TabComponent,
   SearchBarComponent,
   IconComponent,
 } from '../../shared/ui';
 import type { SearchRecentItem } from '../../shared/ui/search-bar/search-bar.component';
 import { ActionCardComponent } from '../../shared/ui/action-card/action-card.component';
 import { HeroIllustrationComponent } from './hero-illustration.component';
+import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
-    HeaderComponent,
-    LogoComponent,
-    ButtonIconComponent,
-    TabComponent,
+    TopboxTestShellComponent,
     SearchBarComponent,
     ActionCardComponent,
     HeroIllustrationComponent,

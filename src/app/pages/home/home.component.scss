@@ -3,19 +3,8 @@
 // Source : Figma > Layout cible > node 2865:10424
 // =============================================================
 
-// ── Shell ─────────────────────────────────────────────────────
 :host {
-  display:        flex;
-  flex-direction: column;
-  height:         100vh;
-  overflow:       hidden;
-}
-
-// ── Layout : sidenav + main ───────────────────────────────────
-.home-layout {
-  display:  flex;
-  flex:     1;
-  overflow: hidden;
+  display: block;
 }
 
 // ── Main content area ─────────────────────────────────────────

@@ -1,42 +1,4 @@
-<!-- ══ Header ══════════════════════════════════════════════════ -->
-<ds-header>
-
-  <!-- Logo Qirin (reversed = blanc sur fond brand) -->
-  <ds-logo slot="logo" [reversed]="true" />
-
-  <!-- Navigation tabs -->
-  <ng-container slot="tabs">
-    <ds-tab tone="reversed" [selected]="true">Home</ds-tab>
-    <ds-tab tone="reversed">Buyers</ds-tab>
-    <ds-tab tone="reversed">Policies</ds-tab>
-    <ds-tab tone="reversed">Tools</ds-tab>
-    <ds-tab tone="reversed">Configuration</ds-tab>
-  </ng-container>
-
-  <!-- Action icons -->
-  <ng-container slot="actions">
-    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Rechercher">
-      <ds-icon name="search" [size]="16" />
-    </ds-button-icon>
-    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Aide">
-      <ds-icon name="help" [size]="16" />
-    </ds-button-icon>
-    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Notifications">
-      <ds-icon name="bell" [size]="16" />
-    </ds-button-icon>
-  </ng-container>
-
-  <!-- Account -->
-  <ng-container slot="account">
-    <ds-tab tone="reversed">John Doe</ds-tab>
-  </ng-container>
-
-</ds-header>
-
-<!-- ══ Layout principal ════════════════════════════════════════ -->
-<div class="home-layout">
-
-  <!-- ── Main content ────────────────────────────────────────── -->
+<app-topbox-test-shell>
   <main class="home-main">
 
     <!-- Hero section -->
@@ -76,4 +38,4 @@
     </section>
 
   </main>
-</div>
+</app-topbox-test-shell>
