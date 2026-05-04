@@ -1,41 +1,5 @@
 <div class="search-page">
-  <ds-header>
-    <ds-logo slot="logo" [reversed]="true" />
-
-    <ng-container slot="tabs">
-      <ds-tab tone="reversed">Home</ds-tab>
-      <ds-tab tone="reversed">Buyers</ds-tab>
-      <ds-tab tone="reversed" [selected]="true">Search</ds-tab>
-      <ds-tab tone="reversed">Policies</ds-tab>
-      <ds-tab tone="reversed">Tools</ds-tab>
-      <ds-tab tone="reversed">Configuration</ds-tab>
-    </ng-container>
-
-    <ng-container slot="actions">
-      <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Help">
-        <ds-icon name="help" [size]="16" />
-      </ds-button-icon>
-      <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Notifications">
-        <ds-icon name="bell" [size]="16" />
-      </ds-button-icon>
-    </ng-container>
-
-    <ng-container slot="account">
-      <ds-tab tone="reversed">John Doe</ds-tab>
-    </ng-container>
-  </ds-header>
-
-  <div class="search-page__main">
-    <ds-side-nav>
-      <ds-side-nav-item><ds-icon slot="icon" name="home"      [size]="20" />Home</ds-side-nav-item>
-      <ds-side-nav-item [selected]="true"><ds-icon slot="icon" name="search" [size]="20" />Search</ds-side-nav-item>
-      <ds-side-nav-item><ds-icon slot="icon" name="users"     [size]="20" />Buyers</ds-side-nav-item>
-      <ds-side-nav-item><ds-icon slot="icon" name="contract"  [size]="20" />Contracts</ds-side-nav-item>
-      <ds-side-nav-item><ds-icon slot="icon" name="checklist" [size]="20" />Tasks</ds-side-nav-item>
-      <ds-side-nav-item><ds-icon slot="icon" name="chart"     [size]="20" />Analytics</ds-side-nav-item>
-      <ds-side-nav-item><ds-icon slot="icon" name="settings"  [size]="20" />Settings</ds-side-nav-item>
-    </ds-side-nav>
-
+  <app-topbox-test-shell>
     <div class="search-page__content">
       <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="true">
         <ds-breadcrumbs slot="breadcrumbs">
@@ -163,7 +127,7 @@
         }
       </div>
     </div>
-  </div>
+  </app-topbox-test-shell>
 
   <ds-modal
     title="Create a company"

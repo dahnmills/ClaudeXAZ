@@ -1,20 +1,16 @@
 import { Component, computed, input, signal } from '@angular/core';
 import {
-  HeaderComponent,
-  SideNavComponent,
-  SideNavItemComponent,
   PageHeaderComponent,
   BreadcrumbsComponent,
   CrumbComponent,
   TabComponent,
   IconComponent,
-  LogoComponent,
-  ButtonIconComponent,
   ModalComponent,
 } from '../../shared/ui';
 import { SearchBarMultiComponent, type SearchType } from '../../shared/ui/search-bar-multi/search-bar-multi.component';
 import { MoreCriteriaComponent } from '../../shared/ui/more-criteria/more-criteria.component';
 import { ResultCardComponent, type ResultCardData } from '../../shared/ui/result-card/result-card.component';
+import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
 
 type TabId = 'search' | 'recent' | 'favorites';
 
@@ -84,16 +80,12 @@ const SEED_RESULTS: ResultCardData[] = [
   selector: 'app-search',
   standalone: true,
   imports: [
-    HeaderComponent,
-    SideNavComponent,
-    SideNavItemComponent,
+    TopboxTestShellComponent,
     PageHeaderComponent,
     BreadcrumbsComponent,
     CrumbComponent,
     TabComponent,
     IconComponent,
-    LogoComponent,
-    ButtonIconComponent,
     SearchBarMultiComponent,
     MoreCriteriaComponent,
     ResultCardComponent,
