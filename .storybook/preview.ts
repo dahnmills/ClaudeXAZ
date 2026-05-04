@@ -3,6 +3,11 @@ import type { Preview } from '@storybook/angular';
 
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: {
+        order: ['Design System', 'Local Components', 'Pages'],
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

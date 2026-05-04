@@ -62,9 +62,6 @@ export const Full: Story = {
         <ds-breadcrumbs slot="breadcrumbs">
           <ds-crumb label="Buyers" href="#" />
           <ds-crumb label="IMMO DU MARAIS" currentPage />
-        </ds-breadcrumbs>
-
-        <ds-page-title slot="title" title="Current page">
           <div slot="actions" style="display:flex;gap:16px;align-items:center;">
             <ds-link href="#" weight="semi-bold">
               <ds-icon slot="icon-left" name="arrow-right" [size]="16" />
@@ -78,7 +75,9 @@ export const Full: Story = {
               <ds-icon name="context-vertical" [size]="16" />
             </ds-button-icon>
           </div>
-        </ds-page-title>
+        </ds-breadcrumbs>
+
+        <ds-page-title slot="title" title="Current page" />
 
         <div slot="tabs" style="display:flex;gap:32px;">
           <ds-tab [selected]="true">Label</ds-tab>

@@ -1,0 +1,122 @@
+// =============================================================
+// Tooltip — feedback (Figma 119:4038)
+// Spec : padding 4px 8px, radius 4px, drop-shadow 2px rgba(0,0,0,0.25)
+//        bg accent/primary (#121212), text white. Reversed inverse.
+//        Arrow indicator 8x4px on side opposite to position direction
+// =============================================================
+
+.ds-tooltip {
+  display: inline-flex;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.25));
+  pointer-events: none;
+  z-index: 10000;
+  font-family: var(--semantic-font-family);
+}
+
+.ds-tooltip__content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border-radius: var(--semantic-border-radius-s);
+  background: var(--semantic-color-static-background-accent-primary);
+  color: var(--semantic-color-static-text-subtle-primary);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+  white-space: nowrap;
+}
+
+.ds-tooltip--reversed .ds-tooltip__content {
+  background: var(--semantic-color-static-background-main-primary);
+  color: var(--semantic-color-static-text-main-primary);
+}
+
+// ── Arrow indicator (CSS triangle 8x4) ───────────────────────
+.ds-tooltip__indicator {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+
+// Top (tooltip above target → arrow points DOWN)
+.ds-tooltip--top-left,
+.ds-tooltip--top-center,
+.ds-tooltip--top-right {
+  flex-direction: column;
+  align-items: flex-end;
+
+  .ds-tooltip__indicator {
+    order: 2;
+    border-top: 4px solid var(--semantic-color-static-background-accent-primary);
+  }
+  .ds-tooltip__content { order: 1; }
+}
+.ds-tooltip--top-left    { align-items: flex-start; .ds-tooltip__indicator { margin-left: 8px; } }
+.ds-tooltip--top-center  { align-items: center; }
+.ds-tooltip--top-right   { align-items: flex-end; .ds-tooltip__indicator { margin-right: 8px; } }
+
+.ds-tooltip--top-left.ds-tooltip--reversed .ds-tooltip__indicator,
+.ds-tooltip--top-center.ds-tooltip--reversed .ds-tooltip__indicator,
+.ds-tooltip--top-right.ds-tooltip--reversed .ds-tooltip__indicator {
+  border-top-color: var(--semantic-color-static-background-main-primary);
+}
+
+// Bottom (tooltip below → arrow points UP)
+.ds-tooltip--bottom-left,
+.ds-tooltip--bottom-center,
+.ds-tooltip--bottom-right {
+  flex-direction: column;
+
+  .ds-tooltip__indicator {
+    order: 1;
+    border-bottom: 4px solid var(--semantic-color-static-background-accent-primary);
+  }
+  .ds-tooltip__content { order: 2; }
+}
+.ds-tooltip--bottom-left    { align-items: flex-start; .ds-tooltip__indicator { margin-left: 8px; } }
+.ds-tooltip--bottom-center  { align-items: center; }
+.ds-tooltip--bottom-right   { align-items: flex-end; .ds-tooltip__indicator { margin-right: 8px; } }
+
+.ds-tooltip--bottom-left.ds-tooltip--reversed .ds-tooltip__indicator,
+.ds-tooltip--bottom-center.ds-tooltip--reversed .ds-tooltip__indicator,
+.ds-tooltip--bottom-right.ds-tooltip--reversed .ds-tooltip__indicator {
+  border-bottom-color: var(--semantic-color-static-background-main-primary);
+}
+
+// Left (tooltip on left of target → arrow points RIGHT)
+.ds-tooltip--left {
+  flex-direction: row;
+  align-items: center;
+
+  .ds-tooltip__indicator {
+    order: 2;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 4px solid var(--semantic-color-static-background-accent-primary);
+    border-right: 0;
+  }
+  .ds-tooltip__content { order: 1; }
+}
+.ds-tooltip--left.ds-tooltip--reversed .ds-tooltip__indicator {
+  border-left-color: var(--semantic-color-static-background-main-primary);
+}
+
+// Right (tooltip on right of target → arrow points LEFT)
+.ds-tooltip--right {
+  flex-direction: row;
+  align-items: center;
+
+  .ds-tooltip__indicator {
+    order: 1;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-right: 4px solid var(--semantic-color-static-background-accent-primary);
+    border-left: 0;
+  }
+  .ds-tooltip__content { order: 2; }
+}
+.ds-tooltip--right.ds-tooltip--reversed .ds-tooltip__indicator {
+  border-right-color: var(--semantic-color-static-background-main-primary);
+}

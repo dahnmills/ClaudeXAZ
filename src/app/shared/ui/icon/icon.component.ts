@@ -444,6 +444,10 @@ const ICON_PATHS: Record<string, string> = {
     <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
              stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
 
+  'star-filled': `
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+             fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>`,
+
   'thumb-up': `
     <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"
           stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -460,6 +464,21 @@ const ICON_PATHS: Record<string, string> = {
   hash: `
     <path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"
           stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>`,
+
+  aa: `
+    <path d="M3 20 8 6l5 14M5 16h6"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M14.5 12.5c0-1.5 1.2-2.5 3-2.5s3 1 3 2.5V20m-6-3c0 1.7 1.3 3 3 3s3-1.3 3-3v-1.5h-3c-1.7 0-3 .3-3 1.5z"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+
+  copy: `
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+
+  'sliders': `
+    <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`,
 
   // ── Table / drag handle (6 dots in 2×3 grid) ─────────────────────────────
   'drag-handle': `

@@ -1,11 +1,12 @@
 import { Component, input, output, computed } from '@angular/core';
+import { IconComponent } from '../icon/icon.component';
 
 export type TabTone = 'default' | 'accent' | 'reversed';
 
 @Component({
   selector: 'ds-tab',
   standalone: true,
-  imports: [],
+  imports: [IconComponent],
   templateUrl: './tab.component.html',
   styleUrl: './tab.component.scss',
   host: {
@@ -23,6 +24,11 @@ export class TabComponent {
   tone     = input<TabTone>('default');
   selected = input<boolean>(false);
   disabled = input<boolean>(false);
+
+  // Figma 57:231 — extra slots
+  icon     = input<boolean>(false);          // gates [slot=icon] rendering
+  counter  = input<number | null>(null);     // red badge top-right
+  chevron  = input<boolean>(false);          // dropdown indicator
 
   clicked = output<void>();
 

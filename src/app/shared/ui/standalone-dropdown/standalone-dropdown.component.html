@@ -1,0 +1,8 @@
+<ng-content select="[slot=icon]" />
+@if (icon(); as ic) {
+  <ds-icon class="ds-standalone-dropdown__icon" [name]="ic" [size]="16" />
+}
+<span class="ds-standalone-dropdown__label">{{ label() }}</span>
+<span class="ds-standalone-dropdown__chevron">
+  <ds-icon name="chevron-down" [size]="16" />
+</span>

@@ -1,0 +1,178 @@
+<div class="search-page">
+  <ds-header>
+    <ds-logo slot="logo" [reversed]="true" />
+
+    <ng-container slot="tabs">
+      <ds-tab tone="reversed">Home</ds-tab>
+      <ds-tab tone="reversed">Buyers</ds-tab>
+      <ds-tab tone="reversed" [selected]="true">Search</ds-tab>
+      <ds-tab tone="reversed">Policies</ds-tab>
+      <ds-tab tone="reversed">Tools</ds-tab>
+      <ds-tab tone="reversed">Configuration</ds-tab>
+    </ng-container>
+
+    <ng-container slot="actions">
+      <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Help">
+        <ds-icon name="help" [size]="16" />
+      </ds-button-icon>
+      <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Notifications">
+        <ds-icon name="bell" [size]="16" />
+      </ds-button-icon>
+    </ng-container>
+
+    <ng-container slot="account">
+      <ds-tab tone="reversed">John Doe</ds-tab>
+    </ng-container>
+  </ds-header>
+
+  <div class="search-page__main">
+    <ds-side-nav>
+      <ds-side-nav-item><ds-icon slot="icon" name="home"      [size]="20" />Home</ds-side-nav-item>
+      <ds-side-nav-item [selected]="true"><ds-icon slot="icon" name="search" [size]="20" />Search</ds-side-nav-item>
+      <ds-side-nav-item><ds-icon slot="icon" name="users"     [size]="20" />Buyers</ds-side-nav-item>
+      <ds-side-nav-item><ds-icon slot="icon" name="contract"  [size]="20" />Contracts</ds-side-nav-item>
+      <ds-side-nav-item><ds-icon slot="icon" name="checklist" [size]="20" />Tasks</ds-side-nav-item>
+      <ds-side-nav-item><ds-icon slot="icon" name="chart"     [size]="20" />Analytics</ds-side-nav-item>
+      <ds-side-nav-item><ds-icon slot="icon" name="settings"  [size]="20" />Settings</ds-side-nav-item>
+    </ds-side-nav>
+
+    <div class="search-page__content">
+      <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="true">
+        <ds-breadcrumbs slot="breadcrumbs">
+          <ds-crumb label="Home" />
+          <ds-crumb label="Search" [currentPage]="true" />
+        </ds-breadcrumbs>
+
+        <ng-container slot="tabs">
+          <ds-tab
+            [selected]="activeTab() === 'search'"
+            [icon]="true"
+            (clicked)="setTab('search')"
+          >
+            <ds-icon slot="icon" name="search" [size]="20" />
+            Search
+          </ds-tab>
+          <ds-tab
+            [selected]="activeTab() === 'recent'"
+            [icon]="true"
+            [counter]="recentsCount() || null"
+            (clicked)="setTab('recent')"
+          >
+            <ds-icon slot="icon" name="clock" [size]="20" />
+            Recent
+          </ds-tab>
+          <ds-tab
+            [selected]="activeTab() === 'favorites'"
+            [icon]="true"
+            [counter]="favoritesCount() || null"
+            (clicked)="setTab('favorites')"
+          >
+            <ds-icon slot="icon" name="star" [size]="20" />
+            Favorites
+          </ds-tab>
+        </ng-container>
+      </ds-page-header>
+
+      <div class="search-page__inner">
+
+        @if (activeTab() === 'search') {
+          <div class="search-page__bar-wrap">
+            <ds-search-bar-multi
+              [(type)]="searchType"
+              [(query)]="searchQuery"
+              [criteriaCount]="criteriaCount()"
+              (moreCriteriaClicked)="toggleMoreCriteria()"
+              (searchClicked)="runSearch()"
+            />
+
+            @if (showMoreCriteria()) {
+              <div class="search-page__criteria-overlay">
+                <ds-more-criteria
+                  (closed)="toggleMoreCriteria()"
+                  (countChange)="criteriaCount.set($event)"
+                />
+              </div>
+            }
+          </div>
+
+          @if (isResults()) {
+            <div class="search-page__results">
+              @for (entry of visibleResults(); track entry.i) {
+                <ds-result-card
+                  [data]="entry.r"
+                  [open]="expandedIdx() === entry.i"
+                  [favorited]="isFavorite(entry.i)"
+                  (toggled)="toggleCard(entry.i)"
+                  (starred)="toggleFavorite(entry.i)"
+                  (added)="addCompany(entry.i)"
+                />
+              }
+            </div>
+          } @else {
+            <div class="search-page__empty">
+              <ds-icon name="search" [size]="48" />
+              <span class="search-page__empty-text">Start your search above</span>
+            </div>
+          }
+        }
+
+        @if (activeTab() === 'recent') {
+          @if (recentsCount() === 0) {
+            <div class="search-page__empty">
+              <ds-icon name="clock" [size]="48" />
+              <span class="search-page__empty-text">No recent searches</span>
+            </div>
+          } @else {
+            <div class="search-page__list">
+              @for (r of recents(); track r.ts) {
+                <button class="search-page__recent" (click)="pickRecent(r)">
+                  <ds-icon name="clock" [size]="20" />
+                  <span class="search-page__recent-type">{{ r.type }}</span>
+                  <span class="search-page__recent-query">{{ r.query }}</span>
+                  <span class="search-page__recent-time">{{ formatTime(r.ts) }}</span>
+                </button>
+              }
+              <button class="search-page__clear" (click)="clearRecents()">
+                <ds-icon name="trash" [size]="16" />
+                Clear all
+              </button>
+            </div>
+          }
+        }
+
+        @if (activeTab() === 'favorites') {
+          @if (favoritesCount() === 0) {
+            <div class="search-page__empty">
+              <ds-icon name="star" [size]="48" />
+              <span class="search-page__empty-text">No favorites yet — star a result to add it here</span>
+            </div>
+          } @else {
+            <div class="search-page__results">
+              @for (entry of visibleResults(); track entry.i) {
+                <ds-result-card
+                  [data]="entry.r"
+                  [open]="expandedIdx() === entry.i"
+                  [favorited]="true"
+                  (toggled)="toggleCard(entry.i)"
+                  (starred)="toggleFavorite(entry.i)"
+                  (added)="addCompany(entry.i)"
+                />
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+
+  <ds-modal
+    title="Create a company"
+    size="medium"
+    [open]="showCreateModal()"
+    [footer]="false"
+    contentHeight="120px"
+    (closed)="closeCreateModal()"
+  >
+    <p class="search-page__wip">Work in progress</p>
+  </ds-modal>
+</div>

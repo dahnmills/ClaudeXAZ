@@ -1,33 +1,41 @@
-// =============================================================
-// Side Navigation — Shell
-// Source : Figma > -Components--Navigation > Side Navigation
-//
-// Fidélité Figma :
-//   • Largeur 280px, fond Grey/050
-//   • Bordure droite 1px Grey/200
-//   • Items container : padding 8px, gap 8px
-// =============================================================
-
 :host {
   display:        flex;
   flex-direction: column;
-  width:          280px;
+  width:          240px;
   min-height:     100%;
   background:     var(--semantic-color-static-background-main-secondary);
   border-right:   1px solid var(--semantic-color-static-border-subtle-tertiary);
-  transition:     width 0.2s ease;
+  transition:     width 0.25s ease;
 
-  // ── Collapsed (icon-only, 56px) ──────────────────────────
-  &.ds-side-nav--collapsed {
-    width: 56px;
-  }
+  &.ds-side-nav--collapsed { width: 56px; }
 }
 
-// ── Items container ───────────────────────────────────────────
 .ds-side-nav__items {
   display:        flex;
   flex-direction: column;
   gap:            var(--foundation-spacing-8);
   padding:        var(--foundation-spacing-8);
   flex:           1;
+  min-width:      0;
+}
+
+.ds-side-nav__toggle {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           32px;
+  height:          32px;
+  margin:          var(--semantic-measurement-spacing-s) auto var(--semantic-measurement-spacing-m);
+  border:          0;
+  background:      var(--semantic-color-interactive-background-neutral-default);
+  border:          1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-round);
+  cursor:          pointer;
+  color:           var(--semantic-color-static-icon-main-secondary);
+  transition:      background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: var(--semantic-color-interactive-background-muted-hover);
+    color:      var(--semantic-color-interactive-text-strong-default);
+  }
 }

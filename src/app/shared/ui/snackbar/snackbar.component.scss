@@ -1,0 +1,27 @@
+.ds-snackbar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  border-radius: var(--semantic-border-radius-s);
+  background: var(--semantic-color-static-background-accent-primary);
+  color: var(--semantic-color-static-text-subtle-primary);
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10001;
+  animation: ds-snackbar-in 160ms ease-out;
+}
+
+.ds-snackbar--success { background: var(--semantic-color-static-background-functional-positive); }
+.ds-snackbar--error   { background: var(--semantic-color-static-background-functional-negative); }
+
+@keyframes ds-snackbar-in {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}

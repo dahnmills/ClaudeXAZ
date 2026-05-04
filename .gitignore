@@ -1,0 +1,10 @@
+node_modules/
+.angular/
+dist/
+
+# Storybook and build caches
+.cache/
+coverage/
+
+# OS/editor
+.DS_Store

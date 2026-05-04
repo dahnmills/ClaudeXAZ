@@ -1,0 +1,59 @@
+<div class="ds-more-criteria__header">
+  <h3 class="ds-more-criteria__title">More criteria</h3>
+  <div class="ds-more-criteria__actions">
+    <ds-button type="plain" tone="accent" (clicked)="clearAll()">
+      <ds-icon slot="icon-left" name="refresh" [size]="16" />
+      Clear all
+    </ds-button>
+    <ds-button-icon type="plain" tone="accent" ariaLabel="Close" (clicked)="closed.emit()">
+      <ds-icon name="close" [size]="16" />
+    </ds-button-icon>
+  </div>
+</div>
+<div class="ds-more-criteria__divider"></div>
+
+<div class="ds-more-criteria__body">
+  <div class="ds-more-criteria__row">
+    <span class="ds-more-criteria__label">Status</span>
+    <div class="ds-more-criteria__chips">
+      @for (chip of statusChips(); track chip.id) {
+        <ds-tag
+          type="select"
+          [label]="chip.label"
+          [selected]="chip.selected"
+          (toggled)="toggleChip(chip.id)"
+        />
+      }
+    </div>
+  </div>
+
+  <div class="ds-more-criteria__row">
+    <span class="ds-more-criteria__label">Options</span>
+    <ds-checkbox
+      label="Extend country search"
+      [checked]="extendCountry()"
+      (checkedChange)="extendCountry.set($event)"
+    />
+  </div>
+
+  <div class="ds-more-criteria__row ds-more-criteria__row--top">
+    <span class="ds-more-criteria__label">Address</span>
+    <div class="ds-more-criteria__address">
+      <div class="ds-more-criteria__street">
+        <label class="ds-more-criteria__field-label">Street address</label>
+        <textarea
+          class="ds-more-criteria__textarea"
+          placeholder="Placeholder"
+          [value]="street()"
+          (input)="street.set($any($event.target).value)"
+        ></textarea>
+      </div>
+      <div class="ds-more-criteria__grid">
+        <ds-input-text label="City" placeholder="Placeholder" [(value)]="city" />
+        <ds-input-text label="Region / State" placeholder="Placeholder" [(value)]="region" />
+        <ds-input-text label="Postal code / ZIP" placeholder="Placeholder" [(value)]="zip" />
+        <ds-input-text label="Phone number" placeholder="Placeholder" [(value)]="phone" />
+      </div>
+    </div>
+  </div>
+</div>

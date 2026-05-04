@@ -49,4 +49,5 @@
 
 .ds-page-header__tabs {
   align-items: flex-start;
+  gap: var(--semantic-measurement-spacing-xl); // 32px between tabs
 }

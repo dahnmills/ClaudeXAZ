@@ -1,0 +1,117 @@
+<div class="ds-result-card__main">
+  <div class="ds-result-card__left">
+    <div class="ds-result-card__product-icon">
+      <ds-icon name="grid" [size]="24" />
+    </div>
+    <div class="ds-result-card__info">
+      <div class="ds-result-card__name-row">
+        <span class="ds-result-card__name">{{ data().name }}</span>
+        @if (data().city) {
+          <span class="ds-result-card__sep">-</span>
+          <span class="ds-result-card__city">{{ data().city }}</span>
+        }
+        @if (exists() && data().companyId) {
+          <button
+            type="button"
+            class="ds-result-card__id-badge"
+            dsTooltip="Copy ID"
+            dsTooltipPosition="top-center"
+            (click)="copyId()"
+          >
+            <ds-icon name="hash" [size]="16" />
+            <span class="ds-result-card__id-value">{{ data().companyId }}</span>
+            <ds-icon name="copy" [size]="16" />
+          </button>
+        }
+      </div>
+      <span class="ds-result-card__address">{{ data().address }}</span>
+    </div>
+  </div>
+
+  <div class="ds-result-card__right">
+    <div class="ds-result-card__score">
+      <span class="ds-result-card__score-value">{{ data().score ?? 0 }}</span>
+      <div class="ds-result-card__score-bar">
+        <div class="ds-result-card__score-fill" [style.width.%]="scorePct()"></div>
+      </div>
+    </div>
+    <div class="ds-result-card__actions">
+      <ds-button-icon
+        type="plain"
+        tone="accent"
+        ariaLabel="Add"
+        dsTooltip="Create a company"
+        dsTooltipPosition="top-center"
+        class="ds-result-card__add"
+        [class.ds-result-card__add--hidden]="exists()"
+        [attr.tabindex]="exists() ? -1 : null"
+        [attr.aria-hidden]="exists() ? true : null"
+        (clicked)="!exists() && added.emit()"
+      >
+        <ds-icon name="plus" [size]="16" />
+      </ds-button-icon>
+      <ds-button-icon
+        type="plain"
+        tone="accent"
+        [ariaLabel]="favorited() ? 'Unfavorite' : 'Favorite'"
+        class="ds-result-card__star"
+        [class.ds-result-card__star--on]="favorited()"
+        dsTooltip="Add to favorite"
+        dsTooltipPosition="top-center"
+        (clicked)="starred.emit()"
+      >
+        <ds-icon [name]="favorited() ? 'star-filled' : 'star'" [size]="20" />
+      </ds-button-icon>
+      <ds-button-icon type="plain" tone="accent" ariaLabel="Toggle details" (clicked)="toggled.emit()">
+        <ds-icon [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+      </ds-button-icon>
+    </div>
+  </div>
+</div>
+
+@if (open()) {
+  <div class="ds-result-card__divider"></div>
+  <div class="ds-result-card__details">
+    @if (data().general) {
+      <div class="ds-result-card__col">
+        <span class="ds-result-card__col-title">General information</span>
+        @for (r of data().general!; track r.label) {
+          <div class="ds-result-card__col-row">
+            <span class="ds-result-card__col-label">{{ r.label }}</span>
+            <span class="ds-result-card__col-value">{{ r.value }}</span>
+          </div>
+        }
+      </div>
+    }
+    @if (data().financial) {
+      <div class="ds-result-card__col">
+        <span class="ds-result-card__col-title">Financial information</span>
+        @for (r of data().financial!; track r.label) {
+          <div class="ds-result-card__col-row">
+            <span class="ds-result-card__col-label">{{ r.label }}</span>
+            <span class="ds-result-card__col-value">{{ r.value }}</span>
+          </div>
+        }
+      </div>
+    }
+    @if (data().localIds) {
+      <div class="ds-result-card__col">
+        <span class="ds-result-card__col-title">Local IDs</span>
+        @for (r of data().localIds!; track r.label) {
+          <div class="ds-result-card__col-row">
+            <span class="ds-result-card__col-label">{{ r.label }}</span>
+            <span class="ds-result-card__col-value">{{ r.value }}</span>
+          </div>
+        }
+      </div>
+    }
+    @if (data().providers) {
+      <div class="ds-result-card__col">
+        <span class="ds-result-card__col-title">Info providers</span>
+        @for (p of data().providers!; track p) {
+          <span class="ds-result-card__col-value">{{ p }}</span>
+        }
+      </div>
+    }
+  </div>
+}

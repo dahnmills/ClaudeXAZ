@@ -136,6 +136,35 @@
   transition:  color 0.15s ease;
 }
 
+.ds-tab__icon,
+.ds-tab__chevron {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  line-height:     0;          // strip baseline
+  flex-shrink:     0;
+}
+
+.ds-tab__icon:empty { display: none; }
+
+// ── Counter (Figma 416:146): red round badge inline after label ───
+.ds-tab__counter {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  min-width:       16px;
+  height:          16px;
+  padding:         0 4px;
+  background:      var(--semantic-color-static-background-functional-signal);
+  color:           var(--semantic-color-static-text-subtle-primary);
+  border-radius:   9999px;
+  font-family:     var(--semantic-font-family);
+  font-size:       12px;
+  line-height:     16px;
+  font-weight:     var(--semantic-font-text-style-font-weight-bold);
+  flex-shrink:     0;
+}
+
 .ds-tab__label {
   font-family: var(--semantic-font-family);
   font-size:   var(--semantic-font-text-style-size-l);              // 16px

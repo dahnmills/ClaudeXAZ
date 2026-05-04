@@ -1,0 +1,19 @@
+@switch (type()) {
+  @case ('filter') {
+    <span class="ds-tag__chip ds-tag__chip--left">{{ label() }}</span>
+    <span class="ds-tag__chip ds-tag__chip--right">
+      <ds-icon name="close" [size]="12" />
+    </span>
+  }
+  @case ('select') {
+    <span class="ds-tag__chip">
+      @if (selected()) {
+        <ds-icon name="check" [size]="12" />
+      }
+      <span class="ds-tag__label">{{ label() }}</span>
+    </span>
+  }
+  @default {
+    <span class="ds-tag__chip">{{ label() }}</span>
+  }
+}

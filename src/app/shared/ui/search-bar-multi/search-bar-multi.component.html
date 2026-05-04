@@ -1,0 +1,95 @@
+<div class="ds-search-bar-multi__content">
+  <div class="ds-search-bar-multi__slot ds-search-bar-multi__type">
+    <ds-standalone-dropdown
+      [icon]="meta().icon"
+      [label]="meta().label"
+      (clicked)="toggle('type')"
+    />
+    @if (openFlyout() === 'type') {
+      <div class="ds-search-bar-multi__flyout">
+        <ds-flyout-menu>
+          @for (t of searchTypes; track t.id) {
+            <ds-flyout-menu-item [label]="t.label" [icon]="t.icon" (clicked)="pickType(t.id)" />
+          }
+        </ds-flyout-menu>
+      </div>
+    }
+  </div>
+  <span class="ds-search-bar-multi__divider"></span>
+
+  <div class="ds-search-bar-multi__slot ds-search-bar-multi__country">
+    @if (country(); as c) {
+      <ds-standalone-dropdown
+        [icon]="null"
+        [label]="countryLabel()"
+        [disabled]="!countryEnabled()"
+        (clicked)="toggle('country')"
+      >
+        <ds-flag slot="icon" [code]="c" />
+      </ds-standalone-dropdown>
+    } @else {
+      <ds-standalone-dropdown
+        icon="globe"
+        [label]="countryLabel()"
+        [disabled]="!countryEnabled()"
+        (clicked)="toggle('country')"
+      />
+    }
+    @if (openFlyout() === 'country') {
+      <div class="ds-search-bar-multi__flyout">
+        <ds-flyout-menu>
+          @for (c of countries; track c.code) {
+            <div role="menuitem" tabindex="0" class="ds-search-bar-multi__country-item" (click)="pickCountry(c.code)" (keydown.enter)="pickCountry(c.code)">
+              <ds-flag [code]="c.code" />
+              <span>{{ c.label }}</span>
+            </div>
+          }
+        </ds-flyout-menu>
+      </div>
+    }
+  </div>
+  <span class="ds-search-bar-multi__divider"></span>
+
+  <div class="ds-search-bar-multi__slot ds-search-bar-multi__id-type">
+    <ds-standalone-dropdown
+      icon="hash"
+      [label]="idTypeLabel()"
+      [disabled]="!idTypeEnabled()"
+      (clicked)="toggle('id-type')"
+    />
+    @if (openFlyout() === 'id-type') {
+      <div class="ds-search-bar-multi__flyout">
+        <ds-flyout-menu>
+          @for (it of idTypes; track it) {
+            <ds-flyout-menu-item [label]="it" (clicked)="pickIdType(it)" />
+          }
+        </ds-flyout-menu>
+      </div>
+    }
+  </div>
+  <span class="ds-search-bar-multi__divider"></span>
+
+  <div class="ds-search-bar-multi__field">
+    <ds-icon name="search" [size]="24" class="ds-search-bar-multi__field-icon" />
+    <input
+      type="text"
+      class="ds-search-bar-multi__input"
+      [placeholder]="meta().placeholder"
+      [value]="query()"
+      (input)="onInput($event)"
+      (keydown.enter)="searchClicked.emit()"
+    />
+    @if (query()) {
+      <button type="button" class="ds-search-bar-multi__clear" aria-label="Clear" (click)="clearQuery()">
+        <ds-icon name="close" [size]="16" />
+      </button>
+    }
+  </div>
+  <span class="ds-search-bar-multi__divider"></span>
+
+  <ds-button type="tertiary" tone="accent" (clicked)="moreCriteriaClicked.emit()">
+    <ds-icon slot="icon-left" name="sliders" [size]="16" />
+    More criteria ({{ criteriaCount() }})
+  </ds-button>
+  <ds-button type="primary" (clicked)="searchClicked.emit()">Search</ds-button>
+</div>

@@ -69,15 +69,18 @@
 // ── Label ─────────────────────────────────────────────────────
 .ds-side-nav-item__label {
   font-family:   var(--semantic-font-family);
-  font-size:     var(--semantic-font-text-style-size-l);             // 16px
+  font-size:     var(--semantic-font-text-style-size-l);
   font-weight:   var(--semantic-font-text-style-font-weight-regular);
-  line-height:   var(--semantic-font-text-style-line-height-l);      // 24px
+  line-height:   var(--semantic-font-text-style-line-height-l);
   white-space:   nowrap;
   overflow:      hidden;
   text-overflow: ellipsis;
+  opacity:       1;
+  max-width:     200px;
+  transition:    opacity 0.2s ease, max-width 0.25s ease;
 }
 
-// ── Collapsed (état géré par le parent via :host-context) ─────
+// ── Collapsed (parent driven via :host-context) ───────────────
 :host-context(.ds-side-nav--collapsed) {
   justify-content: center;
   padding:         0;
@@ -85,6 +88,8 @@
   align-self:      center;
 
   .ds-side-nav-item__label {
-    display: none;
+    opacity:    0;
+    max-width:  0;
+    pointer-events: none;
   }
 }
