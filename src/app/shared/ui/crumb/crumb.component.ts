@@ -24,4 +24,9 @@ export class CrumbComponent {
     this.currentPage() ? 'ds-crumb--current'  : '',
     this.disabled()    ? 'ds-crumb--disabled' : '',
   ].filter(Boolean).join(' '));
+
+  onClick(event: MouseEvent) {
+    event.preventDefault();
+    if (!this.disabled()) this.clicked.emit();
+  }
 }
