@@ -1,0 +1,80 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--semantic-color-static-background-main-secondary);
+}
+
+.ut-filters-page__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-xl);
+}
+
+.ut-filters-page__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--semantic-measurement-spacing-m);
+}
+
+.ut-filters-page__saved-picker {
+  flex: 0 1 360px;
+  min-width: var(--semantic-measurement-sizing-none);
+}
+
+.ut-filters-page__table {
+  display: flex;
+  flex-direction: column;
+}
+
+.ut-filters-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-3xl);
+  color: var(--semantic-color-static-text-main-secondary);
+  font-family: var(--semantic-font-family);
+  text-align: center;
+}
+
+.ut-filters-page__empty p {
+  margin: 0;
+  font-size: var(--semantic-font-text-style-size-m);
+}
+
+.ut-filters-page__company {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--semantic-measurement-spacing-xxs);
+  line-height: 1.2;
+}
+
+.ut-filters-page__company-name {
+  color: var(--semantic-color-static-text-main-primary);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+}
+
+.ut-filters-page__company-id {
+  color: var(--semantic-color-static-text-main-secondary);
+  font-size: var(--semantic-font-text-style-size-s);
+}
+
+.ut-filters-page__national-id {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-xs);
+  font-family: var(--semantic-font-family);
+}
+
+.ut-filters-page__national-id-type {
+  padding: var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-xs);
+  border-radius: var(--semantic-border-radius-s);
+  background: var(--semantic-color-static-background-main-secondary);
+  color: var(--semantic-color-static-text-main-secondary);
+  font-size: var(--semantic-font-text-style-size-s);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+}

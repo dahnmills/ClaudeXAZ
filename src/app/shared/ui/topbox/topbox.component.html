@@ -5,14 +5,14 @@
     <span class="ds-topbox__label">{{ label() }}</span>
 
     @if (grade()) {
-      <span class="ds-topbox__separator" aria-hidden="true"></span>
+      <ds-divider class="ds-topbox__separator" orientation="vertical" />
       <span class="ds-topbox__grade" [class]="'ds-topbox__grade--' + gradeColor()">
         {{ grade() }}
       </span>
     }
 
     @if (id()) {
-      <span class="ds-topbox__separator" aria-hidden="true"></span>
+      <ds-divider class="ds-topbox__separator" orientation="vertical" />
       <span class="ds-topbox__id">
         <ds-icon name="hash" [size]="16" aria-hidden="true" />
         <span class="ds-topbox__id-value">{{ id() }}</span>
@@ -20,18 +20,18 @@
     }
 
     @if (highRisk()) {
-      <span class="ds-topbox__separator" aria-hidden="true"></span>
-      <span class="ds-topbox__flag">HIGH RISK</span>
+      <ds-divider class="ds-topbox__separator" orientation="vertical" />
+      <ds-badge label="HIGH RISK" status="error" variant="light" size="m" />
     }
 
     @if (sru()) {
-      <span class="ds-topbox__separator" aria-hidden="true"></span>
-      <span class="ds-topbox__flag">SRU</span>
+      <ds-divider class="ds-topbox__separator" orientation="vertical" />
+      <ds-badge label="SRU" status="error" variant="light" size="m" />
     }
 
     @if (sanction()) {
-      <span class="ds-topbox__separator" aria-hidden="true"></span>
-      <span class="ds-topbox__flag">SANCTION</span>
+      <ds-divider class="ds-topbox__separator" orientation="vertical" />
+      <ds-badge label="SANCTION" status="error" variant="light" size="m" />
     }
   </div>
 

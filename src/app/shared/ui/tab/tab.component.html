@@ -7,7 +7,19 @@
   }
   <span class="ds-tab__label"><ng-content /></span>
   @if (counter() !== null) {
-    <span class="ds-tab__counter" aria-label="counter">{{ counter() }}</span>
+    @if (counterStyle() === 'inline') {
+      <span class="ds-tab__counter-inline" aria-label="counter">
+        (<span
+          class="ds-tab__counter-value"
+          [class.ds-tab__counter-value--strong]="counterStrong()"
+        >{{ counter() }}</span>)
+      </span>
+    } @else {
+      <span class="ds-tab__counter" aria-label="counter">{{ counter() }}</span>
+    }
+  }
+  @if (changed()) {
+    <span class="ds-tab__change-dot" aria-label="changed"></span>
   }
   @if (chevron()) {
     <span class="ds-tab__chevron">

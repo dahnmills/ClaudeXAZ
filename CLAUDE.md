@@ -237,6 +237,45 @@ Organismes
 
 ---
 
+## Composition stricte (cascade design system)
+
+Toute molécule ou organisme doit composer les atomes existants au lieu de les réimplémenter. Quand on modifie un atome, le changement doit cascader naturellement à tous ses consommateurs — pas de duplication d'états, de couleurs, ni de markup natif.
+
+### Interdictions dans `shared/ui/**` (hors atome lui-même)
+
+- ❌ `<button>`, `<a>`, `<input>`, `<textarea>`, `<select>` natifs → utiliser `<ds-button>`, `<ds-button-icon>`, `<ds-link>`, `<ds-input-text>`
+- ❌ `<svg>` inline → toujours `<ds-icon>` (ajouter le path au registry si manquant)
+- ❌ `<span>` ou `<div>` stylisé en pastille / pill / badge → `<ds-badge>` (ou `<ds-tag>` si filtre/sélection)
+- ❌ Boîte avec `bg + border + radius` réimplémentée → wrapper `<ds-card>` (sauf primitives à style propre : Modal, Flyout, Snackbar, Tooltip, Topbox)
+- ❌ Réécriture des états `:hover` / `:active` / `:focus-visible` / `:disabled` quand un atome existant les fournit déjà
+
+### Cas légitimes de garder un atome propre (siblings, pas wrappers)
+
+- **Crumb** wrap `<ds-link>` ✓ (texte inline simple)
+- **FlyoutMenuItem**, **SideNavItem**, **Tab**, **StandaloneDropdown** : restent des atomes parallèles à Link/Button — leurs primitives interactives (full-width row + bg-states) ne se mappent pas à Link/Button. C'est OK.
+
+### Exception unique
+
+Seul l'atome sous-jacent peut utiliser le natif :
+- `Button` → `<button>` interne, `Link` → `<a>` interne, `InputText` → `<input>`, `Icon` → `<svg>`, `Flag` → `<svg>`, `Logo` → `<svg>`
+
+### Atomes visuels à réutiliser systématiquement
+
+| Pattern visuel | Atome | Notes |
+|----------------|-------|-------|
+| Texte navigable inline | `<ds-link>` | tones default/neutral/reversed |
+| CTA bouton | `<ds-button>` | + variants type/tone |
+| Bouton icône seul | `<ds-button-icon>` | ariaLabel obligatoire |
+| Pastille statut | `<ds-badge>` | status info/warning/success/error/neutral |
+| Tag interactif | `<ds-tag>` | type static/filter/select |
+| Icône SVG | `<ds-icon>` | size en number |
+| Conteneur card | `<ds-card>` | noPadding pour contenu custom |
+| Liste label/value | `<ds-properties-panel>` | columns 1-4, variant card/flat |
+| Item de menu déroulant | `<ds-flyout-menu-item>` | slot=icon pour custom (Flag, etc.) |
+| Item de side-nav | `<ds-side-nav-item>` | slot=icon + content label |
+
+---
+
 ## Fichiers Figma de référence (clés MCP)
 
 | Clé | Contenu |

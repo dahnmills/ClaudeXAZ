@@ -1,5 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { IconComponent, type IconName } from '../icon/icon.component';
+import { BadgeComponent } from '../badge/badge.component';
+import { DividerComponent } from '../divider/divider.component';
 
 export type TopboxDataType  = 'policy' | 'buyer';
 export type TopboxGradeColor = 'grade-1' | 'grade-2' | 'grade-3' | 'grade-4' | 'grade-5'
@@ -9,7 +11,7 @@ export type TopboxGradeColor = 'grade-1' | 'grade-2' | 'grade-3' | 'grade-4' | '
 @Component({
   selector: 'ds-topbox',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, BadgeComponent, DividerComponent],
   templateUrl: './topbox.component.html',
   styleUrl: './topbox.component.scss',
   host: {

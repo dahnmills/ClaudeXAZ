@@ -31,17 +31,7 @@
   min-width: 0;
 }
 
-.ds-result-card__product-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
-  background: var(--semantic-color-static-background-main-alt-primary);
-  color: var(--semantic-color-static-icon-main-alt-primary, var(--semantic-color-interactive-text-strong-default));
-  flex-shrink: 0;
-}
+// Product icon utilise <ds-icon-tile size="m" tone="brand">
 
 .ds-result-card__info {
   display: flex;
@@ -156,11 +146,7 @@
   color: var(--foundation-color-orange-300) !important;
 }
 
-.ds-result-card__divider {
-  height: 1px;
-  background: var(--semantic-color-static-border-subtle-tertiary);
-  width: 100%;
-}
+// Divider utilise <ds-divider />
 
 .ds-result-card__details {
   display: flex;

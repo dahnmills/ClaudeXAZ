@@ -82,6 +82,30 @@
   outline-offset: 1px;
 }
 
+.ds-input-text--variant-inline {
+  .ds-input-text__container {
+    height: auto;
+    padding: var(--semantic-measurement-spacing-none);
+    border: var(--semantic-border-size-none) solid transparent;
+    border-radius: var(--semantic-border-radius-none);
+    background: transparent;
+    box-shadow: inset 0 calc(var(--semantic-border-size-m) * -1) 0 var(--semantic-color-interactive-border-strong-active);
+  }
+
+  .ds-input-text__container:hover,
+  .ds-input-text__container:focus-within {
+    border: var(--semantic-border-size-none) solid transparent;
+    outline: none;
+  }
+
+  .ds-input-text__input {
+    color: var(--semantic-color-static-text-main-secondary);
+    font-size: var(--semantic-font-text-style-size-l);
+    font-weight: var(--semantic-font-text-style-font-weight-regular);
+    line-height: var(--semantic-font-text-style-line-height-l);
+  }
+}
+
 // ── Error state ───────────────────────────────────────────────
 .ds-input-text--error .ds-input-text__container {
   border-color: var(--semantic-color-interactive-border-strong-negative-default); // Red/300

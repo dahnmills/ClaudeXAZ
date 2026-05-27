@@ -1,10 +1,11 @@
 import { Component, computed, input, output } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
+import { LinkComponent } from '../link/link.component';
 
 @Component({
   selector: 'ds-crumb',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, LinkComponent],
   templateUrl: './crumb.component.html',
   styleUrl: './crumb.component.scss',
   host: {

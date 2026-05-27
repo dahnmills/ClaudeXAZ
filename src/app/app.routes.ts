@@ -4,12 +4,14 @@ import { IndexPage } from './user-testing/pages/index.page';
 import { WithAccordionPage } from './user-testing/pages/with-accordion.page';
 import { WithModalPage } from './user-testing/pages/with-modal.page';
 import { SearchComponent } from './pages/search/search.component';
+import { FiltersTestPageComponent } from './user-testing/filters/filters-test-page.component';
 
 export const appRoutes: Routes = [
   { path: '', component: IndexPage },
   { path: 'home', component: HomeComponent },
   { path: 'accordion', component: WithAccordionPage },
   { path: 'modal', component: WithModalPage },
+  { path: 'filters', component: FiltersTestPageComponent },
   { path: 'search', component: SearchComponent },
   { path: '**', redirectTo: '' },
 ];

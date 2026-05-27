@@ -10,7 +10,7 @@
     </ds-button-icon>
   </div>
 </div>
-<div class="ds-more-criteria__divider"></div>
+<ds-divider class="ds-more-criteria__divider" />
 
 <div class="ds-more-criteria__body">
   <div class="ds-more-criteria__row">
@@ -40,13 +40,13 @@
     <span class="ds-more-criteria__label">Address</span>
     <div class="ds-more-criteria__address">
       <div class="ds-more-criteria__street">
-        <label class="ds-more-criteria__field-label">Street address</label>
-        <textarea
-          class="ds-more-criteria__textarea"
+        <ds-textarea
+          label="Street address"
           placeholder="Placeholder"
+          [rows]="4"
           [value]="street()"
-          (input)="street.set($any($event.target).value)"
-        ></textarea>
+          (valueChange)="street.set($event)"
+        />
       </div>
       <div class="ds-more-criteria__grid">
         <ds-input-text label="City" placeholder="Placeholder" [(value)]="city" />

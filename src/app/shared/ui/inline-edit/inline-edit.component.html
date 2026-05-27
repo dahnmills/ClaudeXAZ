@@ -1,0 +1,53 @@
+@if (editing()) {
+  <div
+    class="ds-inline-edit__editor"
+    (keydown.enter)="commit()"
+    (keydown.escape)="cancel()"
+  >
+    <ds-input-text
+      variant="inline"
+      [placeholder]="placeholder()"
+      [error]="showError()"
+      errorMessage="Name is required"
+      [value]="draft()"
+      (valueChange)="draft.set($event)"
+    />
+
+    <div class="ds-inline-edit__actions">
+      <ds-button-icon type="tertiary" tone="default" size="s" ariaLabel="Save" (clicked)="commit()">
+        <ds-icon name="check" [size]="16" />
+      </ds-button-icon>
+      <ds-button-icon type="tertiary" tone="default" size="s" ariaLabel="Cancel" (clicked)="cancel()">
+        <ds-icon name="close" [size]="16" />
+      </ds-button-icon>
+    </div>
+  </div>
+} @else {
+  <div class="ds-inline-edit__display">
+    <span class="ds-inline-edit__value">{{ displayValue() }}</span>
+    <div class="ds-inline-edit__actions">
+      <ds-button-icon
+        type="tertiary"
+        tone="default"
+        size="s"
+        [ariaLabel]="ariaLabel()"
+        [disabled]="disabled()"
+        (clicked)="startEdit()"
+      >
+        <ds-icon name="edit-compose" [size]="16" />
+      </ds-button-icon>
+      @if (deletable()) {
+        <ds-button-icon
+          type="tertiary"
+          tone="default"
+          size="s"
+          [ariaLabel]="deleteAriaLabel()"
+          [disabled]="disabled()"
+          (clicked)="onDelete()"
+        >
+          <ds-icon name="trash" [size]="16" />
+        </ds-button-icon>
+      }
+    </div>
+  </div>
+}

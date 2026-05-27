@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 export class InputTextComponent {
   label       = input<string>('');
   placeholder = input<string>('');
+  variant     = input<'default' | 'inline'>('default');
   optional    = input<boolean>(false);
   disabled    = input<boolean>(false);
   readonly    = input<boolean>(false);
@@ -24,6 +25,7 @@ export class InputTextComponent {
 
   hostClasses = computed(() => [
     'ds-input-text',
+    `ds-input-text--variant-${this.variant()}`,
     this.disabled() ? 'ds-input-text--disabled'  : '',
     this.readonly()  ? 'ds-input-text--readonly'  : '',
     this.error()     ? 'ds-input-text--error'      : '',

@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../button/button.component';
 import { BadgeComponent } from '../badge/badge.component';
 import { LinkComponent } from '../link/link.component';
+import { IconComponent } from '../icon/icon.component';
+import { DividerComponent } from '../divider/divider.component';
 import type { BadgeStatus } from '../badge/badge.component';
 
 export interface SearchRecentItem {
@@ -17,7 +19,7 @@ export interface SearchRecentItem {
 @Component({
   selector: 'ds-search-bar',
   standalone: true,
-  imports: [FormsModule, ButtonComponent, BadgeComponent, LinkComponent],
+  imports: [FormsModule, ButtonComponent, BadgeComponent, LinkComponent, IconComponent, DividerComponent],
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.scss',
   host: { 'class': 'ds-search-bar' },

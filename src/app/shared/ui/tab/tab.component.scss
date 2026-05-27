@@ -131,7 +131,7 @@
 .ds-tab__content {
   display:     inline-flex;
   align-items: center;
-  gap:         var(--foundation-spacing-4, 4px);
+  gap:         var(--semantic-measurement-spacing-xs);
   flex:        1;
   transition:  color 0.15s ease;
 }
@@ -163,6 +163,27 @@
   line-height:     16px;
   font-weight:     var(--semantic-font-text-style-font-weight-bold);
   flex-shrink:     0;
+}
+
+.ds-tab__counter-inline {
+  display: inline-flex;
+  align-items: baseline;
+  color: inherit;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+}
+
+.ds-tab__counter-value--strong {
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+}
+
+.ds-tab__change-dot {
+  width: var(--semantic-measurement-sizing-s);
+  height: var(--semantic-measurement-sizing-s);
+  background: var(--semantic-color-static-background-functional-signal);
+  border-radius: var(--semantic-border-radius-round);
+  flex-shrink: 0;
 }
 
 .ds-tab__label {

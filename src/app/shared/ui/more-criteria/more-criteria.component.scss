@@ -33,8 +33,6 @@
 }
 
 .ds-more-criteria__divider {
-  height: 1px;
-  background: var(--semantic-color-static-border-subtle-tertiary);
   margin: var(--semantic-measurement-spacing-m) 0;
 }
 
@@ -89,35 +87,7 @@
   min-width: 0;
 }
 
-.ds-more-criteria__field-label {
-  font-family: var(--semantic-font-family);
-  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-  font-size: var(--semantic-font-text-style-size-l);
-  line-height: var(--semantic-font-text-style-line-height-l);
-  color: var(--semantic-color-static-text-main-primary);
-}
-
-.ds-more-criteria__textarea {
-  resize: vertical;
-  min-height: 100px;
-  padding: 6px 8px;
-  border: 1px solid var(--semantic-color-interactive-border-medium-alt-default);
-  border-radius: var(--semantic-border-radius-s);
-  font-family: var(--semantic-font-family);
-  font-size: var(--semantic-font-text-style-size-l);
-  line-height: var(--semantic-font-text-style-line-height-l);
-  color: var(--semantic-color-static-text-main-primary);
-  background: var(--semantic-color-interactive-background-neutral-default);
-  outline: none;
-  box-sizing: border-box;
-  width: 100%;
-
-  &::placeholder { color: var(--semantic-color-static-text-main-tertiary); }
-  &:focus-visible {
-    border-color: var(--semantic-color-interactive-border-focus);
-    outline: 1px solid var(--semantic-color-interactive-border-focus);
-  }
-}
+// Street address utilise <ds-textarea>
 
 .ds-more-criteria__grid {
   display: grid;

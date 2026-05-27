@@ -70,12 +70,9 @@ $grade-bg: (
   white-space:    nowrap;
 }
 
-// ── Séparateur vertical ────────────────────────────────────────
+// Séparateur vertical utilise <ds-divider orientation="vertical" /> avec height override
 .ds-topbox__separator {
-  width:            1px;
-  height:           16px;
-  background-color: var(--semantic-color-static-border-subtle-tertiary); // Grey/200
-  flex-shrink:      0;
+  height: 16px;
 }
 
 // ── Grade pill ────────────────────────────────────────────────
@@ -121,22 +118,7 @@ $grade-bg: (
   line-height: var(--semantic-font-text-style-line-height-l);
 }
 
-// ── Flag badges (HIGH RISK / SRU / SANCTION) ──────────────────
-.ds-topbox__flag {
-  display:          inline-flex;
-  align-items:      center;
-  height:           24px;
-  padding:          0 var(--semantic-measurement-spacing-s);
-  background-color: var(--semantic-color-static-background-subtle-functional-negative);
-  color:            var(--semantic-color-static-text-main-functional-negative);
-  border-radius:    var(--semantic-border-radius-round);
-  font-family:      var(--semantic-font-family);
-  font-size:        var(--semantic-font-text-style-size-l);
-  line-height:      var(--semantic-font-text-style-line-height-l);
-  font-weight:      var(--semantic-font-text-style-font-weight-semi-bold);
-  white-space:      nowrap;
-  flex-shrink:      0;
-}
+// Flags HIGH RISK / SRU / SANCTION : utilisent <ds-badge status="error" variant="light" />
 
 // ── Action (droite) ───────────────────────────────────────────
 .ds-topbox__action {

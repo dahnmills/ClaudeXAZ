@@ -1,0 +1,32 @@
+<aside
+  class="ds-drawer__panel"
+  role="dialog"
+  aria-modal="false"
+  [attr.aria-hidden]="!open()"
+  [attr.aria-label]="title()"
+  [attr.tabindex]="open() ? null : -1"
+>
+  <header class="ds-drawer__header">
+    <div class="ds-drawer__close-row">
+      <ds-button-icon
+        type="plain"
+        tone="accent"
+        size="m"
+        ariaLabel="Close"
+        (clicked)="closed.emit()"
+      >
+        <ds-icon name="close" [size]="24" />
+      </ds-button-icon>
+    </div>
+
+    <h2 class="ds-drawer__title">{{ title() }}</h2>
+  </header>
+
+  <div class="ds-drawer__body">
+    <ng-content select=":not([slot=footer])" />
+  </div>
+
+  <footer class="ds-drawer__footer">
+    <ng-content select="[slot=footer]" />
+  </footer>
+</aside>

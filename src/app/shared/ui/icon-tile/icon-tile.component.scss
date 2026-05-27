@@ -1,0 +1,46 @@
+// =============================================================
+// Icon Tile — atome
+// Cadre coloré contenant une icône. Sizes s/m/l, tones brand/neutral/subtle.
+// =============================================================
+
+:host {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+
+  // ── Sizes ───────────────────────────────────────────────────
+  &.ds-icon-tile--size-s {
+    width:  32px;
+    height: 32px;
+    border-radius: var(--foundation-radius-4);
+  }
+
+  &.ds-icon-tile--size-m {
+    width:  40px;
+    height: 40px;
+    border-radius: 5px;
+  }
+
+  &.ds-icon-tile--size-l {
+    width:  56px;
+    height: 56px;
+    border-radius: var(--foundation-radius-8);
+  }
+
+  // ── Tones ───────────────────────────────────────────────────
+  &.ds-icon-tile--tone-brand {
+    background: var(--semantic-color-static-background-main-alt-primary);  // BlueA/025
+    color:      var(--semantic-color-interactive-text-strong-default);     // BlueA/500
+  }
+
+  &.ds-icon-tile--tone-neutral {
+    background: var(--semantic-color-static-background-main-secondary);    // Grey/050
+    color:      var(--semantic-color-static-text-main-secondary);          // Grey/700
+  }
+
+  &.ds-icon-tile--tone-subtle {
+    background: var(--semantic-color-static-background-accent-tertiary);
+    color:      var(--semantic-color-static-text-main-primary);
+  }
+}

@@ -10,30 +10,29 @@
 // =============================================================
 
 :host {
-  display:     flex;
-  align-items: center;
-  width:       100%;
-  min-width:   0;
-  padding:     0 var(--semantic-measurement-spacing-l)        // pr-20 → on utilise spacing-l (24px) pour rester sur tokens. Si besoin exact 20, créer token.
-               0 var(--semantic-measurement-spacing-s);       // pl-8
-  box-sizing:  border-box;
+  display:        flex;
+  align-items:    center;
+  width:          100%;
+  min-width:      0;
+  padding-top:    var(--semantic-measurement-spacing-none);
+  padding-right:  var(--semantic-measurement-spacing-l);
+  padding-bottom: var(--semantic-measurement-spacing-none);
+  padding-left:   var(--semantic-measurement-spacing-s);
+  margin:         var(--semantic-measurement-spacing-none);
+  box-sizing:     border-box;
 
   // Size M : h-56, py-16
   &.ds-cell--size-m {
-    height:  56px;
-    padding: var(--semantic-measurement-spacing-m)
-             var(--semantic-measurement-spacing-l)
-             var(--semantic-measurement-spacing-m)
-             var(--semantic-measurement-spacing-s);
+    height:         56px;
+    padding-top:    var(--semantic-measurement-spacing-m);
+    padding-bottom: var(--semantic-measurement-spacing-m);
   }
 
   // Size S : h-40, py-8
   &.ds-cell--size-s {
-    height:  40px;
-    padding: var(--semantic-measurement-spacing-s)
-             var(--semantic-measurement-spacing-l)
-             var(--semantic-measurement-spacing-s)
-             var(--semantic-measurement-spacing-s);
+    height:         40px;
+    padding-top:    var(--semantic-measurement-spacing-s);
+    padding-bottom: var(--semantic-measurement-spacing-s);
   }
 
   // Alignement

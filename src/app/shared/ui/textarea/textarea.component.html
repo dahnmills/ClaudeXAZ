@@ -1,0 +1,27 @@
+<div [class]="hostClasses()">
+  @if (label()) {
+    <label class="ds-textarea__label" [for]="inputId()">
+      {{ label() }}
+      @if (optional()) {
+        <span class="ds-textarea__optional">(optional)</span>
+      }
+    </label>
+  }
+
+  <div class="ds-textarea__container">
+    <textarea
+      class="ds-textarea__input"
+      [id]="inputId()"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [readOnly]="readonly()"
+      [rows]="rows()"
+      [attr.aria-invalid]="error() || null"
+      [(ngModel)]="value"
+    ></textarea>
+  </div>
+
+  @if (error() && errorMessage()) {
+    <span class="ds-textarea__error-msg" role="alert">{{ errorMessage() }}</span>
+  }
+</div>

@@ -1,0 +1,116 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--foundation-spacing-2, 2px);
+  width: 100%;
+}
+
+.ds-select__label {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color: var(--semantic-color-static-text-main-primary);
+}
+
+.ds-select__container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: var(--semantic-measurement-spacing-xl);
+  border-radius: var(--semantic-border-radius-s);
+  border: var(--semantic-border-size-s) solid var(--semantic-color-interactive-border-strong-alt-default);
+  background: var(--semantic-color-static-background-main);
+  transition: border-color 120ms ease;
+}
+
+.ds-select__container:hover {
+  border-color: var(--semantic-color-interactive-border-strong-alt-hover);
+}
+
+:host(.ds-select--open) .ds-select__container,
+.ds-select__container:focus-within {
+  border-color: var(--semantic-color-interactive-border-strong-default);
+}
+
+.ds-select__container:focus-within {
+  outline: var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+  outline-offset: var(--semantic-border-size-s);
+}
+
+.ds-select__field {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 var(--semantic-measurement-spacing-xl) 0 var(--semantic-measurement-spacing-s);
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color: var(--semantic-color-static-text-main-primary);
+  cursor: pointer;
+  text-align: left;
+}
+
+.ds-select__field:disabled {
+  cursor: not-allowed;
+}
+
+.ds-select__value {
+  display: inline-block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ds-select__value--placeholder {
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+.ds-select__chevron {
+  position: absolute;
+  right: var(--semantic-measurement-spacing-xs);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--semantic-color-static-text-main-secondary);
+  pointer-events: none;
+  transition: transform 200ms ease;
+}
+
+:host(.ds-select--open) .ds-select__chevron {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.ds-select__flyout {
+  position: absolute;
+  top: calc(100% + var(--semantic-measurement-spacing-xs));
+  left: 0;
+  right: 0;
+  z-index: 50;
+}
+
+.ds-select__flyout ::ng-deep .ds-flyout-menu {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+:host(.ds-select--disabled) {
+  opacity: var(--semantic-measurement-opacity-disabled);
+  pointer-events: none;
+}
+
+:host(.ds-select--error) .ds-select__container {
+  border-color: var(--semantic-color-interactive-border-strong-negative-default);
+}
+
+.ds-select__error-msg {
+  color: var(--semantic-color-static-text-main-functional-negative);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+}

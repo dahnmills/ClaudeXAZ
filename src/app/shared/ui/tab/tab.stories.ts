@@ -15,6 +15,9 @@ const meta: Meta<TabComponent> = {
     icon:     { control: 'boolean' },
     chevron:  { control: 'boolean' },
     counter:  { control: { type: 'number' } },
+    counterStyle: { control: 'select', options: ['badge', 'inline'] },
+    counterStrong: { control: 'boolean' },
+    changed: { control: 'boolean' },
     clicked:  { action: 'clicked' },
   },
 };
@@ -30,6 +33,9 @@ export const Default: Story = {
     icon: false,
     chevron: false,
     counter: null,
+    counterStyle: 'badge',
+    counterStrong: false,
+    changed: false,
   },
   render: (args) => ({
     props: args,
@@ -42,6 +48,9 @@ export const Default: Story = {
           [icon]="icon"
           [chevron]="chevron"
           [counter]="counter"
+          [counterStyle]="counterStyle"
+          [counterStrong]="counterStrong"
+          [changed]="changed"
           (clicked)="clicked()"
         >
           <ds-icon slot="icon" name="search" [size]="20" />
@@ -86,6 +95,19 @@ export const WithCounter: Story = {
           Favorites
         </ds-tab>
         <ds-tab [counter]="99">Notifications</ds-tab>
+      </div>
+    `,
+  }),
+};
+
+export const WithInlineCounterChange: Story = {
+  render: () => ({
+    template: `
+      <div style="display:flex;gap:32px;border-bottom:1px solid #d9d9d9;padding:0 16px;">
+        <ds-tab [selected]="true">Filters</ds-tab>
+        <ds-tab [counter]="4" counterStyle="inline" [counterStrong]="true" [changed]="true">
+          Saved filters
+        </ds-tab>
       </div>
     `,
   }),

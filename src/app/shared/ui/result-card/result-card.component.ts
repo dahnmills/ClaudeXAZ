@@ -3,6 +3,10 @@ import { IconComponent } from '../icon/icon.component';
 import { ButtonIconComponent } from '../button-icon/button-icon.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { SnackbarService } from '../snackbar/snackbar.service';
+import { PropertiesPanelComponent, type PropertySection } from '../properties-panel/properties-panel.component';
+import { DividerComponent } from '../divider/divider.component';
+import { IconTileComponent } from '../icon-tile/icon-tile.component';
+import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
 
 export interface InfoRow { label: string; value: string; }
 
@@ -22,7 +26,7 @@ export interface ResultCardData {
 @Component({
   selector: 'ds-result-card',
   standalone: true,
-  imports: [IconComponent, ButtonIconComponent, TooltipDirective],
+  imports: [IconComponent, ButtonIconComponent, TooltipDirective, PropertiesPanelComponent, DividerComponent, IconTileComponent, ProgressBarComponent],
   templateUrl: './result-card.component.html',
   styleUrl: './result-card.component.scss',
   host: {
@@ -59,5 +63,14 @@ export class ResultCardComponent {
   scorePct = computed(() => {
     const s = this.data().score ?? 0;
     return Math.max(0, Math.min(1, s)) * 100;
+  });
+
+  detailSections = computed<PropertySection[]>(() => {
+    const d = this.data();
+    const out: PropertySection[] = [];
+    if (d.general)   out.push({ title: 'General information',   rows: d.general });
+    if (d.financial) out.push({ title: 'Financial information', rows: d.financial });
+    if (d.localIds)  out.push({ title: 'Local IDs',              rows: d.localIds });
+    return out;
   });
 }

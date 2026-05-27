@@ -5,13 +5,15 @@ import { ButtonIconComponent } from '../button-icon/button-icon.component';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
 import { InputTextComponent } from '../input-text/input-text.component';
 import { TagComponent } from '../tag/tag.component';
+import { TextareaComponent } from '../textarea/textarea.component';
+import { DividerComponent } from '../divider/divider.component';
 
 interface StatusChip { id: string; label: string; selected: boolean; }
 
 @Component({
   selector: 'ds-more-criteria',
   standalone: true,
-  imports: [IconComponent, ButtonComponent, ButtonIconComponent, CheckboxComponent, InputTextComponent, TagComponent],
+  imports: [IconComponent, ButtonComponent, ButtonIconComponent, CheckboxComponent, InputTextComponent, TagComponent, TextareaComponent, DividerComponent],
   templateUrl: './more-criteria.component.html',
   styleUrl: './more-criteria.component.scss',
   host: { 'class': 'ds-more-criteria' },

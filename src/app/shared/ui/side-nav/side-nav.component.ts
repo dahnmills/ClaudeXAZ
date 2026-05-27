@@ -1,10 +1,11 @@
 import { Component, computed, model } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
+import { SideNavItemComponent } from './side-nav-item.component';
 
 @Component({
   selector: 'ds-side-nav',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, SideNavItemComponent],
   templateUrl: './side-nav.component.html',
   styleUrl: './side-nav.component.scss',
   host: {

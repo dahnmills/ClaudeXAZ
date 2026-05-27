@@ -1,0 +1,93 @@
+// =============================================================
+// Textarea
+// Source : Figma > -Components--Data Entry > Input Text (multiline variant)
+// Mirror les états de InputText avec un <textarea> resizable verticalement.
+// =============================================================
+
+.ds-textarea {
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+  width:          100%;
+}
+
+// ── Label ─────────────────────────────────────────────────────
+.ds-textarea__label {
+  display:     flex;
+  align-items: center;
+  gap:         var(--foundation-spacing-4, 4px);
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+  cursor:      pointer;
+}
+
+.ds-textarea__optional {
+  color:     var(--semantic-color-static-text-main-tertiary);
+  font-size: var(--semantic-font-text-style-size-m);
+}
+
+// ── Container ─────────────────────────────────────────────────
+.ds-textarea__container {
+  display:       flex;
+  align-items:   stretch;
+  padding:       var(--semantic-measurement-spacing-s);   // 8px
+  border-radius: var(--semantic-border-radius-s);
+  border:        1px solid var(--semantic-color-static-text-main-tertiary); // Grey/500
+  background:    var(--semantic-color-static-background-main-primary);
+  transition:    border-color 0.15s ease, background 0.15s ease;
+}
+
+.ds-textarea__container:hover {
+  border-color: var(--semantic-color-interactive-border-medium-alt-hover);
+}
+
+// ── Textarea natif ────────────────────────────────────────────
+.ds-textarea__input {
+  flex:        1;
+  min-width:   0;
+  border:      none;
+  outline:     none;
+  background:  transparent;
+  resize:      vertical;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+
+  &::placeholder { color: var(--semantic-color-static-text-main-tertiary); }
+}
+
+// ── Focus ─────────────────────────────────────────────────────
+.ds-textarea__container:focus-within {
+  border-color:   var(--semantic-color-interactive-border-strong-active);
+  outline:        2px solid var(--semantic-color-interactive-border-focus);
+  outline-offset: 1px;
+}
+
+// ── Error ─────────────────────────────────────────────────────
+.ds-textarea--error .ds-textarea__container {
+  border-color: var(--semantic-color-interactive-border-strong-negative-default);
+}
+
+.ds-textarea__error-msg {
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-interactive-text-strong-negative-default);
+}
+
+// ── Read Only ─────────────────────────────────────────────────
+.ds-textarea--readonly .ds-textarea__container {
+  background:     var(--semantic-color-static-background-main-secondary);
+  cursor:         default;
+  pointer-events: none;
+}
+
+// ── Disabled ──────────────────────────────────────────────────
+.ds-textarea--disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  pointer-events: none;
+}

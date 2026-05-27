@@ -15,6 +15,7 @@
 // =============================================================
 
 :host {
+  box-sizing:       border-box;
   display:         inline-flex;
   align-items:     center;
   justify-content: center;
@@ -81,6 +82,34 @@
       }
     }
 
+    &.ds-button--tone-positive {
+      background:   var(--semantic-color-interactive-background-strong-positive-default);
+      border-color: var(--semantic-color-interactive-border-strong-positive-default);
+
+      &:hover:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-strong-positive-hover);
+        border-color: var(--semantic-color-interactive-border-strong-positive-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-strong-positive-active);
+        border-color: var(--semantic-color-interactive-border-strong-positive-active);
+      }
+    }
+
+    &.ds-button--tone-negative {
+      background:   var(--semantic-color-interactive-background-strong-negative-default);
+      border-color: var(--semantic-color-interactive-border-strong-negative-default);
+
+      &:hover:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-strong-negative-hover);
+        border-color: var(--semantic-color-interactive-border-strong-negative-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-strong-negative-active);
+        border-color: var(--semantic-color-interactive-border-strong-negative-active);
+      }
+    }
+
     // Reversed (white bg, brand text)
     &.ds-button--reversed {
       background:   var(--semantic-color-interactive-background-neutral-default);
@@ -134,6 +163,40 @@
       }
     }
 
+    &.ds-button--tone-positive {
+      background:   var(--semantic-color-interactive-background-light-positive-default);
+      border-color: var(--semantic-color-interactive-border-strong-positive-default);
+      color:        var(--semantic-color-interactive-text-strong-positive-default);
+
+      &:hover:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-light-positive-hover);
+        border-color: var(--semantic-color-interactive-border-strong-positive-hover);
+        color:        var(--semantic-color-interactive-text-strong-positive-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-light-positive-active);
+        border-color: var(--semantic-color-interactive-border-strong-positive-active);
+        color:        var(--semantic-color-interactive-text-strong-positive-active);
+      }
+    }
+
+    &.ds-button--tone-negative {
+      background:   var(--semantic-color-interactive-background-light-negative-default);
+      border-color: var(--semantic-color-interactive-border-strong-negative-default);
+      color:        var(--semantic-color-interactive-text-strong-negative-default);
+
+      &:hover:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-light-negative-hover);
+        border-color: var(--semantic-color-interactive-border-strong-negative-hover);
+        color:        var(--semantic-color-interactive-text-strong-negative-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        background:   var(--semantic-color-interactive-background-light-negative-active);
+        border-color: var(--semantic-color-interactive-border-strong-negative-active);
+        color:        var(--semantic-color-interactive-text-strong-negative-active);
+      }
+    }
+
     // Reversed
     &.ds-button--reversed {
       background:   transparent;
@@ -169,6 +232,28 @@
       }
     }
 
+    &.ds-button--tone-positive {
+      color: var(--semantic-color-interactive-text-strong-positive-default);
+
+      &:hover:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-positive-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-positive-active);
+      }
+    }
+
+    &.ds-button--tone-negative {
+      color: var(--semantic-color-interactive-text-strong-negative-default);
+
+      &:hover:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-negative-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-negative-active);
+      }
+    }
+
     // Reversed
     &.ds-button--reversed {
       color: var(--semantic-color-interactive-text-neutral-default);
@@ -201,6 +286,28 @@
       }
       &:active:not(.ds-button--disabled) {
         color: var(--semantic-color-interactive-text-strong-alt-active);
+      }
+    }
+
+    &.ds-button--tone-positive {
+      color: var(--semantic-color-interactive-text-strong-positive-default);
+
+      &:hover:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-positive-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-positive-active);
+      }
+    }
+
+    &.ds-button--tone-negative {
+      color: var(--semantic-color-interactive-text-strong-negative-default);
+
+      &:hover:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-negative-hover);
+      }
+      &:active:not(.ds-button--disabled) {
+        color: var(--semantic-color-interactive-text-strong-negative-active);
       }
     }
 

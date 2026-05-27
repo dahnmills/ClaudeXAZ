@@ -1,7 +1,7 @@
 import { Component, input, output, computed } from '@angular/core';
 
 export type ButtonType = 'primary' | 'secondary' | 'tertiary' | 'plain';
-export type ButtonTone = 'default' | 'accent';
+export type ButtonTone = 'default' | 'accent' | 'positive' | 'negative';
 
 @Component({
   selector: 'ds-button',

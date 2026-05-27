@@ -7,7 +7,7 @@ const meta: Meta<ButtonComponent> = {
   tags: ['autodocs'],
   argTypes: {
     type:     { control: 'select', options: ['primary', 'secondary', 'tertiary', 'plain'] },
-    tone:     { control: 'select', options: ['default', 'accent'] },
+    tone:     { control: 'select', options: ['default', 'accent', 'positive', 'negative'] },
     reversed: { control: 'boolean' },
     disabled: { control: 'boolean' },
     clicked:  { action: 'clicked' },
@@ -50,6 +50,23 @@ export const AccentTone: Story = {
         <ds-button type="secondary" tone="accent">Secondary</ds-button>
         <ds-button type="tertiary"  tone="accent">Tertiary</ds-button>
         <ds-button type="plain"     tone="accent">Plain</ds-button>
+      </div>
+    `,
+  }),
+};
+
+export const FeedbackTones: Story = {
+  render: () => ({
+    template: `
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <ds-button type="primary" tone="positive">Positive primary</ds-button>
+        <ds-button type="secondary" tone="positive">Positive secondary</ds-button>
+        <ds-button type="tertiary" tone="positive">Positive tertiary</ds-button>
+        <ds-button type="plain" tone="positive">Positive plain</ds-button>
+        <ds-button type="primary" tone="negative">Negative primary</ds-button>
+        <ds-button type="secondary" tone="negative">Negative secondary</ds-button>
+        <ds-button type="tertiary" tone="negative">Negative tertiary</ds-button>
+        <ds-button type="plain" tone="negative">Negative plain</ds-button>
       </div>
     `,
   }),

@@ -2,6 +2,7 @@ import { Component, input, output, computed } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
 
 export type TabTone = 'default' | 'accent' | 'reversed';
+export type TabCounterStyle = 'badge' | 'inline';
 
 @Component({
   selector: 'ds-tab',
@@ -28,6 +29,9 @@ export class TabComponent {
   // Figma 57:231 — extra slots
   icon     = input<boolean>(false);          // gates [slot=icon] rendering
   counter  = input<number | null>(null);     // red badge top-right
+  counterStyle = input<TabCounterStyle>('badge');
+  counterStrong = input<boolean>(false);
+  changed = input<boolean>(false);
   chevron  = input<boolean>(false);          // dropdown indicator
 
   clicked = output<void>();

@@ -148,10 +148,7 @@
 }
 
 // ── Divider ───────────────────────────────────────────────────
-.ds-search-flyout__divider {
-  height:     1px;
-  background: var(--semantic-color-static-border-subtle-tertiary);
-}
+// Divider utilise <ds-divider />
 
 // ── Footer ────────────────────────────────────────────────────
 .ds-search-flyout__footer {

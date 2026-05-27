@@ -1,6 +1,6 @@
-<div class="ds-action-card__icon-wrap" aria-hidden="true">
+<ds-icon-tile size="l" tone="brand">
   <ng-content select="[slot=icon]" />
-</div>
+</ds-icon-tile>
 
 <div class="ds-action-card__body">
   <p class="ds-action-card__title">{{ title() }}</p>
@@ -9,7 +9,7 @@
   }
 </div>
 
-<a class="ds-action-card__link" [href]="linkHref()">
+<ds-link [href]="linkHref()" tone="default" size="m" weight="regular">
   {{ linkLabel() }}
-  <span class="ds-action-card__arrow" aria-hidden="true">→</span>
-</a>
+  <ds-icon slot="icon-right" name="arrow-right" [size]="16" />
+</ds-link>

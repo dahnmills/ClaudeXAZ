@@ -1,0 +1,115 @@
+<app-topbox-test-shell>
+  <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="true">
+    <ds-breadcrumbs slot="breadcrumbs">
+      <ds-crumb label="Home" href="#" />
+      <ds-crumb label="Buyers" href="#" />
+      <ds-crumb label="Companies" [currentPage]="true" />
+    </ds-breadcrumbs>
+
+    <ds-page-title slot="title" title="Companies" />
+
+    <div slot="tabs" style="display:flex;gap:32px;">
+      <ds-tab [selected]="true">All</ds-tab>
+      <ds-tab>Watchlist</ds-tab>
+      <ds-tab>Archived</ds-tab>
+    </div>
+  </ds-page-header>
+
+  <div class="ut-filters-page__body">
+    <div class="ut-filters-page__toolbar">
+      <ds-select
+        class="ut-filters-page__saved-picker"
+        placeholder="Select your filters"
+        [options]="savedFilterOptions()"
+        [value]="activeSavedFilterId() ?? ''"
+        (selectionChange)="onSavedSelectChange($event)"
+      />
+
+      <ds-button type="secondary" tone="default" (clicked)="openDrawer()">
+        Filter@if (activeFiltersCount() > 0) { ({{ activeFiltersCount() }}) }
+      </ds-button>
+    </div>
+
+    <div class="ut-filters-page__table">
+      <ds-table-row>
+        <ds-cell-header
+          type="selection"
+          [allSelected]="countChecked() === sortedCompanies().length && sortedCompanies().length > 0"
+          [allIndeterminate]="countChecked() > 0 && countChecked() < sortedCompanies().length"
+          (allSelectedChange)="toggleAll(sortedCompanies(), $event)"
+        />
+        <ds-cell-header style="flex:1.6;" type="default" title="Company"     [sortable]="true" [sortDirection]="sortDirFor('company')"     (sortClicked)="cycleSort('company')" />
+        <ds-cell-header style="flex:1;"   type="default" title="National ID" [sortable]="true" [sortDirection]="sortDirFor('nationalId')"  (sortClicked)="cycleSort('nationalId')" />
+        <ds-cell-header style="flex:1.2;" type="default" title="Sector"      [sortable]="true" [sortDirection]="sortDirFor('sector')"      (sortClicked)="cycleSort('sector')" />
+        <ds-cell-header style="flex:0.8;" type="default" title="BU"          [sortable]="true" [sortDirection]="sortDirFor('bu')"          (sortClicked)="cycleSort('bu')" />
+        <ds-cell-header style="flex:0.6;" type="default" title="Grade"       [sortable]="true" [sortDirection]="sortDirFor('grade')"       (sortClicked)="cycleSort('grade')" />
+        <ds-cell-header style="flex:1;"   type="default" title="Turnover"    [sortable]="true" [sortDirection]="sortDirFor('turnover')"    (sortClicked)="cycleSort('turnover')" />
+        <ds-cell-header style="flex:0.8;" type="default" title="Sensitivity" [sortable]="true" [sortDirection]="sortDirFor('sensitivity')" (sortClicked)="cycleSort('sensitivity')" />
+        <ds-cell-header style="flex:0.8;" type="default" title="Status"      [sortable]="true" [sortDirection]="sortDirFor('status')"      (sortClicked)="cycleSort('status')" />
+      </ds-table-row>
+
+      @if (sortedCompanies().length === 0) {
+        <div class="ut-filters-page__empty">
+          <ds-icon name="search" [size]="32" />
+          <p>No results match the current filters.</p>
+        </div>
+      }
+
+      @for (row of sortedCompanies(); track row.id) {
+        <ds-table-row [interactive]="true">
+          <ds-cell-selection
+            control="check"
+            [checked]="!!checked()[row.id]"
+            (checkedChange)="toggleRow(row.id, $event)"
+          />
+          <ds-cell style="flex:1.6;">
+            <div class="ut-filters-page__company">
+              <span class="ut-filters-page__company-name">{{ row.name }}</span>
+              <span class="ut-filters-page__company-id">{{ row.companyId }}</span>
+            </div>
+          </ds-cell>
+          <ds-cell style="flex:1;">
+            <span class="ut-filters-page__national-id">
+              <span class="ut-filters-page__national-id-type">{{ idTypeLabel(row.nationalIdType) }}</span>
+              {{ row.nationalId }}
+            </span>
+          </ds-cell>
+          <ds-cell style="flex:1.2;">{{ row.tradeSectorFamily }}</ds-cell>
+          <ds-cell style="flex:0.8;">{{ row.businessUnit }}</ds-cell>
+          <ds-cell style="flex:0.6;">
+            <ds-badge [label]="row.grade" status="info" variant="strong" size="s" />
+          </ds-cell>
+          <ds-cell style="flex:1;">{{ formatMoney(row.turnover) }}</ds-cell>
+          <ds-cell style="flex:0.8;">
+            <ds-badge [label]="row.sensitivity" status="warning" variant="light" size="s" />
+          </ds-cell>
+          <ds-cell style="flex:0.8;">
+            <ds-badge
+              [label]="row.status === 'active' ? 'Active' : 'Closed'"
+              [status]="row.status === 'active' ? 'success' : 'neutral'"
+              variant="light"
+              size="s"
+            />
+          </ds-cell>
+        </ds-table-row>
+      }
+    </div>
+  </div>
+</app-topbox-test-shell>
+
+<ds-filter-drawer
+  [open]="drawerOpen()"
+  title="Filters"
+  [filters]="filters"
+  [savedFilters]="savedFilters()"
+  [currentFilters]="currentFilters()"
+  [activeSavedFilterId]="activeSavedFilterId()"
+  (currentFiltersChange)="currentFilters.set($event)"
+  [currentTab]="currentTab()"
+  (currentTabChange)="currentTab.set($event)"
+  (savedFiltersChange)="savedFilters.set($event)"
+  (savedFilterApplied)="onSavedFilterApplied($event)"
+  (savedFilterCreated)="onSavedFilterCreated($event)"
+  (closed)="closeDrawer()"
+  (applied)="onApplied($event)"
+/>

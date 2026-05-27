@@ -2,16 +2,12 @@
   <ng-content />
 </div>
 <div class="ds-side-nav__bottom">
-  <button
-    type="button"
-    class="ds-side-nav__toggle"
+  <ds-side-nav-item
     [attr.aria-expanded]="!collapsed()"
     [attr.aria-label]="collapsed() ? 'Open panel' : 'Close panel'"
-    (click)="toggle()"
+    (clicked)="toggle()"
   >
-    <span class="ds-side-nav__toggle-icon">
-      <ds-icon name="panel-left" [size]="20" />
-    </span>
-    <span class="ds-side-nav__toggle-label">{{ collapsed() ? 'Open panel' : 'Close panel' }}</span>
-  </button>
+    <ds-icon slot="icon" name="panel-left" [size]="20" />
+    {{ collapsed() ? 'Open panel' : 'Close panel' }}
+  </ds-side-nav-item>
 </div>

@@ -1,8 +1,8 @@
 <div class="ds-result-card__main">
   <div class="ds-result-card__left">
-    <div class="ds-result-card__product-icon">
+    <ds-icon-tile size="m" tone="brand">
       <ds-icon name="grid" [size]="24" />
-    </div>
+    </ds-icon-tile>
     <div class="ds-result-card__info">
       <div class="ds-result-card__name-row">
         <span class="ds-result-card__name">{{ data().name }}</span>
@@ -31,9 +31,7 @@
   <div class="ds-result-card__right">
     <div class="ds-result-card__score">
       <span class="ds-result-card__score-value">{{ data().score ?? 0 }}</span>
-      <div class="ds-result-card__score-bar">
-        <div class="ds-result-card__score-fill" [style.width.%]="scorePct()"></div>
-      </div>
+      <ds-progress-bar class="ds-result-card__score-bar" [value]="(data().score ?? 0)" size="s" tone="brand" />
     </div>
     <div class="ds-result-card__actions">
       <ds-button-icon
@@ -70,40 +68,16 @@
 </div>
 
 @if (open()) {
-  <div class="ds-result-card__divider"></div>
+  <ds-divider class="ds-result-card__divider" />
+
   <div class="ds-result-card__details">
-    @if (data().general) {
-      <div class="ds-result-card__col">
-        <span class="ds-result-card__col-title">General information</span>
-        @for (r of data().general!; track r.label) {
-          <div class="ds-result-card__col-row">
-            <span class="ds-result-card__col-label">{{ r.label }}</span>
-            <span class="ds-result-card__col-value">{{ r.value }}</span>
-          </div>
-        }
-      </div>
-    }
-    @if (data().financial) {
-      <div class="ds-result-card__col">
-        <span class="ds-result-card__col-title">Financial information</span>
-        @for (r of data().financial!; track r.label) {
-          <div class="ds-result-card__col-row">
-            <span class="ds-result-card__col-label">{{ r.label }}</span>
-            <span class="ds-result-card__col-value">{{ r.value }}</span>
-          </div>
-        }
-      </div>
-    }
-    @if (data().localIds) {
-      <div class="ds-result-card__col">
-        <span class="ds-result-card__col-title">Local IDs</span>
-        @for (r of data().localIds!; track r.label) {
-          <div class="ds-result-card__col-row">
-            <span class="ds-result-card__col-label">{{ r.label }}</span>
-            <span class="ds-result-card__col-value">{{ r.value }}</span>
-          </div>
-        }
-      </div>
+    @if (detailSections().length) {
+      <ds-properties-panel
+        class="ds-result-card__properties"
+        [sections]="detailSections()"
+        [columns]="3"
+        variant="flat"
+      />
     }
     @if (data().providers) {
       <div class="ds-result-card__col">

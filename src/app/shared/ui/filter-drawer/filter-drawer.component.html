@@ -1,0 +1,456 @@
+<ds-drawer [open]="open()" [title]="title()" (closed)="onClose()">
+  <div class="ds-filter-drawer__layout">
+    <div class="ds-filter-drawer__tabs" role="tablist" aria-label="Filter drawer sections">
+      <ds-tab
+        [selected]="currentTab() === 'current'"
+        [counter]="filtersTabCounter()"
+        counterStyle="inline"
+        (clicked)="onTabChange('current')"
+      >
+        Filters
+      </ds-tab>
+      <ds-tab
+        [selected]="currentTab() === 'saved'"
+        [counter]="savedFiltersList().length"
+        counterStyle="inline"
+        [counterStrong]="savedFiltersChanged()"
+        [changed]="savedFiltersChanged()"
+        (clicked)="onTabChange('saved')"
+      >
+        Saved filters
+      </ds-tab>
+    </div>
+
+    <div class="ds-filter-drawer__content">
+      @if (statusMessage()) {
+        <p class="ds-filter-drawer__status" role="status">{{ statusMessage() }}</p>
+      }
+
+      @if (currentTab() === 'current') {
+        <section class="ds-filter-drawer__fields" aria-label="Filter criteria">
+          @for (filter of filters(); track filter.id; let last = $last) {
+            <ng-container [ngTemplateOutlet]="sectionTpl" [ngTemplateOutletContext]="{ $implicit: filter, depth: 0 }" />
+
+            @if (!last) {
+              <ds-divider />
+            }
+          }
+
+          @if (filters().length === 0) {
+            <div class="ds-filter-drawer__empty">
+              <ds-icon name="filter" [size]="32" />
+              <p>No filters available</p>
+            </div>
+          }
+        </section>
+      }
+
+      @if (currentTab() === 'saved') {
+        <section class="ds-filter-drawer__saved" aria-label="Saved filters">
+          @if (savedFiltersList().length > 0) {
+            <div class="ds-filter-drawer__saved-list" role="list">
+              @for (filter of savedFiltersList(); track filter.id) {
+                <div
+                  class="ds-filter-drawer__saved-row"
+                  [class.ds-filter-drawer__saved-row--deleting]="isSavedFilterDeleting(filter.id)"
+                  [class.ds-filter-drawer__saved-row--active]="isActiveSavedFilter(filter.id)"
+                  role="listitem"
+                  [attr.tabindex]="isSavedFilterDeleting(filter.id) ? -1 : 0"
+                  [attr.aria-label]="'Apply ' + filter.name"
+                  (click)="onApplySavedFilter(filter)"
+                  (keydown.enter)="onApplySavedFilter(filter)"
+                  (keydown.space)="$event.preventDefault(); onApplySavedFilter(filter)"
+                >
+                  <ds-radio
+                    [selected]="isActiveSavedFilter(filter.id)"
+                    [attr.aria-hidden]="true"
+                  />
+
+                  <div class="ds-filter-drawer__saved-edit" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                    <ds-inline-edit
+                      [value]="filter.name"
+                      placeholder="Saved filter name"
+                      emptyLabel="My Filters"
+                      ariaLabel="Rename saved filter"
+                      deleteAriaLabel="Delete saved filter"
+                      (saved)="onRenameSavedFilter(filter, $event)"
+                      (deleted)="onDeleteSavedFilter(filter.id)"
+                    />
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="ds-filter-drawer__empty">
+              <ds-icon name="bookmark" [size]="32" />
+              <p>No saved filters</p>
+              <p class="ds-filter-drawer__empty-hint">
+                Save a filter set from the Filters tab.
+              </p>
+            </div>
+          }
+        </section>
+      }
+    </div>
+  </div>
+
+  @if (currentTab() === 'current') {
+    <div slot="footer" class="ds-filter-drawer__footer">
+      <div class="ds-filter-drawer__footer-right">
+        <ds-button
+          type="plain"
+          tone="default"
+          [disabled]="activeFiltersCount() === 0"
+          (clicked)="onReset()"
+        >
+          Clear all
+        </ds-button>
+
+        <ds-button
+          class="ds-filter-drawer__save-my-filters"
+          type="secondary"
+          [tone]="saveFeedback() ? 'positive' : 'default'"
+          [disabled]="activeFiltersCount() === 0 || saveFeedback()"
+          (clicked)="onSaveCurrentFilters()"
+        >
+          <span class="ds-filter-drawer__save-labels">
+            <span
+              class="ds-filter-drawer__save-label"
+              [class.ds-filter-drawer__save-label--hidden]="saveFeedback()"
+            >
+              Save my filters
+            </span>
+            <span
+              class="ds-filter-drawer__save-label"
+              [class.ds-filter-drawer__save-label--hidden]="!saveFeedback()"
+            >
+              Saved
+            </span>
+          </span>
+        </ds-button>
+
+        <ds-button type="primary" tone="default" (clicked)="onApply()">
+          Apply
+        </ds-button>
+      </div>
+    </div>
+  }
+</ds-drawer>
+
+<ng-template #sectionTpl let-filter let-depth="depth">
+  <div
+    class="ds-filter-drawer__section"
+    [class.ds-filter-drawer__section--open]="isFilterOpen(filter)"
+    [class.ds-filter-drawer__section--nested]="depth > 0"
+    [class.ds-filter-drawer__section--active]="depth > 0 && countForOwnValue(filter) > 0"
+  >
+    <div
+      class="ds-filter-drawer__section-header"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="isFilterOpen(filter)"
+      (click)="toggleFilterSection(filter)"
+      (keydown.enter)="toggleFilterSection(filter)"
+      (keydown.space)="$event.preventDefault(); toggleFilterSection(filter)"
+    >
+      <span class="ds-filter-drawer__section-title-wrap">
+        <span class="ds-filter-drawer__section-title">{{ filter.label }}</span>
+        @if (depth === 0 && hasActiveFilter(filter)) {
+          <ds-badge
+            [label]="getFilterCountLabel(filter)"
+            status="info"
+            variant="strong"
+            size="s"
+          />
+        }
+      </span>
+      @if (filter.type === 'range-currency' && isRangeCurrencyActive(filter)) {
+        <span class="ds-filter-drawer__section-summary">{{ rangeCurrencySummary(filter) }}</span>
+      }
+      <ds-icon name="chevron-down" [size]="16" class="ds-filter-drawer__section-chevron" />
+    </div>
+
+    <div class="ds-filter-drawer__section-body-wrap" [attr.aria-hidden]="!isFilterOpen(filter)">
+      <div class="ds-filter-drawer__section-body">
+        @switch (filter.type) {
+          @case ('text') {
+            <ds-input-text
+              [placeholder]="filter.placeholder || 'Search ' + filter.label"
+              [value]="getFilterTextValue(filter.id)"
+              (valueChange)="onFilterValueChange(filter.id, $event)"
+            />
+          }
+
+          @case ('checkbox') {
+            <ds-checkbox
+              [label]="filter.label"
+              [checked]="getFilterBoolValue(filter.id)"
+              (checkedChange)="onFilterValueChange(filter.id, $event)"
+            />
+          }
+
+          @case ('checkbox-list') {
+            <div
+              class="ds-filter-drawer__checkbox-list"
+              [class.ds-filter-drawer__checkbox-list--cols-2]="filter.columns === 2"
+              role="group"
+              [attr.aria-label]="filter.label"
+            >
+              @for (option of getFilterOptions(filter); track option.value) {
+                <div class="ds-filter-drawer__checkbox-row">
+                  <ds-checkbox
+                    [label]="option.color ? '' : option.label"
+                    [checked]="getCheckboxListValue(filter.id, option.value)"
+                    (checkedChange)="toggleCheckboxList(filter.id, option.value, $event)"
+                  />
+                  @if (option.color) {
+                    <span class="ds-filter-drawer__grade-pill" [style.background]="option.color">{{ option.label }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          @case ('select') {
+            <div class="ds-filter-drawer__options" role="listbox" [attr.aria-label]="filter.label">
+              <ds-tag
+                type="select"
+                label="All"
+                [selected]="getFilterTextValue(filter.id) === ''"
+                (toggled)="onFilterValueChange(filter.id, '')"
+              />
+              @for (option of getFilterOptions(filter); track option.value) {
+                <ds-tag
+                  type="select"
+                  [label]="option.label"
+                  [selected]="isSelectOptionSelected(filter.id, option.value)"
+                  (toggled)="onFilterValueChange(filter.id, option.value)"
+                />
+              }
+            </div>
+          }
+
+          @case ('button-range') {
+            <ds-button-range-group
+              [options]="getFilterOptions(filter)"
+              [value]="getFilterArrayValue(filter.id)"
+              [mode]="filter.rangeMode ?? 'range'"
+              [ariaLabel]="filter.label"
+              (valueChange)="onFilterValueChange(filter.id, $event)"
+            />
+          }
+
+          @case ('composite-id') {
+            <div class="ds-filter-drawer__composite-id">
+              <div class="ds-filter-drawer__composite-id-row">
+                <ds-select
+                  class="ds-filter-drawer__composite-id-select"
+                  [options]="filter.idTypes ?? []"
+                  [value]="getIdTypeValue(filter)"
+                  (selectionChange)="selectIdType(filter, $event)"
+                />
+                <ds-input-text
+                  class="ds-filter-drawer__composite-id-input"
+                  [placeholder]="filter.placeholder || 'Search'"
+                  [value]="getSubText(filter.id, 'value')"
+                  (valueChange)="setSubValue(filter.id, 'value', $event)"
+                  (keydown.enter)="onCompositeIdEnter(filter, $event)"
+                />
+              </div>
+              @if (getSubArray(filter.id, 'chips').length > 0) {
+                <div class="ds-filter-drawer__chips">
+                  @for (chip of getSubArray(filter.id, 'chips'); track chip) {
+                    <ds-tag
+                      type="filter"
+                      [label]="chip"
+                      (removed)="removeCompositeIdChip(filter.id, chip)"
+                    />
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          @case ('search-chips') {
+            <div class="ds-filter-drawer__search-chips">
+              <ds-input-text
+                [placeholder]="filter.placeholder || 'Search ' + filter.label"
+                [value]="getSubText(filter.id, 'draft')"
+                (valueChange)="setSubValue(filter.id, 'draft', $event)"
+                (keydown.enter)="onSearchChipsEnter(filter, $event)"
+              >
+                <ds-icon slot="append" name="search" [size]="16" class="ds-filter-drawer__search-icon" />
+              </ds-input-text>
+              @if (getSubArray(filter.id, 'chips').length > 0) {
+                <div class="ds-filter-drawer__chips">
+                  @for (chip of getSubArray(filter.id, 'chips'); track chip) {
+                    <ds-tag
+                      type="filter"
+                      [label]="chip"
+                      (removed)="removeSearchChipsChip(filter.id, chip)"
+                    />
+                  }
+                </div>
+              }
+              @if (filter.options && filter.options.length > 0) {
+                <div class="ds-filter-drawer__checkbox-list" role="group" [attr.aria-label]="filter.label">
+                  @for (option of getFilteredOptions(filter); track option.value) {
+                    <ds-checkbox
+                      [label]="option.label"
+                      [checked]="isSearchChipsOptionSelected(filter, option.label)"
+                      (checkedChange)="toggleSearchChipsOption(filter, option.label, $event)"
+                    />
+                  }
+                </div>
+              }
+            </div>
+          }
+
+          @case ('tree') {
+            <div class="ds-filter-drawer__search-chips">
+              <ds-input-text
+                [placeholder]="filter.placeholder || 'Search ' + filter.label"
+                [value]="getSubText(filter.id, 'search')"
+                (valueChange)="setSubValue(filter.id, 'search', $event)"
+              >
+                <ds-icon slot="append" name="search" [size]="16" class="ds-filter-drawer__search-icon" />
+              </ds-input-text>
+              @if (getFilterArrayValue(filter.id).length > 0) {
+                <div class="ds-filter-drawer__chips">
+                  @for (chip of getFilterArrayValue(filter.id); track chip) {
+                    <ds-tag
+                      type="filter"
+                      [label]="chip"
+                      (removed)="removeSearchChip(filter.id, chip)"
+                    />
+                  }
+                </div>
+              }
+              <div class="ds-filter-drawer__tree" role="tree" [attr.aria-label]="filter.label">
+                @for (node of getFilteredTree(filter); track trackTreeNode($index, node)) {
+                  <ng-container
+                    [ngTemplateOutlet]="treeNodeTpl"
+                    [ngTemplateOutletContext]="{ $implicit: node, filter: filter, level: 0 }"
+                  />
+                }
+              </div>
+            </div>
+          }
+
+          @case ('range-currency') {
+            <div class="ds-filter-drawer__range-currency">
+              <div class="ds-filter-drawer__range-currency-buckets" role="group" [attr.aria-label]="filter.label">
+                @for (option of getFilterOptions(filter); track option.value) {
+                  <ds-tag
+                    type="select"
+                    [label]="option.label"
+                    [selected]="isSubRangeSelected(filter, option.value)"
+                    (toggled)="onSubRangeClicked(filter, option.value)"
+                  />
+                }
+              </div>
+              <div class="ds-filter-drawer__range-currency-inputs">
+                <ds-input-text
+                  placeholder="-"
+                  [value]="formatCurrency(getRangeCurrencyFrom(filter.id))"
+                  (valueChange)="setRangeCurrencyBound(filter, 0, $event)"
+                >
+                  <span slot="prepend" class="ds-filter-drawer__range-currency-symbol">{{ filter.currencySymbol ?? '€' }}</span>
+                </ds-input-text>
+                <span class="ds-filter-drawer__range-currency-to">to</span>
+                <ds-input-text
+                  placeholder="-"
+                  [value]="formatCurrency(getRangeCurrencyTo(filter.id))"
+                  (valueChange)="setRangeCurrencyBound(filter, 1, $event)"
+                >
+                  <span slot="prepend" class="ds-filter-drawer__range-currency-symbol">{{ filter.currencySymbol ?? '€' }}</span>
+                </ds-input-text>
+              </div>
+            </div>
+          }
+
+          @case ('group') {
+            <div class="ds-filter-drawer__group">
+              @for (child of filter.children ?? []; track child.id) {
+                <ng-container
+                  [ngTemplateOutlet]="sectionTpl"
+                  [ngTemplateOutletContext]="{ $implicit: child, depth: depth + 1 }"
+                />
+              }
+            </div>
+          }
+        }
+
+        @if (filter.helperText) {
+          <p class="ds-filter-drawer__helper">{{ filter.helperText }}</p>
+        }
+
+        @if (filter.appendedFilters && filter.appendedFilters.length > 0) {
+          <div class="ds-filter-drawer__appended">
+            @for (sub of filter.appendedFilters; track sub.id) {
+              @switch (sub.type) {
+                @case ('checkbox') {
+                  <ds-checkbox
+                    [label]="sub.label"
+                    [checked]="getFilterBoolValue(sub.id)"
+                    (checkedChange)="onFilterValueChange(sub.id, $event)"
+                  />
+                }
+                @case ('checkbox-list') {
+                  <div class="ds-filter-drawer__checkbox-list" role="group">
+                    @for (option of getFilterOptions(sub); track option.value) {
+                      <ds-checkbox
+                        [label]="option.label"
+                        [checked]="getCheckboxListValue(sub.id, option.value)"
+                        (checkedChange)="toggleCheckboxList(sub.id, option.value, $event)"
+                      />
+                    }
+                  </div>
+                }
+              }
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #treeNodeTpl let-node let-filter="filter" let-level="level">
+  <div class="ds-filter-drawer__tree-node" [style.padding-left.px]="level * 20">
+    <div class="ds-filter-drawer__tree-node-row">
+      @if (node.children && node.children.length > 0) {
+        <button
+          type="button"
+          class="ds-filter-drawer__tree-toggle"
+          [attr.aria-expanded]="isTreeNodeExpanded(filter, node.value)"
+          (click)="toggleTreeNodeExpanded(filter, node.value)"
+        >
+          <ds-icon
+            name="chevron-down"
+            [size]="16"
+            class="ds-filter-drawer__tree-toggle-icon"
+            [class.ds-filter-drawer__tree-toggle-icon--open]="isTreeNodeExpanded(filter, node.value)"
+          />
+        </button>
+      } @else {
+        <span class="ds-filter-drawer__tree-toggle-spacer"></span>
+      }
+      <ds-checkbox
+        [label]="node.label"
+        [checked]="isTreeNodeSelected(filter.id, node)"
+        [indeterminate]="isTreeNodeIndeterminate(filter.id, node)"
+        (checkedChange)="toggleTreeNode(filter.id, node)"
+        (indeterminateChange)="toggleTreeNode(filter.id, node)"
+      />
+    </div>
+    @if (node.children && node.children.length > 0 && isTreeNodeExpanded(filter, node.value)) {
+      @for (child of node.children; track trackTreeNode($index, child)) {
+        <ng-container
+          [ngTemplateOutlet]="treeNodeTpl"
+          [ngTemplateOutletContext]="{ $implicit: child, filter: filter, level: level + 1 }"
+        />
+      }
+    }
+  </div>
+</ng-template>

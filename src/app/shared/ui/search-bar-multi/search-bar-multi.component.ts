@@ -2,9 +2,11 @@ import { Component, computed, input, model, output, signal } from '@angular/core
 import { IconComponent, type IconName } from '../icon/icon.component';
 import { StandaloneDropdownComponent } from '../standalone-dropdown/standalone-dropdown.component';
 import { ButtonComponent } from '../button/button.component';
+import { ButtonIconComponent } from '../button-icon/button-icon.component';
 import { FlyoutMenuComponent } from '../flyout-menu/flyout-menu.component';
 import { FlyoutMenuItemComponent } from '../flyout-menu/flyout-menu-item.component';
 import { FlagComponent, type FlagCode } from '../flag/flag.component';
+import { DividerComponent } from '../divider/divider.component';
 
 export type SearchType = 'company-id' | 'id' | 'name' | 'phone' | 'manager';
 export type IdTypeOption = 'DUN' | 'TVA' | 'SIREN' | 'SIRET';
@@ -44,7 +46,7 @@ export const ID_TYPES: IdTypeOption[] = ['DUN', 'TVA', 'SIREN', 'SIRET'];
 @Component({
   selector: 'ds-search-bar-multi',
   standalone: true,
-  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent],
+  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent, DividerComponent],
   templateUrl: './search-bar-multi.component.html',
   styleUrl: './search-bar-multi.component.scss',
   host: { 'class': 'ds-search-bar-multi' },
