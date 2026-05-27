@@ -35,7 +35,8 @@
 // Country items utilisent <ds-flyout-menu-item> avec slot=icon (Flag)
 
 .ds-search-bar-multi__divider {
-  height: var(--semantic-measurement-spacing-xl);
+  height: var(--semantic-measurement-spacing-l);
+  align-self: center;
 }
 
 .ds-search-bar-multi__field {
@@ -44,6 +45,25 @@
   min-width: 0;
   align-items: center;
   gap: var(--semantic-measurement-spacing-s);
+
+  &--disabled {
+    cursor: not-allowed;
+
+    .ds-search-bar-multi__field-icon,
+    .ds-search-bar-multi__input,
+    .ds-search-bar-multi__input::placeholder {
+      color: var(--semantic-color-static-text-main-tertiary);
+    }
+    .ds-search-bar-multi__input { cursor: not-allowed; }
+  }
+}
+
+.ds-search-bar-multi__phone-prefix {
+  flex-shrink: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color: var(--semantic-color-static-text-main-tertiary);
 }
 
 .ds-search-bar-multi__field-icon {

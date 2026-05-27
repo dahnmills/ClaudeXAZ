@@ -53,11 +53,7 @@ ds-page-header {
 }
 
 .search-page__criteria-overlay {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  z-index: 40;
+  margin-top: var(--semantic-measurement-spacing-s);
 }
 
 .search-page__results {

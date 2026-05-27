@@ -68,17 +68,24 @@
   </div>
   <ds-divider class="ds-search-bar-multi__divider" orientation="vertical" />
 
-  <div class="ds-search-bar-multi__field">
+  <div
+    class="ds-search-bar-multi__field"
+    [class.ds-search-bar-multi__field--disabled]="inputDisabled()"
+  >
     <ds-icon name="search" [size]="24" class="ds-search-bar-multi__field-icon" />
+    @if (phonePrefix(); as p) {
+      <span class="ds-search-bar-multi__phone-prefix">{{ p }}</span>
+    }
     <input
       type="text"
       class="ds-search-bar-multi__input"
       [placeholder]="meta().placeholder"
       [value]="query()"
+      [attr.disabled]="inputDisabled() ? '' : null"
       (input)="onInput($event)"
       (keydown.enter)="searchClicked.emit()"
     />
-    @if (query()) {
+    @if (query() && !inputDisabled()) {
       <ds-button-icon
         class="ds-search-bar-multi__clear"
         type="plain"

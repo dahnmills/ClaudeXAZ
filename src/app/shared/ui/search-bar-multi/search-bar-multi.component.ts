@@ -43,6 +43,14 @@ export const COUNTRIES: { code: FlagCode; label: string }[] = [
 
 export const ID_TYPES: IdTypeOption[] = ['DUN', 'TVA', 'SIREN', 'SIRET'];
 
+export const DIAL_CODES: Record<FlagCode, string> = {
+  fr: '+33',
+  de: '+49',
+  kr: '+82',
+  gb: '+44',
+  us: '+1',
+};
+
 @Component({
   selector: 'ds-search-bar-multi',
   standalone: true,
@@ -80,6 +88,12 @@ export class SearchBarMultiComponent {
     return c ? (this.countries.find(x => x.code === c)?.label ?? 'Select a country') : 'Select a country';
   });
   idTypeLabel = computed(() => this.idType() ?? 'ID Type');
+
+  phonePrefix = computed(() => {
+    const c = this.country();
+    return this.type() === 'phone' && c ? DIAL_CODES[c] : null;
+  });
+  inputDisabled = computed(() => this.type() === 'phone' && !this.country());
 
   toggle(which: 'type' | 'country' | 'id-type') {
     this.openFlyout.update(v => v === which ? null : which);
