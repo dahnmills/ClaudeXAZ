@@ -37,28 +37,30 @@
         </ng-container>
       </ds-page-header>
 
+      @if (activeTab() === 'search') {
+        <div class="search-page__bar-wrap">
+          <ds-search-bar-multi
+            [(type)]="searchType"
+            [(query)]="searchQuery"
+            [criteriaCount]="criteriaCount()"
+            (moreCriteriaClicked)="toggleMoreCriteria()"
+            (searchClicked)="runSearch()"
+          />
+
+          @if (showMoreCriteria()) {
+            <div class="search-page__criteria-overlay">
+              <ds-more-criteria
+                (closed)="toggleMoreCriteria()"
+                (countChange)="criteriaCount.set($event)"
+              />
+            </div>
+          }
+        </div>
+      }
+
       <div class="search-page__inner">
 
         @if (activeTab() === 'search') {
-          <div class="search-page__bar-wrap">
-            <ds-search-bar-multi
-              [(type)]="searchType"
-              [(query)]="searchQuery"
-              [criteriaCount]="criteriaCount()"
-              (moreCriteriaClicked)="toggleMoreCriteria()"
-              (searchClicked)="runSearch()"
-            />
-
-            @if (showMoreCriteria()) {
-              <div class="search-page__criteria-overlay">
-                <ds-more-criteria
-                  (closed)="toggleMoreCriteria()"
-                  (countChange)="criteriaCount.set($event)"
-                />
-              </div>
-            }
-          </div>
-
           @if (isResults()) {
             <div class="search-page__results">
               @for (entry of visibleResults(); track entry.i) {

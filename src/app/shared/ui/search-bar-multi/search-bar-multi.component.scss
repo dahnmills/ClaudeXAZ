@@ -34,9 +34,10 @@
 
 // Country items utilisent <ds-flyout-menu-item> avec slot=icon (Flag)
 
-.ds-search-bar-multi__divider {
+.ds-search-bar-multi__content .ds-search-bar-multi__divider {
   height: var(--semantic-measurement-spacing-l);
   align-self: center;
+  flex-shrink: 0;
 }
 
 .ds-search-bar-multi__field {

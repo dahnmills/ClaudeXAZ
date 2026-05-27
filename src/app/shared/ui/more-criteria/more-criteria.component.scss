@@ -91,7 +91,7 @@
 
 .ds-more-criteria__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--semantic-measurement-spacing-m);
   flex: 1 1 320px;
   min-width: 0;

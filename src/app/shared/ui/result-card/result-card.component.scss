@@ -153,13 +153,19 @@
   gap: var(--semantic-measurement-spacing-l);
   padding: 0 var(--semantic-measurement-spacing-m);
   align-items: flex-start;
+  min-width: 0;
+}
+
+.ds-result-card__properties {
+  flex: 3 1 0;
+  min-width: 0;
 }
 
 .ds-result-card__col {
   display: flex;
   flex-direction: column;
   gap: var(--semantic-measurement-spacing-s);
-  flex: 1 0 0;
+  flex: 1 1 0;
   min-width: 0;
 }
 
