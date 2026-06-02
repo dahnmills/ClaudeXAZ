@@ -1,0 +1,16 @@
+@for (s of steps(); track $index) {
+  <div class="ds-stepper__step ds-stepper__step--{{ statusOf($index) }}">
+    <div class="ds-stepper__marker">
+      @if (statusOf($index) === 'completed') {
+        <ds-icon name="check" [size]="14" />
+      }
+    </div>
+    <div class="ds-stepper__text">
+      <span class="ds-stepper__index">Step {{ $index + 1 }}/{{ total() }}</span>
+      <span class="ds-stepper__label">{{ s.label }}</span>
+      <span class="ds-stepper__status">
+        @if (statusOf($index) === 'completed') { Completed }
+      </span>
+    </div>
+  </div>
+}

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { PageTitleComponent } from './page-title.component';
 
 const meta: Meta<PageTitleComponent> = {
-  title: 'Design System/Page Title',
+  title: 'Design System/Layout/Page Title',
   component: PageTitleComponent,
   tags: ['autodocs'],
   argTypes: {

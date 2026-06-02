@@ -7,7 +7,7 @@ import { ButtonIconComponent } from '../button-icon/button-icon.component';
 import { IconComponent } from '../icon/icon.component';
 
 const meta: Meta<BreadcrumbsComponent> = {
-  title: 'Design System/Breadcrumbs',
+  title: 'Design System/Action/Breadcrumbs',
   component: BreadcrumbsComponent,
   tags: ['autodocs'],
   decorators: [

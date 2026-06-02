@@ -1,0 +1,120 @@
+// =============================================================
+// Popin / Confirm Dialog
+// Source : Figma > -Components--Feedback > Popin (node 63:807)
+//
+// Spec :
+//   • Width 480px, white bg, radius 4px, shadow bottom 800
+//   • Title row : Icon dans pastille ronde (subtle functional bg) + Title 24/32 Bold
+//   • Content text 16/24 Regular, padding-left 48px (aligné sous title texte)
+//   • Footer bg grey/050, 16px padding, 2 buttons flex-1
+//   • Close X top-right (button-icon plain accent)
+// =============================================================
+
+:host {
+  position:       fixed;
+  inset:          0;
+  z-index:        1100;
+  pointer-events: none;
+
+  &.ds-confirm-dialog--open { pointer-events: auto; }
+}
+
+.ds-confirm-dialog__backdrop {
+  position:        absolute;
+  inset:           0;
+  background:      rgba(0, 0, 0, 0.35);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         var(--semantic-measurement-spacing-l);
+}
+
+.ds-confirm-dialog__box {
+  position:       relative;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  width:          480px;
+  max-width:      100%;
+  background:     var(--semantic-color-static-background-main-primary);
+  border-radius:  var(--semantic-border-radius-s);
+  box-shadow:     0 8px 24px rgba(65, 65, 65, 0.35);
+  overflow:       hidden;
+}
+
+// ── Container (title + content) ──────────────────────────────
+.ds-confirm-dialog__container {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+  padding:        var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-l) 0;
+}
+
+.ds-confirm-dialog__title-row {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+
+.ds-confirm-dialog__icon {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         var(--semantic-measurement-spacing-s);
+  border-radius:   var(--semantic-border-radius-round, 100px);
+  flex-shrink:     0;
+}
+
+:host.ds-confirm-dialog--warning .ds-confirm-dialog__icon {
+  background: var(--semantic-color-static-background-subtle-functional-warning);
+  color:      var(--semantic-color-static-background-functional-warning);
+}
+:host.ds-confirm-dialog--danger .ds-confirm-dialog__icon {
+  background: var(--semantic-color-static-background-subtle-functional-negative);
+  color:      var(--semantic-color-static-background-functional-negative);
+}
+:host.ds-confirm-dialog--info .ds-confirm-dialog__icon {
+  background: var(--semantic-color-static-background-subtle-functional-informative);
+  color:      var(--semantic-color-static-background-functional-informative);
+}
+
+.ds-confirm-dialog__title {
+  margin:         0;
+  font-family:    var(--semantic-font-family);
+  font-size:      24px;
+  line-height:    32px;
+  font-weight:    var(--semantic-font-text-style-font-weight-bold);
+  letter-spacing: 0.2px;
+  color:          var(--semantic-color-static-text-main-primary);
+}
+
+.ds-confirm-dialog__text {
+  padding-left:   48px;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-l);
+  line-height:    var(--semantic-font-text-style-line-height-l);
+  font-weight:    var(--semantic-font-text-style-font-weight-regular);
+  color:          var(--semantic-color-static-text-main-primary);
+}
+
+.ds-confirm-dialog__close {
+  position: absolute;
+  top:      var(--semantic-measurement-spacing-m);
+  right:    var(--semantic-measurement-spacing-m);
+}
+
+// ── Footer ───────────────────────────────────────────────────
+.ds-confirm-dialog__footer {
+  display:    flex;
+  align-items: stretch;
+  gap:        var(--semantic-measurement-spacing-m);
+  padding:    var(--semantic-measurement-spacing-m);
+  background: var(--semantic-color-static-background-main-secondary);
+
+  ds-button {
+    flex: 1 0 0;
+  }
+}

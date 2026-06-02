@@ -43,7 +43,7 @@ const sections: PropertySection[] = [
 ];
 
 const meta: Meta<PropertiesPanelComponent> = {
-  title: 'Design System/Properties Panel',
+  title: 'Design System/Data Display/Properties Panel',
   component: PropertiesPanelComponent,
   tags: ['autodocs'],
   argTypes: {

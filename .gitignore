@@ -5,6 +5,7 @@ dist/
 # Storybook and build caches
 .cache/
 coverage/
+storybook-static/
 
 # OS/editor
 .DS_Store

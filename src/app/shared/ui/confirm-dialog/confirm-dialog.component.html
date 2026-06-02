@@ -1,0 +1,33 @@
+@if (open()) {
+  <div class="ds-confirm-dialog__backdrop" (click)="onBackdropClick()">
+    <div class="ds-confirm-dialog__box" (click)="$event.stopPropagation()" role="alertdialog" aria-modal="true">
+
+      <div class="ds-confirm-dialog__container">
+        <div class="ds-confirm-dialog__title-row">
+          <div class="ds-confirm-dialog__icon">
+            <ds-icon [name]="iconName()" [size]="24" />
+          </div>
+          <h2 class="ds-confirm-dialog__title">{{ title() }}</h2>
+        </div>
+        <div class="ds-confirm-dialog__text">
+          <ng-content />
+        </div>
+      </div>
+
+      <ds-button-icon
+        class="ds-confirm-dialog__close"
+        type="plain"
+        tone="accent"
+        ariaLabel="Close"
+        (clicked)="onCancel()"
+      >
+        <ds-icon name="close" [size]="20" />
+      </ds-button-icon>
+
+      <div class="ds-confirm-dialog__footer">
+        <ds-button type="tertiary" tone="accent" (clicked)="onCancel()">{{ cancelLabel() }}</ds-button>
+        <ds-button type="primary" (clicked)="onConfirm()">{{ confirmLabel() }}</ds-button>
+      </div>
+    </div>
+  </div>
+}

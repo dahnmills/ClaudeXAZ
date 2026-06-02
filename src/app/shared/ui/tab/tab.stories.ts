@@ -4,7 +4,7 @@ import { TabComponent } from './tab.component';
 import { IconComponent } from '../icon/icon.component';
 
 const meta: Meta<TabComponent> = {
-  title: 'Design System/Tab',
+  title: 'Design System/Action/Tab',
   component: TabComponent,
   tags: ['autodocs'],
   decorators: [moduleMetadata({ imports: [IconComponent] })],

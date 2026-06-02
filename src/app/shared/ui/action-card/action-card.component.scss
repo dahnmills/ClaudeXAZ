@@ -1,31 +1,56 @@
 // =============================================================
 // Action Card
-// Source : Figma > Layout cible > Homepage > Quick actions
+// Source : Figma > Layout cible > Homepage > Quick actions (standard)
+//        + Admin Data > Activity (selectable variant)
 //
-// Fidélité Figma :
-//   • Bordure Grey/200, radius 4px, padding 16px
-//   • Icon wrap : 56×56px, radius 8px, fond BlueA/025
-//   • Titre : 16px SemiBold Grey/900
-//   • Description : 14px Regular Grey/700
-//   • Lien : BlueA/500, arrow →
+// Variants :
+//   • standard   : icon-tile + body + link, vertical
+//   • selectable : radio + body + badge, horizontal, état selected (border blue)
 // =============================================================
 
 :host {
+  border:         1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:  var(--semantic-border-radius-s);
+  background:     var(--semantic-color-static-background-main-primary);
+  transition:     box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  box-sizing:     border-box;
+}
+
+// ── Variant standard (default) ─────────────────────────────────
+:host.ds-action-card--standard {
   display:        flex;
   flex-direction: column;
-  gap:            var(--foundation-spacing-16);    // 16px
+  gap:            var(--foundation-spacing-16);
   padding:        var(--foundation-spacing-16);
-  border:         1px solid var(--semantic-color-static-border-subtle-tertiary); // Grey/200
-  border-radius:  var(--semantic-border-radius-s);                               // 4px
-  background:     var(--semantic-color-static-background-main-primary);          // white
-  transition:     box-shadow 0.15s ease;
 
   &:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 }
 
-// Icon wrap utilise <ds-icon-tile size="l" tone="brand">
+// ── Variant selectable ─────────────────────────────────────────
+:host.ds-action-card--selectable {
+  display:        flex;
+  flex-direction: row;
+  align-items:    center;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        var(--semantic-measurement-spacing-m);
+  cursor:         pointer;
+  user-select:    none;
+
+  &:hover {
+    background: var(--semantic-color-interactive-background-muted-hover);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: -2px;
+  }
+}
+
+:host.ds-action-card--selected {
+  border-color: var(--semantic-color-interactive-border-strong-default);
+  background:   var(--semantic-color-static-background-subtle-informative);
+}
 
 // ── Body ──────────────────────────────────────────────────────
 .ds-action-card__body {
@@ -33,25 +58,36 @@
   flex-direction: column;
   gap:            var(--foundation-spacing-8);
   flex:           1;
+  min-width:      0;
+}
+
+.ds-action-card__body--inline {
+  gap: var(--semantic-measurement-spacing-xxs);
 }
 
 .ds-action-card__title {
+  margin:      0;
   font-family: var(--semantic-font-family);
-  font-size:   var(--semantic-font-text-style-size-l);               // 16px
+  font-size:   var(--semantic-font-text-style-size-l);
   font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-  line-height: var(--semantic-font-text-style-line-height-l);        // 24px
-  color:       var(--semantic-color-static-text-main-primary);       // Grey/900
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
 }
 
 .ds-action-card__description {
+  margin:      0;
   font-family: var(--semantic-font-family);
-  font-size:   var(--semantic-font-text-style-size-m);               // 14px
+  font-size:   var(--semantic-font-text-style-size-m);
   font-weight: var(--semantic-font-text-style-font-weight-regular);
-  line-height: var(--semantic-font-text-style-line-height-m);        // 20px
-  color:       var(--semantic-color-static-text-main-secondary);     // Grey/700
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
 }
 
-// ── Link — alignement seulement, styles délégués à <ds-link>
-ds-link {
+.ds-action-card__badge {
+  flex-shrink: 0;
+}
+
+// ── Link in standard variant ──────────────────────────────────
+:host.ds-action-card--standard ds-link {
   align-self: flex-start;
 }

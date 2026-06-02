@@ -1,0 +1,51 @@
+// =============================================================
+// Button Split
+// Source : Figma > -Components--Action > Button Split
+//
+// Layout : Button principal + ButtonIcon (chevron) accolés.
+// Bordure partagée : le toggle hérite du style du Button mais
+// rejoint la bordure droite du principal (border-radius adapté).
+// =============================================================
+
+:host {
+  display:        inline-flex;
+  flex-direction: column;
+  align-items:    stretch;
+  position:       relative;
+}
+
+.ds-button-split__group {
+  display:     inline-flex;
+  align-items: stretch;
+  gap:         0;
+}
+
+// Le Button principal : radius gauche, pas droite
+.ds-button-split__main {
+  border-top-right-radius:    0;
+  border-bottom-right-radius: 0;
+  border-right-width:         0;
+}
+
+// Le toggle : radius droite, pas gauche
+.ds-button-split__toggle {
+  border-top-left-radius:    0;
+  border-bottom-left-radius: 0;
+  border-left-width:         1px;
+  height:                    var(--semantic-measurement-spacing-xl);
+  width:                     var(--semantic-measurement-spacing-xl);
+}
+
+// Menu dropdown
+.ds-button-split__menu {
+  position:      absolute;
+  top:           calc(100% + 4px);
+  right:         0;
+  z-index:       50;
+  min-width:     200px;
+}
+
+:host.ds-button-split--disabled {
+  pointer-events: none;
+  opacity:        var(--semantic-measurement-opacity-disabled);
+}

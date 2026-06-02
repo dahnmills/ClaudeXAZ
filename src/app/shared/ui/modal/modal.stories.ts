@@ -6,7 +6,7 @@ import { ButtonComponent } from '../button/button.component';
 import { IconComponent } from '../icon/icon.component';
 
 const meta: Meta<ModalComponent> = {
-  title: 'Design System/Modal',
+  title: 'Design System/Layout/Modal',
   component: ModalComponent,
   tags: ['autodocs'],
   decorators: [

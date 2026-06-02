@@ -1,11 +1,45 @@
-@for (section of sections(); track section.title) {
+@for (section of sections(); track $index) {
   <section class="ds-properties-panel__section" [class.ds-properties-panel__section--card]="variant() === 'card'">
-    <h3 class="ds-properties-panel__title">{{ section.title }}</h3>
+    @if (section.title) {
+      <h3 class="ds-properties-panel__title">{{ section.title }}</h3>
+    }
     <ul class="ds-properties-panel__list">
       @for (row of section.rows; track row.label) {
         <li class="ds-properties-panel__row">
-          <span class="ds-properties-panel__label">{{ row.label }}</span>
-          <span class="ds-properties-panel__value">{{ row.value || '-' }}</span>
+          <span class="ds-properties-panel__label">
+            <span class="ds-properties-panel__label-text">{{ row.label }}</span>
+            @if (row.labelFlag) {
+              <ds-flag [code]="row.labelFlag" />
+            }
+            @if (row.labelIcon) {
+              <ds-icon [name]="row.labelIcon" [size]="14" />
+            }
+          </span>
+
+          @if (isText(row.value)) {
+            <span class="ds-properties-panel__value">{{ textOf(row.value) }}</span>
+          } @else if (isTags(row.value)) {
+            <span class="ds-properties-panel__value ds-properties-panel__value--tags">
+              @for (t of $any(row.value).tags; track t.label) {
+                <ds-tag type="static" [label]="t.label" [class]="'ds-properties-panel__tag ds-properties-panel__tag--' + (t.tone ?? 'neutral')" />
+              }
+            </span>
+          } @else if (isBullets(row.value)) {
+            <ul class="ds-properties-panel__value ds-properties-panel__bullets">
+              @for (b of $any(row.value).items; track $index) {
+                <li>
+                  @if (bulletLink(b); as href) {
+                    {{ bulletLabel(b).split(':')[0] }} :
+                    <ds-link [href]="href">{{ (bulletLabel(b).split(':')[1] || bulletLabel(b)).trim() }}</ds-link>
+                  } @else {
+                    {{ bulletLabel(b) }}
+                  }
+                </li>
+              }
+            </ul>
+          } @else if (isLink(row.value)) {
+            <ds-link class="ds-properties-panel__value" [href]="$any(row.value).href">{{ $any(row.value).label }}</ds-link>
+          }
         </li>
       }
     </ul>

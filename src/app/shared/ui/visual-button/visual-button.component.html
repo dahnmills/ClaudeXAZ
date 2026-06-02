@@ -1,0 +1,9 @@
+<div class="ds-visual-button__icon">
+  <ng-content select="[slot=icon]" />
+</div>
+<div class="ds-visual-button__content">
+  <p class="ds-visual-button__title">{{ title() }}</p>
+  @if (description()) {
+    <p class="ds-visual-button__description">{{ description() }}</p>
+  }
+</div>

@@ -1,0 +1,26 @@
+<ds-widget-card [title]="title()" (externalClicked)="actionClicked.emit()">
+  <div class="ds-newsfeed__content">
+    @if (tags().length) {
+      <div class="ds-newsfeed__tags">
+        @for (t of tags(); track $index) {
+          <ds-badge [label]="t.label" [status]="t.status ?? 'neutral'" variant="light" size="s" />
+        }
+      </div>
+    }
+
+    <ds-link tone="neutral" weight="semi-bold" [underline]="true" [href]="href()" (click)="headlineClicked.emit()">
+      {{ headline() }}
+    </ds-link>
+
+    @if (date()) {
+      <div class="ds-newsfeed__meta">
+        <ds-icon [name]="dateIcon()" [size]="16" />
+        <span class="ds-newsfeed__date">{{ date() }}</span>
+      </div>
+    }
+
+    @if (excerpt()) {
+      <p class="ds-newsfeed__excerpt">{{ excerpt() }}</p>
+    }
+  </div>
+</ds-widget-card>

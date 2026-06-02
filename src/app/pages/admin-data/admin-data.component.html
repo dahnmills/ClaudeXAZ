@@ -1,0 +1,210 @@
+<app-topbox-test-shell>
+  <ds-topbox
+    slot="topbox"
+    dataType="buyer"
+    icon="buyers"
+    label="EASYJET AIRLINE COMPANY LIMITED (GB)"
+    id="5317940"
+    grade="M4"
+    gradeColor="grade-4"
+    actionLabel="More details"
+    actionIcon="info-circle"
+    (actionClicked)="openModal('identity')"
+  />
+
+  <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="true">
+    <ds-breadcrumbs slot="breadcrumbs">
+      <ds-crumb label="Home" href="#" />
+      <ds-crumb label="Buyers" href="#" />
+      <ds-crumb label="EASYJET AIRLINE COMPANY LIMITED (GB)" href="#" />
+      <ds-crumb label="Company Information" href="#" />
+      <ds-crumb label="Administrative data - Global info" [currentPage]="true" />
+    </ds-breadcrumbs>
+
+    <ds-page-title slot="title" title="Administrative data" />
+
+    <div slot="tabs" style="display:flex;gap:32px;">
+      <ds-tab [selected]="true" [chevron]="true">Administrative data</ds-tab>
+      <ds-tab [chevron]="true">Financial statements</ds-tab>
+      <ds-tab [chevron]="true">Official publications</ds-tab>
+      <ds-tab [chevron]="true">Payment incidents</ds-tab>
+      <ds-tab [chevron]="true">Group</ds-tab>
+      <ds-tab>Links</ds-tab>
+      <ds-tab [chevron]="true">Risk indicators</ds-tab>
+    </div>
+  </ds-page-header>
+
+  <div class="admin-data__body">
+    <div class="admin-data__actions-row">
+      <ds-link href="#" weight="semi-bold">
+        <ds-icon slot="icon-left" name="settings" [size]="16" />
+        Change status and origin
+      </ds-link>
+      <ds-link href="#" weight="semi-bold">
+        <ds-icon slot="icon-left" name="edit" [size]="16" />
+        Edit
+      </ds-link>
+    </div>
+
+    <ds-card>
+      <div class="admin-data__card-header">
+        <h2 class="admin-data__card-title">Identity</h2>
+        <ds-link href="#" weight="semi-bold" (click)="openModal('identity'); $event.preventDefault()">
+          More details
+          <ds-icon slot="icon-right" name="chevron-right" [size]="16" />
+        </ds-link>
+      </div>
+      <ds-properties-panel
+        [sections]="identitySections"
+        [columns]="3"
+        variant="flat"
+        layout="stacked"
+      />
+    </ds-card>
+
+    <div class="admin-data__cards-row">
+      <ds-card>
+        <div class="admin-data__card-header">
+          <h2 class="admin-data__card-title">Address &amp; contact</h2>
+          <ds-link href="#" weight="semi-bold" (click)="openModal('address'); $event.preventDefault()">
+            More details
+            <ds-icon slot="icon-right" name="chevron-right" [size]="16" />
+          </ds-link>
+        </div>
+        <ds-properties-panel
+          [sections]="addressSections"
+          [columns]="1"
+          variant="flat"
+          layout="stacked"
+        />
+      </ds-card>
+
+      <ds-card>
+        <div class="admin-data__card-header">
+          <h2 class="admin-data__card-title">Identifiers</h2>
+          <ds-link href="#" weight="semi-bold" (click)="openModal('identifier'); $event.preventDefault()">
+            More details
+            <ds-icon slot="icon-right" name="chevron-right" [size]="16" />
+          </ds-link>
+        </div>
+        <ds-properties-panel
+          [sections]="identifiersSections"
+          [columns]="2"
+          variant="flat"
+          layout="stacked"
+        />
+      </ds-card>
+
+      <ds-card>
+        <div class="admin-data__card-header">
+          <h2 class="admin-data__card-title">Financial information</h2>
+          <ds-link href="#" weight="semi-bold" (click)="openModal('financial'); $event.preventDefault()">
+            More details
+            <ds-icon slot="icon-right" name="chevron-right" [size]="16" />
+          </ds-link>
+        </div>
+        <ds-properties-panel
+          [sections]="financialSections"
+          [columns]="2"
+          variant="flat"
+          layout="stacked"
+        />
+      </ds-card>
+    </div>
+
+    <h2 class="admin-data__activity-title">Activity</h2>
+    <div class="admin-data__activity-row">
+      @for (activity of activities(); track activity.id) {
+        <ds-action-card
+          variant="selectable"
+          [title]="activity.label"
+          [description]="'NACE : ' + activity.nace"
+          [selected]="activity.id === mainActivityId()"
+          [badgeLabel]="activity.id === mainActivityId() ? 'Main' : null"
+          (selectedChange)="pickActivity(activity)"
+        />
+      }
+    </div>
+  </div>
+</app-topbox-test-shell>
+
+<!-- Confirm Dialog -->
+<ds-confirm-dialog
+  [open]="pendingActivity() !== null"
+  title="Confirm new main trade sector"
+  tone="warning"
+  confirmLabel="Confirm"
+  cancelLabel="Cancel"
+  (confirmed)="confirmActivity()"
+  (cancelled)="cancelActivity()"
+>
+  <span>You are about to change your trade sector to <strong>{{ pendingLabel() }}</strong>.</span>
+  <span>Confirm new <strong>main</strong> trade sector ?</span>
+</ds-confirm-dialog>
+
+<!-- Detail Modals -->
+<ds-modal
+  [open]="openDetail() === 'identity'"
+  title="Identity details"
+  size="large"
+  [footer]="false"
+  contentHeight="460px"
+  (closed)="closeModal()"
+>
+  <ds-properties-panel
+    [sections]="identityFullSections"
+    [columns]="2"
+    variant="flat"
+    layout="stacked"
+  />
+</ds-modal>
+
+<ds-modal
+  [open]="openDetail() === 'address'"
+  title="Address & contact details"
+  size="large"
+  [footer]="false"
+  contentHeight="392px"
+  (closed)="closeModal()"
+>
+  <ds-properties-panel
+    [sections]="addressFullSections"
+    [columns]="2"
+    variant="flat"
+    layout="stacked"
+  />
+</ds-modal>
+
+<ds-modal
+  [open]="openDetail() === 'identifier'"
+  title="Identifiers details"
+  size="large"
+  [footer]="false"
+  contentHeight="240px"
+  (closed)="closeModal()"
+>
+  <ds-properties-panel
+    [sections]="identifierFullSections"
+    [columns]="2"
+    variant="flat"
+    layout="stacked"
+  />
+</ds-modal>
+
+<ds-modal
+  [open]="openDetail() === 'financial'"
+  title="Financial information details"
+  size="large"
+  [footer]="false"
+  contentHeight="240px"
+  (closed)="closeModal()"
+>
+  <ds-properties-panel
+    [sections]="financialFullSections"
+    [columns]="2"
+    variant="flat"
+    layout="stacked"
+  />
+</ds-modal>
+
+<ds-toaster-container />

@@ -6,7 +6,7 @@ import { IconComponent } from '../icon/icon.component';
 import { FlagComponent } from '../flag/flag.component';
 
 const meta: Meta = {
-  title: 'Local Components/Flyout Menu Variants',
+  title: 'Design System/Action/Flyout Menu Variants',
   decorators: [
     moduleMetadata({ imports: [FlyoutMenuComponent, FlyoutMenuItemComponent, IconComponent, FlagComponent] }),
   ],

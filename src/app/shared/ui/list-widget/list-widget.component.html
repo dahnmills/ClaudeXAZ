@@ -1,0 +1,29 @@
+<ds-widget-card
+  [title]="title()"
+  [actionIcon]="actionIcon()"
+  [externalAriaLabel]="actionAriaLabel()"
+  (externalClicked)="actionClicked.emit()"
+>
+  <div class="ds-list-widget__list">
+    @for (item of items(); track $index) {
+      <div class="ds-list-widget__item">
+        <div class="ds-list-widget__row">
+          <ds-link tone="neutral" weight="semi-bold" [underline]="true" (click)="itemClicked.emit(item)">
+            {{ item.label }}
+          </ds-link>
+        </div>
+        <div class="ds-list-widget__row ds-list-widget__row--meta">
+          @if (item.date) {
+            <span class="ds-list-widget__date">{{ item.date }}</span>
+          }
+          @if (item.badge) {
+            <ds-badge [label]="item.badge.label" [status]="item.badge.status ?? 'info'" variant="light" size="s" />
+          }
+        </div>
+      </div>
+      @if (!$last) {
+        <ds-divider tone="subtle" />
+      }
+    }
+  </div>
+</ds-widget-card>

@@ -25,7 +25,7 @@ const detailsData: ResultCardData = {
 };
 
 const meta: Meta<ResultCardComponent> = {
-  title: 'Local Components/Result Card',
+  title: 'Design System/Data Display/Result Card',
   component: ResultCardComponent,
   tags: ['autodocs'],
   argTypes: {

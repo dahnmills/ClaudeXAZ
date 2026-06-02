@@ -1,18 +1,31 @@
 // =============================================================
 // Page Title — atom
 // Source : Figma > -Components--Data Display > .Page Title (node 1709:15118)
+//          + Admin Data extended pattern (icon-tile + id + badge + action link)
 //
 // Spec :
-//   • Hauteur 32px, layout flex justify-between
-//   • Titre : Headline X-Small (20/28, semibold, Grey/700, letter-spacing 0.2)
-//   • Slot actions à droite (boutons / icônes)
+//   • Hauteur min 40px, layout flex justify-between
+//   • Slot icon (icon-tile) à gauche
+//   • Titre : Headline X-Small (20/28, semibold, Grey/700)
+//   • ID après séparateur "·"
+//   • Badge (M4, etc.)
+//   • Lien action "More details ▾"
 // =============================================================
 
 :host {
   display:         flex;
   align-items:     center;
+  justify-content: space-between;
   width:           100%;
-  height:          32px;
+  min-height:      40px;
+  gap:             var(--semantic-measurement-spacing-m);
+}
+
+.ds-page-title__left {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+  min-width:   0;
 }
 
 .ds-page-title__heading {
@@ -22,7 +35,32 @@
   line-height:    28px;
   font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
   letter-spacing: 0.2px;
-  color:          var(--semantic-color-static-text-main-secondary); // Grey/700
+  color:          var(--semantic-color-static-text-main-secondary);
   white-space:    nowrap;
 }
 
+.ds-page-title__separator {
+  color:        var(--semantic-color-static-text-main-tertiary);
+  font-size:    var(--semantic-font-text-style-size-l);
+  user-select:  none;
+}
+
+.ds-page-title__id {
+  font-family:  var(--semantic-font-family);
+  font-size:    var(--semantic-font-text-style-size-l);
+  line-height:  var(--semantic-font-text-style-line-height-l);
+  color:        var(--semantic-color-static-text-main-tertiary);
+}
+
+.ds-page-title__action {
+  display:      inline-flex;
+  align-items:  center;
+  gap:          var(--semantic-measurement-spacing-xxs);
+  margin-left:  var(--semantic-measurement-spacing-m);
+}
+
+.ds-page-title__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m);
+}

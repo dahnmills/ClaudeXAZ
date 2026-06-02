@@ -1,0 +1,63 @@
+// =============================================================
+// Chip
+// Source : Figma > -Components--Action > Chip
+//
+// Pill rond compact pour filtres actifs, valeurs sélectionnées,
+// shortcuts. Distinct du Tag (Tag = status badge).
+// =============================================================
+
+:host {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            var(--semantic-measurement-spacing-xs);
+  padding:        0 var(--semantic-measurement-spacing-s);
+  border-radius:  var(--semantic-border-radius-round, 100px);
+  border:         1px solid var(--semantic-color-static-border-subtle-tertiary);
+  background:     var(--semantic-color-static-background-main-primary);
+  color:          var(--semantic-color-static-text-main-secondary);
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-m);
+  line-height:    var(--semantic-font-text-style-line-height-m);
+  font-weight:    var(--semantic-font-text-style-font-weight-regular);
+  white-space:    nowrap;
+  user-select:    none;
+  transition:     background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+:host.ds-chip--size-s { height: 24px; }
+:host.ds-chip--size-m { height: 32px; }
+
+:host.ds-chip--type-filter,
+:host.ds-chip--type-select {
+  cursor: pointer;
+
+  &:hover:not(.ds-chip--disabled) {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    color:        var(--semantic-color-interactive-text-strong-default);
+  }
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+:host.ds-chip--selected {
+  background:   var(--semantic-color-static-background-subtle-informative);
+  border-color: var(--semantic-color-interactive-border-strong-default);
+  color:        var(--semantic-color-interactive-text-strong-default);
+}
+
+:host.ds-chip--disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  cursor:         not-allowed;
+  pointer-events: none;
+}
+
+.ds-chip__close {
+  display:     inline-flex;
+  align-items: center;
+  font-size:   16px;
+  line-height: 1;
+  color:       inherit;
+  padding-left: var(--semantic-measurement-spacing-xxs);
+}

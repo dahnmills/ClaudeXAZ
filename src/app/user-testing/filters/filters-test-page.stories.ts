@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
+import { applicationConfig, moduleMetadata } from '@storybook/angular';
 import { provideRouter } from '@angular/router';
 import { FiltersTestPageComponent } from './filters-test-page.component';
 
@@ -7,10 +7,8 @@ const meta: Meta<FiltersTestPageComponent> = {
   title: 'User Testing/Filters Page',
   component: FiltersTestPageComponent,
   decorators: [
-    moduleMetadata({
-      imports: [FiltersTestPageComponent],
-      providers: [provideRouter([])],
-    }),
+    applicationConfig({ providers: [provideRouter([])] }),
+    moduleMetadata({ imports: [FiltersTestPageComponent] }),
   ],
   parameters: {
     layout: 'fullscreen',

@@ -1,1 +1,20 @@
-<h1 class="ds-page-title__heading">{{ title() }}</h1>
+<div class="ds-page-title__left">
+  <ng-content select="[slot=icon]" />
+  <h1 class="ds-page-title__heading">{{ title() }}</h1>
+  @if (id()) {
+    <span class="ds-page-title__separator" aria-hidden="true">·</span>
+    <span class="ds-page-title__id">{{ id() }}</span>
+  }
+  @if (badgeLabel()) {
+    <ds-badge [label]="badgeLabel()!" [status]="badgeStatus()" variant="light" size="m" />
+  }
+  @if (actionLabel()) {
+    <ds-link class="ds-page-title__action" [href]="actionHref()" (click)="actionClicked.emit()">
+      {{ actionLabel() }}
+      <ds-icon name="chevron-down" [size]="16" />
+    </ds-link>
+  }
+</div>
+<div class="ds-page-title__actions">
+  <ng-content select="[slot=actions]" />
+</div>

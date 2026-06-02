@@ -35,13 +35,25 @@
   width:         14px;
   height:        14px;
   border-radius: 50%;
-
-  // 3 côtés = arc (270°) en Grey/500
-  // côté bas = creux (90°) en Grey/200
   border-top:    2px solid var(--semantic-color-static-background-accent-secondary);
   border-left:   2px solid var(--semantic-color-static-background-accent-secondary);
   border-right:  2px solid var(--semantic-color-static-background-accent-secondary);
   border-bottom: 2px solid var(--semantic-color-static-background-accent-tertiary);
 
   animation: ds-spinner-rotate 0.75s linear infinite;
+}
+
+:host.ds-spinner--size-xs .ds-spinner__ring { width: 10px; height: 10px; border-width: 1.5px; }
+:host.ds-spinner--size-s  .ds-spinner__ring { width: 14px; height: 14px; border-width: 2px; }
+:host.ds-spinner--size-m  .ds-spinner__ring { width: 20px; height: 20px; border-width: 2px; }
+:host.ds-spinner--size-l  .ds-spinner__ring { width: 28px; height: 28px; border-width: 3px; }
+
+// Tone "current" : hérite de la couleur du parent (Button loading state).
+// L'arc reste opaque (currentColor), le creux passe à la même couleur en
+// faible opacité — meilleure intégration sur fonds colorés.
+:host.ds-spinner--tone-current .ds-spinner__ring {
+  border-top-color:    currentColor;
+  border-left-color:   currentColor;
+  border-right-color:  currentColor;
+  border-bottom-color: rgba(255, 255, 255, 0.3);
 }

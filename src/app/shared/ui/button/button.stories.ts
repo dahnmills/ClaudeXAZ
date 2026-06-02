@@ -6,11 +6,13 @@ const meta: Meta<ButtonComponent> = {
   component: ButtonComponent,
   tags: ['autodocs'],
   argTypes: {
-    type:     { control: 'select', options: ['primary', 'secondary', 'tertiary', 'plain'] },
-    tone:     { control: 'select', options: ['default', 'accent', 'positive', 'negative'] },
-    reversed: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-    clicked:  { action: 'clicked' },
+    type:      { control: 'select', options: ['primary', 'secondary', 'tertiary', 'plain'] },
+    tone:      { control: 'select', options: ['default', 'accent', 'positive', 'negative'] },
+    reversed:  { control: 'boolean' },
+    disabled:  { control: 'boolean' },
+    loading:   { control: 'boolean' },
+    fullWidth: { control: 'boolean' },
+    clicked:   { action: 'clicked' },
   },
 };
 
@@ -18,13 +20,23 @@ export default meta;
 type Story = StoryObj<ButtonComponent>;
 
 export const Primary: Story = {
-  args: { type: 'primary', tone: 'default', reversed: false, disabled: false },
+  args: { type: 'primary', tone: 'default', reversed: false, disabled: false, loading: false, fullWidth: false },
   render: (args) => ({
     props: args,
     template: `
-      <ds-button [type]="type" [tone]="tone" [reversed]="reversed" [disabled]="disabled" (clicked)="clicked()">
-        Valider
-      </ds-button>
+      <div [style.width]="fullWidth ? '480px' : 'auto'">
+        <ds-button
+          [type]="type"
+          [tone]="tone"
+          [reversed]="reversed"
+          [disabled]="disabled"
+          [loading]="loading"
+          [fullWidth]="fullWidth"
+          (clicked)="clicked()"
+        >
+          Valider
+        </ds-button>
+      </div>
     `,
   }),
 };
@@ -93,6 +105,26 @@ export const Disabled: Story = {
         <ds-button type="primary"   [disabled]="true">Primary</ds-button>
         <ds-button type="secondary" [disabled]="true">Secondary</ds-button>
         <ds-button type="tertiary"  [disabled]="true">Tertiary</ds-button>
+      </div>
+    `,
+  }),
+};
+
+export const Loading: Story = {
+  args: { type: 'primary', loading: true },
+  render: (args) => ({
+    props: args,
+    template: `<ds-button [type]="type" [loading]="loading">Submitting…</ds-button>`,
+  }),
+};
+
+export const LoadMore: Story = {
+  name: 'Load More (full width)',
+  render: () => ({
+    template: `
+      <div style="width:480px;display:flex;flex-direction:column;gap:8px;">
+        <ds-button type="secondary" tone="accent" [fullWidth]="true">Load more</ds-button>
+        <ds-button type="secondary" tone="accent" [fullWidth]="true" [loading]="true">Loading…</ds-button>
       </div>
     `,
   }),

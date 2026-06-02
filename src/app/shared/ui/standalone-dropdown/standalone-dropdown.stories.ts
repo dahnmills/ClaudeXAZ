@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { StandaloneDropdownComponent } from './standalone-dropdown.component';
 
 const meta: Meta<StandaloneDropdownComponent> = {
-  title: 'Local Components/Standalone Dropdown',
+  title: 'Design System/Action/Standalone Dropdown',
   component: StandaloneDropdownComponent,
   tags: ['autodocs'],
   argTypes: {

@@ -1,0 +1,102 @@
+<app-topbox-test-shell>
+  <!-- Topbox : identité de la company (composant DS développé) -->
+  <ds-topbox
+    slot="topbox"
+    dataType="buyer"
+    icon="buyers"
+    [label]="companyName()"
+    [id]="companyId()"
+    grade="A3"
+    gradeColor="grade-2"
+    [highRisk]="true"
+    [sru]="true"
+    [sanction]="true"
+    actionLabel="View full properties"
+    actionIcon="info-circle"
+    actionType="button"
+    (actionClicked)="openDetails()"
+  />
+
+  <!-- Corps -->
+  <div class="buyer-summary__body">
+    <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="false">
+      <ds-breadcrumbs slot="breadcrumbs">
+        <ds-crumb label="Home" />
+        <ds-crumb label="Buyers" />
+        <ds-crumb [label]="companyName()" />
+        <ds-crumb label="Buyer Summary" [currentPage]="true" />
+      </ds-breadcrumbs>
+      <ds-page-title slot="title" title="Buyer Summary" />
+    </ds-page-header>
+
+    <div class="buyer-summary__action-bar">
+      <ds-select
+        class="buyer-summary__layout-select"
+        [options]="layoutOptions"
+        [(value)]="currentLayout"
+      />
+    </div>
+
+    @if (loading()) {
+      <div class="buyer-summary__grid">
+        @for (c of skeletonCards; track $index) {
+          <div class="buyer-summary__skeleton">
+            <ds-skeleton-item width="40%" height="16px" />
+            <ds-skeleton-item width="100%" height="12px" />
+            <ds-skeleton-item width="90%" height="12px" />
+            <ds-skeleton-item width="60%" height="12px" />
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="buyer-summary__grid">
+        <!-- Rangée 1 -->
+        <ds-widget-card title="Grade" [seeFigures]="true">
+          <ds-chart [data]="gradeData" [xLabels]="months" [yLabels]="gradeY" [min]="1" [max]="11" [invertY]="true" [height]="150" />
+        </ds-widget-card>
+
+        <ds-widget-card title="Exposure" [seeFigures]="true">
+          <ds-chart [data]="exposureData" [xLabels]="months" [height]="150" tone="brand" />
+        </ds-widget-card>
+
+        <ds-widget-card title="Risk figures (USD)">
+          <ds-properties-panel [sections]="riskFigures" [columns]="1" variant="flat" layout="stacked" />
+        </ds-widget-card>
+
+        <ds-widget-card title="Company indicators">
+          <ds-properties-panel [sections]="companyIndicators" [columns]="1" variant="flat" layout="stacked" />
+        </ds-widget-card>
+
+        <!-- Rangée 2 -->
+        <ds-widget-card title="Financials (USD)">
+          <ds-properties-panel [sections]="financials" [columns]="1" variant="flat" layout="stacked" />
+        </ds-widget-card>
+
+        <ds-list-widget title="Job to do" actionIcon="export-share" [items]="jobItems" />
+
+        <ds-newsfeed
+          title="Newsfeed"
+          [tags]="[{ label: 'Positive', status: 'success' }, { label: 'Important', status: 'error' }]"
+          headline="JP Morgan Investment Trusts Ten Largest Investments"
+          date="11 nov 2024 - 16:42"
+          excerpt="Yesterday, someone bought an electric car, since then, he can’t…"
+        />
+
+        <ds-list-widget title="Notepad" actionIcon="context-vertical" [items]="notepadItems" />
+      </div>
+    }
+  </div>
+</app-topbox-test-shell>
+
+<ds-modal
+  title="Full properties"
+  size="medium"
+  [open]="detailsModalOpen()"
+  [footer]="false"
+  [closeOnBackdrop]="true"
+  [closeOnEscape]="true"
+  contentHeight="500px"
+  (closed)="closeDetails()"
+>
+  <ds-properties-panel [sections]="detailsSections" [columns]="2" variant="card" />
+</ds-modal>

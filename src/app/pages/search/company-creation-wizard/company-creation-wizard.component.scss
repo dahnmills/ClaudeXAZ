@@ -1,0 +1,210 @@
+.wizard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.wizard__cols {
+  display: flex;
+  gap: var(--semantic-measurement-spacing-xl);
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* ── Colonne étapes ── */
+.wizard__steps {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+/* ── Colonne formulaire ── */
+.wizard__form {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Panneau gris extérieur qui contient toute l'étape */
+.wizard__panel {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-l);
+  background: var(--semantic-color-static-background-main-secondary);
+  border-radius: var(--semantic-border-radius-s);
+}
+
+.wizard__panel--busy {
+  // n'estompe que les champs, pas l'overlay
+  > :not(.wizard__verify) { opacity: 0.5; pointer-events: none; }
+}
+
+.wizard__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--semantic-measurement-spacing-m);
+}
+
+.wizard__step-title {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+  text-transform: uppercase;
+  color: var(--semantic-color-static-text-main-primary);
+}
+
+.wizard__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-s);
+}
+
+.wizard__group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wizard__group-title {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-s);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+  text-transform: uppercase;
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+/* Carte blanche qui contient les champs */
+.wizard__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-m);
+  background: var(--semantic-color-static-background-main-primary);
+  border-radius: var(--semantic-border-radius-s);
+}
+
+.wizard__row {
+  display: flex;
+  gap: var(--semantic-measurement-spacing-m);
+  align-items: flex-end;
+
+  ds-input-text,
+  ds-select {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+.wizard__row--removable ds-button-icon {
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+/* ── Overlay de vérification ── */
+.wizard__verify {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--semantic-measurement-spacing-s);
+  background: color-mix(in srgb, var(--semantic-color-static-background-main-secondary) 80%, transparent);
+  color: var(--semantic-color-static-text-main-secondary);
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+}
+
+/* ── Footer ── */
+.wizard__footer {
+  flex-shrink: 0;
+  margin-top: var(--semantic-measurement-spacing-m);
+  padding-top: var(--semantic-measurement-spacing-m);
+  border-top: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wizard__footer-left,
+.wizard__footer-right {
+  display: flex;
+  gap: var(--semantic-measurement-spacing-s);
+}
+
+/* ── Panneau de match (inline) ── */
+.wizard__match {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-xl);
+  color: var(--semantic-color-interactive-text-strong-default);
+}
+
+.wizard__match-title {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color: var(--semantic-color-static-text-main-primary);
+}
+
+.wizard__match-text {
+  margin: 0;
+  max-width: 420px;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+.wizard__match-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-xs);
+  width: 100%;
+  max-width: 420px;
+  padding: var(--semantic-measurement-spacing-m);
+  background: var(--semantic-color-static-background-main-secondary);
+  border: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+  text-align: left;
+  font-family: var(--semantic-font-family);
+}
+
+.wizard__match-name {
+  font-size: var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color: var(--semantic-color-static-text-main-primary);
+}
+
+.wizard__match-addr {
+  font-size: var(--semantic-font-text-style-size-s);
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+.wizard__match-id {
+  font-size: var(--semantic-font-text-style-size-s);
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.wizard__match-actions {
+  display: flex;
+  gap: var(--semantic-measurement-spacing-s);
+  margin-top: var(--semantic-measurement-spacing-s);
+}

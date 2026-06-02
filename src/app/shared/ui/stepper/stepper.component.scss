@@ -1,0 +1,82 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-s); // 8px entre étapes
+}
+
+.ds-stepper__step {
+  display: flex;
+  gap: var(--semantic-measurement-spacing-s);
+  position: relative;
+  min-height: 56px;
+
+  // Connecteur vertical fin (Figma : 1px, subtil, du marqueur au suivant)
+  &:not(:last-child) {
+    min-height: 70px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 28px;
+      bottom: calc(-1 * var(--semantic-measurement-spacing-s));
+      width: 1px;
+      background: var(--semantic-color-static-border-subtle-tertiary);
+    }
+  }
+}
+
+.ds-stepper__marker {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.ds-stepper__step--completed .ds-stepper__marker {
+  background: var(--semantic-color-interactive-background-strong-default);
+  color: var(--semantic-color-static-text-main-reversed, #fff);
+}
+.ds-stepper__step--current .ds-stepper__marker {
+  border: 2px solid var(--semantic-color-interactive-background-strong-default);
+  background: transparent;
+}
+.ds-stepper__step--upcoming .ds-stepper__marker {
+  border: 2px solid var(--semantic-color-static-border-subtle-tertiary);
+  background: transparent;
+}
+
+.ds-stepper__text {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--semantic-font-family);
+}
+
+.ds-stepper__index {
+  font-size: var(--semantic-font-text-style-size-s);
+  line-height: 16px;
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.ds-stepper__label {
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: 24px;
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color: var(--semantic-color-static-text-main-primary);
+}
+.ds-stepper__step--upcoming .ds-stepper__label {
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+// Ligne de statut toujours présente (réserve l'espace → pas de saut de hauteur)
+.ds-stepper__status {
+  min-height: 16px;
+  line-height: 16px;
+  font-size: var(--semantic-font-text-style-size-s);
+  color: var(--semantic-color-static-background-functional-positive);
+}

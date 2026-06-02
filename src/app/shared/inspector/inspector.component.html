@@ -1,0 +1,97 @@
+@if (active()) {
+  <!-- Surlignage survol (orange pointillé) -->
+  @if (hoveredRect(); as r) {
+    <div class="inspector__hl inspector__hl--hover"
+      [style.left.px]="r.x" [style.top.px]="r.y" [style.width.px]="r.w" [style.height.px]="r.h"></div>
+  }
+  <!-- Surlignage sélection (bleu plein) -->
+  @if (selectedRect(); as r) {
+    <div class="inspector__hl inspector__hl--selected"
+      [style.left.px]="r.x" [style.top.px]="r.y" [style.width.px]="r.w" [style.height.px]="r.h"></div>
+  }
+
+  <!-- Distances (redlines) entre sélection et survol -->
+  @for (l of measureLines(); track $index) {
+    @if (l.orient === 'h') {
+      <div class="inspector__dist inspector__dist--h" [style.left.px]="l.left" [style.top.px]="l.top" [style.width.px]="l.len">
+        <span class="inspector__dist-label">{{ l.label }}</span>
+      </div>
+    } @else {
+      <div class="inspector__dist inspector__dist--v" [style.left.px]="l.left" [style.top.px]="l.top" [style.height.px]="l.len">
+        <span class="inspector__dist-label">{{ l.label }}</span>
+      </div>
+    }
+  }
+
+  <!-- Panneau docké -->
+  <aside class="inspector__panel">
+    <div class="inspector__bar">
+      <span class="inspector__bar-dot"></span>
+      INSPECT
+      <span class="inspector__bar-hint">{{ selected() ? 'click another to measure · Esc' : 'hover · click to select · Alt+I' }}</span>
+    </div>
+
+    @if (info(); as i) {
+      <div class="inspector__scroll">
+        <div class="inspector__head">
+          <span class="inspector__tag">&lt;{{ i.tag }}&gt;</span>
+          <span class="inspector__size">{{ i.box.width }} × {{ i.box.height }}</span>
+        </div>
+
+        @if (i.classes.length) {
+          <div class="inspector__classes">
+            @for (c of i.classes; track c) {
+              <span class="inspector__chip">.{{ c }}</span>
+            }
+          </div>
+        }
+
+        <!-- Box model -->
+        <div class="inspector__section-title">Box model</div>
+        <div class="inspector__box inspector__box--margin">
+          <span class="inspector__box-tag">margin</span>
+          <span class="inspector__box-edge inspector__box-edge--t">{{ i.box.margin[0] }}</span>
+          <span class="inspector__box-edge inspector__box-edge--r">{{ i.box.margin[1] }}</span>
+          <span class="inspector__box-edge inspector__box-edge--b">{{ i.box.margin[2] }}</span>
+          <span class="inspector__box-edge inspector__box-edge--l">{{ i.box.margin[3] }}</span>
+          <div class="inspector__box inspector__box--border">
+            <span class="inspector__box-tag">border</span>
+            <span class="inspector__box-edge inspector__box-edge--t">{{ i.box.border[0] }}</span>
+            <span class="inspector__box-edge inspector__box-edge--r">{{ i.box.border[1] }}</span>
+            <span class="inspector__box-edge inspector__box-edge--b">{{ i.box.border[2] }}</span>
+            <span class="inspector__box-edge inspector__box-edge--l">{{ i.box.border[3] }}</span>
+            <div class="inspector__box inspector__box--padding">
+              <span class="inspector__box-tag">padding</span>
+              <span class="inspector__box-edge inspector__box-edge--t">{{ i.box.padding[0] }}</span>
+              <span class="inspector__box-edge inspector__box-edge--r">{{ i.box.padding[1] }}</span>
+              <span class="inspector__box-edge inspector__box-edge--b">{{ i.box.padding[2] }}</span>
+              <span class="inspector__box-edge inspector__box-edge--l">{{ i.box.padding[3] }}</span>
+              <div class="inspector__box inspector__box--content">{{ i.box.width }}×{{ i.box.height }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sections -->
+        @for (s of i.sections; track s.title) {
+          <div class="inspector__section-title">{{ s.title }}</div>
+          <ul class="inspector__rows">
+            @for (row of s.rows; track row.label) {
+              <li class="inspector__row" [class.inspector__row--copy]="row.token || row.value" (click)="copy(row)">
+                <span class="inspector__row-label">{{ row.label }}</span>
+                <span class="inspector__row-value">
+                  @if (row.token) {
+                    <code class="inspector__token">{{ row.token }}</code>
+                  } @else {
+                    {{ row.value }}
+                  }
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    } @else {
+      <div class="inspector__empty">Hover an element to inspect</div>
+    }
+  </aside>
+}

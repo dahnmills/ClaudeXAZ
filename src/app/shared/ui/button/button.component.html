@@ -1,3 +1,8 @@
-<ng-content select="[slot=icon-left]" />
-<span class="ds-button__label"><ng-content /></span>
-<ng-content select="[slot=icon-right]" />
+<span class="ds-button__content">
+  <ng-content select="[slot=icon-left]" />
+  <span class="ds-button__label"><ng-content /></span>
+  <ng-content select="[slot=icon-right]" />
+</span>
+@if (loading()) {
+  <ds-spinner class="ds-button__spinner" size="s" tone="current" />
+}

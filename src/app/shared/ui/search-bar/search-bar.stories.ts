@@ -10,7 +10,7 @@ const recentSearches: SearchRecentItem[] = [
 ];
 
 const meta: Meta<SearchBarComponent> = {
-  title: 'Design System/Search Bar',
+  title: 'Design System/Data Entry/Search Bar',
   component: SearchBarComponent,
   tags: ['autodocs'],
   parameters: {

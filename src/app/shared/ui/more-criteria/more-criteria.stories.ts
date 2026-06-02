@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { MoreCriteriaComponent } from './more-criteria.component';
 
 const meta: Meta<MoreCriteriaComponent> = {
-  title: 'Local Components/More Criteria',
+  title: 'Design System/Data Entry/More Criteria',
   component: MoreCriteriaComponent,
   tags: ['autodocs'],
   argTypes: {

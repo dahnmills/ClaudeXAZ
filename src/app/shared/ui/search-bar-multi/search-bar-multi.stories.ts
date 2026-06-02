@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { SearchBarMultiComponent } from './search-bar-multi.component';
 
 const meta: Meta<SearchBarMultiComponent> = {
-  title: 'Local Components/Search Bar Multi',
+  title: 'Design System/Data Entry/Search Bar Multi',
   component: SearchBarMultiComponent,
   tags: ['autodocs'],
   argTypes: {

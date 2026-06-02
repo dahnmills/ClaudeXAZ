@@ -1,0 +1,266 @@
+<ds-modal
+  title="Create a company manually"
+  size="xlarge"
+  [open]="open()"
+  [footer]="false"
+  contentHeight="520px"
+  (closed)="close()"
+>
+  <div class="wizard">
+    <div class="wizard__cols">
+      <!-- Colonne gauche : étapes -->
+      <aside class="wizard__steps">
+        <ds-stepper [steps]="steps" [current]="currentStep()" [completedSteps]="completedSteps()" />
+      </aside>
+
+      <!-- Colonne droite : formulaire -->
+      <section class="wizard__form">
+        @if (matchSuggestion(); as m) {
+          <!-- Panneau de suggestion de match (inline) -->
+          <div class="wizard__match">
+            <ds-icon name="info-circle" [size]="32" />
+            <h3 class="wizard__match-title">We found a matching company</h3>
+            <p class="wizard__match-text">
+              A company with the details you entered already exists. Is this the one you’re looking for?
+            </p>
+            <div class="wizard__match-card">
+              <span class="wizard__match-name">{{ m.name }}</span>
+              <span class="wizard__match-addr">{{ m.address }}</span>
+              <span class="wizard__match-id"># {{ m.companyId }}</span>
+            </div>
+            <div class="wizard__match-actions">
+              <ds-button type="secondary" tone="default" (clicked)="rejectMatch()">No, continue creating</ds-button>
+              <ds-button type="primary" (clicked)="acceptMatch()">Yes, open this company</ds-button>
+            </div>
+          </div>
+        } @else {
+          <div class="wizard__panel" [class.wizard__panel--busy]="verifying()">
+            <div class="wizard__panel-head">
+              <h3 class="wizard__step-title">{{ steps[currentStep()].label }}</h3>
+              @if (currentStep() === 0) {
+                <ds-checkbox label="Public buyer" [checked]="publicBuyer()" (checkedChange)="publicBuyer.set($event)" />
+              }
+              @if (currentStep() === 1) {
+                <ds-checkbox label="Non latin address" [checked]="nonLatinAddr()" (checkedChange)="nonLatinAddr.set($event)" />
+              }
+            </div>
+
+            @switch (currentStep()) {
+              <!-- ───── Step 1 : Identity ───── -->
+              @case (0) {
+                <div class="wizard__card">
+                  <div class="wizard__row">
+                    <ds-select label="Company status *" placeholder="Value" [options]="companyStatusOptions"
+                      [value]="fieldVal('companyStatus')" (valueChange)="setField('companyStatus', $event)" />
+                    <ds-select label="Legal form *" placeholder="Value" [options]="legalFormOptions"
+                      [value]="fieldVal('legalForm')" (valueChange)="setField('legalForm', $event)" />
+                    <ds-select label="Protected Buyer" placeholder="Value" [options]="yesNoOptions"
+                      [value]="fieldVal('protectedBuyer')" (valueChange)="setField('protectedBuyer', $event)" />
+                  </div>
+                  <div class="wizard__row">
+                    <ds-input-text label="Company name *" placeholder="Value"
+                      [value]="fieldVal('companyName')" (valueChange)="setField('companyName', $event)" />
+                    <ds-input-text label="Non latin company name" placeholder="Value"
+                      [value]="fieldVal('nonLatinName')" (valueChange)="setField('nonLatinName', $event)" />
+                  </div>
+                  <div class="wizard__row">
+                    <ds-select label="Identifier type" placeholder="Value" [options]="identifierTypeOptions"
+                      [value]="fieldVal('identifierType')" (valueChange)="setField('identifierType', $event)" />
+                    <ds-input-text label="Identifier type (if not in the list)" placeholder="A"
+                      [value]="fieldVal('identifierOther')" (valueChange)="setField('identifierOther', $event)" />
+                  </div>
+                  <div class="wizard__row">
+                    <ds-input-text label="Workforce effective min" placeholder="1"
+                      [value]="fieldVal('workforceMin')" (valueChange)="setField('workforceMin', $event)" />
+                    <ds-input-text label="Workforce effective max" placeholder="5000"
+                      [value]="fieldVal('workforceMax')" (valueChange)="setField('workforceMax', $event)" />
+                    <ds-input-text label="Creation date" placeholder="DD/MM/YYYY"
+                      [value]="fieldVal('creationDate')" (valueChange)="setField('creationDate', $event)" />
+                    <ds-input-text label="Business start date" placeholder="DD/MM/YYYY"
+                      [value]="fieldVal('businessStartDate')" (valueChange)="setField('businessStartDate', $event)" />
+                  </div>
+                </div>
+              }
+
+              <!-- ───── Step 2 : Address ───── -->
+              @case (1) {
+                <div class="wizard__card">
+                  <div class="wizard__row">
+                    <ds-input-text label="Street number" placeholder="Value"
+                      [value]="fieldVal('streetNumber')" (valueChange)="setField('streetNumber', $event)" />
+                    <ds-input-text label="Street name" placeholder="Value"
+                      [value]="fieldVal('streetName')" (valueChange)="setField('streetName', $event)" />
+                  </div>
+                  <div class="wizard__row">
+                    <ds-input-text label="Additional line" placeholder="Value"
+                      [value]="fieldVal('additionalLine')" (valueChange)="setField('additionalLine', $event)" />
+                  </div>
+                  <div class="wizard__row">
+                    <ds-input-text label="PO Box" placeholder="Value"
+                      [value]="fieldVal('poBox')" (valueChange)="setField('poBox', $event)" />
+                    <ds-input-text label="PB Code" placeholder="Value"
+                      [value]="fieldVal('pbCode')" (valueChange)="setField('pbCode', $event)" />
+                  </div>
+                  <div class="wizard__row">
+                    <ds-input-text label="Post code" placeholder="Value"
+                      [value]="fieldVal('postCode')" (valueChange)="setField('postCode', $event)" />
+                    <ds-input-text label="Town" placeholder="Value"
+                      [value]="fieldVal('town')" (valueChange)="setField('town', $event)" />
+                  </div>
+                  <div class="wizard__row">
+                    <ds-select label="Administrative area" placeholder="Placeholder" [options]="areaOptions"
+                      [value]="fieldVal('area')" (valueChange)="setField('area', $event)" />
+                    <ds-input-text label="Country" placeholder="FRANCE"
+                      [value]="fieldVal('country')" (valueChange)="setField('country', $event)" />
+                  </div>
+                </div>
+              }
+
+              <!-- ───── Step 3 : Information & Contacts ───── -->
+              @case (2) {
+                <div class="wizard__group">
+                  <span class="wizard__group-title">Information</span>
+                  <div class="wizard__card">
+                    <div class="wizard__row">
+                      <ds-input-text label="Company phone number" placeholder="Value"
+                        [value]="fieldVal('phone')" (valueChange)="setField('phone', $event)" />
+                      <ds-input-text label="Fax number" placeholder="Value"
+                        [value]="fieldVal('fax')" (valueChange)="setField('fax', $event)" />
+                    </div>
+                    <div class="wizard__row">
+                      <ds-input-text label="Website" placeholder="https://"
+                        [value]="fieldVal('website')" (valueChange)="setField('website', $event)" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="wizard__group">
+                  <div class="wizard__group-head">
+                    <span class="wizard__group-title">Contacts</span>
+                    <ds-button type="plain" tone="default" (clicked)="addContact()">
+                      <ds-icon slot="icon-left" name="plus" [size]="16" />
+                      Add contact
+                    </ds-button>
+                  </div>
+                  <div class="wizard__card">
+                    @for (c of contacts(); track $index) {
+                      <div class="wizard__row wizard__row--removable">
+                        <ds-input-text [label]="'Contact Name #0' + ($index + 1)" placeholder="Value"
+                          [value]="c.name" (valueChange)="setContact($index, 'name', $event)" />
+                        <ds-input-text label="Email" placeholder="Value"
+                          [value]="c.email" (valueChange)="setContact($index, 'email', $event)" />
+                        <ds-button-icon type="secondary" tone="default" ariaLabel="Remove contact"
+                          [disabled]="contacts().length <= 1" (clicked)="removeContact($index)">
+                          <ds-icon name="trash" [size]="16" />
+                        </ds-button-icon>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- ───── Step 4 : Financial information ───── -->
+              @case (3) {
+                <div class="wizard__card">
+                  <div class="wizard__row">
+                    <ds-select label="Currency" placeholder="EUR" [options]="currencyOptions"
+                      [value]="fieldVal('currency')" (valueChange)="setField('currency', $event)" />
+                    <ds-input-text label="Share capital" placeholder="Value"
+                      [value]="fieldVal('shareCapital')" (valueChange)="setField('shareCapital', $event)" />
+                    <ds-input-text label="Share capital date" placeholder="DD/MM/YYYY"
+                      [value]="fieldVal('shareCapitalDate')" (valueChange)="setField('shareCapitalDate', $event)" />
+                    <ds-input-text label="Issued capital" placeholder="Value"
+                      [value]="fieldVal('issuedCapital')" (valueChange)="setField('issuedCapital', $event)" />
+                  </div>
+                  <div class="wizard__row">
+                    <ds-select label="Contribution in kind" placeholder="Value" [options]="yesNoOptions"
+                      [value]="fieldVal('contributionKind')" (valueChange)="setField('contributionKind', $event)" />
+                    <ds-input-text label="Contribution in kind result" placeholder="Value"
+                      [value]="fieldVal('contributionResult')" (valueChange)="setField('contributionResult', $event)" />
+                  </div>
+                  <div class="wizard__row">
+                    <ds-input-text label="Turnover" placeholder="Value"
+                      [value]="fieldVal('turnover')" (valueChange)="setField('turnover', $event)" />
+                    <ds-input-text label="Turnover year" placeholder="Value"
+                      [value]="fieldVal('turnoverYear')" (valueChange)="setField('turnoverYear', $event)" />
+                    <ds-select label="Turnover type" placeholder="Value" [options]="turnoverTypeOptions"
+                      [value]="fieldVal('turnoverType')" (valueChange)="setField('turnoverType', $event)" />
+                  </div>
+                </div>
+              }
+
+              <!-- ───── Step 5 : Activities ───── -->
+              @case (4) {
+                <div class="wizard__group">
+                  <span class="wizard__group-title">Main activity</span>
+                  <div class="wizard__card">
+                    <div class="wizard__row">
+                      <ds-select label="Type" placeholder="NAF" [options]="activityTypeOptions"
+                        [value]="mainActivity().type" (valueChange)="setMainActivity('type', $event)" />
+                      <ds-input-text label="Code" placeholder="Placeholder"
+                        [value]="mainActivity().code" (valueChange)="setMainActivity('code', $event)" />
+                      <ds-input-text label="Meaning" placeholder="Value"
+                        [value]="mainActivity().meaning" (valueChange)="setMainActivity('meaning', $event)" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="wizard__group">
+                  <div class="wizard__group-head">
+                    <span class="wizard__group-title">Secondary activities</span>
+                    <ds-button type="plain" tone="default" (clicked)="addActivity()">
+                      <ds-icon slot="icon-left" name="plus" [size]="16" />
+                      Add activity
+                    </ds-button>
+                  </div>
+                  <div class="wizard__card">
+                    @for (a of secondaryActivities(); track $index) {
+                      <div class="wizard__row wizard__row--removable">
+                        <ds-select label="Type" placeholder="NAF" [options]="activityTypeOptions"
+                          [value]="a.type" (valueChange)="setActivity($index, 'type', $event)" />
+                        <ds-input-text label="Code" placeholder="Placeholder"
+                          [value]="a.code" (valueChange)="setActivity($index, 'code', $event)" />
+                        <ds-input-text label="Meaning" placeholder="Value"
+                          [value]="a.meaning" (valueChange)="setActivity($index, 'meaning', $event)" />
+                        <ds-button-icon type="secondary" tone="default" ariaLabel="Remove activity"
+                          (clicked)="removeActivity($index)">
+                          <ds-icon name="trash" [size]="16" />
+                        </ds-button-icon>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            }
+          </div>
+
+          @if (verifying()) {
+            <div class="wizard__verify">
+              <ds-spinner size="m" />
+              <span>Checking your data…</span>
+            </div>
+          }
+        }
+      </section>
+    </div>
+
+    <!-- Footer plein largeur : Back à gauche, action à droite -->
+    @if (!matchSuggestion()) {
+      <div class="wizard__footer">
+        <div class="wizard__footer-left">
+          @if (currentStep() > 0) {
+            <ds-button type="plain" tone="default" [disabled]="verifying()" (clicked)="back()">
+              <ds-icon slot="icon-left" name="arrow-left" [size]="16" />
+              Back
+            </ds-button>
+          }
+        </div>
+        <div class="wizard__footer-right">
+          <ds-button type="primary" [loading]="verifying()" (clicked)="next()">
+            {{ isLast() ? 'Create company' : 'Next' }}
+          </ds-button>
+        </div>
+      </div>
+    }
+  </div>
+</ds-modal>

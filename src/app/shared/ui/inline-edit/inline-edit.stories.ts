@@ -2,7 +2,7 @@ import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { InlineEditComponent } from './inline-edit.component';
 
 const meta: Meta<InlineEditComponent> = {
-  title: 'UI/InlineEdit',
+  title: 'Design System/Data Entry/Inline Edit',
   component: InlineEditComponent,
   decorators: [
     moduleMetadata({

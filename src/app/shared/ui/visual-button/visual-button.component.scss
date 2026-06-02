@@ -1,0 +1,79 @@
+// =============================================================
+// Visual Button
+// Source : Figma > -Components--Action > Visual Button
+//
+// Bouton "carte" avec icône proéminente + titre + description.
+// Usage : selections marketing/onboarding, choix d'options visuelles.
+// =============================================================
+
+:host {
+  display:        inline-flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--semantic-measurement-spacing-m);
+  width:          240px;
+  padding:        var(--semantic-measurement-spacing-l);
+  border:         1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:  var(--semantic-border-radius-m);
+  background:     var(--semantic-color-static-background-main-primary);
+  cursor:         pointer;
+  user-select:    none;
+  transition:     background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover:not(.ds-visual-button--disabled) {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    box-shadow:   0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+
+  &.ds-visual-button--selected {
+    background:   var(--semantic-color-static-background-subtle-informative);
+    border-color: var(--semantic-color-interactive-border-strong-default);
+  }
+
+  &.ds-visual-button--disabled {
+    opacity:        var(--semantic-measurement-opacity-disabled);
+    pointer-events: none;
+    cursor:         not-allowed;
+  }
+}
+
+.ds-visual-button__icon {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           48px;
+  height:          48px;
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-static-background-main-alt-primary);
+  color:           var(--semantic-color-interactive-text-strong-default);
+  flex-shrink:     0;
+}
+
+.ds-visual-button__content {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+}
+
+.ds-visual-button__title {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.ds-visual-button__description {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  color:       var(--semantic-color-static-text-main-secondary);
+}

@@ -1,15 +1,28 @@
-<ds-icon-tile size="l" tone="brand">
-  <ng-content select="[slot=icon]" />
-</ds-icon-tile>
-
-<div class="ds-action-card__body">
-  <p class="ds-action-card__title">{{ title() }}</p>
-  @if (description()) {
-    <p class="ds-action-card__description">{{ description() }}</p>
+@if (variant() === 'selectable') {
+  <ds-radio [selected]="selected()" />
+  <div class="ds-action-card__body ds-action-card__body--inline">
+    <p class="ds-action-card__title">{{ title() }}</p>
+    @if (description()) {
+      <p class="ds-action-card__description">{{ description() }}</p>
+    }
+  </div>
+  @if (badgeLabel()) {
+    <ds-tag type="static" [label]="badgeLabel()!" class="ds-action-card__badge" />
   }
-</div>
+} @else {
+  <ds-icon-tile size="l" tone="brand">
+    <ng-content select="[slot=icon]" />
+  </ds-icon-tile>
 
-<ds-link [href]="linkHref()" tone="default" size="m" weight="regular">
-  {{ linkLabel() }}
-  <ds-icon slot="icon-right" name="arrow-right" [size]="16" />
-</ds-link>
+  <div class="ds-action-card__body">
+    <p class="ds-action-card__title">{{ title() }}</p>
+    @if (description()) {
+      <p class="ds-action-card__description">{{ description() }}</p>
+    }
+  </div>
+
+  <ds-link [href]="linkHref()" tone="default" size="m" weight="regular">
+    {{ linkLabel() }}
+    <ds-icon slot="icon-right" name="arrow-right" [size]="16" />
+  </ds-link>
+}

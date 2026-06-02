@@ -15,6 +15,7 @@ import { RouterLink } from '@angular/router';
         <li><a routerLink="/modal">With Modal</a></li>
         <li><a routerLink="/filters">Filters</a></li>
         <li><a routerLink="/search">Search</a></li>
+        <li><a routerLink="/admin-data">Admin Data</a></li>
       </ul>
     </main>
   `,

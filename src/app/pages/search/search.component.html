@@ -58,22 +58,50 @@
         </div>
       }
 
-      <div class="search-page__inner">
+      <div class="search-page__inner" #scrollHost (scroll)="onScroll($event)">
 
         @if (activeTab() === 'search') {
           @if (isResults()) {
-            <div class="search-page__results">
-              @for (entry of visibleResults(); track entry.i) {
-                <ds-result-card
-                  [data]="entry.r"
-                  [open]="expandedIdx() === entry.i"
-                  [favorited]="isFavorite(entry.i)"
-                  (toggled)="toggleCard(entry.i)"
-                  (starred)="toggleFavorite(entry.i)"
-                  (added)="addCompany(entry.i)"
-                />
+            @if (noResults()) {
+              <div class="search-page__empty">
+                <ds-icon name="search" [size]="48" />
+                <span class="search-page__empty-text">No company found for your search</span>
+                <ds-button type="primary" (clicked)="openManualCreate()">
+                  <ds-icon slot="icon-left" name="plus" [size]="16" />
+                  Create a company manually
+                </ds-button>
+              </div>
+            } @else {
+              <div class="search-page__results">
+                @for (entry of visibleResults(); track entry.i) {
+                  <ds-result-card
+                    [data]="entry.r"
+                    [open]="expandedIdx() === entry.i"
+                    [favorited]="isFavorite(entry.i)"
+                    (toggled)="toggleCard(entry.i)"
+                    (starred)="toggleFavorite(entry.i)"
+                    (added)="addCompany(entry.i)"
+                  />
+                }
+              </div>
+
+              @if (loadingMore()) {
+                <div class="search-page__loading-more">
+                  <ds-spinner size="s" />
+                  <span>Loading more results…</span>
+                </div>
               }
-            </div>
+
+              @if (allLoaded()) {
+                <div class="search-page__end">
+                  <span class="search-page__end-text">Can’t find the company you’re looking for?</span>
+                  <ds-button type="primary" (clicked)="openManualCreate()">
+                    <ds-icon slot="icon-left" name="plus" [size]="16" />
+                    Create a company manually
+                  </ds-button>
+                </div>
+              }
+            }
           } @else {
             <div class="search-page__empty">
               <ds-icon name="search" [size]="48" />
@@ -114,7 +142,7 @@
             </div>
           } @else {
             <div class="search-page__results">
-              @for (entry of visibleResults(); track entry.i) {
+              @for (entry of favoriteResults(); track entry.i) {
                 <ds-result-card
                   [data]="entry.r"
                   [open]="expandedIdx() === entry.i"
@@ -131,14 +159,20 @@
     </div>
   </app-topbox-test-shell>
 
-  <ds-modal
-    title="Create a company"
-    size="medium"
-    [open]="showCreateModal()"
-    [footer]="false"
-    contentHeight="120px"
-    (closed)="closeCreateModal()"
+  <ds-confirm-dialog
+    title="Create company"
+    tone="info"
+    confirmLabel="Create"
+    cancelLabel="Cancel"
+    [open]="pendingCreateIdx() !== null"
+    (confirmed)="confirmCreate()"
+    (cancelled)="cancelCreate()"
   >
-    <p class="search-page__wip">Work in progress</p>
-  </ds-modal>
+    Do you really want to create the company "{{ pendingCompanyName() }}"?
+  </ds-confirm-dialog>
+
+  <app-company-creation-wizard
+    [open]="showCreateWizard()"
+    (closed)="closeManualCreate()"
+  />
 </div>

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { CrumbComponent } from './crumb.component';
 
 const meta: Meta<CrumbComponent> = {
-  title: 'Design System/Crumb',
+  title: 'Design System/Action/Crumb',
   component: CrumbComponent,
   tags: ['autodocs'],
   argTypes: {

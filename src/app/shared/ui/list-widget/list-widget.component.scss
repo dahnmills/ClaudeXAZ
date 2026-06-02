@@ -1,0 +1,34 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.ds-list-widget__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-s);
+}
+
+.ds-list-widget__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-xs);
+}
+
+.ds-list-widget__row {
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+}
+
+.ds-list-widget__row--meta {
+  justify-content: space-between;
+}
+
+.ds-list-widget__date {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
+  color: var(--semantic-color-static-text-main-tertiary);
+}

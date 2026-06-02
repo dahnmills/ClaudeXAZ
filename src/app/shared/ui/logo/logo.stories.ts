@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { LogoComponent } from './logo.component';
 
 const meta: Meta<LogoComponent> = {
-  title: 'Design System/Logo',
+  title: 'Design System/Foundation/Logo',
   component: LogoComponent,
   tags: ['autodocs'],
   argTypes: {

@@ -1,0 +1,32 @@
+<div class="ds-button-split__group" role="group">
+  <ds-button
+    class="ds-button-split__main"
+    [type]="type()"
+    [tone]="tone()"
+    [reversed]="reversed()"
+    [disabled]="disabled()"
+    [loading]="loading()"
+    (clicked)="onPrimary()"
+  >
+    <ng-content select="[slot=icon-left]" />
+    <ng-content />
+  </ds-button>
+
+  <ds-button-icon
+    class="ds-button-split__toggle"
+    [type]="type()"
+    [tone]="tone()"
+    [reversed]="reversed()"
+    [disabled]="disabled()"
+    ariaLabel="Toggle menu"
+    (clicked)="onToggle()"
+  >
+    <ds-icon [name]="menuOpen() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+  </ds-button-icon>
+</div>
+
+@if (menuOpen()) {
+  <div class="ds-button-split__menu">
+    <ng-content select="[slot=menu]" />
+  </div>
+}

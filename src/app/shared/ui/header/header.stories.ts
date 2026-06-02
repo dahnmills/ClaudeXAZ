@@ -10,7 +10,7 @@ const ICON_HELP   = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
 const ICON_BELL   = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a5 5 0 015 5v3l1 1H2l1-1V7a5 5 0 015-5z" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 13.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 
 const meta: Meta<HeaderComponent> = {
-  title: 'Design System/Header',
+  title: 'Design System/Layout/Header',
   component: HeaderComponent,
   tags: ['autodocs'],
   parameters: { layout: 'fullscreen', backgrounds: { default: 'dark' } },

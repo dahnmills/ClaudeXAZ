@@ -46,7 +46,7 @@
         [attr.aria-hidden]="exists() ? true : null"
         (clicked)="!exists() && added.emit()"
       >
-        <ds-icon name="plus" [size]="16" />
+        <ds-icon name="plus" [size]="20" />
       </ds-button-icon>
       <ds-button-icon
         type="plain"
@@ -61,7 +61,7 @@
         <ds-icon [name]="favorited() ? 'star-filled' : 'star'" [size]="20" />
       </ds-button-icon>
       <ds-button-icon type="plain" tone="accent" ariaLabel="Toggle details" (clicked)="toggled.emit()">
-        <ds-icon [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+        <ds-icon [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="20" />
       </ds-button-icon>
     </div>
   </div>

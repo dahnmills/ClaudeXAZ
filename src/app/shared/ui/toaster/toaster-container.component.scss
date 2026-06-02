@@ -1,0 +1,128 @@
+// =============================================================
+// Toaster Container
+// Source : Figma > -Components--Feedback > Toaster (node 125:1116)
+//
+// Spec :
+//   • Stack vertical bottom-right
+//   • Each toast 352px, padding 24px h / 16px v, gap 16px
+//   • Bg subtle functional + border 1px main functional
+//   • Icon 24px tone color, top-left
+//   • Title 16/24 SemiBold + Text 16/24 Regular
+//   • Action link right-aligned
+//   • Loader 4px bottom bar (auto-dismiss progress)
+//   • Shadow bottom 400 (0 4 4 rgba(0,0,0,0.25))
+// =============================================================
+
+:host {
+  position:       fixed;
+  bottom:         var(--semantic-measurement-spacing-l);
+  right:          var(--semantic-measurement-spacing-l);
+  z-index:        2000;
+  display:        flex;
+  flex-direction: column-reverse;
+  gap:            var(--semantic-measurement-spacing-s);
+  pointer-events: none;
+  max-width:      352px;
+}
+
+.ds-toaster {
+  position:       relative;
+  display:        flex;
+  align-items:    flex-start;
+  gap:            var(--semantic-measurement-spacing-m);
+  width:          352px;
+  padding:        var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-l);
+  border-radius:  var(--semantic-border-radius-s);
+  border:         1px solid var(--semantic-color-static-border-subtle-tertiary);
+  background:     var(--semantic-color-static-background-main-primary);
+  font-family:    var(--semantic-font-family);
+  color:          var(--semantic-color-static-text-main-primary);
+  box-shadow:     0 4px 4px rgba(0, 0, 0, 0.25);
+  pointer-events: auto;
+  overflow:       hidden;
+  animation:      ds-toaster-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+// ── Tone variants ─────────────────────────────────────────────
+.ds-toaster--success {
+  background:   var(--semantic-color-static-background-subtle-functional-positive);
+  border-color: var(--semantic-color-static-border-main-functional-positive);
+}
+.ds-toaster--success .ds-toaster__icon { color: var(--semantic-color-static-background-functional-positive); }
+.ds-toaster--success .ds-toaster__loader { background: var(--semantic-color-static-background-functional-positive); }
+
+.ds-toaster--info {
+  background:   var(--semantic-color-static-background-subtle-functional-informative);
+  border-color: var(--semantic-color-static-border-main-functional-informative);
+}
+.ds-toaster--info .ds-toaster__icon { color: var(--semantic-color-static-background-functional-informative); }
+.ds-toaster--info .ds-toaster__loader { background: var(--semantic-color-static-background-functional-informative); }
+
+.ds-toaster--warning {
+  background:   var(--semantic-color-static-background-subtle-functional-warning);
+  border-color: var(--semantic-color-static-border-main-functional-warning);
+}
+.ds-toaster--warning .ds-toaster__icon { color: var(--semantic-color-static-background-functional-warning); }
+.ds-toaster--warning .ds-toaster__loader { background: var(--semantic-color-static-background-functional-warning); }
+
+.ds-toaster--error {
+  background:   var(--semantic-color-static-background-subtle-functional-negative);
+  border-color: var(--semantic-color-static-border-main-functional-negative);
+}
+.ds-toaster--error .ds-toaster__icon { color: var(--semantic-color-static-background-functional-negative); }
+.ds-toaster--error .ds-toaster__loader { background: var(--semantic-color-static-background-functional-negative); }
+
+// ── Icon ──────────────────────────────────────────────────────
+.ds-toaster__icon { flex-shrink: 0; }
+
+// ── Content ───────────────────────────────────────────────────
+.ds-toaster__content {
+  flex:           1;
+  min-width:      0;
+  display:        flex;
+  flex-direction: column;
+}
+
+.ds-toaster__title {
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  word-break:  break-word;
+}
+
+.ds-toaster__text {
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  word-break:  break-word;
+}
+
+.ds-toaster__action {
+  align-self:  flex-end;
+  margin-top:  var(--semantic-measurement-spacing-xxs);
+}
+
+// ── Loader bar (auto-dismiss progress) ───────────────────────
+.ds-toaster__loader {
+  position: absolute;
+  bottom:   -1px;
+  left:     -1px;
+  height:   4px;
+  width:    100%;
+  transform-origin: left center;
+  animation-name:     ds-toaster-loader;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes ds-toaster-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes ds-toaster-loader {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}

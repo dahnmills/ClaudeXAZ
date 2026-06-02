@@ -1,0 +1,22 @@
+@for (t of toasts(); track t.id) {
+  <div class="ds-toaster" [class]="'ds-toaster ds-toaster--' + t.tone" role="status">
+    <ds-icon class="ds-toaster__icon" [name]="iconFor(t.tone)" [size]="24" />
+
+    <div class="ds-toaster__content">
+      @if (t.title) {
+        <p class="ds-toaster__title">{{ t.title }}</p>
+      }
+      <p class="ds-toaster__text">{{ t.text }}</p>
+
+      @if (t.actionLabel) {
+        <div class="ds-toaster__action">
+          <ds-link href="#" weight="semi-bold" (click)="onAction(t); $event.preventDefault()">{{ t.actionLabel }}</ds-link>
+        </div>
+      }
+    </div>
+
+    @if (t.duration > 0) {
+      <div class="ds-toaster__loader" [style.animation-duration.ms]="t.duration"></div>
+    }
+  </div>
+}

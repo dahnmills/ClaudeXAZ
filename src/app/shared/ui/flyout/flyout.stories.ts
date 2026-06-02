@@ -6,7 +6,7 @@ import { FlyoutItemComponent } from './flyout-item.component';
 import { BadgeComponent } from '../badge/badge.component';
 
 const meta: Meta<FlyoutComponent> = {
-  title: 'Design System/Flyout',
+  title: 'Design System/Layout/Flyout',
   component: FlyoutComponent,
   tags: ['autodocs'],
   decorators: [

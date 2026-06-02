@@ -11,7 +11,7 @@ import { ButtonIconComponent } from '../button-icon/button-icon.component';
 import { IconComponent } from '../icon/icon.component';
 
 const meta: Meta<PageHeaderComponent> = {
-  title: 'Design System/Page Header',
+  title: 'Design System/Layout/Page Header',
   component: PageHeaderComponent,
   tags: ['autodocs'],
   decorators: [

@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+.buyer-summary__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl);
+}
+
+.buyer-summary__action-bar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buyer-summary__layout-select {
+  width: 240px;
+}
+
+.buyer-summary__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--semantic-measurement-spacing-m);
+}
+
+.buyer-summary__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-s);
+  min-height: 258px;
+  padding: var(--semantic-measurement-spacing-l);
+  background: var(--semantic-color-static-background-main-primary);
+  border: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+}

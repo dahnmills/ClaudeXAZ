@@ -1,0 +1,30 @@
+<ds-card class="ds-widget-card__card" [noPadding]="true">
+  <div class="ds-widget-card__inner">
+    <div class="ds-widget-card__header">
+      <h3 class="ds-widget-card__title">{{ title() }}</h3>
+      <div class="ds-widget-card__actions">
+        @if (seeFigures()) {
+          <ds-button type="plain" tone="accent" (clicked)="seeFiguresClicked.emit()">
+            {{ seeFiguresLabel() }}
+          </ds-button>
+        }
+        @if (externalLink()) {
+          <ds-button-icon
+            type="plain"
+            tone="accent"
+            [ariaLabel]="externalAriaLabel()"
+            (clicked)="externalClicked.emit()"
+          >
+            <ds-icon [name]="actionIcon()" [size]="20" />
+          </ds-button-icon>
+        }
+      </div>
+    </div>
+
+    <ds-divider class="ds-widget-card__divider" />
+
+    <div class="ds-widget-card__body">
+      <ng-content />
+    </div>
+  </div>
+</ds-card>

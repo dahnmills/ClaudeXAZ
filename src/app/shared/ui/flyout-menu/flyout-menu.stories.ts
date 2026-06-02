@@ -4,7 +4,7 @@ import { FlyoutMenuComponent } from './flyout-menu.component';
 import { FlyoutMenuItemComponent } from './flyout-menu-item.component';
 
 const meta: Meta<FlyoutMenuComponent> = {
-  title: 'Design System/Flyout Menu',
+  title: 'Design System/Action/Flyout Menu',
   component: FlyoutMenuComponent,
   tags: ['autodocs'],
   decorators: [

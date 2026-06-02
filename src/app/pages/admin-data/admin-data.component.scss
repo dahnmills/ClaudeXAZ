@@ -1,0 +1,56 @@
+:host {
+  display: block;
+  font-family: var(--semantic-font-family);
+}
+
+.admin-data__body {
+  padding:        var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl);
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+}
+
+.admin-data__actions-row {
+  display:         flex;
+  align-items:     center;
+  justify-content: flex-end;
+  gap:             var(--semantic-measurement-spacing-l);
+}
+
+.admin-data__card-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+  margin-bottom:   var(--semantic-measurement-spacing-m);
+}
+
+.admin-data__card-title {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.admin-data__cards-row {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--semantic-measurement-spacing-m);
+}
+
+.admin-data__activity-title {
+  margin:      var(--semantic-measurement-spacing-m) 0 0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.admin-data__activity-row {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--semantic-measurement-spacing-m);
+}

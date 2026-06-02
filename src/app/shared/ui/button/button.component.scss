@@ -16,6 +16,7 @@
 
 :host {
   box-sizing:       border-box;
+  position:        relative;
   display:         inline-flex;
   align-items:     center;
   justify-content: center;
@@ -48,6 +49,24 @@
     opacity:        var(--semantic-measurement-opacity-disabled); // 0.40
     cursor:         not-allowed;
     pointer-events: none;
+  }
+
+  // ── Loading ────────────────────────────────────────────────
+  // Comme disabled visuellement (opacity 0.40, non cliquable) mais
+  // contenu masqué (visibility hidden) pour préserver la largeur
+  // intrinsèque + spinner overlay centré.
+  &.ds-button--loading {
+    cursor:         progress;
+    pointer-events: none;
+    opacity:        var(--semantic-measurement-opacity-disabled);
+
+    .ds-button__content { visibility: hidden; }
+  }
+
+  // ── Full width ─────────────────────────────────────────────
+  &.ds-button--full-width {
+    display:    flex;
+    width:      100%;
   }
 
   // ============================================================
@@ -318,8 +337,24 @@
   }
 }
 
+// ── Content wrapper (rendered always — visibility toggled on loading) ─
+.ds-button__content {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+
 // ── Label ───────────────────────────────────────────────────
 .ds-button__label {
   display:     inline-flex;
   align-items: center;
+}
+
+// ── Spinner overlay (loading state) ────────────────────────
+.ds-button__spinner {
+  position:        absolute;
+  top:             50%;
+  left:            50%;
+  transform:       translate(-50%, -50%);
+  pointer-events:  none;
 }

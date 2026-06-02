@@ -1,0 +1,81 @@
+:host {
+  display: flex;
+  gap: var(--semantic-measurement-spacing-xs);
+  width: 100%;
+  // Hauteur d'une rangée de libellés axe X — sert à aligner l'axe Y sur le tracé.
+  --ds-chart-x-axis-h: 16px;
+  --ds-chart-line:  var(--semantic-color-interactive-background-strong-default);
+}
+
+:host.ds-chart--tone-positive { --ds-chart-line: var(--semantic-color-static-background-functional-positive); }
+:host.ds-chart--tone-warning  { --ds-chart-line: var(--semantic-color-static-background-functional-warning); }
+:host.ds-chart--tone-negative { --ds-chart-line: var(--semantic-color-static-background-functional-negative); }
+
+.ds-chart__y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: var(--ds-chart-x-axis-h);
+  flex-shrink: 0;
+}
+
+.ds-chart__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ds-chart__plot {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.ds-chart__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ds-chart__grid {
+  stroke: var(--semantic-color-static-border-subtle-tertiary);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ds-chart__line {
+  fill: none;
+  stroke: var(--ds-chart-line);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.ds-chart__dot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ds-chart-line);
+  border: 1.5px solid var(--semantic-color-static-background-main-primary);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.ds-chart__x-axis {
+  display: flex;
+  justify-content: space-between;
+  height: var(--ds-chart-x-axis-h);
+  margin-top: var(--semantic-measurement-spacing-xs);
+}
+
+.ds-chart__axis-label {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  color: var(--semantic-color-static-text-main-tertiary);
+  white-space: nowrap;
+}

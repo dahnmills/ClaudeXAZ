@@ -1,0 +1,37 @@
+@if (yLabels().length) {
+  <div class="ds-chart__y-axis">
+    @for (l of yLabels(); track $index) {
+      <span class="ds-chart__axis-label">{{ l }}</span>
+    }
+  </div>
+}
+
+<div class="ds-chart__main">
+  <div class="ds-chart__plot">
+    <svg class="ds-chart__svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      @if (showGrid()) {
+        @for (x of gridXs(); track $index) {
+          <line class="ds-chart__grid" [attr.x1]="x" [attr.x2]="x" y1="0" y2="100" />
+        }
+        @for (y of gridYs(); track $index) {
+          <line class="ds-chart__grid" x1="0" x2="100" [attr.y1]="y" [attr.y2]="y" />
+        }
+      }
+      <polyline class="ds-chart__line" [attr.points]="linePoints()" />
+    </svg>
+
+    @if (showDots()) {
+      @for (d of dots(); track $index) {
+        <span class="ds-chart__dot" [style.left.%]="d.left" [style.top.%]="d.top"></span>
+      }
+    }
+  </div>
+
+  @if (xLabels().length) {
+    <div class="ds-chart__x-axis">
+      @for (l of xLabels(); track $index) {
+        <span class="ds-chart__axis-label">{{ l }}</span>
+      }
+    </div>
+  }
+</div>

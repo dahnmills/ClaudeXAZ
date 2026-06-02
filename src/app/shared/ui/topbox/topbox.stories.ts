@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { TopboxComponent } from './topbox.component';
 
 const meta: Meta<TopboxComponent> = {
-  title: 'Design System/Topbox',
+  title: 'Design System/Layout/Topbox',
   component: TopboxComponent,
   tags: ['autodocs'],
   argTypes: {
