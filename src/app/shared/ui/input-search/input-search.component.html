@@ -1,0 +1,35 @@
+<div [class]="hostClasses()">
+  @if (label()) {
+    <label class="ds-input-search__label" [for]="inputId()">
+      {{ label() }}
+      @if (optional()) {
+        <span class="ds-input-search__optional">(optional)</span>
+      }
+    </label>
+  }
+
+  <div class="ds-input-search__container">
+    <ds-icon class="ds-input-search__icon-search" name="search" [size]="16" />
+
+    <input
+      class="ds-input-search__input"
+      [id]="inputId()"
+      type="search"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [readOnly]="readonly()"
+      [attr.aria-invalid]="error() || null"
+      [(ngModel)]="value"
+    />
+
+    @if (value()) {
+      <button class="ds-input-search__clear" type="button" aria-label="Clear" (click)="clear()">
+        <ds-icon name="close" [size]="16" />
+      </button>
+    }
+  </div>
+
+  @if (error() && errorMessage()) {
+    <span class="ds-input-search__error-msg" role="alert">{{ errorMessage() }}</span>
+  }
+</div>

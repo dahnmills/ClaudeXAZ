@@ -1,0 +1,24 @@
+<button
+  class="ds-collapsible-table__header"
+  type="button"
+  [attr.aria-expanded]="open()"
+  [attr.aria-disabled]="disabled() || null"
+  [disabled]="disabled() || null"
+  (click)="toggle()"
+>
+  @if (icon()) {
+    <ds-icon class="ds-collapsible-table__icon" [name]="icon()" [size]="16" />
+  }
+  <span class="ds-collapsible-table__category">{{ category() }}</span>
+  <ds-icon
+    class="ds-collapsible-table__chevron"
+    [name]="open() ? 'chevron-up' : 'chevron-down'"
+    [size]="16"
+  />
+</button>
+
+@if (open()) {
+  <div class="ds-collapsible-table__body">
+    <ng-content />
+  </div>
+}

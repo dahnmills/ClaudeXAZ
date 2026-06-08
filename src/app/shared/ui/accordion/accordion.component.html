@@ -1,0 +1,21 @@
+<button
+  class="ds-accordion__header"
+  type="button"
+  [attr.aria-expanded]="open()"
+  [attr.aria-disabled]="disabled() || null"
+  [disabled]="disabled() || null"
+  (click)="toggle()"
+>
+  <span class="ds-accordion__title">{{ title() }}</span>
+  <ds-icon
+    class="ds-accordion__chevron"
+    [name]="open() ? 'chevron-up' : 'chevron-down'"
+    [size]="16"
+  />
+</button>
+
+@if (open()) {
+  <div class="ds-accordion__body">
+    <ng-content />
+  </div>
+}

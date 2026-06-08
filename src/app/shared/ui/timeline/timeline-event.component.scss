@@ -1,0 +1,107 @@
+// Timeline Event — dot status + ligne descendante + header cliquable
+// Source : Figma > Data Display > Timeline 🟠
+
+:host {
+  display:     flex;
+  align-items: stretch;
+  gap:         var(--semantic-measurement-spacing-s);
+  width:       100%;
+  font-family: var(--semantic-font-family);
+}
+
+// ── Rail (dot + ligne verticale) ─────────────────────────────
+.ds-timeline-event__rail {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  flex-shrink:    0;
+  width:          12px;
+  padding-top:    var(--semantic-measurement-spacing-s);
+}
+
+.ds-timeline-event__dot {
+  width:         12px;
+  height:        12px;
+  border-radius: 50%;
+  flex-shrink:   0;
+}
+
+.ds-timeline-event__line {
+  width:      var(--semantic-measurement-spacing-xxs);
+  flex:       1;
+  margin-top: var(--semantic-measurement-spacing-xs);
+  background: var(--semantic-color-static-border-subtle-tertiary);
+}
+
+// ── Status colors (dot) ──────────────────────────────────────
+:host.ds-timeline-event--status-error    .ds-timeline-event__dot { background: var(--semantic-color-static-background-functional-negative); }
+:host.ds-timeline-event--status-warning  .ds-timeline-event__dot { background: var(--semantic-color-static-background-functional-warning); }
+:host.ds-timeline-event--status-success  .ds-timeline-event__dot { background: var(--semantic-color-static-background-functional-positive); }
+:host.ds-timeline-event--status-info     .ds-timeline-event__dot { background: var(--semantic-color-static-background-functional-informative); }
+:host.ds-timeline-event--status-neutral  .ds-timeline-event__dot { background: var(--semantic-color-static-background-accent-secondary); }
+
+// ── Main column ──────────────────────────────────────────────
+.ds-timeline-event__main {
+  flex:           1;
+  min-width:      0;
+  padding-bottom: var(--semantic-measurement-spacing-l);
+}
+
+// Last event : pas de padding bas
+:host.ds-timeline-event--last .ds-timeline-event__main {
+  padding-bottom: 0;
+}
+
+// ── Header (button) ──────────────────────────────────────────
+.ds-timeline-event__header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+  width:           100%;
+  padding:         var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  background:      transparent;
+  border:          none;
+  cursor:          pointer;
+  text-align:      left;
+  border-radius:   var(--semantic-border-radius-s);
+  font-family:     var(--semantic-font-family);
+  transition:      background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--semantic-color-interactive-background-light-alt-hover);
+  }
+  &:active:not(:disabled) {
+    background: var(--semantic-color-interactive-background-light-alt-active);
+  }
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.ds-timeline-event__title {
+  flex:        1;
+  min-width:   0;
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.ds-timeline-event__chevron {
+  flex-shrink: 0;
+  color:       var(--semantic-color-interactive-icon-strong-alt-default);
+}
+
+.ds-timeline-event__body {
+  padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-s) 0;
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+:host.ds-timeline-event--disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  pointer-events: none;
+}

@@ -1,0 +1,72 @@
+// Accordion — header cliquable + body pliable
+// Source : Figma > Data Display > Accordion 🟢
+// Tones : default (bg=white) / alt (bg=accent-muted)
+// Title : Title/H2 (20/28/600)
+
+:host {
+  display:        block;
+  width:          100%;
+  font-family:    var(--semantic-font-family);
+}
+
+.ds-accordion__header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+  width:           100%;
+  padding:         var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  background:      transparent;
+  border:          none;
+  cursor:          pointer;
+  font-family:     var(--semantic-font-family);
+  text-align:      left;
+  border-radius:   var(--semantic-border-radius-s);
+  transition:      background 0.15s ease, color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--semantic-color-interactive-background-light-alt-hover);
+  }
+  &:active:not(:disabled) {
+    background: var(--semantic-color-interactive-background-light-alt-active);
+  }
+  &:focus-visible {
+    outline:        3px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.ds-accordion__title {
+  flex:        1;
+  min-width:   0;
+  font-size:   var(--semantic-font-title-size-s);
+  font-weight: var(--semantic-font-title-font-weight-m);
+  line-height: var(--semantic-font-title-line-height-m);
+  color:       var(--semantic-color-interactive-text-strong-alt-default);
+}
+
+.ds-accordion__chevron {
+  flex-shrink: 0;
+  color:       var(--semantic-color-interactive-icon-strong-alt-default);
+}
+
+// Tone Alt — fond légèrement teinté
+:host.ds-accordion--tone-alt .ds-accordion__header {
+  background: var(--semantic-color-static-background-main-secondary);
+
+  &:hover:not(:disabled) {
+    background: var(--semantic-color-interactive-background-light-alt-hover);
+  }
+}
+
+.ds-accordion__body {
+  padding: var(--semantic-measurement-spacing-m);
+  color:   var(--semantic-color-static-text-main-primary);
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+}
+
+:host.ds-accordion--disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  pointer-events: none;
+}

@@ -1,0 +1,5 @@
+<ds-icon [name]="icon()" [size]="24" class="ds-select-button__icon" />
+<span class="ds-select-button__label">{{ label() }}</span>
+@if (sublabel()) {
+  <span class="ds-select-button__sublabel">{{ sublabel() }}</span>
+}

@@ -1,0 +1,18 @@
+<div class="ds-radio-card__radio">
+  <div class="ds-radio-card__circle">
+    @if (selected()) {
+      <div class="ds-radio-card__dot"></div>
+    }
+  </div>
+</div>
+
+<div class="ds-radio-card__body">
+  <span class="ds-radio-card__label">{{ label() }}</span>
+  @if (sublabel()) {
+    <span class="ds-radio-card__sublabel">{{ sublabel() }}</span>
+  }
+</div>
+
+@if (badge()) {
+  <ds-badge [label]="badge()" status="info" variant="strong" size="s" />
+}

@@ -1,0 +1,76 @@
+// Segmented Control — boutons connectés, positions First/Middle/Last gérées par index
+.ds-segmented-control {
+  display:     inline-flex;
+  font-family: var(--semantic-font-family);
+}
+
+.ds-segmented-control__item {
+  display:        inline-flex;
+  align-items:    center;
+  justify-content: center;
+  gap:            var(--semantic-measurement-spacing-xs);
+  padding:        var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-m);
+  border:         1px solid var(--semantic-color-interactive-border-strong-alt-default);
+  background:     var(--semantic-color-static-background-main-primary);
+  color:          var(--semantic-color-static-text-main-primary);
+  cursor:         pointer;
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-l);
+  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height:    var(--semantic-font-text-style-line-height-l);
+  transition:     background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  // Bordures partagées : un seul trait entre items
+  & + .ds-segmented-control__item {
+    border-left: none;
+  }
+
+  &:hover:not(.ds-segmented-control__item--disabled):not(.ds-segmented-control__item--selected) {
+    background: var(--semantic-color-interactive-background-light-hover);
+  }
+
+  &:active:not(.ds-segmented-control__item--disabled):not(.ds-segmented-control__item--selected) {
+    background: var(--semantic-color-interactive-background-light-active);
+  }
+
+  &--first {
+    border-top-left-radius:    var(--semantic-border-radius-s);
+    border-bottom-left-radius: var(--semantic-border-radius-s);
+  }
+
+  &--last {
+    border-top-right-radius:    var(--semantic-border-radius-s);
+    border-bottom-right-radius: var(--semantic-border-radius-s);
+  }
+
+  &--single {
+    border-radius: var(--semantic-border-radius-s);
+  }
+
+  &--selected {
+    background:   var(--semantic-color-interactive-background-main-default);
+    border-color: var(--semantic-color-interactive-background-main-default);
+    color:        var(--semantic-color-interactive-text-neutral-default);
+    z-index:      1;
+
+    & + .ds-segmented-control__item { border-left: none; }
+
+    &:hover:not(.ds-segmented-control__item--disabled) {
+      background:   var(--semantic-color-interactive-border-strong-hover);
+      border-color: var(--semantic-color-interactive-border-strong-hover);
+    }
+
+    &:active:not(.ds-segmented-control__item--disabled) {
+      background:   var(--semantic-color-interactive-border-strong-active);
+      border-color: var(--semantic-color-interactive-border-strong-active);
+    }
+  }
+
+  &--disabled {
+    opacity:        var(--semantic-measurement-opacity-disabled);
+    cursor:         default;
+    pointer-events: none;
+  }
+}
+
+.ds-segmented-control__label { white-space: nowrap; }

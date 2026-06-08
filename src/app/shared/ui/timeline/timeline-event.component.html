@@ -1,0 +1,30 @@
+<div class="ds-timeline-event__rail">
+  <span class="ds-timeline-event__dot"></span>
+  @if (!isLast()) {
+    <span class="ds-timeline-event__line"></span>
+  }
+</div>
+
+<div class="ds-timeline-event__main">
+  <button
+    class="ds-timeline-event__header"
+    type="button"
+    [attr.aria-expanded]="open()"
+    [attr.aria-disabled]="disabled() || null"
+    [disabled]="disabled() || null"
+    (click)="toggle()"
+  >
+    <span class="ds-timeline-event__title">{{ title() }}</span>
+    <ds-icon
+      class="ds-timeline-event__chevron"
+      [name]="open() ? 'chevron-up' : 'chevron-down'"
+      [size]="16"
+    />
+  </button>
+
+  @if (open()) {
+    <div class="ds-timeline-event__body">
+      <ng-content />
+    </div>
+  }
+</div>

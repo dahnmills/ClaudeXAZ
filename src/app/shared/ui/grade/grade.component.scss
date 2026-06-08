@@ -1,0 +1,94 @@
+// Grade — pastille colorée + score optionnel
+// Source : Figma > Data Display > Grade 🟢
+// Type=Manual (M1-10) / Automatic (A1-10) / NC (N/C) / NA (N/A)
+// Couleurs : --semantic-color-static-background-grade-{1..10}
+// Texte pill : blanc sur fonds sombres (1,2,3,7,8,9,10), Grey/900 sur fonds clairs (4,5,6)
+
+:host {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  font-family: var(--semantic-font-family);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+}
+
+.ds-grade__pill {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  border-radius:   var(--semantic-border-radius-round);
+  padding:         0 var(--semantic-measurement-spacing-s);
+  background:      var(--semantic-color-static-background-grade-none);
+  color:           var(--semantic-color-static-text-subtle-primary);
+  letter-spacing:  var(--semantic-font-text-style-letter-spacing-s);
+  white-space:     nowrap;
+}
+
+.ds-grade__score {
+  color:       var(--semantic-color-static-text-main-primary);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+}
+
+// ── Sizes ───────────────────────────────────────────────────
+:host.ds-grade--size-m {
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+
+  .ds-grade__pill { height: var(--semantic-measurement-spacing-l); min-width: var(--semantic-measurement-spacing-l); }
+}
+
+:host.ds-grade--size-s {
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+
+  .ds-grade__pill { height: 20px; min-width: 20px; }
+}
+
+// ── Couleurs par grade (1..10) ─────────────────────────────
+:host.ds-grade--g1 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-1);
+  color:      var(--semantic-color-static-text-subtle-primary);
+}
+:host.ds-grade--g2 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-2);
+  color:      var(--semantic-color-static-text-subtle-primary);
+}
+:host.ds-grade--g3 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-3);
+  color:      var(--semantic-color-static-text-subtle-primary);
+}
+:host.ds-grade--g4 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-4);
+  color:      var(--semantic-color-static-text-main-primary);
+}
+:host.ds-grade--g5 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-5);
+  color:      var(--semantic-color-static-text-main-primary);
+}
+:host.ds-grade--g6 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-6);
+  color:      var(--semantic-color-static-text-main-primary);
+}
+:host.ds-grade--g7 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-7);
+  color:      var(--semantic-color-static-text-subtle-primary);
+}
+:host.ds-grade--g8 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-8);
+  color:      var(--semantic-color-static-text-subtle-primary);
+}
+:host.ds-grade--g9 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-9);
+  color:      var(--semantic-color-static-text-subtle-primary);
+}
+:host.ds-grade--g10 .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-10);
+  color:      var(--semantic-color-static-text-subtle-primary);
+}
+
+// ── NC / NA — fond gris clair ──────────────────────────────
+:host.ds-grade--type-nc .ds-grade__pill,
+:host.ds-grade--type-na .ds-grade__pill {
+  background: var(--semantic-color-static-background-grade-none);
+  color:      var(--semantic-color-static-text-main-primary);
+}

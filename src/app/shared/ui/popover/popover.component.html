@@ -1,0 +1,28 @@
+<div class="ds-popover__arrow"></div>
+<div class="ds-popover__panel">
+  @if (title() || dismissible()) {
+    <div class="ds-popover__header">
+      @if (title()) {
+        <span class="ds-popover__title">{{ title() }}</span>
+      }
+      @if (dismissible()) {
+        <ds-button-icon
+          class="ds-popover__close"
+          icon="close"
+          ariaLabel="Close"
+          size="s"
+          (clicked)="closed.emit()"
+        />
+      }
+    </div>
+  }
+  <div class="ds-popover__content">
+    <ng-content />
+  </div>
+  @if (false) {
+    <div class="ds-popover__actions">
+      <ng-content select="[slot=actions]" />
+    </div>
+  }
+  <ng-content select="[slot=actions]" />
+</div>

@@ -1,0 +1,28 @@
+<div [class]="hostClasses()">
+  @if (label()) {
+    <label class="ds-input-date__label" [for]="inputId()">
+      {{ label() }}
+      @if (optional()) {
+        <span class="ds-input-date__optional">(optional)</span>
+      }
+    </label>
+  }
+
+  <div class="ds-input-date__container">
+    <input
+      class="ds-input-date__input"
+      [id]="inputId()"
+      type="date"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [readOnly]="readonly()"
+      [attr.aria-invalid]="error() || null"
+      [(ngModel)]="value"
+    />
+    <ds-icon class="ds-input-date__icon" name="calendar" [size]="16" />
+  </div>
+
+  @if (error() && errorMessage()) {
+    <span class="ds-input-date__error-msg" role="alert">{{ errorMessage() }}</span>
+  }
+</div>

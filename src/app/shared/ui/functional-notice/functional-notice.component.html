@@ -1,0 +1,23 @@
+<div [class]="hostClasses()">
+  <ds-icon class="ds-functional-notice__icon" [name]="iconName()" [size]="emphasis() === 'low' ? 16 : 20" />
+
+  <div class="ds-functional-notice__body">
+    @if (title() && emphasis() !== 'low') {
+      <span class="ds-functional-notice__title">{{ title() }}</span>
+    }
+    @if (message()) {
+      <span class="ds-functional-notice__message">{{ message() }}</span>
+    }
+    <ng-content />
+  </div>
+
+  @if (dismissible()) {
+    <ds-button-icon
+      class="ds-functional-notice__close"
+      icon="close"
+      ariaLabel="Dismiss"
+      size="s"
+      (clicked)="dismissed.emit()"
+    />
+  }
+</div>

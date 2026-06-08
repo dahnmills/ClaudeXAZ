@@ -1,0 +1,113 @@
+// Radio Card — mêmes tokens que Checkbox Card, radio button au lieu de checkbox
+
+:host {
+  display:        flex;
+  align-items:    center;
+  gap:            var(--semantic-measurement-spacing-s);
+  padding:        var(--semantic-measurement-spacing-m);
+  border-radius:  var(--semantic-border-radius-s);
+  border:         1px solid var(--semantic-color-interactive-border-strong-alt-default);
+  background:     var(--semantic-color-static-background-main-primary);
+  cursor:         pointer;
+  user-select:    none;
+  font-family:    var(--semantic-font-family);
+  transition:     border-color 0.15s ease, background 0.15s ease;
+  width:          100%;
+  box-sizing:     border-box;
+
+  &:hover:not(.ds-radio-card--disabled) {
+    border-color: var(--semantic-color-interactive-border-medium-alt-hover);
+  }
+
+  &:active:not(.ds-radio-card--disabled) {
+    border-color: var(--semantic-color-interactive-border-strong-active);
+  }
+
+  &.ds-radio-card--selected {
+    border-color: var(--semantic-color-interactive-background-main-default);
+    background:   var(--semantic-color-static-background-main-alt-primary);
+
+    &:hover:not(.ds-radio-card--disabled) {
+      border-color: var(--semantic-color-interactive-border-strong-hover);
+    }
+
+    &:active:not(.ds-radio-card--disabled) {
+      border-color: var(--semantic-color-interactive-border-strong-active);
+    }
+  }
+
+  &.ds-radio-card--disabled {
+    opacity:        var(--semantic-measurement-opacity-disabled);
+    cursor:         default;
+    pointer-events: none;
+  }
+}
+
+// ── Radio circle ─────────────────────────────────────────────
+.ds-radio-card__radio {
+  flex-shrink: 0;
+}
+
+.ds-radio-card__circle {
+  width:         20px;
+  height:        20px;
+  border-radius: 50%;
+  border:        1.5px solid var(--semantic-color-interactive-border-strong-alt-default);
+  background:    transparent;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  transition:    border-color 0.1s ease;
+}
+
+:host.ds-radio-card--selected .ds-radio-card__circle {
+  border-color: var(--semantic-color-interactive-background-main-default);
+  border-width: 2px;
+}
+
+:host.ds-radio-card--selected:hover:not(.ds-radio-card--disabled) .ds-radio-card__circle {
+  border-color: var(--semantic-color-interactive-border-strong-hover);
+}
+
+:host.ds-radio-card--selected:active:not(.ds-radio-card--disabled) .ds-radio-card__circle {
+  border-color: var(--semantic-color-interactive-border-strong-active);
+}
+
+.ds-radio-card__dot {
+  width:         var(--semantic-measurement-spacing-s);
+  height:        var(--semantic-measurement-spacing-s);
+  border-radius: 50%;
+  background:    var(--semantic-color-interactive-background-main-default);
+  transition:    background 0.1s ease;
+}
+
+:host.ds-radio-card--selected:hover:not(.ds-radio-card--disabled) .ds-radio-card__dot {
+  background: var(--semantic-color-interactive-border-strong-hover);
+}
+
+:host.ds-radio-card--selected:active:not(.ds-radio-card--disabled) .ds-radio-card__dot {
+  background: var(--semantic-color-interactive-border-strong-active);
+}
+
+// ── Content ──────────────────────────────────────────────────
+.ds-radio-card__body {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+  flex:           1;
+  min-width:      0;
+}
+
+.ds-radio-card__label {
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.ds-radio-card__sublabel {
+  font-size:   var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+}

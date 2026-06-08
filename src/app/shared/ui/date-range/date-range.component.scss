@@ -1,0 +1,255 @@
+// ── Container ─────────────────────────────────────────────────
+.ds-date-range {
+  display:       inline-flex;
+  gap:           var(--semantic-measurement-spacing-m);
+  font-family:   var(--semantic-font-family);
+  background:    var(--semantic-color-static-background-main-primary);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-m);
+  padding:       var(--semantic-measurement-spacing-m);
+}
+
+.ds-date-range--full-width {
+  display: flex;
+  width:   100%;
+  .ds-date-range__calendar { flex: 1; }
+}
+
+// ── Calendrier ────────────────────────────────────────────────
+.ds-date-range__calendar {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  min-width:      280px;
+}
+
+// ── Header ────────────────────────────────────────────────────
+.ds-date-range__header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 var(--semantic-measurement-spacing-xs);
+}
+
+.ds-date-range__month-label {
+  background:  transparent;
+  border:      none;
+  cursor:      pointer;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+  padding:     var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-xs);
+  border-radius: var(--semantic-border-radius-s);
+
+  &:hover {
+    background: var(--semantic-color-static-background-main-secondary);
+  }
+}
+
+// ── Grille jours ──────────────────────────────────────────────
+.ds-date-range__grid {
+  display:               grid;
+  grid-template-columns: repeat(7, var(--foundation-spacing-40));
+}
+
+.ds-date-range__weekday {
+  display:     flex;
+  align-items: center;
+  justify-content: center;
+  height:      var(--foundation-spacing-40);
+  font-size:   var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+// ── Cellule jour ──────────────────────────────────────────────
+.ds-date-range__day {
+  position:    relative;
+  display:     flex;
+  align-items: center;
+  justify-content: center;
+  width:       var(--foundation-spacing-40);
+  height:      var(--foundation-spacing-40);
+  border:      none;
+  background:  transparent;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  color:       var(--semantic-color-static-text-main-primary);
+  cursor:      pointer;
+  padding:     0;
+
+  span { position: relative; z-index: 2; }
+
+  &:hover:not(:disabled):not(.ds-date-range__day--starting):not(.ds-date-range__day--ending):not(.ds-date-range__day--unique) {
+    span {
+      background:    var(--semantic-color-interactive-background-light-hover);
+      border-radius: var(--semantic-border-radius-s);
+      width:         var(--semantic-measurement-spacing-xl);
+      height:        var(--semantic-measurement-spacing-xl);
+      display:       flex;
+      align-items:   center;
+      justify-content: center;
+    }
+  }
+}
+
+.ds-date-range__day--out {
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.ds-date-range__day--disabled {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  cursor:         default;
+  pointer-events: none;
+}
+
+// ── Unique : pill complet ─────────────────────────────────────
+.ds-date-range__day--unique {
+  span {
+    background:    var(--semantic-color-interactive-background-strong-default);
+    color:         var(--semantic-color-static-text-subtle-primary);
+    border-radius: var(--semantic-border-radius-s);
+    width:         var(--semantic-measurement-spacing-xl);
+    height:        var(--semantic-measurement-spacing-xl);
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
+  }
+
+  &:hover:not(:disabled) span {
+    background: var(--semantic-color-interactive-background-strong-hover);
+  }
+}
+
+// ── Starting : pill gauche + demi-fond clair à droite ────────
+.ds-date-range__day--starting {
+  // demi-fond clair sur la moitié droite
+  background: linear-gradient(
+    to right,
+    transparent 50%,
+    var(--semantic-color-interactive-background-light-default) 50%
+  );
+
+  span {
+    background:    var(--semantic-color-interactive-background-strong-default);
+    color:         var(--semantic-color-static-text-subtle-primary);
+    border-radius: var(--semantic-border-radius-s);
+    width:         var(--semantic-measurement-spacing-xl);
+    height:        var(--semantic-measurement-spacing-xl);
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
+  }
+
+  &:hover:not(:disabled) span {
+    background: var(--semantic-color-interactive-background-strong-hover);
+  }
+}
+
+// ── Ending : pill droit + demi-fond clair à gauche ───────────
+.ds-date-range__day--ending {
+  background: linear-gradient(
+    to left,
+    transparent 50%,
+    var(--semantic-color-interactive-background-light-default) 50%
+  );
+
+  span {
+    background:    var(--semantic-color-interactive-background-strong-default);
+    color:         var(--semantic-color-static-text-subtle-primary);
+    border-radius: var(--semantic-border-radius-s);
+    width:         var(--semantic-measurement-spacing-xl);
+    height:        var(--semantic-measurement-spacing-xl);
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
+  }
+
+  &:hover:not(:disabled) span {
+    background: var(--semantic-color-interactive-background-strong-hover);
+  }
+}
+
+// ── Between : fond clair full-width, texte foncé lisible ─────
+.ds-date-range__day--between {
+  background:    var(--semantic-color-interactive-background-light-default);
+  border-radius: 0;
+
+  span {
+    color: var(--semantic-color-static-text-main-primary);
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--semantic-color-interactive-background-light-hover);
+  }
+}
+
+// ── Grille mois (3×4) ─────────────────────────────────────────
+.ds-date-range__months-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--semantic-measurement-spacing-xs);
+  padding:               var(--semantic-measurement-spacing-xs);
+}
+
+.ds-date-range__month-cell {
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  height:        var(--semantic-measurement-spacing-2xl);
+  border:        none;
+  background:    transparent;
+  border-radius: var(--semantic-border-radius-s);
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-l);
+  color:         var(--semantic-color-static-text-main-primary);
+  cursor:        pointer;
+
+  &:hover { background: var(--semantic-color-interactive-background-light-hover); }
+
+  &--current {
+    background:  var(--semantic-color-interactive-background-strong-default);
+    color:       var(--semantic-color-static-text-subtle-primary);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+
+    &:hover { background: var(--semantic-color-interactive-background-strong-hover); }
+  }
+}
+
+// ── Grille années (3×4) ───────────────────────────────────────
+.ds-date-range__years-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--semantic-measurement-spacing-xs);
+  padding:               var(--semantic-measurement-spacing-xs);
+}
+
+.ds-date-range__year-cell {
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  height:        var(--semantic-measurement-spacing-2xl);
+  border:        none;
+  background:    transparent;
+  border-radius: var(--semantic-border-radius-s);
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-l);
+  color:         var(--semantic-color-static-text-main-primary);
+  cursor:        pointer;
+
+  &:hover { background: var(--semantic-color-interactive-background-light-hover); }
+
+  &--current {
+    background:  var(--semantic-color-interactive-background-strong-default);
+    color:       var(--semantic-color-static-text-subtle-primary);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+
+    &:hover { background: var(--semantic-color-interactive-background-strong-hover); }
+  }
+}

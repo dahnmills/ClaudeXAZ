@@ -1,0 +1,99 @@
+<!-- Style infinite : Back · N of M · Next -->
+@if (isInfinite()) {
+  <button
+    class="ds-pagination__link ds-pagination__link--nav"
+    type="button"
+    [disabled]="!canPrev() || null"
+    [attr.aria-disabled]="!canPrev() || null"
+    [tabindex]="canPrev() ? 0 : -1"
+    (click)="prev()"
+  >
+    <ds-icon name="chevron-left" [size]="16" />
+    <span>Back</span>
+  </button>
+
+  <span class="ds-pagination__count">
+    <strong>{{ page() }}</strong> of {{ total() }}
+  </span>
+
+  <button
+    class="ds-pagination__link ds-pagination__link--nav"
+    type="button"
+    [disabled]="!canNext() || null"
+    [attr.aria-disabled]="!canNext() || null"
+    [tabindex]="canNext() ? 0 : -1"
+    (click)="next()"
+  >
+    <span>Next</span>
+    <ds-icon name="chevron-right" [size]="16" />
+  </button>
+}
+
+<!-- Style classic : First · Back · 1 2 ... 21 · Next · Last -->
+@if (isClassic()) {
+  @if (showFirstLast()) {
+    <button
+      class="ds-pagination__link ds-pagination__link--nav"
+      type="button"
+      [disabled]="!canPrev() || null"
+      [attr.aria-disabled]="!canPrev() || null"
+      [tabindex]="canPrev() ? 0 : -1"
+      (click)="first()"
+    >
+      <ds-icon name="chevron-double-left" [size]="16" />
+      <span>First</span>
+    </button>
+  }
+
+  <button
+    class="ds-pagination__link ds-pagination__link--nav"
+    type="button"
+    [disabled]="!canPrev() || null"
+    [attr.aria-disabled]="!canPrev() || null"
+    [tabindex]="canPrev() ? 0 : -1"
+    (click)="prev()"
+  >
+    <ds-icon name="chevron-left" [size]="16" />
+    <span>Back</span>
+  </button>
+
+  @for (p of pages(); track $index) {
+    @if (p === '...') {
+      <span class="ds-pagination__ellipsis" aria-hidden="true">…</span>
+    } @else {
+      <button
+        class="ds-pagination__link ds-pagination__link--page"
+        type="button"
+        [class.ds-pagination__link--current]="p === page()"
+        [attr.aria-current]="p === page() ? 'page' : null"
+        (click)="goTo(p)"
+      >{{ p }}</button>
+    }
+  }
+
+  <button
+    class="ds-pagination__link ds-pagination__link--nav"
+    type="button"
+    [disabled]="!canNext() || null"
+    [attr.aria-disabled]="!canNext() || null"
+    [tabindex]="canNext() ? 0 : -1"
+    (click)="next()"
+  >
+    <span>Next</span>
+    <ds-icon name="chevron-right" [size]="16" />
+  </button>
+
+  @if (showFirstLast()) {
+    <button
+      class="ds-pagination__link ds-pagination__link--nav"
+      type="button"
+      [disabled]="!canNext() || null"
+      [attr.aria-disabled]="!canNext() || null"
+      [tabindex]="canNext() ? 0 : -1"
+      (click)="last()"
+    >
+      <span>Last</span>
+      <ds-icon name="chevron-double-right" [size]="16" />
+    </button>
+  }
+}

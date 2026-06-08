@@ -1,0 +1,149 @@
+// ── Panel ─────────────────────────────────────────────────────
+.ds-popover {
+  position:   relative;
+  display:    inline-flex;
+  font-family: var(--semantic-font-family);
+}
+
+.ds-popover__panel {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  min-width:      240px;
+  max-width:      400px;
+  padding:        var(--semantic-measurement-spacing-m);
+  border-radius:  var(--semantic-border-radius-m);
+  background:     var(--semantic-color-static-background-main-primary);
+  border:         1px solid var(--semantic-color-static-border-subtle-tertiary);
+  box-shadow:     var(--semantic-shadow-popover);
+  color:          var(--semantic-color-static-text-main-primary);
+}
+
+.ds-popover--reversed .ds-popover__panel {
+  background: var(--semantic-color-static-background-accent-primary);
+  border-color: transparent;
+  color:       var(--semantic-color-static-text-subtle-primary);
+}
+
+// ── Header ────────────────────────────────────────────────────
+.ds-popover__header {
+  display:     flex;
+  align-items: center;
+  justify-content: space-between;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+
+.ds-popover__title {
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: var(--semantic-font-text-style-line-height-l);
+}
+
+// ── Content ───────────────────────────────────────────────────
+.ds-popover__content {
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+.ds-popover--reversed .ds-popover__content {
+  color: var(--semantic-color-static-text-subtle-secondary);
+}
+
+// ── Arrow — direction déduite de la position ──────────────────
+// La flèche pointe vers l'élément déclencheur.
+// position=bottom-* → flèche en haut du popover (pointe vers le haut)
+// position=top-*    → flèche en bas
+// position=right-*  → flèche à gauche
+// position=left-*   → flèche à droite
+
+.ds-popover__arrow {
+  position:   absolute;
+  width:      0;
+  height:     0;
+  z-index:    1;
+}
+
+$arrow-size: 6px;
+$arrow-color: var(--semantic-color-static-background-main-primary);
+
+// bottom-* : flèche pointe vers le haut (triangle en haut du panel)
+.ds-popover--bottom-left,
+.ds-popover--bottom-center,
+.ds-popover--bottom-right {
+  flex-direction: column;
+  .ds-popover__arrow {
+    top:  -$arrow-size;
+    border-left:   $arrow-size solid transparent;
+    border-right:  $arrow-size solid transparent;
+    border-bottom: $arrow-size solid $arrow-color;
+  }
+}
+.ds-popover--bottom-left   .ds-popover__arrow { left: var(--foundation-spacing-16); }
+.ds-popover--bottom-center .ds-popover__arrow { left: 50%; transform: translateX(-50%); }
+.ds-popover--bottom-right  .ds-popover__arrow { right: var(--foundation-spacing-16); }
+
+// top-* : flèche pointe vers le bas
+.ds-popover--top-left,
+.ds-popover--top-center,
+.ds-popover--top-right {
+  flex-direction: column-reverse;
+  .ds-popover__arrow {
+    bottom: -$arrow-size;
+    border-left:  $arrow-size solid transparent;
+    border-right: $arrow-size solid transparent;
+    border-top:   $arrow-size solid $arrow-color;
+  }
+}
+.ds-popover--top-left   .ds-popover__arrow { left: var(--foundation-spacing-16); }
+.ds-popover--top-center .ds-popover__arrow { left: 50%; transform: translateX(-50%); }
+.ds-popover--top-right  .ds-popover__arrow { right: var(--foundation-spacing-16); }
+
+// right-* : flèche pointe à gauche
+.ds-popover--right-top,
+.ds-popover--right-center,
+.ds-popover--right-bottom {
+  flex-direction: row;
+  .ds-popover__arrow {
+    left:       -$arrow-size;
+    border-top:    $arrow-size solid transparent;
+    border-bottom: $arrow-size solid transparent;
+    border-right:  $arrow-size solid $arrow-color;
+  }
+}
+.ds-popover--right-top    .ds-popover__arrow { top: var(--foundation-spacing-16); }
+.ds-popover--right-center .ds-popover__arrow { top: 50%; transform: translateY(-50%); }
+.ds-popover--right-bottom .ds-popover__arrow { bottom: var(--foundation-spacing-16); }
+
+// left-* : flèche pointe à droite
+.ds-popover--left-top,
+.ds-popover--left-center,
+.ds-popover--left-bottom {
+  flex-direction: row-reverse;
+  .ds-popover__arrow {
+    right:      -$arrow-size;
+    border-top:    $arrow-size solid transparent;
+    border-bottom: $arrow-size solid transparent;
+    border-left:   $arrow-size solid $arrow-color;
+  }
+}
+.ds-popover--left-top    .ds-popover__arrow { top: var(--foundation-spacing-16); }
+.ds-popover--left-center .ds-popover__arrow { top: 50%; transform: translateY(-50%); }
+.ds-popover--left-bottom .ds-popover__arrow { bottom: var(--foundation-spacing-16); }
+
+// Reversed arrow colors
+.ds-popover--reversed {
+  $arrow-rev: var(--semantic-color-static-background-accent-primary);
+  &.ds-popover--bottom-left .ds-popover__arrow,
+  &.ds-popover--bottom-center .ds-popover__arrow,
+  &.ds-popover--bottom-right .ds-popover__arrow { border-bottom-color: $arrow-rev; }
+  &.ds-popover--top-left .ds-popover__arrow,
+  &.ds-popover--top-center .ds-popover__arrow,
+  &.ds-popover--top-right .ds-popover__arrow    { border-top-color: $arrow-rev; }
+  &.ds-popover--right-top .ds-popover__arrow,
+  &.ds-popover--right-center .ds-popover__arrow,
+  &.ds-popover--right-bottom .ds-popover__arrow { border-right-color: $arrow-rev; }
+  &.ds-popover--left-top .ds-popover__arrow,
+  &.ds-popover--left-center .ds-popover__arrow,
+  &.ds-popover--left-bottom .ds-popover__arrow  { border-left-color: $arrow-rev; }
+}
