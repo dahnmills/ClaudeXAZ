@@ -17,15 +17,15 @@
 .ds-side-nav__items {
   display:        flex;
   flex-direction: column;
-  gap:            var(--foundation-spacing-8);
-  padding:        var(--foundation-spacing-8);
+  gap:            var(--semantic-measurement-spacing-s);
+  padding:        var(--semantic-measurement-spacing-s);
   flex:           1;
   min-width:      0;
 }
 
 // ── Bottom (Close panel) ─────────────────────────────────────
 .ds-side-nav__bottom {
-  padding:    var(--foundation-spacing-8);
+  padding:    var(--semantic-measurement-spacing-s);
   border-top: 1px solid var(--semantic-color-static-border-subtle-tertiary);
 }
 

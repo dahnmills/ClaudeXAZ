@@ -13,10 +13,10 @@
   display:         flex;
   align-items:     center;
   justify-content: flex-start;
-  gap:             var(--foundation-spacing-8);
-  height:          var(--foundation-sizing-40);
-  padding:         0 var(--foundation-spacing-8);
-  border-radius:   var(--foundation-radius-8);
+  gap:             var(--semantic-measurement-spacing-s);
+  height:          var(--foundation-sizing-40); // 40px (pas de token semantic à 40px)
+  padding:         0 var(--semantic-measurement-spacing-s);
+  border-radius:   var(--semantic-border-radius-m);
   cursor:          pointer;
   user-select:     none;
   overflow:        hidden;
@@ -57,8 +57,8 @@
   display:         inline-flex;
   align-items:     center;
   justify-content: center;
-  width:           var(--foundation-sizing-24);
-  height:          var(--foundation-sizing-24);
+  width:           var(--semantic-measurement-sizing-l);
+  height:          var(--semantic-measurement-sizing-l);
   flex-shrink:     0;
   color:           currentColor;
 }

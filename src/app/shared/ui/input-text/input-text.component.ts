@@ -1,4 +1,4 @@
-import { Component, input, output, computed, model } from '@angular/core';
+import { Component, input, output, computed, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -21,7 +21,7 @@ export class InputTextComponent {
   /** Valeur bindée via [(value)] */
   value = model<string>('');
 
-  inputId = computed(() => `ds-input-${Math.random().toString(36).slice(2, 8)}`);
+  inputId = signal(`ds-input-${Math.random().toString(36).slice(2, 8)}`);
 
   hostClasses = computed(() => [
     'ds-input-text',

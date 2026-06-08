@@ -13,7 +13,7 @@
   font-family: var(--semantic-font-family);
   font-size: var(--semantic-font-text-style-size-m);
   line-height: var(--semantic-font-text-style-line-height-m);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--semantic-shadow-flyout);
   z-index: 10001;
   animation: ds-snackbar-in 160ms ease-out;
 }

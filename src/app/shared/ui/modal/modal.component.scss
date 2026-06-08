@@ -22,7 +22,7 @@
   align-items:     center;
   justify-content: center;
   padding:         var(--semantic-measurement-spacing-xl);
-  background:      rgba(0, 0, 0, 0.35);
+  background:      var(--semantic-color-overlay-backdrop);
 }
 
 .ds-modal__box {
@@ -33,7 +33,7 @@
   max-height:     calc(100vh - var(--semantic-measurement-spacing-3xl));
   background:     var(--semantic-color-static-background-main-primary);
   border-radius:  var(--semantic-border-radius-s);
-  box-shadow:     0 8px 24px rgba(65, 65, 65, 0.35); // Shadows/Bottom/800
+  box-shadow:     var(--semantic-shadow-modal);
   overflow:       hidden;
 }
 

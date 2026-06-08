@@ -6,7 +6,7 @@
   padding-top: var(--semantic-measurement-spacing-m);
   padding-bottom: var(--semantic-measurement-spacing-xl);
   box-sizing: border-box;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--semantic-shadow-flyout);
 }
 
 .ds-more-criteria__header {

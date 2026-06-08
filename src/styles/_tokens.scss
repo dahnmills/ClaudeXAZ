@@ -136,6 +136,7 @@
   --foundation-spacing-80: 80px;
   --foundation-spacing-88: 88px;
   --foundation-spacing-96: 96px;
+  --foundation-spacing-104: 104px;
 
   // -----------------------------------------------------------
   // BORDER RADIUS
@@ -208,4 +209,19 @@
   --foundation-font-letter-spacing-0-2: 0.2px;
   --foundation-font-letter-spacing-0-5: 0.5px;
   --foundation-font-letter-spacing-1:   1px;
+
+  // -----------------------------------------------------------
+  // SHADOWS
+  // Source : Figma > Foundation > Shadows
+  // Format : offset-x offset-y blur spread color
+  // -----------------------------------------------------------
+  --foundation-shadow-bottom-100: 0 1px 2px 0 rgba(65, 65, 65, 0.25);
+  --foundation-shadow-bottom-200: 0 1px 3px 0 rgba(65, 65, 65, 0.40);
+  --foundation-shadow-bottom-300: 0 2px 3px 0 rgba(65, 65, 65, 0.45);
+  --foundation-shadow-bottom-400: 0 2px 4px 0 rgba(65, 65, 65, 0.50);
+  --foundation-shadow-bottom-500: 0 4px 8px 0 rgba(65, 65, 65, 0.50);
+
+  // Shadow d'élévation produit (barre de recherche, panneaux flottants)
+  --foundation-shadow-elevation: 0 1px 4px 0 rgba(18, 43, 84, 0.16),
+                                 0 4px 16px 0 rgba(18, 43, 84, 0.12);
 }

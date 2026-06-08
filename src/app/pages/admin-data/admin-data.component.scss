@@ -3,11 +3,20 @@
   font-family: var(--semantic-font-family);
 }
 
+// Body : pas de padding latéral car ds-page-header gère déjà 32px en interne.
+// On garde un padding-bottom pour aérer en bas et un padding latéral aligné
+// sur PageHeader (32px) pour le contenu hors-PageHeader.
 .admin-data__body {
-  padding:        var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl);
+  padding:        var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-xl) var(--semantic-measurement-spacing-xl);
   display:        flex;
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-m);
+}
+
+// Tabs slot — gap entre tabs (Figma : 32px)
+.admin-data__tabs {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-xl);
 }
 
 .admin-data__actions-row {

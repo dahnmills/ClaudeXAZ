@@ -533,6 +533,7 @@
   --semantic-measurement-spacing-xl:   var(--foundation-spacing-32);
   --semantic-measurement-spacing-2xl:  var(--foundation-spacing-48);
   --semantic-measurement-spacing-3xl:  var(--foundation-spacing-64);
+  --semantic-measurement-size-tile:    var(--foundation-spacing-104);
 
 
   // ===========================================================
@@ -628,4 +629,24 @@
   --semantic-font-text-style-letter-spacing-s:    var(--foundation-font-letter-spacing-0-2);
   --semantic-font-text-style-letter-spacing-m:    var(--foundation-font-letter-spacing-0-5);
   --semantic-font-text-style-letter-spacing-l:    var(--foundation-font-letter-spacing-1);
+
+  // ===========================================================
+  // SHADOW (semantic aliases)
+  // ===========================================================
+  --semantic-shadow-flyout:    var(--foundation-shadow-bottom-400);
+  --semantic-shadow-popover:   var(--foundation-shadow-bottom-300);
+  --semantic-shadow-tooltip:   var(--foundation-shadow-bottom-200);
+  --semantic-shadow-modal:     var(--foundation-shadow-bottom-500);
+  --semantic-shadow-card:      var(--foundation-shadow-bottom-100);
+  --semantic-shadow-elevation: var(--foundation-shadow-elevation);
+
+  // ===========================================================
+  // OVERLAY (backdrop pour modales et drawers)
+  // ===========================================================
+  --semantic-color-overlay-backdrop: rgba(0, 0, 0, 0.35);
+
+  // ===========================================================
+  // FAVORITE (star fill)
+  // ===========================================================
+  --semantic-color-static-icon-favorite: var(--foundation-color-orange-300);
 }

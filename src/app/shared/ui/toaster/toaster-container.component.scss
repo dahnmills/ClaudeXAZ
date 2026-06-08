@@ -37,7 +37,7 @@
   background:     var(--semantic-color-static-background-main-primary);
   font-family:    var(--semantic-font-family);
   color:          var(--semantic-color-static-text-main-primary);
-  box-shadow:     0 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow:     var(--semantic-shadow-flyout);
   pointer-events: auto;
   overflow:       hidden;
   animation:      ds-toaster-in 220ms cubic-bezier(0.16, 1, 0.3, 1);

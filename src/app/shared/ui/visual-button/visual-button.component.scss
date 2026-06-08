@@ -22,7 +22,7 @@
 
   &:hover:not(.ds-visual-button--disabled) {
     border-color: var(--semantic-color-interactive-border-strong-default);
-    box-shadow:   0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow:   var(--semantic-shadow-card);
   }
 
   &:focus-visible {

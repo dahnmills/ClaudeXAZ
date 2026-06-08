@@ -35,7 +35,7 @@
   align-items:   stretch;
   padding:       var(--semantic-measurement-spacing-s);   // 8px
   border-radius: var(--semantic-border-radius-s);
-  border:        1px solid var(--semantic-color-static-text-main-tertiary); // Grey/500
+  border:        1px solid var(--semantic-color-interactive-border-medium-alt-default); // Grey/500
   background:    var(--semantic-color-static-background-main-primary);
   transition:    border-color 0.15s ease, background 0.15s ease;
 }

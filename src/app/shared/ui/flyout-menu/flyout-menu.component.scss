@@ -17,7 +17,7 @@
   min-width:      196px;
   background:     var(--semantic-color-static-background-main-primary); // White
   border-radius:  var(--semantic-border-radius-s); // 4px
-  box-shadow:     0 2px 4px rgba(65, 65, 65, 0.5); // Shadows/Bottom/400
+  box-shadow:     var(--semantic-shadow-flyout); // Shadows/Bottom/400
   padding:        var(--semantic-measurement-spacing-s) 0; // 8px vertical
   overflow:       hidden;
 }

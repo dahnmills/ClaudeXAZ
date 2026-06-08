@@ -21,9 +21,7 @@
   background:    var(--semantic-color-static-background-main-primary);
   border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
   border-radius: var(--semantic-border-radius-s);
-  box-shadow:
-    0 1px  4px  rgba(18, 43, 84, 0.16),
-    0 4px  16px rgba(18, 43, 84, 0.12);
+  box-shadow: var(--semantic-shadow-elevation);
 
   // Ancre pour le flyout positionné en absolu
   position: relative;
@@ -71,9 +69,7 @@
 
   background:     var(--semantic-color-static-background-main-primary);
   border-radius:  var(--semantic-border-radius-s);
-  box-shadow:
-    0 1px  4px  rgba(18, 43, 84, 0.16),
-    0 4px  16px rgba(18, 43, 84, 0.12);
+  box-shadow: var(--semantic-shadow-elevation);
   overflow:       hidden;
 }
 

@@ -17,7 +17,7 @@
   min-width:      290px;
   background:     var(--semantic-color-static-background-main-primary); // White
   border-radius:  var(--semantic-border-radius-s);
-  box-shadow:     0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow:     var(--semantic-shadow-flyout);
   overflow:       hidden;
   padding-bottom: var(--semantic-measurement-spacing-m); // 16px
 }

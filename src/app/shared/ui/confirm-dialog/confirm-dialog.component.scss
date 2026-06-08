@@ -22,7 +22,7 @@
 .ds-confirm-dialog__backdrop {
   position:        absolute;
   inset:           0;
-  background:      rgba(0, 0, 0, 0.35);
+  background:      var(--semantic-color-overlay-backdrop);
   display:         flex;
   align-items:     center;
   justify-content: center;
@@ -38,7 +38,7 @@
   max-width:      100%;
   background:     var(--semantic-color-static-background-main-primary);
   border-radius:  var(--semantic-border-radius-s);
-  box-shadow:     0 8px 24px rgba(65, 65, 65, 0.35);
+  box-shadow:     var(--semantic-shadow-modal);
   overflow:       hidden;
 }
 

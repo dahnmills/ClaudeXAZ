@@ -48,7 +48,7 @@
   padding:       0 var(--semantic-measurement-spacing-s);   // 0 8px
   gap:           var(--semantic-measurement-spacing-s);     // 8px
   border-radius: var(--semantic-border-radius-s);           // 4px
-  border:        1px solid var(--semantic-color-static-text-main-tertiary); // Grey/500
+  border:        1px solid var(--semantic-color-interactive-border-medium-alt-default); // Grey/500
   background:    var(--semantic-color-static-background-main-primary);      // white
   transition:    border-color 0.15s ease, background 0.15s ease;
 }
@@ -124,7 +124,7 @@
   pointer-events: none;
 }
 .ds-input-text--readonly .ds-input-text__container:hover {
-  border-color: var(--semantic-color-static-text-main-tertiary); // back to Grey/500
+  border-color: var(--semantic-color-interactive-border-medium-alt-default); // back to Grey/500
 }
 
 // ── Disabled ──────────────────────────────────────────────────

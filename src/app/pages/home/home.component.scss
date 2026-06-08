@@ -1,6 +1,11 @@
 // =============================================================
 // Homepage Layout
-// Source : Figma > Layout cible > node 2865:10424
+// Source : Figma > Layout > Home page (node 2810:9187)
+//
+// Espacements Figma exacts (Main Content 1224×736) :
+//   • Frame interne : padding ~66px latéral, ~16px vertical
+//   • Hero row     : 1098×409, hero text 499px de large à gauche, illustration 535×409 à droite
+//   • Action cards : grille 4 colonnes, gap 16px
 // =============================================================
 
 :host {
@@ -8,66 +13,76 @@
 }
 
 // ── Main content area ─────────────────────────────────────────
+// Le shell parent (TopboxTestShell) gère Header + Side Nav.
+// Cette zone contient le hero + les action cards centrés.
 .home-main {
   flex:           1;
   overflow-y:     auto;
   background:     var(--semantic-color-static-background-main-primary);
-  padding:        var(--foundation-spacing-40) var(--foundation-spacing-48);
+  padding:        var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-3xl); // 16px / 64px
   display:        flex;
   flex-direction: column;
-  gap:            var(--foundation-spacing-40);
+  gap:            var(--semantic-measurement-spacing-2xl); // 48px entre hero et cards
 }
 
 // ── Hero section ──────────────────────────────────────────────
+// Texte à gauche (max 499px), illustration à droite
 .home-hero {
   display:         flex;
   align-items:     center;
   justify-content: space-between;
-  gap:             var(--foundation-spacing-32);
+  gap:             var(--semantic-measurement-spacing-xl); // 32px
   min-height:      300px;
 }
 
 .home-hero__content {
   display:        flex;
   flex-direction: column;
-  gap:            var(--foundation-spacing-16);
-  max-width:      500px;
+  gap:            var(--semantic-measurement-spacing-m); // 16px
+  max-width:      499px;
   flex-shrink:    0;
 }
 
+// "Welcome back, John" — bleu BlueA/500
 .home-hero__welcome {
+  margin:      0;
   font-family: var(--semantic-font-family);
   font-size:   var(--semantic-font-text-style-size-l);
   font-weight: var(--semantic-font-text-style-font-weight-regular);
   line-height: var(--semantic-font-text-style-line-height-l);
-  color:       var(--semantic-color-interactive-text-strong-default); // BlueA/500
+  color:       var(--semantic-color-interactive-text-strong-default);
 }
 
+// "What would you like to work on today?" — h1 large
 .home-hero__title {
+  margin:      0;
   font-family: var(--semantic-font-family);
-  font-size:   var(--foundation-font-size-40, 40px);
+  font-size:   var(--foundation-font-size-40); // pas de token semantic à 40px
   font-weight: var(--semantic-font-text-style-font-weight-bold);
-  line-height: 1.2;
-  color:       var(--semantic-color-static-text-main-primary); // Grey/900
+  line-height: var(--semantic-font-display-line-height-m); // 56px
+  color:       var(--semantic-color-static-text-main-primary);
 }
 
+// Subtitle — text M
 .home-hero__subtitle {
+  margin:      0;
   font-family: var(--semantic-font-family);
   font-size:   var(--semantic-font-text-style-size-m);
   font-weight: var(--semantic-font-text-style-font-weight-regular);
   line-height: var(--semantic-font-text-style-line-height-m);
-  color:       var(--semantic-color-static-text-main-secondary); // Grey/700
+  color:       var(--semantic-color-static-text-main-secondary);
 }
 
 // ── Search bar ────────────────────────────────────────────────
 ds-search-bar {
-  width: 100%;
+  width:     100%;
   max-width: 480px;
 }
 
 // ── Action cards grid ─────────────────────────────────────────
+// 4 colonnes, gap 16px (Figma)
 .home-actions {
   display:               grid;
   grid-template-columns: repeat(4, 1fr);
-  gap:                   var(--foundation-spacing-16);
+  gap:                   var(--semantic-measurement-spacing-m); // 16px
 }

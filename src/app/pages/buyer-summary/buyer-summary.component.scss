@@ -2,35 +2,47 @@
   display: block;
 }
 
+// Body : pas de padding latéral car ds-page-header gère déjà 32px
+// (.ds-page-header__breadcrumbs/title/tabs ont padding: 0 32px)
+// On laisse juste le padding-top après la topbox + un gap inter-sections.
 .buyer-summary__body {
-  display: flex;
+  display:        flex;
   flex-direction: column;
-  gap: var(--semantic-measurement-spacing-m);
-  padding: var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl);
+  gap:            var(--semantic-measurement-spacing-m);
+  padding-bottom: var(--semantic-measurement-spacing-xl);
 }
 
+// Action-bar et grid alignés sur les 32px latéraux de PageHeader
 .buyer-summary__action-bar {
-  display: flex;
+  display:         flex;
   justify-content: flex-end;
+  padding:         0 var(--semantic-measurement-spacing-xl); // 32px
 }
 
 .buyer-summary__layout-select {
   width: 240px;
 }
 
+// Grille widgets : 4 colonnes uniformes pour caser les 8 widgets,
+// gap 16px et padding latéral 32px aligné avec PageHeader.
+// Figma montre 3 cols + un widget large 2-cols : on l'applique ci-dessous.
 .buyer-summary__grid {
-  display: grid;
+  display:               grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--semantic-measurement-spacing-m);
+  gap:                   var(--semantic-measurement-spacing-m); // 16px
+  padding:               0 var(--semantic-measurement-spacing-xl); // 32px
 }
 
+// Newsfeed prend 2 colonnes (matching Figma : large card 768px)
+.buyer-summary__grid ds-newsfeed {
+  grid-column: span 2;
+}
+
+// Skeleton wrapper : utilise <ds-card> pour bg/border/radius/padding,
+// on ajoute juste le layout flex et la hauteur min pour matcher les widgets.
 .buyer-summary__skeleton {
-  display: flex;
+  display:        flex;
   flex-direction: column;
-  gap: var(--semantic-measurement-spacing-s);
-  min-height: 258px;
-  padding: var(--semantic-measurement-spacing-l);
-  background: var(--semantic-color-static-background-main-primary);
-  border: 1px solid var(--semantic-color-static-border-subtle-tertiary);
-  border-radius: var(--semantic-border-radius-s);
+  gap:            var(--semantic-measurement-spacing-s);
+  min-height:     258px;
 }
