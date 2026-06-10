@@ -286,3 +286,14 @@ Seul l'atome sous-jacent peut utiliser le natif :
 | `1wVY9FfjONIX6us9JmIm7U` | Composants Data Entry (Input, Checkbox, Radio…) |
 | `fH3vmSNZR8r0sU3kN455CD` | Composants Feedback (Badge, Toaster, Notice…) |
 | `bbgSPUChd18EVNGijjoZGn` | Maquette cible Layout (node `2865:10424`) |
+
+---
+
+## Design Context (impeccable)
+
+Strategic + visual design context lives in two root files, written via `/impeccable init`:
+
+- **`PRODUCT.md`** — register (`product`), users (credit analysts + country admins), product purpose, brand personality (sober · reliable · dense), anti-references, design principles, a11y (WCAG AA).
+- **`DESIGN.md`** — visual system in Stitch format: token frontmatter + the six sections (Overview, Colors, Typography, Elevation, Components, Do's and Don'ts). North Star: *"The Underwriter's Desk"*.
+
+Read both before designing or generating new screens. They encode the rules already enforced in `_tokens.scss` / `_semantic.scss` and the composition strictness in this file. Sidecar `.impeccable/design.json` powers `/impeccable live`.

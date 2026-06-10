@@ -1,0 +1,353 @@
+:host {
+  display:     block;
+  min-height:  100vh;
+  background:  var(--semantic-color-static-background-main-secondary);
+  font-family: var(--semantic-font-family);
+}
+
+.tag-config__tabs {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-xl);
+}
+
+.tag-config__body {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-l);
+  padding:        var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl) var(--semantic-measurement-spacing-2xl);
+}
+
+// ── Floating edit snackbar (top-center, below header, like Figma) ────
+.tag-config__edit-bar {
+  position:      fixed;
+  top:           var(--semantic-measurement-sizing-3xl);
+  left:          50%;
+  transform:     translateX(-50%) translateY(-50%);
+  z-index:       200;
+
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-l);
+  padding:       var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  background:    var(--semantic-color-static-background-accent-primary);
+  border-radius: var(--semantic-border-radius-m);
+  box-shadow:    var(--semantic-shadow-flyout);
+  white-space:   nowrap;
+
+  animation:     tag-edit-bar-in 250ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes tag-edit-bar-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(calc(-50% + 12px)); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag-config__edit-bar { animation: none; }
+}
+
+.tag-config__edit-bar-left {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+
+.tag-config__edit-bar-dot {
+  width:         var(--semantic-measurement-spacing-s);
+  height:        var(--semantic-measurement-spacing-s);
+  border-radius: var(--semantic-border-radius-round);
+  flex-shrink:   0;
+  background:    var(--semantic-color-static-background-functional-positive);
+
+  &--dirty { background: var(--semantic-color-static-background-functional-warning); }
+}
+
+.tag-config__edit-bar-label {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-subtle-primary);
+}
+
+.tag-config__edit-bar-actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  margin-left: var(--semantic-measurement-spacing-s);
+}
+
+.tag-config__edit-bar-sep {
+  display:    block;
+  width:      1px;
+  height:     var(--semantic-measurement-spacing-l);
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  margin:     0 var(--semantic-measurement-spacing-xxs);
+}
+
+// ── Edit mode overlay ───────────────────────────────────────────────
+.tag-config__edit-overlay {
+  position:       fixed;
+  inset:          0;
+  background:     rgba(0, 0, 0, 0.18);
+  z-index:        199;
+  pointer-events: none;
+  animation:      tag-edit-overlay-in 200ms ease both;
+}
+
+@keyframes tag-edit-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// ── Section head (one per tab) ──────────────────────────────────────
+.tag-config__section-head {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+}
+
+.tag-config__section-titles {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+}
+
+.tag-config__section-title {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-title-size-s);
+  font-weight: var(--semantic-font-title-font-weight-m);
+  line-height: var(--semantic-font-title-line-height-s);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.tag-config__section-sub {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+  line-height: var(--semantic-font-text-style-line-height-m);
+}
+
+.tag-config__section-actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m);
+  flex-shrink: 0;
+}
+
+// ── Rules : separated cards ─────────────────────────────────────────
+.tag-config__rules {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+}
+
+.tag-config__empty {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  gap:             var(--semantic-measurement-spacing-m);
+  padding:         var(--semantic-measurement-spacing-2xl) var(--semantic-measurement-spacing-xl);
+  text-align:      center;
+  background:      var(--semantic-color-static-background-main-primary);
+  border:          var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-m);
+}
+
+.tag-config__empty-title {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.tag-config__empty-sub {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  max-width:   48ch;
+}
+
+.tag-config__pipeline-link {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+// ── Pipeline : numbered cards (sequence, no timeline track) ─────────
+.tag-config__pipeline {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  margin:         0;
+  padding:        0;
+  list-style:     none;
+}
+
+.tag-config__stage {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  padding:        var(--semantic-measurement-spacing-m);
+  background:     var(--semantic-color-static-background-main-primary);
+  border:         var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:  var(--semantic-border-radius-m);
+
+}
+
+.tag-config__stage + .tag-config__stage {
+  position: relative;
+
+  &::before {
+    content:     '';
+    position:    absolute;
+    top:         calc(-1 * var(--semantic-measurement-spacing-m) / 2);
+    left:        50%;
+    transform:   translateX(-50%);
+    width:       1px;
+    height:      var(--semantic-measurement-spacing-m);
+    background:  var(--semantic-color-static-border-subtle-tertiary);
+  }
+}
+
+.tag-config__stage-head {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+
+.tag-config__stage-step {
+  flex-shrink:    0;
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-s);
+  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
+  text-transform: uppercase;
+  color:          var(--semantic-color-static-text-main-tertiary);
+}
+
+.tag-config__stage-title {
+  margin:      0;
+  flex:        1;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.tag-config__stage-sub {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+  line-height: var(--semantic-font-text-style-line-height-m);
+}
+
+.tag-config__stage ds-button { align-self: flex-start; }
+
+// System rules inside a stage
+.tag-config__sys-list {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+}
+
+.tag-config__sys-rule {
+  display:               grid;
+  grid-template-columns: minmax(180px, auto) 1fr auto;
+  align-items:           center;
+  gap:                   var(--semantic-measurement-spacing-m);
+  padding:               var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  background:            var(--semantic-color-static-background-main-secondary);
+  border-radius:         var(--semantic-border-radius-s);
+}
+
+.tag-config__sys-text {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+  min-width:      0;
+}
+
+.tag-config__sys-label {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.tag-config__sys-id {
+  font-family:          var(--semantic-font-family);
+  font-size:            var(--semantic-font-text-style-size-s);
+  font-weight:          var(--semantic-font-text-style-font-weight-semi-bold);
+  color:                var(--semantic-color-static-text-main-tertiary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing:       var(--semantic-font-text-style-letter-spacing-s);
+}
+
+.tag-config__sys-desc {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+  line-height: var(--semantic-font-text-style-line-height-m);
+}
+
+.tag-config__sys-aside {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+  justify-self: end;
+}
+
+// ── Settings cards ──────────────────────────────────────────────────
+.tag-config__setting-head {
+  display:         flex;
+  align-items:     flex-start;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+  margin-bottom:   var(--semantic-measurement-spacing-m);
+}
+
+.tag-config__setting-titles {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+}
+
+.tag-config__setting-title {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.tag-config__setting-sub {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+  line-height: var(--semantic-font-text-style-line-height-m);
+}
+
+// ── History ─────────────────────────────────────────────────────────
+.tag-config__history {
+  display:        flex;
+  flex-direction: column;
+}
+
+// ── Drawer body (fix : content was flush-left) ──────────────────────
+.tag-config__drawer-body {
+  padding: 0 var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-m);
+}

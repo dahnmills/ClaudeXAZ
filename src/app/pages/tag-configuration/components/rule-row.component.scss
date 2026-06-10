@@ -1,0 +1,164 @@
+:host {
+  display:       block;
+  border-radius: var(--semantic-border-radius-s);
+  transition:    box-shadow 0.15s ease;
+}
+
+.tag-rule-row__inner {
+  display:        flex;
+  flex-direction: column;
+}
+
+// ── Head: position | active-criteria grid | decision | actions ──────
+.tag-rule-row__head {
+  display:               grid;
+  grid-template-columns: var(--semantic-measurement-spacing-xl) 1fr auto var(--semantic-measurement-spacing-xl);
+  align-items:           start;
+  column-gap:            var(--semantic-measurement-spacing-m);
+  padding:               var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+}
+
+// ── Position chip ───────────────────────────────────────────────────
+.tag-rule-row__pos {
+  display:              inline-flex;
+  align-items:          center;
+  justify-content:      center;
+  width:                var(--semantic-measurement-spacing-xl);
+  height:               var(--semantic-measurement-spacing-xl);
+  font-family:          var(--semantic-font-family);
+  font-size:            var(--semantic-font-text-style-size-m);
+  font-weight:          var(--semantic-font-text-style-font-weight-semi-bold);
+  color:                var(--semantic-color-static-text-main-secondary);
+  font-variant-numeric: tabular-nums;
+  background:           var(--semantic-color-static-background-main-tertiary);
+  border:               var(--semantic-border-size-s) solid transparent;
+  border-radius:        var(--semantic-border-radius-s);
+  text-align:           center;
+
+  &--static { cursor: default; user-select: none; }
+
+  &--editable {
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    &:hover {
+      border-color: var(--semantic-color-static-border-subtle-tertiary);
+      background:   var(--semantic-color-static-background-main-primary);
+    }
+    &:focus-visible {
+      outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+      outline-offset: var(--semantic-measurement-spacing-xxs);
+      border-color:   var(--semantic-color-interactive-border-strong-default);
+    }
+  }
+}
+
+// ── Criteria grid — dense, fills the width, no empty full-width bands ─
+.tag-rule-row__grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap:                   var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-m);
+  min-width:             0;
+
+  &--inactive {
+    padding:    var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-s);
+    margin-left: calc(var(--semantic-measurement-spacing-xl) + var(--semantic-measurement-spacing-m));
+  }
+}
+
+// ── Single criterion ────────────────────────────────────────────────
+.tag-rule-row__crit {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+  min-width:      0;
+
+  &--any .tag-rule-row__crit-value {
+    color:       var(--semantic-color-static-text-main-tertiary);
+    font-weight: var(--semantic-font-text-style-font-weight-regular);
+  }
+}
+
+.tag-rule-row__crit-label {
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-s);
+  color:         var(--semantic-color-static-text-main-tertiary);
+  line-height:   var(--semantic-font-text-style-line-height-s);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+.tag-rule-row__crit-value {
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-m);
+  font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
+  color:         var(--semantic-color-static-text-main-primary);
+  line-height:   var(--semantic-font-text-style-line-height-m);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+// Catch-all (no active criterion) — reads as a warning, not blank space
+.tag-rule-row__catch-all {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  font-style:  italic;
+  color:       var(--semantic-color-static-text-main-tertiary);
+  align-self:  center;
+}
+
+// ── Decision — hugs content ─────────────────────────────────────────
+.tag-rule-row__decision {
+  flex-shrink: 0;
+  align-self:  center;
+}
+
+// ── Actions ─────────────────────────────────────────────────────────
+.tag-rule-row__actions {
+  display:         flex;
+  justify-content: center;
+  align-self:      center;
+  width:           var(--semantic-measurement-spacing-xl);
+}
+
+// ── Foot toggle (inactive criteria) ─────────────────────────────────
+.tag-rule-row__foot {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  padding:     var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-m);
+  margin-left: calc(var(--semantic-measurement-spacing-xl) + var(--semantic-measurement-spacing-m));
+  border-top:  var(--semantic-border-size-s) dashed var(--semantic-color-static-border-subtle-tertiary);
+  cursor:      pointer;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-s);
+  color:       var(--semantic-color-static-text-main-tertiary);
+
+  &:hover { background: var(--semantic-color-interactive-background-light-alt-hover); }
+  &:focus-visible {
+    outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+    outline-offset: calc(-1 * var(--semantic-border-size-m));
+  }
+}
+
+.tag-rule-row__foot-label {
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+}
+
+.tag-rule-row__foot-pill {
+  display:       inline-flex;
+  align-items:   center;
+  padding:       0 var(--semantic-measurement-spacing-xs);
+  background:    var(--semantic-color-static-background-main-tertiary);
+  border-radius: var(--semantic-border-radius-round);
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-xs);
+  color:         var(--semantic-color-static-text-main-tertiary);
+  white-space:   nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host { transition: none; }
+}

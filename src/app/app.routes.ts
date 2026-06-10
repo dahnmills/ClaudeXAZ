@@ -7,6 +7,7 @@ import { SearchComponent } from './pages/search/search.component';
 import { FiltersTestPageComponent } from './user-testing/filters/filters-test-page.component';
 import { AdminDataComponent } from './pages/admin-data/admin-data.component';
 import { BuyerSummaryComponent } from './pages/buyer-summary/buyer-summary.component';
+import { TagConfigurationComponent } from './pages/tag-configuration/tag-configuration.component';
 
 export const appRoutes: Routes = [
   { path: '', component: IndexPage },
@@ -17,5 +18,6 @@ export const appRoutes: Routes = [
   { path: 'search', component: SearchComponent },
   { path: 'admin-data', component: AdminDataComponent },
   { path: 'buyer-summary/:id', component: BuyerSummaryComponent },
+  { path: 'tag-configuration', component: TagConfigurationComponent },
   { path: '**', redirectTo: '' },
 ];

@@ -1,0 +1,95 @@
+<ds-card [noPadding]="true">
+  <article class="tag-rule-row__inner">
+
+    <!-- ── Head: position · active criteria · decision · actions ─────── -->
+    <div class="tag-rule-row__head">
+
+      <!-- Position chip -->
+      @if (editMode()) {
+        <input
+          class="tag-rule-row__pos tag-rule-row__pos--editable"
+          type="number" min="1" [max]="totalRules()"
+          [value]="rule().position"
+          (change)="onPositionInput($event)"
+          (click)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()"
+          [attr.aria-label]="'Rule position, currently ' + rule().position + '. Type a number to reorder.'"
+        />
+      } @else {
+        <span
+          class="tag-rule-row__pos tag-rule-row__pos--static"
+          [attr.aria-label]="'Rule position ' + rule().position"
+        >{{ rule().position }}</span>
+      }
+
+      <!-- Active criteria — dense multi-column grid, the signal of the rule -->
+      <div class="tag-rule-row__grid">
+        @for (col of activeCrits(); track col.label) {
+          <span class="tag-rule-row__crit">
+            <span class="tag-rule-row__crit-label">{{ col.label }}</span>
+            <span class="tag-rule-row__crit-value">{{ col.value }}</span>
+          </span>
+        }
+        @if (!hasActive()) {
+          <span class="tag-rule-row__catch-all">Matches every company (no active criterion)</span>
+        }
+      </div>
+
+      <ds-badge
+        class="tag-rule-row__decision"
+        [label]="badge().label"
+        [status]="badge().status"
+        [variant]="badge().variant"
+        size="m"
+      />
+
+      <span
+        class="tag-rule-row__actions"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()"
+      >
+        <ds-cell-action ariaLabel="Rule actions">
+          <ds-flyout-menu slot="menu">
+            <ds-flyout-menu-item label="Edit"      icon="edit"      (clicked)="editClicked.emit()" />
+            <ds-flyout-menu-item label="Duplicate" icon="duplicate" (clicked)="duplicate.emit()" />
+            @if (editMode()) {
+              <ds-flyout-menu-item label="Move up"   icon="arrow-up"   [disabled]="isFirst()" (clicked)="moveUp()" />
+              <ds-flyout-menu-item label="Move down" icon="arrow-down" [disabled]="isLast()"  (clicked)="moveDown()" />
+            }
+            <ds-flyout-menu-item label="Delete" icon="trash" (clicked)="deleteClicked.emit()" />
+          </ds-flyout-menu>
+        </ds-cell-action>
+      </span>
+    </div>
+
+    <!-- ── Inactive criteria: compressed by default, expandable ──────── -->
+    @if (inactiveCount() > 0) {
+      <div
+        class="tag-rule-row__foot"
+        role="button"
+        tabindex="0"
+        [attr.aria-expanded]="expanded()"
+        [attr.aria-label]="(expanded() ? 'Hide' : 'Show') + ' the ' + inactiveCount() + ' unconstrained criteria'"
+        (click)="toggleExpand.emit()"
+        (keydown.enter)="toggleExpand.emit()"
+        (keydown.space)="$event.preventDefault(); toggleExpand.emit()"
+      >
+        <ds-icon [name]="expanded() ? 'chevron-up' : 'chevron-down'" [size]="12" />
+        <span class="tag-rule-row__foot-label">{{ inactiveCount() }} more {{ inactiveCount() === 1 ? 'criterion' : 'criteria' }}</span>
+        <span class="tag-rule-row__foot-pill">Any</span>
+      </div>
+
+      @if (expanded()) {
+        <div class="tag-rule-row__grid tag-rule-row__grid--inactive">
+          @for (col of inactiveCrits(); track col.label) {
+            <span class="tag-rule-row__crit tag-rule-row__crit--any">
+              <span class="tag-rule-row__crit-label">{{ col.label }}</span>
+              <span class="tag-rule-row__crit-value">{{ col.value }}</span>
+            </span>
+          }
+        </div>
+      }
+    }
+
+  </article>
+</ds-card>

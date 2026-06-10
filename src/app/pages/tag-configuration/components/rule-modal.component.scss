@@ -1,0 +1,77 @@
+.tag-rule-modal {
+  &__body {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-l);
+  }
+
+  &__section {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-s);
+  }
+
+  // Section title = brief "Label" role : 12px, uppercase, tracked (institutional, dense)
+  &__section-title {
+    margin:         0;
+    padding-bottom: var(--semantic-measurement-spacing-xs);
+    border-bottom:  var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+    font-family:    var(--semantic-font-family);
+    font-size:      var(--semantic-font-text-style-size-s);
+    font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+    line-height:    var(--semantic-font-text-style-line-height-s);
+    letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
+    text-transform: uppercase;
+    color:          var(--semantic-color-static-text-main-tertiary);
+  }
+
+  &__decision-group {
+    display:   flex;
+    gap:       var(--semantic-measurement-spacing-s);
+    flex-wrap: wrap;
+  }
+
+  &__decision-btn {
+    background:    transparent;
+    border:        var(--semantic-border-size-m) solid transparent;
+    border-radius: var(--semantic-border-radius-round);
+    padding:       var(--semantic-measurement-spacing-xxs);
+    cursor:        pointer;
+    transition:    border-color 0.15s ease, background 0.15s ease;
+
+    &:hover { background: var(--semantic-color-interactive-background-light-alt-hover); }
+
+    &--selected {
+      border-color: var(--semantic-color-interactive-border-strong-default);
+      background:   var(--semantic-color-interactive-background-light-default);
+    }
+
+    &:focus-visible {
+      outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+      outline-offset: var(--semantic-measurement-spacing-xxs);
+    }
+  }
+
+  &__field-grid {
+    display:               grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:                   var(--semantic-measurement-spacing-m);
+  }
+
+  &__field {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-xxs);
+  }
+
+  &__field-hint {
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-s);
+    line-height: var(--semantic-font-text-style-line-height-s);
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag-rule-modal__decision-btn { transition: none; }
+}

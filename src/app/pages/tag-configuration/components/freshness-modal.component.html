@@ -1,0 +1,83 @@
+<ds-modal
+  title="Edit freshness thresholds"
+  size="medium"
+  [open]="open()"
+  [closeOnBackdrop]="true"
+  [closeOnEscape]="true"
+  contentHeight="460px"
+  (closed)="closed.emit()"
+>
+
+  <div class="tag-freshness-modal__body">
+
+    <!-- State legend -->
+    <div class="tag-freshness-modal__states">
+      <div class="tag-freshness-modal__state tag-freshness-modal__state--fresh">
+        <span class="tag-freshness-modal__state-label">FRESH</span>
+        <span class="tag-freshness-modal__state-desc">Data is recent enough</span>
+      </div>
+      <div class="tag-freshness-modal__state tag-freshness-modal__state--outdated">
+        <span class="tag-freshness-modal__state-label">OUTDATED</span>
+        <span class="tag-freshness-modal__state-desc">Data is aging</span>
+      </div>
+      <div class="tag-freshness-modal__state tag-freshness-modal__state--old">
+        <span class="tag-freshness-modal__state-label">OLD</span>
+        <span class="tag-freshness-modal__state-desc">Data is too old</span>
+      </div>
+    </div>
+
+    @if (!isValid()) {
+      <ds-functional-notice
+        status="error"
+        emphasis="medium"
+        title="Invalid thresholds"
+        [message]="errorMessage()"
+      />
+    }
+
+    <!-- Last Verified Autograde -->
+    <section class="tag-freshness-modal__section">
+      <h3 class="tag-freshness-modal__section-title">Last verified autograde</h3>
+      <div class="tag-freshness-modal__field-grid">
+        <ds-input-text
+          label="Fresh if ≤ (months)"
+          placeholder="6"
+          [(value)]="lvFresh"
+          [error]="!lvValid()"
+        />
+        <ds-input-text
+          label="Old if > (months)"
+          placeholder="12"
+          [(value)]="lvOutdated"
+          [error]="!lvValid()"
+        />
+      </div>
+    </section>
+
+    <!-- Manual Valid Grade -->
+    <section class="tag-freshness-modal__section">
+      <h3 class="tag-freshness-modal__section-title">Manual valid grade</h3>
+      <div class="tag-freshness-modal__field-grid">
+        <ds-input-text
+          label="Fresh if ≤ (months)"
+          placeholder="12"
+          [(value)]="mgFresh"
+          [error]="!mgValid()"
+        />
+        <ds-input-text
+          label="Old if > (months)"
+          placeholder="24"
+          [(value)]="mgOutdated"
+          [error]="!mgValid()"
+        />
+      </div>
+    </section>
+
+  </div>
+
+  <div slot="actions">
+    <ds-button type="secondary" (clicked)="closed.emit()">Cancel</ds-button>
+    <ds-button type="primary" [disabled]="!isValid()" (clicked)="onSave()">Save thresholds</ds-button>
+  </div>
+
+</ds-modal>

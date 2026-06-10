@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-08T00:00:00Z",
+  "title": "Design System: Qirin",
+  "extensions": {
+    "colorMeta": {
+      "brand-blue": { "role": "primary", "displayName": "Allianz Brand Blue", "canonical": "#003781", "tonalRamp": ["#002c66", "#003781", "#075994", "#006192", "#007ab3", "#008ed6", "#55c0f6", "#86cff4", "#b7ddf0", "#d9eaf2", "#f1f9fa"] },
+      "interactive-blue": { "role": "primary", "displayName": "Interactive Blue", "canonical": "#007ab3", "tonalRamp": ["#002c66", "#003781", "#006192", "#007ab3", "#008ed6", "#55c0f6", "#86cff4", "#b7ddf0", "#d9eaf2", "#f1f9fa"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#121212", "tonalRamp": ["#121212", "#262626", "#414141", "#5b5b5b", "#767676", "#999999", "#c2c2c2", "#d9d9d9", "#ececec", "#f5f5f5"] },
+      "positive": { "role": "tertiary", "displayName": "Accept Green", "canonical": "#1e8927", "tonalRamp": ["#113b15", "#17501d", "#1a6120", "#1a7521", "#1e8927", "#45a54a", "#61b367", "#9bcfa0", "#c4e3c7", "#e8f3e9"] },
+      "negative": { "role": "tertiary", "displayName": "Refuse Red", "canonical": "#b0050c", "tonalRamp": ["#430a0c", "#630306", "#75060a", "#8d070b", "#b0050c", "#c51322", "#e12d3c", "#f16472", "#fcbac2", "#fce4e8"] },
+      "warning": { "role": "tertiary", "displayName": "Task Amber", "canonical": "#e08d05", "tonalRamp": ["#513005", "#693c02", "#894f01", "#ae6405", "#d87b02", "#e08d05", "#efbe25", "#fddb72", "#fcecbb", "#fdf8e9"] },
+      "informative": { "role": "secondary", "displayName": "Informative Slate-Blue", "canonical": "#496ebd", "tonalRamp": ["#1e2d52", "#243966", "#365496", "#3a5ba2", "#496ebd", "#6b8bc7", "#90a8d5", "#b5c5e3", "#dae2f1", "#ecf0f8"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Largest titles; rare in this product-register tool." },
+      "headline": { "displayName": "Headline", "purpose": "Page titles, card section titles." },
+      "body-compact": { "displayName": "Body Compact", "purpose": "The workhorse for dense surfaces: tables, rule criteria, property panels." },
+      "label": { "displayName": "Label", "purpose": "Eyebrow captions, column headers, badge text. Uppercase allowed only here, max 4 words." }
+    },
+    "shadows": [
+      { "name": "card", "value": "0 1px 2px 0 rgba(65,65,65,0.25)", "purpose": "Resting lift for a detached card or the open state of an expandable row." },
+      { "name": "popover", "value": "0 2px 3px 0 rgba(65,65,65,0.45)", "purpose": "Popovers and dropdown flyouts." },
+      { "name": "modal", "value": "0 4px 8px 0 rgba(65,65,65,0.50)", "purpose": "Modal dialogs." },
+      { "name": "elevation", "value": "0 1px 4px 0 rgba(18,43,84,0.16), 0 4px 16px 0 rgba(18,43,84,0.12)", "purpose": "Product floating surfaces (search bar, floating panels); navy-tinted double shadow." }
+    ],
+    "motion": [
+      { "name": "ease-state", "value": "ease", "purpose": "Default 0.15s state transitions (hover, active, expand)." }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single action button. Interactive Blue fill, deepens to brand navy on hover.",
+      "html": "<button class=\"ds-btn-primary\">Create rule</button>",
+      "css": ".ds-btn-primary { background: #007ab3; color: #fff; padding: 8px 16px; border: none; border-radius: 4px; font-family: 'Allianz Neo', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s ease; } .ds-btn-primary:hover { background: #003781; } .ds-btn-primary:focus-visible { outline: 2px solid #008ed6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Low-emphasis action: white fill, blue text and border.",
+      "html": "<button class=\"ds-btn-secondary\">Edit freshness</button>",
+      "css": ".ds-btn-secondary { background: #fff; color: #007ab3; padding: 8px 16px; border: 1px solid #007ab3; border-radius: 4px; font-family: 'Allianz Neo', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s ease; } .ds-btn-secondary:hover { background: #f1f9fa; } .ds-btn-secondary:focus-visible { outline: 2px solid #008ed6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "badge-info",
+      "description": "Read-only status pill. Always carries a label, never color alone. Shown here in success (Accept).",
+      "html": "<span class=\"ds-badge ds-badge--success\">Accept</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 100px; font-family: 'Allianz Neo', sans-serif; font-size: 12px; font-weight: 600; line-height: 16px; } .ds-badge--success { background: #1e8927; color: #fff; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "White surface on a grey page. Flat at rest, 1px subtle border, 4px radius.",
+      "html": "<div class=\"ds-card\">Rule details</div>",
+      "css": ".ds-card { background: #fff; color: #121212; border: 1px solid #d9d9d9; border-radius: 4px; padding: 24px; font-family: 'Allianz Neo', sans-serif; font-size: 14px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-text",
+      "description": "White field, subtle border, blue focus border + ring.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Search for a buyer\" />",
+      "css": ".ds-input { background: #fff; color: #121212; border: 1px solid #d9d9d9; border-radius: 4px; padding: 8px 16px; font-family: 'Allianz Neo', sans-serif; font-size: 14px; } .ds-input::placeholder { color: #767676; } .ds-input:focus-visible { outline: 2px solid #008ed6; outline-offset: 1px; border-color: #007ab3; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Underwriter's Desk",
+    "overview": "Qirin is a working surface for credit professionals, not a showroom. It carries the calm authority of an Allianz Trade underwriter's desk: everything needed is in front of you, arranged so the eye finds the constraint that matters without hunting. The system earns trust through rigor (consistent spacing, a single confident blue, status that always says what it means) never through decoration. Density is deliberate: a screen can hold a 14-criteria rule or a full buyer dossier and still read in one pass, because hierarchy (scale, weight, whitespace) does the sorting, not the user. It rejects the generic-AI-SaaS look, the austere gray-on-gray spreadsheet, and anything consumer or playful.",
+    "keyCharacteristics": [
+      "One confident brand blue, used where action or identity lives; never sprinkled.",
+      "Density with hierarchy: dense is fine, cluttered is not.",
+      "Status meaning is never color-only; always paired with a label or icon.",
+      "Every value flows from Figma-backed tokens (Foundation to Semantic); no hardcoded styles.",
+      "Allianz Neo throughout, weight contrast over multiple families."
+    ],
+    "rules": [
+      { "name": "The One Blue Rule", "body": "There is exactly one action color (Interactive Blue #007ab3). If something is blue, it is actionable or selected. Informational blue is a different hue (BlueB #496ebd) on purpose; do not blur the two.", "section": "colors" },
+      { "name": "The Status-Earns-Its-Color Rule", "body": "The four functional colors are forbidden as decoration. A green element means accepted; a red element means refused/error. Color always rides alongside a label or icon, never alone.", "section": "colors" },
+      { "name": "The Weight-Not-Family Rule", "body": "Never reach for a second typeface to create hierarchy. Allianz Neo at 400/600/700 plus the size scale covers every level.", "section": "typography" },
+      { "name": "The Compact-Default Rule", "body": "On data-dense surfaces, 14px Body Compact is the default, not 16px. Reserve 16px Body for prose and empty states.", "section": "typography" },
+      { "name": "The Flat-At-Rest Rule", "body": "Surfaces are flat at rest, separated by tone and 1px borders. A shadow appears only when an element floats or responds to state.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do reference semantic tokens for every color, space, size, and radius (var(--semantic-...)). Foundation to Semantic to component is the only path.",
+      "Do keep one action color: Interactive Blue (#007ab3) means actionable/selected, full stop.",
+      "Do pair every status color with a label or icon; meaning must survive grayscale and color-blindness.",
+      "Do default to 14px Body Compact on dense surfaces; reserve 16px for prose.",
+      "Do keep surfaces flat at rest; add shadow only for floating layers or state changes.",
+      "Do create hierarchy with Allianz Neo weights (400/600/700) and the size scale."
+    ],
+    "donts": [
+      "Don't use cream/sand/beige body backgrounds, decorative gradients, or gradient text.",
+      "Don't ship the hero-metric template or endless identical icon+heading+text card grids.",
+      "Don't put a tiny uppercase tracked eyebrow above every section, or numbered 01/02/03 section markers as scaffolding.",
+      "Don't fall into the austere gray-on-gray dense grid with no hierarchy.",
+      "Don't use glassmorphism, heavy shadows, non-functional bright colors, or gratuitous animation.",
+      "Don't go consumer/playful: no pastels, mascot illustrations, emoji, or casual copy.",
+      "Don't use border-left/border-right greater than 1px as a colored accent stripe.",
+      "Don't introduce a second typeface for hierarchy.",
+      "Don't hardcode a hex or px value in any component; add a token first."
+    ]
+  }
+}
