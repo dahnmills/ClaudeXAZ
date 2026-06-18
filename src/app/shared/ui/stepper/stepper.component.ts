@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
 
 export interface StepperStep {
@@ -26,6 +26,8 @@ export class StepperComponent {
   current = input<number>(0);
   /** Indices des étapes déjà complétées (restent "completed" même après Back). */
   completedSteps = input<number[]>([]);
+  /** Émis quand l'user clique sur une étape navigable (completed ou current). */
+  stepChange = output<number>();
 
   total = computed(() => this.steps().length);
 

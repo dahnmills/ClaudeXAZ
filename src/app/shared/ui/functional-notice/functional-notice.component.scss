@@ -68,32 +68,32 @@
   padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
 
   &.ds-functional-notice--info {
-    background: var(--semantic-color-static-background-info-secondary);
-    border:     1px solid var(--semantic-color-static-border-info-tertiary);
+    background: var(--semantic-color-static-background-subtle-functional-informative);
+    border:     1px solid var(--semantic-color-static-border-main-functional-informative);
     .ds-functional-notice__icon,
-    .ds-functional-notice__title { color: var(--semantic-color-static-text-info-primary); }
-    .ds-functional-notice__message { color: var(--semantic-color-static-text-info-secondary); }
+    .ds-functional-notice__title,
+    .ds-functional-notice__message { color: var(--semantic-color-static-text-main-functional-informative); }
   }
   &.ds-functional-notice--success {
-    background: var(--semantic-color-static-background-positive-secondary);
-    border:     1px solid var(--semantic-color-static-border-positive-tertiary);
+    background: var(--semantic-color-static-background-subtle-functional-positive);
+    border:     1px solid var(--semantic-color-static-border-main-functional-positive);
     .ds-functional-notice__icon,
-    .ds-functional-notice__title { color: var(--semantic-color-static-text-positive-primary); }
-    .ds-functional-notice__message { color: var(--semantic-color-static-text-positive-secondary); }
+    .ds-functional-notice__title,
+    .ds-functional-notice__message { color: var(--semantic-color-static-text-main-functional-positive); }
   }
   &.ds-functional-notice--warning {
-    background: var(--semantic-color-static-background-warning-secondary);
-    border:     1px solid var(--semantic-color-static-border-warning-tertiary);
+    background: var(--semantic-color-static-background-subtle-functional-warning);
+    border:     1px solid var(--semantic-color-static-border-main-functional-warning);
     .ds-functional-notice__icon,
-    .ds-functional-notice__title { color: var(--semantic-color-static-text-warning-primary); }
-    .ds-functional-notice__message { color: var(--semantic-color-static-text-warning-secondary); }
+    .ds-functional-notice__title,
+    .ds-functional-notice__message { color: var(--semantic-color-static-text-main-functional-warning); }
   }
   &.ds-functional-notice--error {
-    background: var(--semantic-color-static-background-negative-secondary);
-    border:     1px solid var(--semantic-color-static-border-negative-tertiary);
+    background: var(--semantic-color-static-background-subtle-functional-negative);
+    border:     1px solid var(--semantic-color-static-border-main-functional-negative);
     .ds-functional-notice__icon,
-    .ds-functional-notice__title { color: var(--semantic-color-static-text-negative-primary); }
-    .ds-functional-notice__message { color: var(--semantic-color-static-text-negative-secondary); }
+    .ds-functional-notice__title,
+    .ds-functional-notice__message { color: var(--semantic-color-static-text-main-functional-negative); }
   }
 }
 

@@ -17,8 +17,12 @@
   width:            100%;
   padding:          var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl); // 24/32
   background-color: var(--semantic-color-static-background-main-primary);
-  overflow-x:       clip;
-  overflow-y:       auto;
+  overflow: visible;
+
+  &.ds-modal-content--scroll {
+    overflow-x: visible;
+    overflow-y: auto;
+  }
 
   // Scrollbar style aligné Figma (rail Grey/050, thumb Grey/200, arrondi)
   &::-webkit-scrollbar {

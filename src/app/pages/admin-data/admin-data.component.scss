@@ -31,7 +31,9 @@
   align-items:     center;
   justify-content: space-between;
   gap:             var(--semantic-measurement-spacing-m);
+  padding-bottom:  var(--semantic-measurement-spacing-m);
   margin-bottom:   var(--semantic-measurement-spacing-m);
+  border-bottom:   1px solid var(--semantic-color-static-border-subtle-tertiary);
 }
 
 .admin-data__card-title {
@@ -62,4 +64,66 @@
   display:               grid;
   grid-template-columns: repeat(3, 1fr);
   gap:                   var(--semantic-measurement-spacing-m);
+}
+
+// ── Change Status & Origin form (csof) ──────────────────────────────────────
+
+.csof {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+}
+
+.csof__banner {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s);
+  padding:       var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  background:    var(--semantic-color-static-background-subtle-functional-informative);
+  border:        1px solid var(--semantic-color-static-border-main-functional-informative);
+  border-radius: var(--semantic-border-radius-s);
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-l);
+  line-height:   var(--semantic-font-text-style-line-height-l);
+  color:         var(--semantic-color-static-text-main-functional-informative);
+}
+
+.csof__banner-item {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+}
+
+.csof__banner-icon {
+  flex-shrink: 0;
+}
+
+.csof__banner-label {
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+}
+
+.csof__banner-value {
+  font-weight: var(--semantic-font-text-style-font-weight-semibold);
+}
+
+.csof__banner-sep {
+  width:       1px;
+  height:      16px;
+  background:  var(--semantic-color-static-border-main-functional-informative);
+  flex-shrink: 0;
+}
+
+// ─── Status cards ─────────────────────────────────────────────────────────────
+.csof__cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap:     var(--semantic-measurement-spacing-m);
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+.csof__footer {
+  display:         flex;
+  gap:             var(--semantic-measurement-spacing-s);
+  align-items:     center;
+  justify-content: flex-end;
 }

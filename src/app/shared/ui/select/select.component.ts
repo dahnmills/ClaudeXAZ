@@ -20,15 +20,14 @@ export interface SelectOption {
   },
 })
 export class SelectComponent {
-  label = input<string>('');
-  placeholder = input<string>('');
-  options = input.required<SelectOption[]>();
-  disabled = input<boolean>(false);
-  error = input<boolean>(false);
+  label        = input<string>('');
+  placeholder  = input<string>('');
+  options      = input.required<SelectOption[]>();
+  disabled     = input<boolean>(false);
+  error        = input<boolean>(false);
   errorMessage = input<string>('');
 
-  value = model<string>('');
-
+  value           = model<string>('');
   selectionChange = output<string>();
 
   open = signal(false);
@@ -44,8 +43,8 @@ export class SelectComponent {
   hostClasses = computed(() => [
     'ds-select',
     this.disabled() ? 'ds-select--disabled' : '',
-    this.error() ? 'ds-select--error' : '',
-    this.open() ? 'ds-select--open' : '',
+    this.error()    ? 'ds-select--error'     : '',
+    this.open()     ? 'ds-select--open'      : '',
   ].filter(Boolean).join(' '));
 
   toggle(): void {
@@ -64,9 +63,7 @@ export class SelectComponent {
   onDocClick(event: MouseEvent): void {
     if (!this.open()) return;
     const target = event.target as HTMLElement;
-    if (!target.closest('.ds-select')) {
-      this.open.set(false);
-    }
+    if (!target.closest('ds-select')) this.open.set(false);
   }
 
   @HostListener('document:keydown.escape')

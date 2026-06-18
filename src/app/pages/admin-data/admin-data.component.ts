@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   PageHeaderComponent,
   BreadcrumbsComponent,
@@ -16,8 +17,14 @@ import {
   ConfirmDialogComponent,
   ToasterService,
   ToasterContainerComponent,
+  RadioCardComponent,
+  SelectComponent,
+  type SelectOption,
+  TextareaComponent,
+  ButtonComponent,
 } from '../../shared/ui';
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
+import { CompanyEditWizardComponent } from './company-edit-wizard/company-edit-wizard.component';
 
 interface Activity {
   id:    string;
@@ -32,15 +39,36 @@ const ACTIVITIES: Activity[] = [
 
 type DetailKey = 'identity' | 'address' | 'identifier' | 'financial' | null;
 
+type CompanyStatus = 'active' | 'closed';
+
+
+const ORIGINS_FOR_ACTIVE: SelectOption[] = [
+  { value: 'normal',      label: 'Normal activity' },
+  { value: 'reactivated', label: 'Reactivated' },
+  { value: 'corrected',   label: 'Corrected' },
+];
+
+const ORIGINS_FOR_CLOSED: SelectOption[] = [
+  { value: 'bankrupt',   label: 'Bankruptcy' },
+  { value: 'merged',     label: 'Merged / Absorbed' },
+  { value: 'dissolved',  label: 'Dissolved' },
+  { value: 'DOUBL',      label: 'Duplicate (DOUBL)' },
+  { value: 'liquidated', label: 'Liquidated' },
+];
+
 @Component({
   selector: 'app-admin-data',
   standalone: true,
   imports: [
+    FormsModule,
     TopboxTestShellComponent, TopboxComponent,
     PageHeaderComponent, BreadcrumbsComponent, CrumbComponent,
     PageTitleComponent, TabComponent, IconComponent, LinkComponent,
     CardComponent, PropertiesPanelComponent, ActionCardComponent,
     ModalComponent, ConfirmDialogComponent, ToasterContainerComponent,
+    RadioCardComponent, SelectComponent, TextareaComponent,
+    ButtonComponent,
+    CompanyEditWizardComponent,
   ],
   templateUrl: './admin-data.component.html',
   styleUrl: './admin-data.component.scss',
@@ -174,6 +202,56 @@ export class AdminDataComponent {
       { label: 'Currency',             value: 'GBP' },
     ]},
   ];
+
+  // ── Edit wizard ───────────────────────────────────────────────────────────
+  showEditWizard = signal(false);
+
+  onEditSaved(): void {
+    this.toaster.show('Company data saved successfully', { tone: 'success' });
+  }
+
+  // ── Change status & origin modal ──────────────────────────────────────────
+  readonly currentStatus: CompanyStatus = 'active';
+  statusModalOpen = signal(false);
+  newStatus       = signal<CompanyStatus | null>(null);
+  newOrigin       = signal<string>('');
+  comment         = signal<string>('');
+
+originOptions = computed<SelectOption[]>(() => {
+    const s = this.newStatus();
+    if (s === 'active') return ORIGINS_FOR_ACTIVE;
+    if (s === 'closed') return ORIGINS_FOR_CLOSED;
+    return [];
+  });
+
+  statusFormValid = computed(() => !!(this.newStatus() && this.newOrigin()));
+
+  openStatusModal(): void {
+    this.newStatus.set(null);
+    this.newOrigin.set('');
+    this.comment.set('');
+    this.statusModalOpen.set(true);
+  }
+
+  closeStatusModal(): void { this.statusModalOpen.set(false); }
+
+  onNewStatusChange(val: CompanyStatus): void {
+    if (val === this.currentStatus || val === this.newStatus()) return;
+    this.newStatus.set(val);
+    this.newOrigin.set('');
+  }
+
+  confirmStatusChange(): void {
+    if (!this.statusFormValid()) return;
+    const originLabel = this.originOptions().find(o => o.value === this.newOrigin())?.label ?? '';
+    this.toaster.show(
+      `Status changed to: ${this.newStatus()} · Origin: ${originLabel}`,
+      { tone: 'success' },
+    );
+    this.statusModalOpen.set(false);
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
 
   pickActivity(a: Activity): void {
     if (a.id === this.mainActivityId()) return;

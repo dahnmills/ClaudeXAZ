@@ -73,6 +73,11 @@
   color: var(--semantic-color-static-text-main-tertiary);
 }
 
+.ds-stepper__step--clickable {
+  cursor: pointer;
+  &:hover .ds-stepper__label { color: var(--semantic-color-interactive-text-strong-default); }
+}
+
 // Ligne de statut toujours présente (réserve l'espace → pas de saut de hauteur)
 .ds-stepper__status {
   min-height: 16px;

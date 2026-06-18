@@ -1,5 +1,9 @@
 @for (s of steps(); track $index) {
-  <div class="ds-stepper__step ds-stepper__step--{{ statusOf($index) }}">
+  <div
+    class="ds-stepper__step ds-stepper__step--{{ statusOf($index) }}"
+    [class.ds-stepper__step--clickable]="statusOf($index) !== 'upcoming'"
+    (click)="statusOf($index) !== 'upcoming' && stepChange.emit($index)"
+  >
     <div class="ds-stepper__marker">
       @if (statusOf($index) === 'completed') {
         <ds-icon name="check" [size]="14" />

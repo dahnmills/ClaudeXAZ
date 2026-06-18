@@ -36,11 +36,11 @@
 
   <div class="admin-data__body">
     <div class="admin-data__actions-row">
-      <ds-link href="#" weight="semi-bold">
+      <ds-link href="#" weight="semi-bold" (click)="openStatusModal(); $event.preventDefault()">
         <ds-icon slot="icon-left" name="settings" [size]="16" />
         Change status and origin
       </ds-link>
-      <ds-link href="#" weight="semi-bold">
+      <ds-link href="#" weight="semi-bold" (click)="showEditWizard.set(true); $event.preventDefault()">
         <ds-icon slot="icon-left" name="edit" [size]="16" />
         Edit
       </ds-link>
@@ -126,85 +126,156 @@
       }
     </div>
   </div>
+
+  <!-- ── Modals — slot hors de .ut-main pour échapper au scroll container ── -->
+  <ng-container slot="modals">
+
+    <ds-confirm-dialog
+      [open]="pendingActivity() !== null"
+      title="Confirm new main trade sector"
+      tone="warning"
+      confirmLabel="Confirm"
+      cancelLabel="Cancel"
+      (confirmed)="confirmActivity()"
+      (cancelled)="cancelActivity()"
+    >
+      <span>You are about to change your trade sector to <strong>{{ pendingLabel() }}</strong>.</span>
+      <span>Confirm new <strong>main</strong> trade sector ?</span>
+    </ds-confirm-dialog>
+
+    <ds-modal
+      [open]="openDetail() === 'identity'"
+      title="Identity details"
+      size="large"
+      [footer]="false"
+      contentHeight="460px"
+      (closed)="closeModal()"
+    >
+      <ds-properties-panel
+        [sections]="identityFullSections"
+        [columns]="2"
+        variant="flat"
+        layout="stacked"
+      />
+    </ds-modal>
+
+    <ds-modal
+      [open]="openDetail() === 'address'"
+      title="Address & contact details"
+      size="large"
+      [footer]="false"
+      contentHeight="392px"
+      (closed)="closeModal()"
+    >
+      <ds-properties-panel
+        [sections]="addressFullSections"
+        [columns]="2"
+        variant="flat"
+        layout="stacked"
+      />
+    </ds-modal>
+
+    <ds-modal
+      [open]="openDetail() === 'identifier'"
+      title="Identifiers details"
+      size="large"
+      [footer]="false"
+      contentHeight="240px"
+      (closed)="closeModal()"
+    >
+      <ds-properties-panel
+        [sections]="identifierFullSections"
+        [columns]="2"
+        variant="flat"
+        layout="stacked"
+      />
+    </ds-modal>
+
+    <ds-modal
+      [open]="openDetail() === 'financial'"
+      title="Financial information details"
+      size="large"
+      [footer]="false"
+      contentHeight="240px"
+      (closed)="closeModal()"
+    >
+      <ds-properties-panel
+        [sections]="financialFullSections"
+        [columns]="2"
+        variant="flat"
+        layout="stacked"
+      />
+    </ds-modal>
+
+    <ds-modal
+      [open]="statusModalOpen()"
+      title="Change status and origin"
+      size="medium"
+      contentHeight="auto"
+      (closed)="closeStatusModal()"
+    >
+      <div class="csof">
+
+        <div class="csof__banner">
+          <span class="csof__banner-item">
+            <ds-icon name="buyers" [size]="14" class="csof__banner-icon" />
+            <span class="csof__banner-label">Current status</span>
+            <span class="csof__banner-value">Active</span>
+          </span>
+          <span class="csof__banner-sep" aria-hidden="true"></span>
+          <span class="csof__banner-item">
+            <ds-icon name="calendar" [size]="14" class="csof__banner-icon" />
+            <span class="csof__banner-label">Effective date</span>
+            <span class="csof__banner-value">2017-01-01</span>
+          </span>
+        </div>
+
+        <div class="csof__cards" role="radiogroup" aria-label="Select new status">
+          <ds-radio-card
+            label="Active"
+            badge="Current"
+            [disabled]="true"
+          />
+          <ds-radio-card
+            label="Closed"
+            [selected]="newStatus() === 'closed'"
+            (selectedChange)="onNewStatusChange('closed')"
+          />
+        </div>
+
+        <ds-select
+          label="New origin"
+          placeholder="Select an origin"
+          [options]="originOptions()"
+          [disabled]="!newStatus()"
+          [(value)]="newOrigin"
+        />
+
+        <ds-textarea
+          label="Comment"
+          placeholder="Optional"
+          [optional]="true"
+          [rows]="3"
+          [disabled]="!newStatus()"
+          [(value)]="comment"
+        />
+
+      </div>
+
+      <div slot="actions" class="csof__footer">
+        <ds-button type="secondary" (clicked)="closeStatusModal()">Cancel</ds-button>
+        <ds-button type="primary" [disabled]="!statusFormValid()" (clicked)="confirmStatusChange()">Save changes</ds-button>
+      </div>
+    </ds-modal>
+
+    <app-company-edit-wizard
+      [open]="showEditWizard()"
+      (closed)="showEditWizard.set(false)"
+      (saved)="onEditSaved()"
+    />
+
+    <ds-toaster-container />
+
+  </ng-container>
+
 </app-topbox-test-shell>
-
-<!-- Confirm Dialog -->
-<ds-confirm-dialog
-  [open]="pendingActivity() !== null"
-  title="Confirm new main trade sector"
-  tone="warning"
-  confirmLabel="Confirm"
-  cancelLabel="Cancel"
-  (confirmed)="confirmActivity()"
-  (cancelled)="cancelActivity()"
->
-  <span>You are about to change your trade sector to <strong>{{ pendingLabel() }}</strong>.</span>
-  <span>Confirm new <strong>main</strong> trade sector ?</span>
-</ds-confirm-dialog>
-
-<!-- Detail Modals -->
-<ds-modal
-  [open]="openDetail() === 'identity'"
-  title="Identity details"
-  size="large"
-  [footer]="false"
-  contentHeight="460px"
-  (closed)="closeModal()"
->
-  <ds-properties-panel
-    [sections]="identityFullSections"
-    [columns]="2"
-    variant="flat"
-    layout="stacked"
-  />
-</ds-modal>
-
-<ds-modal
-  [open]="openDetail() === 'address'"
-  title="Address & contact details"
-  size="large"
-  [footer]="false"
-  contentHeight="392px"
-  (closed)="closeModal()"
->
-  <ds-properties-panel
-    [sections]="addressFullSections"
-    [columns]="2"
-    variant="flat"
-    layout="stacked"
-  />
-</ds-modal>
-
-<ds-modal
-  [open]="openDetail() === 'identifier'"
-  title="Identifiers details"
-  size="large"
-  [footer]="false"
-  contentHeight="240px"
-  (closed)="closeModal()"
->
-  <ds-properties-panel
-    [sections]="identifierFullSections"
-    [columns]="2"
-    variant="flat"
-    layout="stacked"
-  />
-</ds-modal>
-
-<ds-modal
-  [open]="openDetail() === 'financial'"
-  title="Financial information details"
-  size="large"
-  [footer]="false"
-  contentHeight="240px"
-  (closed)="closeModal()"
->
-  <ds-properties-panel
-    [sections]="financialFullSections"
-    [columns]="2"
-    variant="flat"
-    layout="stacked"
-  />
-</ds-modal>
-
-<ds-toaster-container />

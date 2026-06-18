@@ -10,8 +10,9 @@ import { Component, input } from '@angular/core';
   template: `<ng-content />`,
   styleUrl: './modal-content.component.scss',
   host: {
-    'class':         'ds-modal-content',
+    'class':          'ds-modal-content',
     '[style.height]': 'height()',
+    '[class.ds-modal-content--scroll]': 'height() !== "auto"',
   },
 })
 export class ModalContentComponent {
