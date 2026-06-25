@@ -1,0 +1,39 @@
+.ds-grid-selection {
+  display:          flex;
+  flex-direction:   column;
+  gap:              var(--semantic-measurement-spacing-s);
+  padding:          var(--semantic-measurement-spacing-m);
+  background:       var(--semantic-color-static-background-main-primary);
+  border:           2px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:    var(--semantic-border-radius-s);
+  cursor:           pointer;
+  transition:       border-color 120ms ease, background 120ms ease;
+  width:            100%;
+
+  &:hover {
+    border-color: var(--semantic-color-interactive-border-strong-hover);
+  }
+
+  &--selected {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    background:   var(--semantic-color-interactive-background-subtle-default);
+  }
+}
+
+.ds-grid-selection__grid {
+  display: grid;
+  gap:     var(--semantic-measurement-spacing-xs);
+  height:  80px;
+}
+
+.ds-grid-selection__block {
+  background:    var(--semantic-color-static-background-main-tertiary);
+  border-radius: var(--semantic-border-radius-xs);
+}
+
+.ds-grid-selection__label {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-s);
+  color:       var(--semantic-color-static-text-main-secondary);
+  text-align:  center;
+}

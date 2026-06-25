@@ -17,8 +17,12 @@ export class DrawerComponent {
   open = input<boolean>(false);
   title = input.required<string>();
   closeOnEscape = input<boolean>(true);
+  /** Show a back affordance above the title (flow drawers / sub-views). */
+  showBack = input<boolean>(false);
+  backLabel = input<string>('Back');
 
   closed = output<void>();
+  back   = output<void>();
 
   hostClasses = computed(() => [
     'ds-drawer',

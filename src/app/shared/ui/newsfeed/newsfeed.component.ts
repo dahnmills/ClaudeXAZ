@@ -28,6 +28,8 @@ export class NewsfeedComponent {
   date     = input<string>('');
   dateIcon = input<IconName>('clock');
   excerpt  = input<string>('');
+  /** Affiche le bouton d'action du header (false = pas de bouton). */
+  externalLink = input<boolean>(true);
 
   headlineClicked = output<void>();
   actionClicked   = output<void>();

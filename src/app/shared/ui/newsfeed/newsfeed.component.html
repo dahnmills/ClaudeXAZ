@@ -1,4 +1,4 @@
-<ds-widget-card [title]="title()" (externalClicked)="actionClicked.emit()">
+<ds-widget-card [title]="title()" [externalLink]="externalLink()" (externalClicked)="actionClicked.emit()">
   <div class="ds-newsfeed__content">
     @if (tags().length) {
       <div class="ds-newsfeed__tags">

@@ -33,6 +33,9 @@
 .ds-drawer__close-row {
   display: flex;
   justify-content: flex-end;
+
+  // With a back affordance: back on the left, close on the right
+  &--back { justify-content: space-between; }
 }
 
 .ds-drawer__title {

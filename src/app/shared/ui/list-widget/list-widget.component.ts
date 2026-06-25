@@ -32,6 +32,8 @@ export class ListWidgetComponent {
   /** Icône du bouton d'action du header (lien externe ou menu). */
   actionIcon = input<IconName>('export-share');
   actionAriaLabel = input<string>('Open');
+  /** Affiche le bouton d'action du header (false = pas de bouton). */
+  externalLink = input<boolean>(true);
 
   itemClicked   = output<ListWidgetItem>();
   actionClicked = output<void>();

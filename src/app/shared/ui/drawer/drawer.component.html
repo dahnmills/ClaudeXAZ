@@ -7,7 +7,18 @@
   [attr.tabindex]="open() ? null : -1"
 >
   <header class="ds-drawer__header">
-    <div class="ds-drawer__close-row">
+    <div class="ds-drawer__close-row" [class.ds-drawer__close-row--back]="showBack()">
+      @if (showBack()) {
+        <ds-button-icon
+          type="plain"
+          tone="accent"
+          size="m"
+          [ariaLabel]="backLabel()"
+          (clicked)="back.emit()"
+        >
+          <ds-icon name="arrow-left" [size]="24" />
+        </ds-button-icon>
+      }
       <ds-button-icon
         type="plain"
         tone="accent"

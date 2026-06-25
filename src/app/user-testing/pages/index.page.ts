@@ -17,6 +17,7 @@ import { RouterLink } from '@angular/router';
         <li><a routerLink="/search">Search</a></li>
         <li><a routerLink="/admin-data">Admin Data</a></li>
         <li><a routerLink="/tag-configuration">TAG Configuration</a></li>
+        <li><a routerLink="/buyer-summary/137381425">Buyer Summary</a></li>
       </ul>
     </main>
   `,
