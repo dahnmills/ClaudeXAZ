@@ -1,17 +1,25 @@
-import { Component, computed, input, model, signal, OnInit } from '@angular/core';
+import { Component, computed, input, model, output, signal, OnInit } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
 import { ButtonIconComponent } from '../button-icon/button-icon.component';
+import { ButtonComponent } from '../button/button.component';
 
-/**
- * layout  : 'single' = 1 calendrier visible, 'dual' = 2 calendriers côte à côte
- * selection: 'date'  = sélection d'une date unique, 'range' = sélection d'une plage
- */
 export type DateRangeLayout = 'single' | 'dual';
 export type DateRangeSelection = 'date' | 'range';
-// Rétrocompat
 export type DateRangeType = DateRangeLayout;
 export type DateType = 'default' | 'unique' | 'starting' | 'between' | 'ending';
 export type CalendarView = 'days' | 'months' | 'years';
+
+export interface DateRangeShortcut {
+  label: string;
+  getValue: () => { start: Date; end: Date } | null;
+}
+
+export interface DateRangeValue {
+  startDate: Date | null;
+  startTime: string;
+  endDate:   Date | null;
+  endTime:   string;
+}
 
 interface CalendarDay {
   date:     Date;
@@ -24,41 +32,68 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+function _nowMidnight() {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+function _daysAgo(n: number) {
+  const d = _nowMidnight();
+  d.setDate(d.getDate() - n);
+  return d;
+}
+
+function _hoursAgo(n: number) {
+  return new Date(Date.now() - n * 60 * 60 * 1000);
+}
+
+export const DEFAULT_SHORTCUTS: DateRangeShortcut[] = [
+  { label: 'Last hour',     getValue: () => ({ start: _hoursAgo(1),  end: new Date() }) },
+  { label: 'Last 24 hours', getValue: () => ({ start: _hoursAgo(24), end: new Date() }) },
+  { label: 'Last 7 days',   getValue: () => ({ start: _daysAgo(7),   end: _nowMidnight() }) },
+  { label: 'Last 10 days',  getValue: () => ({ start: _daysAgo(10),  end: _nowMidnight() }) },
+  { label: 'Custom',        getValue: () => null },
+];
+
 @Component({
   selector: 'ds-date-range',
   standalone: true,
-  imports: [IconComponent, ButtonIconComponent],
+  imports: [IconComponent, ButtonIconComponent, ButtonComponent],
   templateUrl: './date-range.component.html',
   styleUrl: './date-range.component.scss',
 })
 export class DateRangeComponent implements OnInit {
-  /** Nombre de calendriers affichés */
   type      = input<DateRangeLayout>('single');
-  /** Mode de sélection : une date unique ou une plage start→end */
   selection = input<DateRangeSelection>('range');
   fullWidth = input<boolean>(false);
   minDate   = input<Date | null>(null);
   maxDate   = input<Date | null>(null);
 
+  showShortcuts = input<boolean>(false);
+  shortcuts     = input<DateRangeShortcut[]>(DEFAULT_SHORTCUTS);
+  showTime      = input<boolean>(false);
+  showFooter    = input<boolean>(false);
+
   startDate = model<Date | null>(null);
   endDate   = model<Date | null>(null);
 
-  readonly weekdays = WEEKDAYS;
+  applied   = output<DateRangeValue>();
+  cancelled = output<void>();
+
+  readonly weekdays    = WEEKDAYS;
   readonly monthsShort = MONTHS_SHORT;
 
-  // Mois affichés (premier jour du mois)
   leftMonth  = signal<Date>(new Date());
   rightMonth = signal<Date>(new Date());
-
-  // Vue active : days → months → years
-  leftView  = signal<CalendarView>('days');
-  rightView = signal<CalendarView>('days');
-
-  // Année de référence pour la grille years (on affiche 12 années autour)
+  leftView   = signal<CalendarView>('days');
+  rightView  = signal<CalendarView>('days');
   leftYearBase  = signal<number>(new Date().getFullYear());
   rightYearBase = signal<number>(new Date().getFullYear());
+  hoverDate     = signal<Date | null>(null);
 
-  hoverDate = signal<Date | null>(null);
+  startTime      = signal<string>('00:00');
+  endTime        = signal<string>('00:00');
+  activeShortcut = signal<string | null>(null);
 
   ngOnInit() {
     const now = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -71,15 +106,77 @@ export class DateRangeComponent implements OnInit {
 
   hostClasses = computed(() => [
     'ds-date-range',
-    this.type()      === 'dual'  ? 'ds-date-range--dual'       : '',
-    this.selection() === 'date'  ? 'ds-date-range--date-only'  : '',
-    this.fullWidth()             ? 'ds-date-range--full-width' : '',
+    this.type()          === 'dual'  ? 'ds-date-range--dual'           : '',
+    this.selection()     === 'date'  ? 'ds-date-range--date-only'      : '',
+    this.fullWidth()                 ? 'ds-date-range--full-width'     : '',
+    this.showShortcuts()             ? 'ds-date-range--with-shortcuts' : '',
+    this.showFooter()                ? 'ds-date-range--with-footer'    : '',
   ].filter(Boolean).join(' '));
 
+  // ── Shortcuts ────────────────────────────────────────────────
+  onShortcutClick(shortcut: DateRangeShortcut) {
+    this.activeShortcut.set(shortcut.label);
+    const range = shortcut.getValue();
+    if (range) {
+      this.startDate.set(range.start);
+      this.endDate.set(range.end);
+      const startMon = new Date(range.start.getFullYear(), range.start.getMonth(), 1);
+      this.leftMonth.set(startMon);
+      this.leftYearBase.set(startMon.getFullYear());
+      if (this.type() === 'dual') {
+        // Always offset right by +1 month so dual calendar never shows the same month twice
+        const nextMon = new Date(startMon.getFullYear(), startMon.getMonth() + 1, 1);
+        this.rightMonth.set(nextMon);
+        this.rightYearBase.set(nextMon.getFullYear());
+      }
+    }
+  }
+
+  shortcutClass(shortcut: DateRangeShortcut): string {
+    return [
+      'ds-date-range__shortcut-item',
+      this.activeShortcut() === shortcut.label ? 'ds-date-range__shortcut-item--active' : '',
+    ].filter(Boolean).join(' ');
+  }
+
+  // ── Footer ───────────────────────────────────────────────────
+  onApply() {
+    this.applied.emit({
+      startDate: this.startDate(),
+      startTime: this.startTime(),
+      endDate:   this.endDate(),
+      endTime:   this.endTime(),
+    });
+  }
+
+  onCancel() {
+    this.cancelled.emit();
+  }
+
   // ── Labels ───────────────────────────────────────────────────
-  monthLabel(d: Date)      { return `${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`; }
-  yearLabel(d: Date)       { return `${d.getFullYear()}`; }
+  monthLabel(d: Date)          { return `${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`; }
+  yearLabel(d: Date)           { return `${d.getFullYear()}`; }
   yearRangeLabel(base: number) { return `${base} – ${base + 11}`; }
+
+  dateInputValue(d: Date | null): string {
+    if (!d) return '';
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  onStartDateInput(value: string) {
+    if (!value) { this.startDate.set(null); return; }
+    const d = new Date(value);
+    if (!isNaN(d.getTime())) this.startDate.set(d);
+  }
+
+  onEndDateInput(value: string) {
+    if (!value) { this.endDate.set(null); return; }
+    const d = new Date(value);
+    if (!isNaN(d.getTime())) this.endDate.set(d);
+  }
 
   // ── Navigation days ──────────────────────────────────────────
   prevLeft() {
@@ -104,7 +201,7 @@ export class DateRangeComponent implements OnInit {
     }
   }
 
-  // ── Navigation years (grille 12) ─────────────────────────────
+  // ── Navigation years ─────────────────────────────────────────
   prevLeftYears()  { this.leftYearBase.update(y => y - 12); }
   nextLeftYears()  { this.leftYearBase.update(y => y + 12); }
   prevRightYears() { this.rightYearBase.update(y => y - 12); }
@@ -169,7 +266,7 @@ export class DateRangeComponent implements OnInit {
     const min = this.minDate();
     const max = this.maxDate();
     const disabled = (min !== null && date < min) || (max !== null && date > max);
-    return { date, inMonth, dateType: this._computeType(date), disabled };
+    return { date, inMonth, dateType: inMonth ? this._computeType(date) : 'default', disabled };
   }
 
   private _computeType(date: Date): DateType {
@@ -181,7 +278,6 @@ export class DateRangeComponent implements OnInit {
     if (!start) return 'default';
     const s = this._strip(start);
 
-    // Fin effective = end confirmé ou hover
     const effectiveEnd = end ? this._strip(end) : (hover ? this._strip(hover) : null);
 
     if (!effectiveEnd) return this._sameDay(d, s) ? 'unique' : 'default';
@@ -203,17 +299,16 @@ export class DateRangeComponent implements OnInit {
     const end   = this.endDate();
 
     if (this.selection() === 'date') {
-      // Sélection date unique uniquement
       this.startDate.set(day.date);
       this.endDate.set(null);
       this.leftMonth.update(d => new Date(d));
       return;
     }
 
-    // Sélection plage (range)
     if (!start || end) {
       this.startDate.set(day.date);
       this.endDate.set(null);
+      this.activeShortcut.set('Custom');
     } else {
       if (day.date < start) {
         this.endDate.set(start);
@@ -222,6 +317,7 @@ export class DateRangeComponent implements OnInit {
         this.endDate.set(day.date);
       }
       this.hoverDate.set(null);
+      this.activeShortcut.set('Custom');
     }
     this.leftMonth.update(d => new Date(d));
   }
@@ -241,8 +337,7 @@ export class DateRangeComponent implements OnInit {
     return [
       'ds-date-range__day',
       `ds-date-range__day--${day.dateType}`,
-      !day.inMonth  ? 'ds-date-range__day--out'      : '',
-      day.disabled  ? 'ds-date-range__day--disabled'  : '',
+      day.disabled ? 'ds-date-range__day--disabled' : '',
     ].filter(Boolean).join(' ');
   }
 

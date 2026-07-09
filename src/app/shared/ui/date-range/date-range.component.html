@@ -1,152 +1,231 @@
 <div [class]="hostClasses()" (mouseleave)="onMouseLeave()">
 
-  <!-- ── Calendrier gauche ── -->
-  <div class="ds-date-range__calendar">
-
-    <!-- Vue JOURS -->
-    @if (leftView() === 'days') {
-      <div class="ds-date-range__header">
-        <ds-button-icon ariaLabel="Previous month" type="tertiary" size="s" (clicked)="prevLeft()">
-          <ds-icon name="chevron-left" [size]="16" />
-        </ds-button-icon>
-        <button class="ds-date-range__month-label" type="button" (click)="toggleLeftView()">
-          {{ monthLabel(leftMonth()) }}
+  <!-- ── Shortcuts ── -->
+  @if (showShortcuts()) {
+    <div class="ds-date-range__shortcuts" role="listbox" aria-label="Quick date ranges">
+      @for (shortcut of shortcuts(); track shortcut.label) {
+        <button
+          [class]="shortcutClass(shortcut)"
+          type="button"
+          role="option"
+          [attr.aria-selected]="activeShortcut() === shortcut.label"
+          (click)="onShortcutClick(shortcut)">
+          {{ shortcut.label }}
         </button>
-        <ds-button-icon ariaLabel="Next month" type="tertiary" size="s" (clicked)="nextLeft()">
-          <ds-icon name="chevron-right" [size]="16" />
-        </ds-button-icon>
-      </div>
-      <div class="ds-date-range__grid">
-        @for (wd of weekdays; track wd) {
-          <div class="ds-date-range__weekday">{{ wd }}</div>
-        }
-        @for (day of buildDays(leftMonth()); track day.date.toISOString()) {
-          <button [class]="dayClass(day)" type="button" [disabled]="day.disabled || null"
-            (click)="onDayClick(day)" (mouseenter)="onDayHover(day)">
-            <span>{{ day.date.getDate() }}</span>
-          </button>
-        }
-      </div>
-    }
-
-    <!-- Vue MOIS -->
-    @if (leftView() === 'months') {
-      <div class="ds-date-range__header">
-        <ds-button-icon ariaLabel="Previous year" type="tertiary" size="s" (clicked)="prevLeft()">
-          <ds-icon name="chevron-left" [size]="16" />
-        </ds-button-icon>
-        <button class="ds-date-range__month-label" type="button" (click)="toggleLeftView()">
-          {{ yearLabel(leftMonth()) }}
-        </button>
-        <ds-button-icon ariaLabel="Next year" type="tertiary" size="s" (clicked)="nextLeft()">
-          <ds-icon name="chevron-right" [size]="16" />
-        </ds-button-icon>
-      </div>
-      <div class="ds-date-range__months-grid">
-        @for (m of monthsShort; track $index) {
-          <button [class]="monthClass($index, leftMonth())" type="button" (click)="pickLeftMonth($index)">
-            {{ m }}
-          </button>
-        }
-      </div>
-    }
-
-    <!-- Vue ANNÉES -->
-    @if (leftView() === 'years') {
-      <div class="ds-date-range__header">
-        <ds-button-icon ariaLabel="Previous years" type="tertiary" size="s" (clicked)="prevLeftYears()">
-          <ds-icon name="chevron-left" [size]="16" />
-        </ds-button-icon>
-        <button class="ds-date-range__month-label" type="button" (click)="toggleLeftView()">
-          {{ yearRangeLabel(leftYearBase()) }}
-        </button>
-        <ds-button-icon ariaLabel="Next years" type="tertiary" size="s" (clicked)="nextLeftYears()">
-          <ds-icon name="chevron-right" [size]="16" />
-        </ds-button-icon>
-      </div>
-      <div class="ds-date-range__years-grid">
-        @for (y of yearsGrid(leftYearBase()); track y) {
-          <button [class]="yearClass(y, leftMonth())" type="button" (click)="pickLeftYear(y)">
-            {{ y }}
-          </button>
-        }
-      </div>
-    }
-
-  </div>
-
-  <!-- ── Calendrier droit (dual) ── -->
-  @if (type() === 'dual') {
-    <div class="ds-date-range__calendar">
-
-      @if (rightView() === 'days') {
-        <div class="ds-date-range__header">
-          <ds-button-icon ariaLabel="Previous month" type="tertiary" size="s" (clicked)="prevRight()">
-            <ds-icon name="chevron-left" [size]="16" />
-          </ds-button-icon>
-          <button class="ds-date-range__month-label" type="button" (click)="toggleRightView()">
-            {{ monthLabel(rightMonth()) }}
-          </button>
-          <ds-button-icon ariaLabel="Next month" type="tertiary" size="s" (clicked)="nextRight()">
-            <ds-icon name="chevron-right" [size]="16" />
-          </ds-button-icon>
-        </div>
-        <div class="ds-date-range__grid">
-          @for (wd of weekdays; track wd) {
-            <div class="ds-date-range__weekday">{{ wd }}</div>
-          }
-          @for (day of buildDays(rightMonth()); track day.date.toISOString()) {
-            <button [class]="dayClass(day)" type="button" [disabled]="day.disabled || null"
-              (click)="onDayClick(day)" (mouseenter)="onDayHover(day)">
-              <span>{{ day.date.getDate() }}</span>
-            </button>
-          }
-        </div>
       }
+    </div>
+  }
 
-      @if (rightView() === 'months') {
-        <div class="ds-date-range__header">
-          <ds-button-icon ariaLabel="Previous year" type="tertiary" size="s" (clicked)="prevRight()">
-            <ds-icon name="chevron-left" [size]="16" />
-          </ds-button-icon>
-          <button class="ds-date-range__month-label" type="button" (click)="toggleRightView()">
-            {{ yearLabel(rightMonth()) }}
-          </button>
-          <ds-button-icon ariaLabel="Next year" type="tertiary" size="s" (clicked)="nextRight()">
-            <ds-icon name="chevron-right" [size]="16" />
-          </ds-button-icon>
-        </div>
-        <div class="ds-date-range__months-grid">
-          @for (m of monthsShort; track $index) {
-            <button [class]="monthClass($index, rightMonth())" type="button" (click)="pickRightMonth($index)">
-              {{ m }}
-            </button>
-          }
-        </div>
-      }
+  <!-- ── Body ── -->
+  <div class="ds-date-range__body">
 
-      @if (rightView() === 'years') {
-        <div class="ds-date-range__header">
-          <ds-button-icon ariaLabel="Previous years" type="tertiary" size="s" (clicked)="prevRightYears()">
-            <ds-icon name="chevron-left" [size]="16" />
-          </ds-button-icon>
-          <button class="ds-date-range__month-label" type="button" (click)="toggleRightView()">
-            {{ yearRangeLabel(rightYearBase()) }}
-          </button>
-          <ds-button-icon ariaLabel="Next years" type="tertiary" size="s" (clicked)="nextRightYears()">
-            <ds-icon name="chevron-right" [size]="16" />
-          </ds-button-icon>
-        </div>
-        <div class="ds-date-range__years-grid">
-          @for (y of yearsGrid(rightYearBase()); track y) {
-            <button [class]="yearClass(y, rightMonth())" type="button" (click)="pickRightYear(y)">
-              {{ y }}
+    <!-- ── Calendriers ── -->
+    <div class="ds-date-range__calendars">
+
+      <!-- Calendrier gauche -->
+      <div class="ds-date-range__calendar">
+
+        @if (leftView() === 'days') {
+          <div class="ds-date-range__header">
+            <ds-button-icon ariaLabel="Previous month" type="tertiary" size="s" (clicked)="prevLeft()">
+              <ds-icon name="chevron-left" [size]="16" />
+            </ds-button-icon>
+            <button class="ds-date-range__month-label" type="button" (click)="toggleLeftView()">
+              {{ monthLabel(leftMonth()) }}
             </button>
+            <ds-button-icon ariaLabel="Next month" type="tertiary" size="s" (clicked)="nextLeft()">
+              <ds-icon name="chevron-right" [size]="16" />
+            </ds-button-icon>
+          </div>
+          <div class="ds-date-range__grid">
+            @for (wd of weekdays; track wd) {
+              <div class="ds-date-range__weekday">{{ wd }}</div>
+            }
+            @for (day of buildDays(leftMonth()); track day.date.toISOString()) {
+              @if (day.inMonth) {
+                <button [class]="dayClass(day)" type="button" [disabled]="day.disabled || null"
+                  (click)="onDayClick(day)" (mouseenter)="onDayHover(day)">
+                  <span>{{ day.date.getDate() }}</span>
+                </button>
+              } @else {
+                <div class="ds-date-range__day-empty"></div>
+              }
+            }
+          </div>
+        }
+
+        @if (leftView() === 'months') {
+          <div class="ds-date-range__header">
+            <ds-button-icon ariaLabel="Previous year" type="tertiary" size="s" (clicked)="prevLeft()">
+              <ds-icon name="chevron-left" [size]="16" />
+            </ds-button-icon>
+            <button class="ds-date-range__month-label" type="button" (click)="toggleLeftView()">
+              {{ yearLabel(leftMonth()) }}
+            </button>
+            <ds-button-icon ariaLabel="Next year" type="tertiary" size="s" (clicked)="nextLeft()">
+              <ds-icon name="chevron-right" [size]="16" />
+            </ds-button-icon>
+          </div>
+          <div class="ds-date-range__months-grid">
+            @for (m of monthsShort; track $index) {
+              <button [class]="monthClass($index, leftMonth())" type="button" (click)="pickLeftMonth($index)">
+                {{ m }}
+              </button>
+            }
+          </div>
+        }
+
+        @if (leftView() === 'years') {
+          <div class="ds-date-range__header">
+            <ds-button-icon ariaLabel="Previous years" type="tertiary" size="s" (clicked)="prevLeftYears()">
+              <ds-icon name="chevron-left" [size]="16" />
+            </ds-button-icon>
+            <button class="ds-date-range__month-label" type="button" (click)="toggleLeftView()">
+              {{ yearRangeLabel(leftYearBase()) }}
+            </button>
+            <ds-button-icon ariaLabel="Next years" type="tertiary" size="s" (clicked)="nextLeftYears()">
+              <ds-icon name="chevron-right" [size]="16" />
+            </ds-button-icon>
+          </div>
+          <div class="ds-date-range__years-grid">
+            @for (y of yearsGrid(leftYearBase()); track y) {
+              <button [class]="yearClass(y, leftMonth())" type="button" (click)="pickLeftYear(y)">
+                {{ y }}
+              </button>
+            }
+          </div>
+        }
+
+      </div>
+
+      <!-- Calendrier droit (dual) -->
+      @if (type() === 'dual') {
+        <div class="ds-date-range__calendar">
+
+          @if (rightView() === 'days') {
+            <div class="ds-date-range__header">
+              <ds-button-icon ariaLabel="Previous month" type="tertiary" size="s" (clicked)="prevRight()">
+                <ds-icon name="chevron-left" [size]="16" />
+              </ds-button-icon>
+              <button class="ds-date-range__month-label" type="button" (click)="toggleRightView()">
+                {{ monthLabel(rightMonth()) }}
+              </button>
+              <ds-button-icon ariaLabel="Next month" type="tertiary" size="s" (clicked)="nextRight()">
+                <ds-icon name="chevron-right" [size]="16" />
+              </ds-button-icon>
+            </div>
+            <div class="ds-date-range__grid">
+              @for (wd of weekdays; track wd) {
+                <div class="ds-date-range__weekday">{{ wd }}</div>
+              }
+              @for (day of buildDays(rightMonth()); track day.date.toISOString()) {
+                @if (day.inMonth) {
+                  <button [class]="dayClass(day)" type="button" [disabled]="day.disabled || null"
+                    (click)="onDayClick(day)" (mouseenter)="onDayHover(day)">
+                    <span>{{ day.date.getDate() }}</span>
+                  </button>
+                } @else {
+                  <div class="ds-date-range__day-empty"></div>
+                }
+              }
+            </div>
           }
+
+          @if (rightView() === 'months') {
+            <div class="ds-date-range__header">
+              <ds-button-icon ariaLabel="Previous year" type="tertiary" size="s" (clicked)="prevRight()">
+                <ds-icon name="chevron-left" [size]="16" />
+              </ds-button-icon>
+              <button class="ds-date-range__month-label" type="button" (click)="toggleRightView()">
+                {{ yearLabel(rightMonth()) }}
+              </button>
+              <ds-button-icon ariaLabel="Next year" type="tertiary" size="s" (clicked)="nextRight()">
+                <ds-icon name="chevron-right" [size]="16" />
+              </ds-button-icon>
+            </div>
+            <div class="ds-date-range__months-grid">
+              @for (m of monthsShort; track $index) {
+                <button [class]="monthClass($index, rightMonth())" type="button" (click)="pickRightMonth($index)">
+                  {{ m }}
+                </button>
+              }
+            </div>
+          }
+
+          @if (rightView() === 'years') {
+            <div class="ds-date-range__header">
+              <ds-button-icon ariaLabel="Previous years" type="tertiary" size="s" (clicked)="prevRightYears()">
+                <ds-icon name="chevron-left" [size]="16" />
+              </ds-button-icon>
+              <button class="ds-date-range__month-label" type="button" (click)="toggleRightView()">
+                {{ yearRangeLabel(rightYearBase()) }}
+              </button>
+              <ds-button-icon ariaLabel="Next years" type="tertiary" size="s" (clicked)="nextRightYears()">
+                <ds-icon name="chevron-right" [size]="16" />
+              </ds-button-icon>
+            </div>
+            <div class="ds-date-range__years-grid">
+              @for (y of yearsGrid(rightYearBase()); track y) {
+                <button [class]="yearClass(y, rightMonth())" type="button" (click)="pickRightYear(y)">
+                  {{ y }}
+                </button>
+              }
+            </div>
+          }
+
         </div>
       }
 
     </div>
-  }
+
+    <!-- ── Time inputs ── -->
+    @if (showTime()) {
+      <div class="ds-date-range__time-row">
+        <div class="ds-date-range__time-group">
+          <input
+            class="ds-date-range__time-input"
+            type="text"
+            placeholder="YYYY-MM-DD"
+            [value]="dateInputValue(startDate())"
+            (change)="onStartDateInput($any($event.target).value)"
+            aria-label="Start date" />
+          <input
+            class="ds-date-range__time-input"
+            type="text"
+            placeholder="HH:MM"
+            [value]="startTime()"
+            (change)="startTime.set($any($event.target).value)"
+            aria-label="Start time" />
+        </div>
+        @if (type() === 'dual') {
+          <div class="ds-date-range__time-group">
+            <input
+              class="ds-date-range__time-input"
+              type="text"
+              placeholder="YYYY-MM-DD"
+              [value]="dateInputValue(endDate())"
+              (change)="onEndDateInput($any($event.target).value)"
+              aria-label="End date" />
+            <input
+              class="ds-date-range__time-input"
+              type="text"
+              placeholder="HH:MM"
+              [value]="endTime()"
+              (change)="endTime.set($any($event.target).value)"
+              aria-label="End time" />
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ── Footer ── -->
+    @if (showFooter()) {
+      <div class="ds-date-range__footer">
+        <ds-button type="secondary" (clicked)="onCancel()">Cancel</ds-button>
+        <ds-button type="primary"   (clicked)="onApply()">Apply</ds-button>
+      </div>
+    }
+
+  </div>
 
 </div>

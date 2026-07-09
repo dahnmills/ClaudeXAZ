@@ -6,8 +6,11 @@ const meta: Meta<DateRangeComponent> = {
   component: DateRangeComponent,
   tags: ['autodocs'],
   argTypes: {
-    type:      { control: 'select', options: ['single', 'dual'],  description: 'Nombre de calendriers affichés' },
-    selection: { control: 'select', options: ['range', 'date'],   description: 'Mode de sélection' },
+    type:          { control: 'select', options: ['single', 'dual'],  description: 'Nombre de calendriers affichés' },
+    selection:     { control: 'select', options: ['range', 'date'],   description: 'Mode de sélection' },
+    showShortcuts: { control: 'boolean', description: 'Afficher les raccourcis' },
+    showTime:      { control: 'boolean', description: 'Afficher les champs date/heure' },
+    showFooter:    { control: 'boolean', description: 'Afficher Cancel / Apply' },
   },
 };
 
@@ -32,4 +35,30 @@ export const DateSingleCalendar: Story = {
 export const DateDualCalendar: Story = {
   name: 'Date unique — 2 calendriers',
   args: { type: 'dual', selection: 'date' },
+};
+
+export const WithShortcuts: Story = {
+  name: 'Avec shortcuts',
+  args: { type: 'single', selection: 'range', showShortcuts: true },
+};
+
+export const WithShortcutsDual: Story = {
+  name: 'Shortcuts + 2 calendriers',
+  args: { type: 'dual', selection: 'range', showShortcuts: true },
+};
+
+export const WithTime: Story = {
+  name: 'Avec time inputs',
+  args: { type: 'dual', selection: 'range', showTime: true },
+};
+
+export const Full: Story = {
+  name: 'Complet (shortcuts + time + footer)',
+  args: {
+    type:          'dual',
+    selection:     'range',
+    showShortcuts: true,
+    showTime:      true,
+    showFooter:    true,
+  },
 };

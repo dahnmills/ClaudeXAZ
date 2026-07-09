@@ -1,18 +1,70 @@
 // ── Container ─────────────────────────────────────────────────
 .ds-date-range {
   display:       inline-flex;
-  gap:           var(--semantic-measurement-spacing-m);
   font-family:   var(--semantic-font-family);
   background:    var(--semantic-color-static-background-main-primary);
   border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
   border-radius: var(--semantic-border-radius-m);
-  padding:       var(--semantic-measurement-spacing-m);
+  overflow:      hidden;
 }
 
 .ds-date-range--full-width {
   display: flex;
   width:   100%;
   .ds-date-range__calendar { flex: 1; }
+}
+
+// ── Shortcuts sidebar ─────────────────────────────────────────
+.ds-date-range__shortcuts {
+  width:        151px;
+  flex-shrink:  0;
+  border-right: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+  padding:      var(--semantic-measurement-spacing-m) 0;
+  display:      flex;
+  flex-direction: column;
+}
+
+.ds-date-range__shortcut-item {
+  background:  transparent;
+  border:      none;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+  text-align:  left;
+  cursor:      pointer;
+  padding:     var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-m);
+  width:       100%;
+  transition:  background 100ms ease;
+
+  &:hover {
+    background: var(--semantic-color-interactive-background-light-hover);
+  }
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-strong-default);
+    outline-offset: -2px;
+  }
+
+  &--active {
+    background: var(--semantic-color-interactive-background-medium-default);
+  }
+}
+
+// ── Body ──────────────────────────────────────────────────────
+.ds-date-range__body {
+  display:        flex;
+  flex-direction: column;
+  flex:           0 0 auto;
+  overflow:       hidden;
+}
+
+// ── Calendriers row ───────────────────────────────────────────
+.ds-date-range__calendars {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-m);
 }
 
 // ── Calendrier ────────────────────────────────────────────────
@@ -32,15 +84,15 @@
 }
 
 .ds-date-range__month-label {
-  background:  transparent;
-  border:      none;
-  cursor:      pointer;
-  font-family: var(--semantic-font-family);
-  font-size:   var(--semantic-font-text-style-size-l);
-  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-  line-height: var(--semantic-font-text-style-line-height-l);
-  color:       var(--semantic-color-static-text-main-primary);
-  padding:     var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-xs);
+  background:    transparent;
+  border:        none;
+  cursor:        pointer;
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-l);
+  font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height:   var(--semantic-font-text-style-line-height-l);
+  color:         var(--semantic-color-static-text-main-primary);
+  padding:       var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-xs);
   border-radius: var(--semantic-border-radius-s);
 
   &:hover {
@@ -55,49 +107,49 @@
 }
 
 .ds-date-range__weekday {
-  display:     flex;
-  align-items: center;
+  display:         flex;
+  align-items:     center;
   justify-content: center;
-  height:      var(--foundation-spacing-40);
-  font-size:   var(--semantic-font-text-style-size-m);
-  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-  color:       var(--semantic-color-static-text-main-secondary);
+  height:          var(--foundation-spacing-40);
+  font-size:       var(--semantic-font-text-style-size-m);
+  font-weight:     var(--semantic-font-text-style-font-weight-semi-bold);
+  color:           var(--semantic-color-static-text-main-secondary);
 }
 
 // ── Cellule jour ──────────────────────────────────────────────
 .ds-date-range__day {
-  position:    relative;
-  display:     flex;
-  align-items: center;
+  position:        relative;
+  display:         flex;
+  align-items:     center;
   justify-content: center;
-  width:       var(--foundation-spacing-40);
-  height:      var(--foundation-spacing-40);
-  border:      none;
-  background:  transparent;
-  font-family: var(--semantic-font-family);
-  font-size:   var(--semantic-font-text-style-size-l);
-  font-weight: var(--semantic-font-text-style-font-weight-regular);
-  color:       var(--semantic-color-static-text-main-primary);
-  cursor:      pointer;
-  padding:     0;
+  width:           var(--foundation-spacing-40);
+  height:          var(--foundation-spacing-40);
+  border:          none;
+  background:      transparent;
+  border-radius:   0;
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-l);
+  font-weight:     var(--semantic-font-text-style-font-weight-regular);
+  color:           var(--semantic-color-static-text-main-primary);
+  cursor:          pointer;
+  padding:         0;
 
-  span { position: relative; z-index: 2; }
-
-  &:hover:not(:disabled):not(.ds-date-range__day--starting):not(.ds-date-range__day--ending):not(.ds-date-range__day--unique) {
+  &:hover:not(:disabled):not(.ds-date-range__day--starting):not(.ds-date-range__day--ending):not(.ds-date-range__day--unique):not(.ds-date-range__day--between) {
     span {
-      background:    var(--semantic-color-interactive-background-light-hover);
-      border-radius: var(--semantic-border-radius-s);
-      width:         var(--semantic-measurement-spacing-xl);
-      height:        var(--semantic-measurement-spacing-xl);
-      display:       flex;
-      align-items:   center;
+      background:      var(--semantic-color-interactive-background-light-hover);
+      border-radius:   var(--semantic-border-radius-s);
+      width:           var(--semantic-measurement-spacing-xl);
+      height:          var(--semantic-measurement-spacing-xl);
+      display:         flex;
+      align-items:     center;
       justify-content: center;
     }
   }
 }
 
-.ds-date-range__day--out {
-  color: var(--semantic-color-static-text-main-tertiary);
+.ds-date-range__day-empty {
+  width:  var(--foundation-spacing-40);
+  height: var(--foundation-spacing-40);
 }
 
 .ds-date-range__day--disabled {
@@ -106,91 +158,60 @@
   pointer-events: none;
 }
 
-// ── Unique : pill complet ─────────────────────────────────────
+// ── Unique ────────────────────────────────────────────────────
 .ds-date-range__day--unique {
-  span {
-    background:    var(--semantic-color-interactive-background-strong-default);
-    color:         var(--semantic-color-static-text-subtle-primary);
-    border-radius: var(--semantic-border-radius-s);
-    width:         var(--semantic-measurement-spacing-xl);
-    height:        var(--semantic-measurement-spacing-xl);
-    display:       flex;
-    align-items:   center;
-    justify-content: center;
-    font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
-  }
-
-  &:hover:not(:disabled) span {
-    background: var(--semantic-color-interactive-background-strong-hover);
-  }
-}
-
-// ── Starting : pill gauche + demi-fond clair à droite ────────
-.ds-date-range__day--starting {
-  // demi-fond clair sur la moitié droite
-  background: linear-gradient(
-    to right,
-    transparent 50%,
-    var(--semantic-color-interactive-background-light-default) 50%
-  );
-
-  span {
-    background:    var(--semantic-color-interactive-background-strong-default);
-    color:         var(--semantic-color-static-text-subtle-primary);
-    border-radius: var(--semantic-border-radius-s);
-    width:         var(--semantic-measurement-spacing-xl);
-    height:        var(--semantic-measurement-spacing-xl);
-    display:       flex;
-    align-items:   center;
-    justify-content: center;
-    font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
-  }
-
-  &:hover:not(:disabled) span {
-    background: var(--semantic-color-interactive-background-strong-hover);
-  }
-}
-
-// ── Ending : pill droit + demi-fond clair à gauche ───────────
-.ds-date-range__day--ending {
-  background: linear-gradient(
-    to left,
-    transparent 50%,
-    var(--semantic-color-interactive-background-light-default) 50%
-  );
-
-  span {
-    background:    var(--semantic-color-interactive-background-strong-default);
-    color:         var(--semantic-color-static-text-subtle-primary);
-    border-radius: var(--semantic-border-radius-s);
-    width:         var(--semantic-measurement-spacing-xl);
-    height:        var(--semantic-measurement-spacing-xl);
-    display:       flex;
-    align-items:   center;
-    justify-content: center;
-    font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
-  }
-
-  &:hover:not(:disabled) span {
-    background: var(--semantic-color-interactive-background-strong-hover);
-  }
-}
-
-// ── Between : fond clair full-width, texte foncé lisible ─────
-.ds-date-range__day--between {
-  background:    var(--semantic-color-interactive-background-light-default);
-  border-radius: 0;
-
-  span {
-    color: var(--semantic-color-static-text-main-primary);
-  }
+  background:    var(--semantic-color-interactive-background-strong-default);
+  border-radius: var(--semantic-border-radius-s);
+  color:         var(--semantic-color-static-text-subtle-primary);
+  font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
 
   &:hover:not(:disabled) {
-    background: var(--semantic-color-interactive-background-light-hover);
+    background: var(--semantic-color-interactive-background-strong-hover);
   }
 }
 
-// ── Grille mois (3×4) ─────────────────────────────────────────
+// ── Starting : cellule forte, arrondie à gauche ───────────────
+.ds-date-range__day--starting {
+  background:    var(--semantic-color-interactive-background-strong-default);
+  border-radius: var(--semantic-border-radius-s) 0 0 var(--semantic-border-radius-s);
+  color:         var(--semantic-color-static-text-subtle-primary);
+  font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
+  box-shadow:    inset 0  3px 0 var(--semantic-color-static-background-main-primary),
+                 inset 0 -3px 0 var(--semantic-color-static-background-main-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--semantic-color-interactive-background-strong-hover);
+  }
+}
+
+// ── Ending : cellule forte, arrondie à droite ─────────────────
+.ds-date-range__day--ending {
+  background:    var(--semantic-color-interactive-background-strong-default);
+  border-radius: 0 var(--semantic-border-radius-s) var(--semantic-border-radius-s) 0;
+  color:         var(--semantic-color-static-text-subtle-primary);
+  font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
+  box-shadow:    inset 0  3px 0 var(--semantic-color-static-background-main-primary),
+                 inset 0 -3px 0 var(--semantic-color-static-background-main-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--semantic-color-interactive-background-strong-hover);
+  }
+}
+
+// ── Between : band moyenne rectangulaire ─────────────────────
+.ds-date-range__day--between {
+  background:    var(--semantic-color-interactive-background-medium-default);
+  border-radius: 0;
+  color:         var(--semantic-color-static-text-main-primary);
+  box-shadow:    inset 0  3px 0 var(--semantic-color-static-background-main-primary),
+                 inset 0 -3px 0 var(--semantic-color-static-background-main-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--semantic-color-interactive-background-medium-hover);
+  }
+}
+
+// ── Grille mois ───────────────────────────────────────────────
 .ds-date-range__months-grid {
   display:               grid;
   grid-template-columns: repeat(3, 1fr);
@@ -199,17 +220,17 @@
 }
 
 .ds-date-range__month-cell {
-  display:       flex;
-  align-items:   center;
+  display:         flex;
+  align-items:     center;
   justify-content: center;
-  height:        var(--semantic-measurement-spacing-2xl);
-  border:        none;
-  background:    transparent;
-  border-radius: var(--semantic-border-radius-s);
-  font-family:   var(--semantic-font-family);
-  font-size:     var(--semantic-font-text-style-size-l);
-  color:         var(--semantic-color-static-text-main-primary);
-  cursor:        pointer;
+  height:          var(--semantic-measurement-spacing-2xl);
+  border:          none;
+  background:      transparent;
+  border-radius:   var(--semantic-border-radius-s);
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-l);
+  color:           var(--semantic-color-static-text-main-primary);
+  cursor:          pointer;
 
   &:hover { background: var(--semantic-color-interactive-background-light-hover); }
 
@@ -222,7 +243,7 @@
   }
 }
 
-// ── Grille années (3×4) ───────────────────────────────────────
+// ── Grille années ─────────────────────────────────────────────
 .ds-date-range__years-grid {
   display:               grid;
   grid-template-columns: repeat(3, 1fr);
@@ -231,17 +252,17 @@
 }
 
 .ds-date-range__year-cell {
-  display:       flex;
-  align-items:   center;
+  display:         flex;
+  align-items:     center;
   justify-content: center;
-  height:        var(--semantic-measurement-spacing-2xl);
-  border:        none;
-  background:    transparent;
-  border-radius: var(--semantic-border-radius-s);
-  font-family:   var(--semantic-font-family);
-  font-size:     var(--semantic-font-text-style-size-l);
-  color:         var(--semantic-color-static-text-main-primary);
-  cursor:        pointer;
+  height:          var(--semantic-measurement-spacing-2xl);
+  border:          none;
+  background:      transparent;
+  border-radius:   var(--semantic-border-radius-s);
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-l);
+  color:           var(--semantic-color-static-text-main-primary);
+  cursor:          pointer;
 
   &:hover { background: var(--semantic-color-interactive-background-light-hover); }
 
@@ -252,4 +273,54 @@
 
     &:hover { background: var(--semantic-color-interactive-background-strong-hover); }
   }
+}
+
+// ── Time row ──────────────────────────────────────────────────
+.ds-date-range__time-row {
+  display:     flex;
+  gap:         var(--semantic-measurement-spacing-m);
+  padding:     0 var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-m);
+  border-top:  1px solid var(--semantic-color-static-border-subtle-tertiary);
+  padding-top: var(--semantic-measurement-spacing-s);
+}
+
+.ds-date-range__time-group {
+  display:   flex;
+  gap:       var(--semantic-measurement-spacing-s);
+  flex:      1;
+  min-width: 0;
+}
+
+.ds-date-range__time-input {
+  flex:      1;
+  width:     0;
+  min-width: 0;
+  height:    32px;
+  border:        1px solid var(--semantic-color-interactive-border-medium-alt-default);
+  border-radius: var(--semantic-border-radius-s);
+  background:    var(--semantic-color-interactive-background-neutral-default);
+  padding:       0 var(--semantic-measurement-spacing-s);
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-l);
+  color:         var(--semantic-color-static-text-main-primary);
+  appearance:    none;
+  -webkit-appearance: none;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    box-shadow:   0 0 0 2px var(--semantic-color-interactive-background-light-active);
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────
+.ds-date-range__footer {
+  border-top:      1px solid var(--semantic-color-static-border-subtle-tertiary);
+  padding:         var(--semantic-measurement-spacing-m);
+  display:         flex;
+  justify-content: flex-end;
+  gap:             var(--semantic-measurement-spacing-s);
 }
