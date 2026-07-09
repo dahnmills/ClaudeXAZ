@@ -15,6 +15,9 @@ import { TooltipComponent, TooltipPosition } from './tooltip.component';
 @Directive({
   selector: '[dsTooltip]',
   standalone: true,
+  host: {
+    '[attr.title]': 'null',
+  },
 })
 export class TooltipDirective implements OnDestroy {
   dsTooltip         = input.required<string>();
