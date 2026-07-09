@@ -236,7 +236,7 @@
           [dsTooltip]="isLast() ? 'Save all changes' : 'Continue to ' + steps[currentStep() + 1].label"
           dsTooltipPosition="top-center"
           (clicked)="next()">
-          {{ isLast() ? 'Save' : 'Next' }}
+          {{ isLast() ? 'Save changes' : 'Next' }}
         </ds-button>
       </div>
     </div>

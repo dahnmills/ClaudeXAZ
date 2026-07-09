@@ -122,6 +122,7 @@ export class CompanyCreationWizardComponent {
 
   // ── Navigation ────────────────────────────────────────────────────────
   back() { if (this.currentStep() > 0) this.currentStep.update(s => s - 1); }
+  goToStep(i: number) { if (this.completedSteps().includes(i) || i === this.currentStep()) this.currentStep.set(i); }
 
   next() {
     const cur = this.currentStep();

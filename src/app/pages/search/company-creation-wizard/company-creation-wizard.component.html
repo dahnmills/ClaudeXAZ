@@ -10,7 +10,7 @@
     <div class="wizard__cols">
       <!-- Colonne gauche : étapes -->
       <aside class="wizard__steps">
-        <ds-stepper [steps]="steps" [current]="currentStep()" [completedSteps]="completedSteps()" />
+        <ds-stepper [steps]="steps" [current]="currentStep()" [completedSteps]="completedSteps()" (stepChange)="goToStep($event)" />
       </aside>
 
       <!-- Colonne droite : formulaire -->
@@ -29,8 +29,14 @@
               <span class="wizard__match-id"># {{ m.companyId }}</span>
             </div>
             <div class="wizard__match-actions">
-              <ds-button type="secondary" tone="default" (clicked)="rejectMatch()">No, continue creating</ds-button>
-              <ds-button type="primary" (clicked)="acceptMatch()">Yes, open this company</ds-button>
+              <ds-button type="secondary" tone="default"
+                dsTooltip="This is not the right company — continue filling in your new one"
+                dsTooltipPosition="top-center"
+                (clicked)="rejectMatch()">No, continue creating</ds-button>
+              <ds-button type="primary"
+                dsTooltip="Stop here and open the existing company file"
+                dsTooltipPosition="top-center"
+                (clicked)="acceptMatch()">Yes, open this company</ds-button>
             </div>
           </div>
         } @else {
