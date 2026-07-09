@@ -13,6 +13,7 @@ import {
   CardComponent,
   WidgetCardComponent,
   ChartComponent,
+  type ChartTone,
   PropertiesPanelComponent,
   ListWidgetComponent,
   NewsfeedComponent,
@@ -20,9 +21,13 @@ import {
   ButtonComponent,
   ButtonIconComponent,
   IconComponent,
+  type IconName,
+  DividerComponent,
+  TextareaComponent,
   DrawerComponent,
   GridSelectionComponent,
   InputTextComponent,
+  InputSearchComponent,
   FlyoutMenuComponent,
   FlyoutMenuItemComponent,
   type LayoutConfig,
@@ -109,7 +114,70 @@ export const DEFAULT_BOARDS: Board[] = [
   },
 ];
 
-export interface CardPreview { id: string; label: string; }
+export interface CardPreview { id: string; label: string; custom?: boolean; }
+
+// ── Card builder model ────────────────────────────────────────────────────────
+// A custom card = a named stack of blocks, each block backed by a DS primitive
+// and (for data blocks) wired to real buyer data points. Free composition,
+// zero style freedom → stays consistent with the board.
+
+let blockUidCounter = 0;
+function nextBlockId(): string { return `block-${++blockUidCounter}`; }
+let zoneUidCounter = 0;
+function nextZoneId(): string { return `zone-${++zoneUidCounter}`; }
+let customCardCounter = 0;
+function nextCustomCardId(): string { return `custom-${++customCardCounter}`; }
+
+export type BlockKind = 'heading' | 'figures' | 'chart' | 'note';
+
+export interface CardBlock {
+  id: string;
+  kind: BlockKind;
+  text?: string;            // heading: title ; note: free text
+  dataPointIds?: string[];  // figures: ids picked from DATA_CATALOG
+  metricId?: string;        // chart: id from METRIC_CATALOG
+}
+
+// A layout zone holds an independent stack of blocks
+export interface CardZone { id: string; blocks: CardBlock[]; }
+
+export interface CustomCard { id: string; name: string; layoutId: string; zones: CardZone[]; }
+
+// Card layouts — the skeleton chosen first. Each defines its zone count; the CSS
+// (grid-template-areas, class bs-zones--<id>) drives the actual placement.
+// Drawn from dashboard tools: sidebar/master-detail (Dynatrace, Grafana),
+// hero KPI banner (Power BI), triptych (Looker Studio).
+export interface CardLayoutDef { id: string; label: string; hint: string; zones: number; }
+
+export const CARD_LAYOUTS: CardLayoutDef[] = [
+  { id: 'stack',        label: 'Stack',         hint: 'Single column, blocks stacked',   zones: 1 },
+  { id: 'two-col',      label: 'Two columns',   hint: 'Two columns side by side',        zones: 2 },
+  { id: 'three-col',    label: 'Three columns', hint: 'Triptych of equal columns',       zones: 3 },
+  { id: 'sidebar',      label: 'Sidebar',       hint: 'Narrow highlight + wide detail',  zones: 2 },
+  { id: 'split-header', label: 'Split header',  hint: 'Full-width header over two cols',  zones: 3 },
+  { id: 'grid-2x2',     label: 'Grid 2×2',      hint: 'Four compact quadrants',          zones: 4 },
+  { id: 'hero-row',     label: 'Hero + row',    hint: 'Focal banner over a row of three', zones: 4 },
+];
+
+const CARD_LAYOUT_MAP: Record<string, CardLayoutDef> =
+  Object.fromEntries(CARD_LAYOUTS.map(l => [l.id, l]));
+
+// A single buyer data point the analyst can drop onto a Figures block
+export interface DataPoint { id: string; label: string; value: string; category: string; }
+
+// A time series the analyst can plot in a Chart block
+export interface Metric {
+  id: string; label: string; data: number[]; tone: ChartTone;
+  invertY?: boolean; yLabels?: string[]; min?: number; max?: number;
+}
+
+// Palette shown in the "Add block" bar
+export const BLOCK_KINDS: { kind: BlockKind; label: string; icon: IconName }[] = [
+  { kind: 'heading', label: 'Heading', icon: 'aa' },
+  { kind: 'figures', label: 'Figures', icon: 'grid' },
+  { kind: 'chart',   label: 'Chart',   icon: 'chart' },
+  { kind: 'note',    label: 'Note',    icon: 'edit-compose' },
+];
 
 export const LAYOUTS: LayoutConfig[] = [
   { id: '4x1',          label: '4 equal',    gridCols: 4, slots: [{cols:1,rows:1},{cols:1,rows:1},{cols:1,rows:1},{cols:1,rows:1},{cols:1,rows:1},{cols:1,rows:1},{cols:1,rows:1},{cols:1,rows:1}] },
@@ -143,6 +211,45 @@ export const WIDGET_SIZE_OPTIONS: SelectOption[] = [
 
 export const CARD_PREVIEWS: CardPreview[] = WIDGET_TYPE_OPTIONS.map(o => ({ id: o.value, label: o.label }));
 
+// Buyer data catalogue — flat list of real data points the analyst can compose
+// onto a Figures block. Mirrors the demo widget mocks, grouped for the picker.
+export const DATA_CATALOG: DataPoint[] = [
+  { id: 'exposure',       label: 'Exposure',         value: '1 548 000',      category: 'Risk' },
+  { id: 'highest-limit',  label: 'Highest limit',    value: '10 000 246 000', category: 'Risk' },
+  { id: 'number-limits',  label: 'Number of limits', value: '72',             category: 'Risk' },
+  { id: 'granted-limit',  label: 'Granted limit',    value: '5 000 000',      category: 'Limits' },
+  { id: 'used-limit',     label: 'Used limit',       value: '1 548 000',      category: 'Limits' },
+  { id: 'available-limit',label: 'Available',        value: '3 452 000',      category: 'Limits' },
+  { id: 'turnover',       label: 'Turnover',         value: '123 900 000',    category: 'Financials' },
+  { id: 'pre-tax-profit', label: 'Pre tax Profit',   value: '18 000',         category: 'Financials' },
+  { id: 'cashflow',       label: 'Cashflow',         value: '22 000',         category: 'Financials' },
+  { id: 'total-overdue',  label: 'Total overdue',    value: '0',              category: 'Overdues' },
+  { id: 'oldest-overdue', label: 'Oldest',           value: 'N/A',            category: 'Overdues' },
+  { id: 'disputes',       label: 'Disputes',         value: 'None',           category: 'Overdues' },
+  { id: 'score',          label: 'Score',            value: '82 / 100',       category: 'Score' },
+  { id: 'score-trend',    label: 'Trend',            value: 'Stable',         category: 'Score' },
+  { id: 'score-updated',  label: 'Updated',          value: '11 nov 2024',    category: 'Score' },
+  { id: 'cover-requested',label: 'Cover requested',  value: '2 000 000',      category: 'Coverage' },
+  { id: 'cover-granted',  label: 'Cover granted',    value: '2 000 000',      category: 'Coverage' },
+  { id: 'cover-decision', label: 'Decision',         value: 'Approved',       category: 'Coverage' },
+  { id: 'pay-on-time',    label: 'On time',          value: '94 %',           category: 'Payment' },
+  { id: 'pay-late-30',    label: 'Late 1-30',        value: '6 %',            category: 'Payment' },
+  { id: 'pay-late-30p',   label: 'Late 30+',         value: '0 %',            category: 'Payment' },
+];
+
+
+// Time series the analyst can plot in a Chart block
+export const METRIC_CATALOG: Metric[] = [
+  { id: 'grade-history', label: 'Grade history', data: [6,6,6,7,6,5,5,6], tone: 'positive',
+    invertY: true, yLabels: ['1','4','7','10','N/A'], min: 1, max: 11 },
+  { id: 'exposure-trend', label: 'Exposure trend', data: [12,18,15,22,28,26,34,40], tone: 'brand' },
+];
+
+export const METRIC_OPTIONS: SelectOption[] = METRIC_CATALOG.map(m => ({ value: m.id, label: m.label }));
+
+const DATA_POINT_MAP: Record<string, DataPoint> = Object.fromEntries(DATA_CATALOG.map(d => [d.id, d]));
+const METRIC_MAP: Record<string, Metric> = Object.fromEntries(METRIC_CATALOG.map(m => [m.id, m]));
+
 export const LOADING_MESSAGES = [
   "Preparing your layout",
   "Placing your cards",
@@ -173,9 +280,12 @@ const WIDGET_LABELS: Record<string, string> = Object.fromEntries(WIDGET_TYPE_OPT
     ButtonComponent,
     ButtonIconComponent,
     IconComponent,
+    DividerComponent,
+    TextareaComponent,
     DrawerComponent,
     GridSelectionComponent,
     InputTextComponent,
+    InputSearchComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
     NgTemplateOutlet,
@@ -241,6 +351,18 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
   dropIndex     = signal<number | null>(null); // insertion index for the bar indicator
   dropOnUid     = signal<string | null>(null); // empty placeholder being aimed
 
+  // ── Card builder state ─────────────────────────────────────────────────────
+  customCards    = signal<CustomCard[]>([]);          // user-built cards (mock persistence)
+  builderOpen    = signal(false);
+  editingCardId  = signal<string | null>(null);       // null = creating a fresh card
+  builderStep    = signal<'layout' | 'compose'>('layout');
+  // canvas + inspector: "<zoneId>:<blockId>" of the selected block (edited in
+  // the right-hand inspector panel)
+  selectedBlockKey = signal<string | null>(null);
+  // figures field picker: search query per block id
+  fieldSearch      = signal<Record<string, string>>({});
+  draftCard      = signal<CustomCard>({ id: '', name: '', layoutId: 'stack', zones: [] });
+
   // Board currently displayed in ready state
   currentBoard = computed(() =>
     this.boards().find(b => b.id === this.currentBoardId()) ?? this.boards()[0]
@@ -260,11 +382,17 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
     }
   });
 
-  // Front-only filter — "gr" → "Grade"
+  // Custom cards surface as draggable previews alongside the built-in ones
+  customCardPreviews = computed<CardPreview[]>(() =>
+    this.customCards().map(c => ({ id: c.id, label: c.name, custom: true }))
+  );
+
+  // Front-only filter — "gr" → "Grade". Custom cards listed first.
   filteredCards = computed(() => {
+    const all = [...this.customCardPreviews(), ...CARD_PREVIEWS];
     const q = this.cardFilter().trim().toLowerCase();
-    if (!q) return CARD_PREVIEWS;
-    return CARD_PREVIEWS.filter(c => c.label.toLowerCase().includes(q));
+    if (!q) return all;
+    return all.filter(c => c.label.toLowerCase().includes(q));
   });
 
   readonly LAYOUTS             = LAYOUTS;
@@ -272,6 +400,17 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
   readonly WIDGET_SIZE_OPTIONS = WIDGET_SIZE_OPTIONS;
   readonly CARD_PREVIEWS       = CARD_PREVIEWS;
   readonly LOADING_MESSAGES    = LOADING_MESSAGES;
+  readonly BLOCK_KINDS         = BLOCK_KINDS;
+  readonly METRIC_OPTIONS      = METRIC_OPTIONS;
+  readonly CARD_LAYOUTS        = CARD_LAYOUTS;
+
+  // Builder modal title follows step + create/edit mode
+  builderTitle = computed(() => {
+    const verb = this.editingCardId() ? 'Edit' : 'Create';
+    return this.builderStep() === 'layout'
+      ? `${verb} custom card — pick a layout`
+      : `${verb} custom card`;
+  });
 
   readonly skeletonCards = Array.from({ length: 8 });
   readonly months        = MONTHS;
@@ -824,7 +963,263 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
   }
 
   widgetLabel(widgetType: string): string {
-    return WIDGET_LABELS[widgetType] ?? widgetType;
+    return WIDGET_LABELS[widgetType] ?? this.customCardFor(widgetType)?.name ?? widgetType;
+  }
+
+  // ── Custom-card rendering ────────────────────────────────────────────────────
+
+  // A widgetType resolves to a custom card when its id matches one we built
+  customCardFor(widgetType: string): CustomCard | null {
+    return this.customCards().find(c => c.id === widgetType) ?? null;
+  }
+
+  // Map a Figures block's picked data points → PropertySection[] (the shape the
+  // properties panel already consumes across the board)
+  figuresSection(block: CardBlock): PropertySection[] {
+    const rows = (block.dataPointIds ?? [])
+      .map(id => DATA_POINT_MAP[id])
+      .filter(Boolean)
+      .map(d => ({ label: d.label, value: d.value }));
+    return [{ rows }];
+  }
+
+  metricFor(metricId: string | undefined): Metric | null {
+    return metricId ? METRIC_MAP[metricId] ?? null : null;
+  }
+
+  // ── Card builder ─────────────────────────────────────────────────────────────
+
+  // Build the empty zones a layout requires
+  private blankZones(layoutId: string): CardZone[] {
+    const def = CARD_LAYOUT_MAP[layoutId] ?? CARD_LAYOUTS[0];
+    return Array.from({ length: def.zones }, () => ({ id: nextZoneId(), blocks: [] }));
+  }
+
+  openCardBuilder(): void {
+    this.drawerOpen.set(false);   // the builder opens as a modal — close the drawer behind it
+    this.editingCardId.set(null);
+    this.builderStep.set('layout');
+    this.selectedBlockKey.set(null);
+    const zones = this.blankZones('stack');
+    this.draftCard.set({ id: nextCustomCardId(), name: '', layoutId: 'stack', zones });
+    this.builderOpen.set(true);
+  }
+
+  editCustomCard(id: string): void {
+    const card = this.customCards().find(c => c.id === id);
+    if (!card) return;
+    this.drawerOpen.set(false);   // same: modal replaces the drawer
+    this.editingCardId.set(id);
+    this.builderStep.set('compose');
+    this.selectedBlockKey.set(null);
+    // Deep copy so edits don't mutate the live card until saved
+    this.draftCard.set({
+      id: card.id,
+      name: card.name,
+      layoutId: card.layoutId,
+      zones: card.zones.map(z => ({
+        id: z.id,
+        blocks: z.blocks.map(b => ({ ...b, dataPointIds: b.dataPointIds ? [...b.dataPointIds] : undefined })),
+      })),
+    });
+    this.builderOpen.set(true);
+  }
+
+  closeBuilder(): void {
+    this.builderOpen.set(false);
+    this.editingCardId.set(null);
+  }
+
+  // Step 1 → pick the skeleton. Changing layout re-shapes the zones, preserving
+  // blocks where possible (flatten then re-spread across the new zones).
+  selectCardLayout(layoutId: string): void {
+    this.draftCard.update(c => {
+      if (c.layoutId === layoutId && c.zones.length) return c;
+      const def = CARD_LAYOUT_MAP[layoutId] ?? CARD_LAYOUTS[0];
+      const carried = c.zones.flatMap(z => z.blocks);
+      const zones: CardZone[] = Array.from({ length: def.zones }, () => ({ id: nextZoneId(), blocks: [] }));
+      // Keep existing content: drop everything into the first zone
+      if (carried.length) zones[0].blocks = carried;
+      this.selectedBlockKey.set(null);
+      return { ...c, layoutId, zones };
+    });
+  }
+
+  goToCompose(): void {
+    this.builderStep.set('compose');
+  }
+
+  backToLayout(): void { this.builderStep.set('layout'); }
+
+  layoutLabel(layoutId: string): string { return CARD_LAYOUT_MAP[layoutId]?.label ?? layoutId; }
+
+  // ── Canvas + inspector (select on the canvas, edit on the right) ────────────
+  private blockKey(zoneId: string, blockId: string): string { return `${zoneId}:${blockId}`; }
+
+  isBlockSelected(zoneId: string, blockId: string): boolean {
+    return this.selectedBlockKey() === this.blockKey(zoneId, blockId);
+  }
+
+  // Select a block on the canvas → its editor shows in the inspector (set, not
+  // toggle: the selection stays visible while editing on the right).
+  selectBlock(zoneId: string, blockId: string): void {
+    this.selectedBlockKey.set(this.blockKey(zoneId, blockId));
+  }
+
+  // The selected block resolved against the live draft (null if none / deleted)
+  selectedBlock = computed<{ zoneId: string; block: CardBlock } | null>(() => {
+    const key = this.selectedBlockKey();
+    if (!key) return null;
+    const [zoneId, blockId] = key.split(':');
+    const zone = this.draftCard().zones.find(z => z.id === zoneId);
+    const block = zone?.blocks.find(b => b.id === blockId);
+    return block ? { zoneId, block } : null;
+  });
+
+  // Add a block from the inline tile row → drop it in the zone and select it
+  // (so it appears straight away in the inspector, ready to fill).
+  addBlockFromMenu(zoneId: string, kind: BlockKind): void {
+    const block = this.newBlock(kind);
+    this.draftCard.update(c => ({
+      ...c,
+      zones: c.zones.map(z => z.id === zoneId ? { ...z, blocks: [...z.blocks, block] } : z),
+    }));
+    this.selectedBlockKey.set(this.blockKey(zoneId, block.id));
+  }
+
+  blockKindLabel(kind: BlockKind): string {
+    return BLOCK_KINDS.find(b => b.kind === kind)?.label ?? kind;
+  }
+  blockKindIcon(kind: BlockKind): IconName {
+    return BLOCK_KINDS.find(b => b.kind === kind)?.icon ?? 'grid';
+  }
+
+  setCardName(name: string): void {
+    this.draftCard.update(c => ({ ...c, name }));
+  }
+
+  private newBlock(kind: BlockKind): CardBlock {
+    const block: CardBlock = { id: nextBlockId(), kind };
+    if (kind === 'figures') block.dataPointIds = [];
+    if (kind === 'chart')   block.metricId = METRIC_CATALOG[0]?.id;
+    if (kind === 'heading') block.text = '';
+    if (kind === 'note')    block.text = '';
+    return block;
+  }
+
+  removeBlock(zoneId: string, blockId: string): void {
+    this.draftCard.update(c => ({
+      ...c,
+      zones: c.zones.map(z => z.id === zoneId ? { ...z, blocks: z.blocks.filter(b => b.id !== blockId) } : z),
+    }));
+  }
+
+  moveBlock(zoneId: string, blockId: string, dir: -1 | 1): void {
+    this.draftCard.update(c => ({
+      ...c,
+      zones: c.zones.map(z => {
+        if (z.id !== zoneId) return z;
+        const i = z.blocks.findIndex(b => b.id === blockId);
+        const j = i + dir;
+        if (i < 0 || j < 0 || j >= z.blocks.length) return z;
+        const blocks = [...z.blocks];
+        [blocks[i], blocks[j]] = [blocks[j], blocks[i]];
+        return { ...z, blocks };
+      }),
+    }));
+  }
+
+  private updateBlock(zoneId: string, blockId: string, patch: Partial<CardBlock>): void {
+    this.draftCard.update(c => ({
+      ...c,
+      zones: c.zones.map(z => z.id === zoneId
+        ? { ...z, blocks: z.blocks.map(b => b.id === blockId ? { ...b, ...patch } : b) }
+        : z),
+    }));
+  }
+
+  setBlockText(zoneId: string, blockId: string, text: string): void {
+    this.updateBlock(zoneId, blockId, { text });
+  }
+
+  setBlockMetric(zoneId: string, blockId: string, metricId: string): void {
+    this.updateBlock(zoneId, blockId, { metricId });
+  }
+
+  toggleDataPoint(zoneId: string, block: CardBlock, dpId: string): void {
+    const cur = block.dataPointIds ?? [];
+    // Add → append (becomes last in display order). Remove → drop it.
+    const next = cur.includes(dpId) ? cur.filter(x => x !== dpId) : [...cur, dpId];
+    this.updateBlock(zoneId, block.id, { dataPointIds: next });
+  }
+
+  // The chosen data points, in display order (the order of dataPointIds)
+  selectedDataPoints(block: CardBlock): DataPoint[] {
+    return (block.dataPointIds ?? []).map(id => DATA_POINT_MAP[id]).filter(Boolean);
+  }
+
+  // ── Figures field search picker ──────────────────────────────────────────────
+  fieldQuery(blockId: string): string { return this.fieldSearch()[blockId] ?? ''; }
+
+  setFieldQuery(blockId: string, q: string): void {
+    this.fieldSearch.update(m => ({ ...m, [blockId]: q }));
+  }
+
+  // Catalogue minus already-selected, filtered by the search query (label or category)
+  fieldResults(block: CardBlock): DataPoint[] {
+    const chosen = new Set(block.dataPointIds ?? []);
+    const q = (this.fieldSearch()[block.id] ?? '').trim().toLowerCase();
+    return DATA_CATALOG.filter(d => !chosen.has(d.id)).filter(d =>
+      !q || d.label.toLowerCase().includes(q) || d.category.toLowerCase().includes(q)
+    );
+  }
+
+  // Add a field from the search results and clear the query
+  addField(zoneId: string, block: CardBlock, dpId: string): void {
+    if ((block.dataPointIds ?? []).includes(dpId)) return;
+    this.updateBlock(zoneId, block.id, { dataPointIds: [...(block.dataPointIds ?? []), dpId] });
+    this.setFieldQuery(block.id, '');
+  }
+
+  // Reorder a chosen field within the block — drives its position in the card
+  moveDataPoint(zoneId: string, block: CardBlock, dpId: string, dir: -1 | 1): void {
+    const cur = [...(block.dataPointIds ?? [])];
+    const i = cur.indexOf(dpId);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= cur.length) return;
+    [cur[i], cur[j]] = [cur[j], cur[i]];
+    this.updateBlock(zoneId, block.id, { dataPointIds: cur });
+  }
+
+  private blockHasContent(b: CardBlock): boolean {
+    return (b.kind === 'figures' && (b.dataPointIds?.length ?? 0) > 0)
+      || (b.kind === 'chart'   && !!b.metricId)
+      || ((b.kind === 'heading' || b.kind === 'note') && !!b.text?.trim());
+  }
+
+  // A draft is valid once it has a name and at least one block carrying content
+  canSaveCustomCard = computed(() => {
+    const c = this.draftCard();
+    if (!c.name.trim()) return false;
+    return c.zones.some(z => z.blocks.some(b => this.blockHasContent(b)));
+  });
+
+  validateCustomCard(): void {
+    if (!this.canSaveCustomCard()) return;
+    const card = this.draftCard();
+    const editId = this.editingCardId();
+    if (editId) {
+      this.customCards.update(arr => arr.map(c => c.id === editId ? card : c));
+      this.toaster.show('Your changes are saved', { tone: 'success', title: 'Card updated' });
+    } else {
+      this.customCards.update(arr => [...arr, card]);
+      this.toaster.show('Your card is ready to drop on a board', { tone: 'success', title: 'Card created' });
+    }
+    this.closeBuilder();
+  }
+
+  deleteCustomCard(id: string): void {
+    this.customCards.update(arr => arr.filter(c => c.id !== id));
   }
 
   private buildSlots(id: LayoutId): SlotConfig[] {

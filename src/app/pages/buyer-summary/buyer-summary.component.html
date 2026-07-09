@@ -51,7 +51,9 @@
         <div class="bs-configure-overlay" aria-hidden="true"></div>
 
         <!-- Floating action bar — light, elevated, anchored bottom-center.
-             Builder convention (Figma/Framer/Material floating toolbar). -->
+             Builder convention (Figma/Framer/Material floating toolbar).
+             Hidden while the card-builder modal is open (it would float over it). -->
+        @if (!builderOpen()) {
         <div class="bs-floatbar" role="region" aria-label="Board editor">
           <ds-button type="secondary" (clicked)="openDrawer('cards')">
             <ds-icon slot="icon-left" name="plus" [size]="16" />
@@ -61,6 +63,7 @@
           <ds-button type="tertiary" (clicked)="cancelConfigure()">Cancel</ds-button>
           <ds-button type="primary" (clicked)="validateBoard()">Save board</ds-button>
         </div>
+        }
 
         <!-- Surface above overlay: slots only -->
         <div class="bs-configure-surface">
@@ -287,6 +290,11 @@
               <ds-icon name="plus" [size]="16" />
               Create a new board
             </button>
+            <button class="manage-board__create manage-board__create--alt" type="button"
+              (click)="openCardBuilder()">
+              <ds-icon name="plus-circle" [size]="16" />
+              Create a custom card
+            </button>
           </div>
         }
 
@@ -312,6 +320,10 @@
           </div>
           <ds-input-text class="drawer-filter" placeholder="Filter cards…"
             [value]="cardFilter()" (valueChange)="cardFilter.set($event)" />
+          <button class="drawer-build" type="button" (click)="openCardBuilder()">
+            <ds-icon name="plus-circle" [size]="16" />
+            Create a custom card
+          </button>
           <p class="drawer-hint">
             <ds-icon name="drag-handle" [size]="14" /> Drag onto the board,
             or use <ds-icon name="plus" [size]="14" /> to add.
@@ -330,9 +342,22 @@
                   <span class="drawer-card__drag-badge">
                     <ds-icon name="drag-handle" [size]="14" /> Drag
                   </span>
+                  @if (card.custom) {
+                    <span class="drawer-card__custom-badge">Custom</span>
+                  }
                 </div>
                 <div class="drawer-card__foot">
                   <span class="drawer-card__label">{{ card.label }}</span>
+                  @if (card.custom) {
+                    <ds-button-icon type="plain" ariaLabel="Edit custom card"
+                      (clicked)="editCustomCard(card.id)">
+                      <ds-icon name="edit" [size]="16" />
+                    </ds-button-icon>
+                    <ds-button-icon type="plain" ariaLabel="Delete custom card"
+                      (clicked)="deleteCustomCard(card.id)">
+                      <ds-icon name="trash" [size]="16" />
+                    </ds-button-icon>
+                  }
                   <ds-button-icon type="secondary" ariaLabel="Add to board"
                     (clicked)="addCard(card.id)">
                     <ds-icon name="plus" [size]="16" />
@@ -386,6 +411,95 @@
       <div slot="actions" class="bs-modal-actions">
         <ds-button type="secondary" (clicked)="discardConfirmOpen.set(false)">Keep editing</ds-button>
         <ds-button type="primary" tone="negative" (clicked)="confirmDiscard()">Discard</ds-button>
+      </div>
+    </ds-modal>
+
+    <!-- ═══ Card builder — pick a layout, then fill its zones with DS blocks ═══ -->
+    <ds-modal [title]="builderTitle()" size="xlarge" [open]="builderOpen()"
+      contentHeight="640px" [closeOnBackdrop]="false"
+      [showBack]="builderStep() === 'compose'" backLabel="Layout"
+      (backClicked)="backToLayout()" (closed)="closeBuilder()">
+
+      @switch (builderStep()) {
+
+        <!-- ── Step 1: choose the skeleton ── -->
+        @case ('layout') {
+          <div class="bs-layout-pick">
+            <p class="bs-layout-pick__sub">Choose how this card is divided. You'll fill each zone next.</p>
+            <div class="bs-layout-pick__grid">
+              @for (l of CARD_LAYOUTS; track l.id) {
+                <button class="bs-layout-card" type="button"
+                  [class.bs-layout-card--on]="draftCard().layoutId === l.id"
+                  [attr.aria-pressed]="draftCard().layoutId === l.id"
+                  (click)="selectCardLayout(l.id)">
+                  <span class="bs-layout-card__diagram bs-zones bs-zones--{{ l.id }}" aria-hidden="true">
+                    @for (z of [].constructor(l.zones); track $index) { <span class="bs-zone"></span> }
+                  </span>
+                  <span class="bs-layout-card__label">{{ l.label }}</span>
+                  <span class="bs-layout-card__hint">{{ l.hint }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- ── Step 2: canvas (structure) + inspector (block content) ── -->
+        @case ('compose') {
+          <div class="bs-builder2">
+
+            <!-- Left: the card is the editing surface for structure -->
+            <div class="bs-cv-canvas">
+              <div class="bs-cv-head">
+                <ds-input-text class="bs-cv-name" label="Card name"
+                  placeholder="e.g. Risk snapshot"
+                  [value]="draftCard().name" (valueChange)="setCardName($event)" />
+                <span class="bs-cv-layout-tag">
+                  <ds-icon name="grid" [size]="14" /> {{ layoutLabel(draftCard().layoutId) }}
+                </span>
+              </div>
+              <div class="bs-cv-stage">
+                <ng-container [ngTemplateOutlet]="customCardTpl"
+                  [ngTemplateOutletContext]="{ $implicit: draftCard(), chartHeight: 110, editable: true }" />
+              </div>
+            </div>
+
+            <!-- Right: inspector — edits the selected block with room to breathe -->
+            <div class="bs-inspector">
+              @if (selectedBlock(); as sel) {
+                <div class="bs-inspector__header">
+                  <ds-icon [name]="blockKindIcon(sel.block.kind)" [size]="18" />
+                  <span class="bs-inspector__title">{{ blockKindLabel(sel.block.kind) }}</span>
+                </div>
+                <ng-container [ngTemplateOutlet]="blockEditorTpl"
+                  [ngTemplateOutletContext]="{ $implicit: sel.block, zoneId: sel.zoneId }" />
+              } @else {
+                <div class="bs-inspector__empty">
+                  <ds-icon name="sliders" [size]="24" />
+                  <p>Select a block on the card to edit it, or add one from the canvas.</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Footer lives outside the @switch so [slot=actions] projects cleanly -->
+      <div slot="actions" class="bs-modal-actions">
+        @if (builderStep() === 'layout') {
+          <ds-button type="tertiary" (clicked)="closeBuilder()">Cancel</ds-button>
+          <ds-button type="primary" (clicked)="goToCompose()">
+            Continue
+            <ds-icon slot="icon-right" name="arrow-right" [size]="16" />
+          </ds-button>
+        } @else {
+          @if (!canSaveCustomCard()) {
+            <span class="bs-builder-hint">Name the card and add at least one block to save.</span>
+          }
+          <ds-button type="tertiary" (clicked)="closeBuilder()">Cancel</ds-button>
+          <ds-button type="primary" [disabled]="!canSaveCustomCard()" (clicked)="validateCustomCard()">
+            {{ editingCardId() ? 'Save card' : 'Create card' }}
+          </ds-button>
+        }
       </div>
     </ds-modal>
   </ng-container>
@@ -457,9 +571,181 @@
         excerpt="Yesterday, someone bought an electric car…" />
     }
     @default {
-      <ds-widget-card [title]="widgetLabel(type)" [externalLink]="false">
-        <ds-properties-panel [sections]="riskFigures" [columns]="1" variant="flat" layout="stacked" />
-      </ds-widget-card>
+      @if (customCardFor(type); as card) {
+        <ng-container [ngTemplateOutlet]="customCardTpl"
+          [ngTemplateOutletContext]="{ $implicit: card, chartHeight: chartH }" />
+      } @else {
+        <ds-widget-card [title]="widgetLabel(type)" [externalLink]="false">
+          <ds-properties-panel [sections]="riskFigures" [columns]="1" variant="flat" layout="stacked" />
+        </ds-widget-card>
+      }
+    }
+  }
+</ng-template>
+
+<!-- Custom card renderer — a named ds-widget-card whose zones are laid out by the
+     chosen layout. Used by the board (pure render) AND the builder canvas
+     (editable: overlays, inline editors, add-block) — strict WYSIWYG. -->
+<ng-template #customCardTpl let-card let-chartH="chartHeight" let-editable="editable">
+  <ds-widget-card [title]="card.name || 'Untitled card'" [externalLink]="false">
+    <div class="bs-custom-card bs-zones bs-zones--{{ card.layoutId }}"
+      [class.bs-custom-card--editable]="editable">
+      @for (zone of card.zones; track zone.id) {
+        <div class="bs-zone">
+          @for (block of zone.blocks; track block.id; let i = $index; let count = $count) {
+
+            @if (editable) {
+              <!-- Editable wrapper: hover toolbar; click selects → inspector edits -->
+              <div class="bs-cv-block"
+                [class.bs-cv-block--selected]="isBlockSelected(zone.id, block.id)"
+                (click)="selectBlock(zone.id, block.id)">
+
+                <div class="bs-cv-toolbar" (click)="$event.stopPropagation()">
+                  <ds-button-icon type="plain" tone="default" ariaLabel="Move block up"
+                    [disabled]="i === 0" (clicked)="moveBlock(zone.id, block.id, -1)">
+                    <ds-icon name="arrow-up" [size]="16" />
+                  </ds-button-icon>
+                  <ds-button-icon type="plain" tone="default" ariaLabel="Move block down"
+                    [disabled]="i === count - 1" (clicked)="moveBlock(zone.id, block.id, 1)">
+                    <ds-icon name="arrow-down" [size]="16" />
+                  </ds-button-icon>
+                  <ds-button-icon type="plain" tone="default" ariaLabel="Edit block"
+                    (clicked)="selectBlock(zone.id, block.id)">
+                    <ds-icon name="edit" [size]="16" />
+                  </ds-button-icon>
+                  <ds-button-icon type="plain" tone="default" ariaLabel="Remove block"
+                    (clicked)="removeBlock(zone.id, block.id)">
+                    <ds-icon name="trash" [size]="16" />
+                  </ds-button-icon>
+                </div>
+
+                <ng-container [ngTemplateOutlet]="blockRenderTpl"
+                  [ngTemplateOutletContext]="{ $implicit: block, chartHeight: chartH }" />
+              </div>
+            } @else {
+              <ng-container [ngTemplateOutlet]="blockRenderTpl"
+                [ngTemplateOutletContext]="{ $implicit: block, chartHeight: chartH }" />
+            }
+          }
+
+          @if (editable) {
+            <!-- Inline tile row — 4 block types, always visible, 1 click = add -->
+            <div class="bs-cv-addrow" role="group" aria-label="Add block"
+              (click)="$event.stopPropagation()">
+              @for (b of BLOCK_KINDS; track b.kind) {
+                <button class="bs-cv-tile" type="button"
+                  (click)="addBlockFromMenu(zone.id, b.kind)">
+                  <ds-icon class="bs-cv-tile__icon" [name]="b.icon" [size]="20" />
+                  <span class="bs-cv-tile__label">{{ b.label }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </ds-widget-card>
+</ng-template>
+
+<!-- Pure render of one block — shared by board and canvas -->
+<ng-template #blockRenderTpl let-block let-chartH="chartHeight">
+  @switch (block.kind) {
+    @case ('heading') {
+      <div class="bs-block-heading">
+        <h4 class="bs-block-heading__text">{{ block.text || 'Section' }}</h4>
+        <ds-divider />
+      </div>
+    }
+    @case ('figures') {
+      <ds-properties-panel [sections]="figuresSection(block)"
+        [columns]="1" variant="flat" layout="stacked" />
+    }
+    @case ('chart') {
+      @if (metricFor(block.metricId); as m) {
+        <ds-chart [data]="m.data" [xLabels]="months"
+          [yLabels]="m.yLabels || []"
+          [min]="m.min ?? null" [max]="m.max ?? null"
+          [invertY]="!!m.invertY" [tone]="m.tone" [height]="chartH || 96" />
+      } @else {
+        <p class="bs-block-note bs-block-note--placeholder">Pick a metric…</p>
+      }
+    }
+    @case ('note') {
+      <p class="bs-block-note" [class.bs-block-note--placeholder]="!block.text">
+        {{ block.text || 'Empty note' }}
+      </p>
+    }
+  }
+</ng-template>
+
+<!-- Inline editor of one block — canvas only -->
+<ng-template #blockEditorTpl let-block let-zoneId="zoneId">
+  @switch (block.kind) {
+    @case ('heading') {
+      <ds-input-text placeholder="Section title"
+        [value]="block.text || ''"
+        (valueChange)="setBlockText(zoneId, block.id, $event)" />
+    }
+    @case ('note') {
+      <ds-textarea placeholder="Write a note for this buyer…" [rows]="3"
+        [value]="block.text || ''"
+        (valueChange)="setBlockText(zoneId, block.id, $event)" />
+    }
+    @case ('chart') {
+      <ds-select placeholder="Pick a metric" [options]="METRIC_OPTIONS"
+        [value]="block.metricId || ''"
+        (selectionChange)="setBlockMetric(zoneId, block.id, $event)" />
+    }
+    @case ('figures') {
+      <!-- Selected wells — ordered list that drives the card order -->
+      <div class="bs-wells">
+        <span class="bs-wells__title">
+          Selected
+          <span class="bs-wells__count">{{ (block.dataPointIds || []).length }}</span>
+        </span>
+        @for (dp of selectedDataPoints(block); track dp.id; let si = $index; let sc = $count) {
+          <div class="bs-well">
+            <span class="bs-well__order">{{ si + 1 }}</span>
+            <span class="bs-well__label">{{ dp.label }}</span>
+            <span class="bs-well__value">{{ dp.value }}</span>
+            <div class="bs-well__controls">
+              <ds-button-icon type="plain" ariaLabel="Move field up"
+                [disabled]="si === 0" (clicked)="moveDataPoint(zoneId, block, dp.id, -1)">
+                <ds-icon name="arrow-up" [size]="14" />
+              </ds-button-icon>
+              <ds-button-icon type="plain" ariaLabel="Move field down"
+                [disabled]="si === sc - 1" (clicked)="moveDataPoint(zoneId, block, dp.id, 1)">
+                <ds-icon name="arrow-down" [size]="14" />
+              </ds-button-icon>
+              <ds-button-icon type="plain" ariaLabel="Remove field"
+                (clicked)="toggleDataPoint(zoneId, block, dp.id)">
+                <ds-icon name="close" [size]="14" />
+              </ds-button-icon>
+            </div>
+          </div>
+        } @empty {
+          <p class="bs-wells__empty">No field yet — pick from the catalogue below.</p>
+        }
+      </div>
+
+      <!-- Search + click to add — fast for 21 fields, no checkbox wall -->
+      <div class="bs-field-search">
+        <ds-input-search placeholder="Search a field to add…"
+          [value]="fieldQuery(block.id)"
+          (valueChange)="setFieldQuery(block.id, $event)" />
+        <div class="bs-field-results">
+          @for (dp of fieldResults(block); track dp.id) {
+            <button class="bs-field-result" type="button"
+              (click)="addField(zoneId, block, dp.id)">
+              <span class="bs-field-result__label">{{ dp.label }}</span>
+              <span class="bs-field-result__cat">{{ dp.category }}</span>
+              <ds-icon class="bs-field-result__add" name="plus" [size]="16" />
+            </button>
+          } @empty {
+            <p class="bs-field-results__empty">No field matches your search.</p>
+          }
+        </div>
+      </div>
     }
   }
 </ng-template>

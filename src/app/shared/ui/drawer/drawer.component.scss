@@ -53,6 +53,8 @@
   flex: 1 1 auto;
   flex-direction: column;
   min-height: var(--semantic-measurement-sizing-none);
+  overflow-y: auto;   // le contenu long scrolle dans le drawer, pas la page
+  overscroll-behavior: contain;
 }
 
 .ds-drawer__footer {

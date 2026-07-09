@@ -510,6 +510,9 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   height:         100%;
   min-height:     0;
   box-sizing:     border-box;
+  // Views without an inner scroll area (boards, create) scroll here.
+  // Cards/layouts keep their own flex:1 overflow list, so this stays inert for them.
+  overflow-y:     auto;
 }
 
 .drawer-tabs {
@@ -782,6 +785,575 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   transition:      background 120ms ease;
 
   &:hover { background: var(--semantic-color-interactive-background-subtle-hover); }
+
+  // Secondary CTA — custom card creation sits below the board CTA, quieter
+  &--alt {
+    background:   var(--semantic-color-static-background-main-primary);
+    border-style: solid;
+    border-color: var(--semantic-color-static-border-subtle-tertiary);
+    color:        var(--semantic-color-static-text-main-primary);
+
+    &:hover { background: var(--semantic-color-interactive-background-light-default); }
+  }
+}
+
+// ── Drawer: "Create a custom card" CTA ───────────────────────────────────────
+.drawer-build {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-s);
+  padding:         var(--semantic-measurement-spacing-s);
+  border:          1px dashed var(--semantic-color-interactive-border-strong-default);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-interactive-background-subtle-default);
+  cursor:          pointer;
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-m);
+  font-weight:     var(--semantic-font-text-style-font-weight-semibold);
+  color:           var(--semantic-color-interactive-text-strong-default);
+  transition:      background 120ms ease;
+
+  &:hover { background: var(--semantic-color-interactive-background-subtle-hover); }
+}
+
+// "Custom" badge over a user-built card preview
+.drawer-card__custom-badge {
+  position:      absolute;
+  top:           var(--semantic-measurement-spacing-xs);
+  right:         var(--semantic-measurement-spacing-xs);
+  padding:       2px var(--semantic-measurement-spacing-xs);
+  border-radius: var(--semantic-border-radius-xs);
+  background:    var(--semantic-color-interactive-background-strong-default);
+  color:         var(--semantic-color-interactive-text-neutral-default);
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-s);
+  font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+}
+
+// ── Custom card content (composed blocks) ────────────────────────────────────
+.bs-custom-card {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+}
+
+// One zone = an independent vertical stack of blocks
+.bs-zone {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  min-width:      0;
+}
+
+// ── Zone layouts — shared by the real card AND the picker diagrams ───────────
+// Generic .bs-zone children placed by grid; nth-child spans handle full-width
+// header/hero rows. Skeletons drawn from BI tools (sidebar, split, hero banner).
+.bs-zones {
+  display: grid;
+  gap:     var(--semantic-measurement-spacing-m);
+
+  &--stack       { grid-template-columns: 1fr; }
+  &--two-col     { grid-template-columns: 1fr 1fr; }
+  &--three-col   { grid-template-columns: repeat(3, 1fr); }
+  &--sidebar     { grid-template-columns: 1fr 2fr; }
+  &--grid-2x2    { grid-template-columns: 1fr 1fr; }
+
+  // Full-width header over a two-column body
+  &--split-header {
+    grid-template-columns: 1fr 1fr;
+    > .bs-zone:nth-child(1) { grid-column: 1 / -1; }
+  }
+
+  // Focal banner over a row of three
+  &--hero-row {
+    grid-template-columns: repeat(3, 1fr);
+    > .bs-zone:nth-child(1) { grid-column: 1 / -1; }
+  }
+}
+
+.bs-block-heading {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+
+  &__text {
+    margin:      0;
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-title-size-xs);
+    font-weight: var(--semantic-font-text-style-font-weight-semibold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+}
+
+.bs-block-note {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+  white-space: pre-wrap;
+}
+
+// ── Card builder — canvas (structure) + inspector (block content) ────────────
+.bs-builder2 {
+  display:               grid;
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows:    minmax(0, 1fr);
+  gap:                   var(--semantic-measurement-spacing-m);
+  height:                100%;
+  min-height:            0;
+  overflow:              hidden; // each column owns its own scroll
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    grid-template-rows:    none;
+    height:                auto;
+    overflow:              visible;
+  }
+}
+
+// Left column: the card is the editing surface for structure
+.bs-cv-canvas {
+  display:          flex;
+  flex-direction:   column;
+  gap:              var(--semantic-measurement-spacing-l);
+  min-height:       0;
+  overflow-y:       auto;
+  overscroll-behavior: contain;
+  padding:          var(--semantic-measurement-spacing-m);
+  background:       var(--semantic-color-static-background-main-secondary);
+  border-radius:    var(--semantic-border-radius-s);
+}
+
+.bs-cv-head {
+  display:        flex;
+  align-items:    flex-end;   // input has a label above → align baselines
+  gap:            var(--semantic-measurement-spacing-m);
+  flex-shrink:    0;
+}
+
+// Card-name field grows; the layout tag stays compact beside it
+.bs-cv-name { flex: 1; min-width: 0; }
+
+.bs-cv-layout-tag {
+  display:        flex;
+  align-items:    center;
+  gap:            var(--semantic-measurement-spacing-xs);
+  flex-shrink:    0;
+  margin-bottom:  var(--semantic-measurement-spacing-xs); // sit level with input box
+  padding:        var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border-radius:  var(--semantic-border-radius-round);
+  background:     var(--semantic-color-static-background-main-primary);
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-s);
+  color:          var(--semantic-color-static-text-main-secondary);
+
+  ds-icon { color: var(--semantic-color-static-text-main-tertiary); }
+}
+
+// Footer hint explaining why Save is disabled
+.bs-builder-hint {
+  margin-right: auto;   // push commit buttons to the right
+  font-family:  var(--semantic-font-family);
+  font-size:    var(--semantic-font-text-style-size-s);
+  color:        var(--semantic-color-static-text-main-tertiary);
+}
+
+// The card fills the canvas column
+.bs-cv-stage {
+  flex-shrink: 0;
+  width:       100%;
+}
+
+// ── Inspector — edits the selected block, with room to breathe ───────────────
+.bs-inspector {
+  display:          flex;
+  flex-direction:   column;
+  gap:              var(--semantic-measurement-spacing-m);
+  min-height:       0;
+  overflow-y:       auto;
+  overscroll-behavior: contain;
+  padding:          var(--semantic-measurement-spacing-m);
+  border:           1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:    var(--semantic-border-radius-s);
+  background:       var(--semantic-color-static-background-main-primary);
+
+  &__header {
+    display:        flex;
+    align-items:    center;
+    gap:            var(--semantic-measurement-spacing-s);
+    padding-bottom: var(--semantic-measurement-spacing-s);
+    border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary);
+
+    ds-icon { color: var(--semantic-color-interactive-text-strong-default); }
+  }
+
+  &__title {
+    font-family:    var(--semantic-font-family);
+    font-size:      var(--semantic-font-text-style-size-m);
+    font-weight:    var(--semantic-font-text-style-font-weight-semibold);
+    color:          var(--semantic-color-static-text-main-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__empty {
+    display:         flex;
+    flex-direction:  column;
+    align-items:     center;
+    justify-content: center;
+    gap:             var(--semantic-measurement-spacing-s);
+    flex:            1;
+    padding:         var(--semantic-measurement-spacing-xl);
+    text-align:      center;
+    color:           var(--semantic-color-static-text-main-tertiary);
+
+    p { margin: 0; font-family: var(--semantic-font-family); font-size: var(--semantic-font-text-style-size-m); }
+    ds-icon { color: var(--semantic-color-static-text-main-tertiary); }
+  }
+}
+
+// ── Canvas block wrapper — hover toolbar; click selects ──────────────────────
+.bs-custom-card--editable {
+  .bs-zone { gap: var(--semantic-measurement-spacing-s); }
+}
+
+.bs-cv-block {
+  position:      relative;
+  padding:       var(--semantic-measurement-spacing-xs);
+  border-radius: var(--semantic-border-radius-s);
+  border:        1px solid transparent;
+  cursor:        pointer;
+  transition:    border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+
+  &:hover { border-color: var(--semantic-color-static-border-subtle-tertiary); }
+
+  &--selected {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    background:   var(--semantic-color-static-background-main-primary);
+    box-shadow:   inset 0 0 0 1px var(--semantic-color-interactive-border-strong-default);
+  }
+}
+
+// Floating per-block toolbar — same convention as the board's bs-toolbar
+.bs-cv-toolbar {
+  position:      absolute;
+  top:           calc(-1 * var(--semantic-measurement-spacing-l));
+  right:         var(--semantic-measurement-spacing-xs);
+  z-index:       5;
+  display:       flex;
+  align-items:   center;
+  gap:           2px;
+  padding:       var(--semantic-measurement-spacing-xs);
+  background:    var(--semantic-color-static-background-main-primary);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-m);
+  box-shadow:    var(--semantic-shadow-flyout);
+  opacity:       0;
+  visibility:    hidden;
+  transition:    opacity 140ms ease, visibility 140ms ease;
+}
+
+.bs-cv-block:hover .bs-cv-toolbar,
+.bs-cv-block--selected .bs-cv-toolbar {
+  opacity:    1;
+  visibility: visible;
+}
+
+// Add-block — a row of tiles, always visible, 1 click = add (no menu)
+.bs-cv-addrow {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   var(--semantic-measurement-spacing-xs);
+  margin-top:            var(--semantic-measurement-spacing-xs);
+}
+
+.bs-cv-tile {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-xs);
+  padding:         var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-xs);
+  border:          1px dashed var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-static-background-main-primary);
+  cursor:          pointer;
+  transition:      color 120ms ease, border-color 120ms ease, background 120ms ease,
+                   transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  &__icon { color: var(--semantic-color-static-text-main-tertiary); transition: color 120ms ease; }
+
+  &__label {
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-s);
+    font-weight: var(--semantic-font-text-style-font-weight-semibold);
+    color:       var(--semantic-color-static-text-main-secondary);
+  }
+
+  &:hover {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    border-style: solid;
+    background:    var(--semantic-color-interactive-background-light-default);
+    transform:    translateY(-2px);
+
+    .bs-cv-tile__icon  { color: var(--semantic-color-interactive-text-strong-default); }
+    .bs-cv-tile__label { color: var(--semantic-color-interactive-text-strong-default); }
+  }
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-strong-default);
+    outline-offset: 2px;
+  }
+}
+
+// Placeholder text for empty chart/note blocks on the canvas
+.bs-block-note--placeholder { color: var(--semantic-color-static-text-main-tertiary); font-style: italic; }
+
+// Figures: catalogue scrolls in its own bounded window. overscroll-behavior
+// isolates it from the left column so the two scrolls don't chain (the cause of
+// the erratic feel) — the column still scrolls for everything else.
+// ── Figures: selected "wells" — ordered list that drives the card order ──────
+// Pattern from Power BI / Metabase field wells: a separate ordered, reorderable,
+// removable list of the chosen fields (the catalogue below only adds to it).
+.bs-wells {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+  padding:        var(--semantic-measurement-spacing-s);
+  border:         1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:  var(--semantic-border-radius-s);
+  background:     var(--semantic-color-static-background-main-secondary);
+
+  &__title {
+    display:        flex;
+    align-items:    center;
+    gap:            var(--semantic-measurement-spacing-xs);
+    font-family:    var(--semantic-font-family);
+    font-size:      var(--semantic-font-text-style-size-s);
+    font-weight:    var(--semantic-font-text-style-font-weight-semibold);
+    color:          var(--semantic-color-static-text-main-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__count {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    min-width:       18px;
+    height:          18px;
+    padding:         0 var(--semantic-measurement-spacing-xs);
+    border-radius:   var(--semantic-border-radius-round);
+    background:      var(--semantic-color-interactive-background-strong-default);
+    color:           var(--semantic-color-interactive-text-neutral-default);
+    font-size:       var(--semantic-font-text-style-size-s);
+    letter-spacing:  0;
+  }
+
+  &__empty {
+    margin:      0;
+    padding:     var(--semantic-measurement-spacing-xs) 0;
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-s);
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+.bs-well {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s);
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border-radius: var(--semantic-border-radius-xs);
+  background:    var(--semantic-color-static-background-main-primary);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+
+  &__order {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    width:           20px;
+    height:          20px;
+    flex-shrink:     0;
+    border-radius:   var(--semantic-border-radius-round);
+    background:      var(--semantic-color-static-background-main-secondary);
+    font-family:     var(--semantic-font-family);
+    font-size:       var(--semantic-font-text-style-size-s);
+    font-weight:     var(--semantic-font-text-style-font-weight-semibold);
+    color:           var(--semantic-color-static-text-main-secondary);
+  }
+
+  &__label {
+    flex:          1;
+    min-width:     0;
+    font-family:   var(--semantic-font-family);
+    font-size:     var(--semantic-font-text-style-size-m);
+    font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+    color:         var(--semantic-color-static-text-main-primary);
+    white-space:   nowrap;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__value {
+    font-family:   var(--semantic-font-family);
+    font-size:     var(--semantic-font-text-style-size-s);
+    color:         var(--semantic-color-static-text-main-tertiary);
+    white-space:   nowrap;
+  }
+
+  &__controls {
+    display:     flex;
+    gap:         2px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Figures: field search picker — type to filter, click to add ──────────────
+.bs-field-search {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+}
+
+.bs-field-results {
+  display:            flex;
+  flex-direction:     column;
+  gap:                2px;
+  max-height:         300px;
+  overflow-y:         auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter:   stable;
+
+  &__empty {
+    margin:      0;
+    padding:     var(--semantic-measurement-spacing-s);
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-s);
+    color:       var(--semantic-color-static-text-main-tertiary);
+    text-align:  center;
+  }
+}
+
+.bs-field-result {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s);
+  width:         100%;
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border:        none;
+  border-radius: var(--semantic-border-radius-xs);
+  background:    transparent;
+  cursor:        pointer;
+  text-align:    left;
+  transition:    background 120ms ease;
+
+  &:hover {
+    background: var(--semantic-color-interactive-background-light-default);
+    .bs-field-result__add { color: var(--semantic-color-interactive-text-strong-default); }
+  }
+
+  &__label {
+    flex:          1;
+    min-width:     0;
+    font-family:   var(--semantic-font-family);
+    font-size:     var(--semantic-font-text-style-size-m);
+    color:         var(--semantic-color-static-text-main-primary);
+    white-space:   nowrap;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__cat {
+    flex-shrink:   0;
+    font-family:   var(--semantic-font-family);
+    font-size:     var(--semantic-font-text-style-size-s);
+    color:         var(--semantic-color-static-text-main-tertiary);
+  }
+
+  &__add {
+    flex-shrink: 0;
+    color:       var(--semantic-color-static-text-main-tertiary);
+    transition:  color 120ms ease;
+  }
+}
+
+// ── Step 1: layout picker ─────────────────────────────────────────────────────
+.bs-layout-pick {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-l);
+
+  &__sub {
+    margin:      0;
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-m);
+    color:       var(--semantic-color-static-text-main-secondary);
+  }
+
+  &__grid {
+    display:               grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap:                   var(--semantic-measurement-spacing-m);
+  }
+}
+
+.bs-layout-card {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     stretch;
+  gap:             var(--semantic-measurement-spacing-xs);
+  padding:         var(--semantic-measurement-spacing-m);
+  border:          1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-static-background-main-primary);
+  cursor:          pointer;
+  text-align:      left;
+  transition:      border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+
+  &:hover { border-color: var(--semantic-color-interactive-border-strong-default); }
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-strong-default);
+    outline-offset: 2px;
+  }
+
+  &--on {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    background:   var(--semantic-color-interactive-background-light-default);
+    box-shadow:   inset 0 0 0 1px var(--semantic-color-interactive-border-strong-default);
+  }
+
+  // The mini diagram reuses the real .bs-zones grid; zones are filled rectangles
+  &__diagram {
+    height:        72px;
+    padding:       var(--semantic-measurement-spacing-xs);
+    border-radius: var(--semantic-border-radius-xs);
+    background:    var(--semantic-color-static-background-main-secondary);
+    gap:           4px;
+
+    .bs-zone {
+      background:     var(--semantic-color-interactive-background-strong-default);
+      border-radius:  2px;
+      opacity:        0.85;
+      min-height:     0;
+    }
+  }
+
+  &__label {
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-semibold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__hint {
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-s);
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
 }
 
 // ── Keyframes ─────────────────────────────────────────────────────────────────

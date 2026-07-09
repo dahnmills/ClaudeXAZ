@@ -1,0 +1,402 @@
+/* ============================================================================
+   Echo — compagnon de feedback testeur. Identité propre (--ec-*, bleu
+   électrique), indépendante des tokens Qirin. Scopé à :host.
+   ========================================================================= */
+
+:host {
+  --ec-ink: #17151f;
+  --ec-ink-2: #56526b;
+  --ec-ink-3: #8b8798;
+  --ec-surface: #ffffff;
+  --ec-surface-2: #f7f8fc;
+  --ec-line: #e9e7f2;
+
+  --ec-blue: #2b6bff;
+  --ec-blue-ink: #1a4fe0;
+  --ec-blue-wash: #e7eeff;
+
+  --ec-pos: #0f9e6e;
+  --ec-pos-wash: #e4f6ee;
+  --ec-conf: #e8930c;
+  --ec-conf-wash: #fcf1dd;
+  --ec-neg: #f0436b;
+  --ec-neg-wash: #fde6ec;
+
+  --ec-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ec-shadow-fab: 0 6px 20px rgba(43, 107, 255, 0.4), 0 2px 6px rgba(23, 21, 31, 0.12);
+  --ec-shadow-pop: 0 24px 60px rgba(23, 21, 31, 0.2), 0 8px 20px rgba(23, 21, 31, 0.1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;   // seul le chrome interactif réactive les events
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Halo de survol (mode élément) ────────────────────────────────────── */
+.fb-highlight {
+  position: fixed;
+  pointer-events: none;
+  border: 2px solid var(--ec-blue);
+  background: color-mix(in srgb, var(--ec-blue) 14%, transparent);
+  border-radius: 8px;
+  transition: all 0.05s linear;
+}
+
+/* ── Surbrillance persistante de la cible retenue ─────────────────────── */
+.fb-selected {
+  position: fixed;
+  pointer-events: none;
+  border: 2px solid var(--ec-blue);
+  border-radius: 8px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ec-blue) 22%, transparent),
+              0 0 0 9999px rgba(23, 21, 31, 0.4);
+  z-index: 0;
+}
+
+/* ── Sélection de zone libre ──────────────────────────────────────────── */
+.fb-zone-catch {
+  position: fixed;
+  inset: 0;
+  pointer-events: auto;
+  cursor: crosshair;
+  background: rgba(23, 21, 31, 0.12);
+}
+.fb-zone {
+  position: fixed;
+  pointer-events: none;
+  border: 2px solid var(--ec-blue);
+  background: color-mix(in srgb, var(--ec-blue) 18%, transparent);
+  border-radius: 8px;
+}
+
+/* ── Bandeau d'aide ───────────────────────────────────────────────────── */
+.fb-hint {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px 9px 16px;
+  background: var(--ec-ink);
+  color: #fff;
+  border-radius: 100px;
+  box-shadow: var(--ec-shadow-pop);
+  font-size: 13.5px;
+  font-weight: 500;
+  pointer-events: none;
+  animation: ec-drop 0.28s var(--ec-ease);
+
+  svg { color: color-mix(in srgb, var(--ec-blue) 55%, #fff); }
+  &__esc {
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* ── Pastille flottante ───────────────────────────────────────────────── */
+.fb-dock {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: auto;
+}
+.fb-fab {
+  width: 54px;
+  height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--ec-blue);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--ec-shadow-fab);
+  transition: transform 0.18s var(--ec-ease), background 0.15s;
+
+  &:hover { transform: translateY(-2px) scale(1.03); background: var(--ec-blue-ink); }
+  &:active { transform: translateY(0) scale(0.97); }
+  &:focus-visible { outline: 3px solid var(--ec-blue-wash); outline-offset: 2px; }
+  &--active { background: var(--ec-ink); }
+}
+
+/* ── Menu de la pastille ──────────────────────────────────────────────── */
+.fb-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 252px;
+  padding: 6px;
+  background: var(--ec-surface);
+  border: 1px solid var(--ec-line);
+  border-radius: 16px;
+  box-shadow: var(--ec-shadow-pop);
+  animation: ec-pop 0.2s var(--ec-ease);
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    padding: 11px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    color: var(--ec-ink);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s;
+
+    svg { color: var(--ec-ink-3); transition: color 0.12s; }
+    &:hover { background: var(--ec-blue-wash); color: var(--ec-blue-ink); }
+    &:hover svg { color: var(--ec-blue); }
+    &:focus-visible { outline: 2px solid var(--ec-blue); outline-offset: -2px; }
+  }
+}
+
+/* ── Popover de saisie ────────────────────────────────────────────────── */
+.fb-editor {
+  position: fixed;
+  right: 24px;
+  bottom: calc(24px + 54px + 12px);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 24px - 54px - 24px);
+  background: var(--ec-surface);
+  border: 1px solid var(--ec-line);
+  border-radius: 20px;
+  box-shadow: var(--ec-shadow-pop);
+  pointer-events: auto;
+  overflow: hidden;
+  animation: ec-pop 0.24s var(--ec-ease);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 16px 14px;
+    border-bottom: 1px solid var(--ec-line);
+  }
+  &__brand { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
+  &__mark {
+    display: grid;
+    place-items: center;
+    width: 24px; height: 24px;
+    border-radius: 7px;
+    background: var(--ec-blue);
+    color: #fff;
+    flex-shrink: 0;
+  }
+  &__title {
+    font-family: 'Bricolage Grotesque', 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--ec-ink);
+  }
+  &__close {
+    display: grid;
+    place-items: center;
+    width: 30px; height: 30px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ec-ink-3);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+    &:hover { background: var(--ec-surface-2); color: var(--ec-ink); }
+    &:focus-visible { outline: 2px solid var(--ec-blue); outline-offset: -2px; }
+  }
+
+  &__scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  &__target {
+    margin: 0;
+    padding: 10px 12px;
+    background: var(--ec-surface-2);
+    border-radius: 10px;
+    color: var(--ec-ink-2);
+    font-size: 13.5px;
+    font-style: italic;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    padding: 5px;
+    background: var(--ec-surface-2);
+    border: 1px solid var(--ec-line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  &__thumb-img { max-width: 100%; max-height: 130px; border-radius: 8px; display: block; }
+  &__thumb-status { font-size: 12px; color: var(--ec-ink-3); }
+
+  &__foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--ec-line);
+    background: var(--ec-surface);
+  }
+}
+
+/* ── Champs ───────────────────────────────────────────────────────────── */
+.fb-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--ec-ink-2);
+  }
+  &__opt { color: var(--ec-ink-3); font-weight: 500; }
+}
+
+/* Réactions — segmentées, sélectionnables */
+.fb-react-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.fb-react {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 11px 6px;
+  border: 1.5px solid var(--ec-line);
+  border-radius: 12px;
+  background: var(--ec-surface);
+  color: var(--ec-ink-2);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s var(--ec-ease), border-color 0.12s, background 0.12s, color 0.12s;
+
+  &:hover { transform: translateY(-1px); border-color: #d7d3e8; }
+  &:active { transform: translateY(0); }
+  &:focus-visible { outline: 2px solid var(--ec-blue); outline-offset: 2px; }
+
+  &--like.fb-react--on     { background: var(--ec-pos-wash);  border-color: var(--ec-pos);  color: var(--ec-pos); }
+  &--dislike.fb-react--on  { background: var(--ec-neg-wash);  border-color: var(--ec-neg);  color: var(--ec-neg); }
+  &--confused.fb-react--on { background: var(--ec-conf-wash); border-color: var(--ec-conf); color: #a5680a; }
+}
+
+/* Note en étoiles */
+.fb-rating { display: flex; gap: 4px; }
+.fb-star {
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  border: none;
+  background: none;
+  color: var(--ec-line);
+  cursor: pointer;
+  transition: transform 0.12s var(--ec-ease), color 0.12s;
+
+  &:hover { transform: scale(1.12); }
+  &:focus-visible { outline: 2px solid var(--ec-blue); outline-offset: 2px; border-radius: 6px; }
+  &--on { color: var(--ec-conf); }
+}
+
+/* Zone de texte */
+.fb-textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1.5px solid var(--ec-line);
+  border-radius: 12px;
+  background: var(--ec-surface);
+  color: var(--ec-ink);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+  resize: vertical;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &::placeholder { color: var(--ec-ink-3); }
+  &:focus { outline: none; border-color: var(--ec-blue); box-shadow: 0 0 0 3px var(--ec-blue-wash); }
+}
+
+/* Boutons */
+.fb-btn {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s var(--ec-ease), background 0.15s, box-shadow 0.15s;
+
+  &:active { transform: translateY(1px); }
+  &:focus-visible { outline: 2px solid var(--ec-blue); outline-offset: 2px; }
+
+  &--ghost {
+    background: transparent;
+    color: var(--ec-ink-2);
+    &:hover { background: var(--ec-surface-2); color: var(--ec-ink); }
+  }
+  &--solid {
+    background: var(--ec-blue);
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(43, 107, 255, 0.35);
+    &:hover { background: var(--ec-blue-ink); }
+    &:disabled { background: var(--ec-line); color: var(--ec-ink-3); box-shadow: none; cursor: not-allowed; }
+  }
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────── */
+@keyframes ec-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes ec-drop {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-fab, .fb-react, .fb-star, .fb-btn { transition: none; }
+  .fb-menu, .fb-editor, .fb-hint { animation: none; }
+  .fb-highlight { transition: none; }
+}

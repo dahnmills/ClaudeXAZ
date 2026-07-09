@@ -7,17 +7,17 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   template: `
     <main class="ut-index">
-      <h1>User testing scenarios</h1>
-      <p>Pick a scenario to open the prototype.</p>
+      <h1>Prototype Qirin</h1>
+      <p>Choisissez un écran à ouvrir.</p>
       <ul>
-        <li><a routerLink="/home">Home</a></li>
-        <li><a routerLink="/accordion">With Accordion</a></li>
-        <li><a routerLink="/modal">With Modal</a></li>
-        <li><a routerLink="/filters">Filters</a></li>
-        <li><a routerLink="/search">Search</a></li>
-        <li><a routerLink="/admin-data">Admin Data</a></li>
-        <li><a routerLink="/tag-configuration">TAG Configuration</a></li>
-        <li><a routerLink="/buyer-summary/137381425">Buyer Summary</a></li>
+        <li><a routerLink="home">Home</a></li>
+        <li><a routerLink="accordion">With Accordion</a></li>
+        <li><a routerLink="modal">With Modal</a></li>
+        <li><a routerLink="filters">Filters</a></li>
+        <li><a routerLink="search">Search</a></li>
+        <li><a routerLink="admin-data">Admin Data</a></li>
+        <li><a routerLink="tag-configuration">TAG Configuration</a></li>
+        <li><a routerLink="buyer-summary/137381425">Buyer Summary</a></li>
       </ul>
     </main>
   `,

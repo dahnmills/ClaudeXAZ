@@ -1,0 +1,153 @@
+<!-- Halo de survol en mode élément -->
+@if (mode() === 'element' && hoveredRect(); as r) {
+  <div class="fb-highlight" [style.top.px]="r.y" [style.left.px]="r.x" [style.width.px]="r.w" [style.height.px]="r.h"></div>
+}
+
+<!-- Surbrillance persistante de la cible retenue (pendant la saisie) -->
+@if (selectedRect(); as r) {
+  <div class="fb-selected" [style.top.px]="r.y" [style.left.px]="r.x" [style.width.px]="r.w" [style.height.px]="r.h"></div>
+}
+
+<!-- Rectangle de sélection en mode zone -->
+@if (mode() === 'zone') {
+  <div class="fb-zone-catch"></div>
+  @if (zoneRect(); as z) {
+    <div class="fb-zone" [style.top.px]="z.y" [style.left.px]="z.x" [style.width.px]="z.w" [style.height.px]="z.h"></div>
+  }
+}
+
+<!-- Bandeau d'aide pendant le ciblage -->
+@if (mode() !== 'off') {
+  <div class="fb-hint" role="status">
+    @if (mode() === 'zone') {
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="2"/><path d="M8 3v18M3 8h18" stroke="currentColor" stroke-width="2"/></svg>
+      <span>Cliquez-glissez pour entourer une zone</span>
+    } @else {
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M12 22s8-5.5 8-12a8 8 0 1 0-16 0c0 6.5 8 12 8 12z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="2"/></svg>
+      <span>Cliquez l'élément à commenter</span>
+    }
+    <span class="fb-hint__esc">Échap</span>
+  </div>
+}
+
+<!-- Pastille flottante + menu -->
+<div class="fb-dock">
+  @if (menuOpen()) {
+    <div class="fb-menu" role="menu">
+      <button class="fb-menu__item" type="button" (click)="startElement()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M12 22s8-5.5 8-12a8 8 0 1 0-16 0c0 6.5 8 12 8 12z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="2"/></svg>
+        <span>Pointer un élément</span>
+      </button>
+      <button class="fb-menu__item" type="button" (click)="startZone()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="2"/><path d="M8 3v18M3 8h18" stroke="currentColor" stroke-width="2"/></svg>
+        <span>Sélectionner une zone</span>
+      </button>
+      <button class="fb-menu__item" type="button" (click)="startScreenFeedback()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span>Donner un avis sur cet écran</span>
+      </button>
+    </div>
+  }
+
+  <button
+    class="fb-fab"
+    type="button"
+    [class.fb-fab--active]="mode() !== 'off' || menuOpen()"
+    [attr.aria-expanded]="menuOpen()"
+    aria-label="Donner un retour"
+    (click)="toggleMenu()"
+  >
+    @if (mode() !== 'off' || menuOpen()) {
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    } @else {
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
+    }
+  </button>
+</div>
+
+<!-- Popover de saisie — ancré en bas à droite (widget Echo) -->
+@if (editorOpen()) {
+  <div class="fb-editor" role="dialog" aria-label="Donner un retour">
+    <header class="fb-editor__head">
+      <span class="fb-editor__brand">
+        <span class="fb-editor__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none"><path d="M4 5h16M4 12h10M4 19h7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+        </span>
+        <span class="fb-editor__title">
+          @if (placement() === 'zone') { Retour sur une zone }
+          @else if (placement() === 'screen') { Avis sur cet écran }
+          @else { Votre retour }
+        </span>
+      </span>
+      <button class="fb-editor__close" type="button" aria-label="Fermer" (click)="closeEditor()">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+
+    <div class="fb-editor__scroll">
+      @if (target()?.text; as t) {
+        <p class="fb-editor__target" title="{{ t }}">« {{ t }} »</p>
+      }
+
+      <!-- Vignette de la cible -->
+      @if (placement() !== 'screen') {
+        <div class="fb-editor__thumb">
+          @if (capturing()) {
+            <span class="fb-editor__thumb-status">Capture…</span>
+          } @else if (screenshot()) {
+            <img class="fb-editor__thumb-img" [src]="screenshot()" alt="Aperçu de la zone visée" />
+          } @else {
+            <span class="fb-editor__thumb-status">Pas d'aperçu</span>
+          }
+        </div>
+      }
+
+      <!-- Réaction (sélectionnable) -->
+      <div class="fb-field">
+        <span class="fb-field__label">Réaction</span>
+        <div class="fb-react-row" role="group" aria-label="Réaction">
+          <button type="button" class="fb-react fb-react--like" [class.fb-react--on]="selectedReaction() === 'like'"
+                  [attr.aria-pressed]="selectedReaction() === 'like'" aria-label="J'aime" (click)="toggleReaction('like')">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none"><path d="M7 11v9M2 13v5a2 2 0 0 0 2 2h13.5a2 2 0 0 0 2-1.6l1.3-6.5a1.6 1.6 0 0 0-1.6-1.9H14V5a2.5 2.5 0 0 0-2.5-2.5L7 11" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            J'aime
+          </button>
+          <button type="button" class="fb-react fb-react--dislike" [class.fb-react--on]="selectedReaction() === 'dislike'"
+                  [attr.aria-pressed]="selectedReaction() === 'dislike'" aria-label="Je n'aime pas" (click)="toggleReaction('dislike')">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none"><path d="M17 13V4M22 11V6a2 2 0 0 0-2-2H6.5a2 2 0 0 0-2 1.6L3.2 12a1.6 1.6 0 0 0 1.6 1.9H10v5a2.5 2.5 0 0 0 2.5 2.5L17 13" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            Non
+          </button>
+          <button type="button" class="fb-react fb-react--confused" [class.fb-react--on]="selectedReaction() === 'confused'"
+                  [attr.aria-pressed]="selectedReaction() === 'confused'" aria-label="Ça me perturbe" (click)="toggleReaction('confused')">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none"><circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.8"/><path d="M9.2 9.3a3 3 0 0 1 5.6 1.2c0 1.8-2.8 2.3-2.8 3.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.1" fill="currentColor"/></svg>
+            Confus
+          </button>
+        </div>
+      </div>
+
+      <!-- Note 1–5 -->
+      <div class="fb-field">
+        <span class="fb-field__label">Note</span>
+        <div class="fb-rating" role="group" aria-label="Note de 1 à 5">
+          @for (n of [1, 2, 3, 4, 5]; track n) {
+            <button type="button" class="fb-star" [class.fb-star--on]="ratingValue() >= n"
+                    [attr.aria-pressed]="ratingValue() === n" [attr.aria-label]="n + ' sur 5'" (click)="setRating(n)">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2l3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Commentaire -->
+      <div class="fb-field">
+        <span class="fb-field__label">Commentaire <span class="fb-field__opt">· optionnel</span></span>
+        <textarea class="fb-textarea" rows="3" placeholder="Dites-nous ce que vous en pensez…"
+                  [value]="comment()" (input)="onComment($event)"></textarea>
+      </div>
+    </div>
+
+    <footer class="fb-editor__foot">
+      <button class="fb-btn fb-btn--ghost" type="button" (click)="closeEditor()">Annuler</button>
+      <button class="fb-btn fb-btn--solid" type="button" [disabled]="!canSubmit()" (click)="submit()">Envoyer</button>
+    </footer>
+  </div>
+}

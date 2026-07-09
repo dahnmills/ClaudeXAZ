@@ -1,0 +1,275 @@
+<div class="vb">
+  <!-- Top bar : identité produit -->
+  <header class="vb-top">
+    <div class="vb-brand">
+      <span class="vb-brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+          <path d="M4 5h16M4 12h10M4 19h7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="vb-brand__name">Echo</span>
+      <span class="vb-brand__tag">{{ usingSupabase ? 'Live · Supabase' : 'Local' }}</span>
+    </div>
+    <div class="vb-top__actions">
+      <button class="vb-btn vb-btn--ghost" type="button" (click)="load()">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M23 4v6h-6M1 20v-6h6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Actualiser
+      </button>
+      <button class="vb-btn vb-btn--ghost" type="button" (click)="exportCsv()">CSV</button>
+      <button class="vb-btn vb-btn--solid" type="button" (click)="exportJson()">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Exporter
+      </button>
+    </div>
+  </header>
+
+  <main class="vb-main">
+    @if (loadError(); as err) {
+      <p class="vb-alert" role="alert">{{ err }}</p>
+    }
+
+    <!-- SIGNATURE : « The Room » — le verdict de la salle -->
+    <section class="room room--{{ verdict().tone }}" aria-label="Sentiment général">
+      <div class="room__glow" aria-hidden="true"></div>
+      <div class="room__content">
+        <span class="room__eyebrow">Ce que dit la salle</span>
+        <h1 class="room__headline">{{ verdict().headline }}</h1>
+        <p class="room__sub">{{ verdict().sub }}</p>
+
+        @if (stats().reacted > 0) {
+          <div class="room__signal" role="img" [attr.aria-label]="sentimentAria()">
+            @if (stats().likePct > 0) {
+              <span class="room__seg room__seg--pos" [style.flex-grow]="stats().likePct"></span>
+            }
+            @if (stats().confusedPct > 0) {
+              <span class="room__seg room__seg--conf" [style.flex-grow]="stats().confusedPct"></span>
+            }
+            @if (stats().dislikePct > 0) {
+              <span class="room__seg room__seg--neg" [style.flex-grow]="stats().dislikePct"></span>
+            }
+          </div>
+          <div class="room__legend">
+            <span><i class="room__dot room__dot--pos"></i>{{ stats().likes }} positif · {{ stats().likePct }}%</span>
+            <span><i class="room__dot room__dot--conf"></i>{{ stats().confused }} confus · {{ stats().confusedPct }}%</span>
+            <span><i class="room__dot room__dot--neg"></i>{{ stats().dislikes }} négatif · {{ stats().dislikePct }}%</span>
+          </div>
+        }
+      </div>
+
+      <div class="room__stats">
+        <div class="stat">
+          <span class="stat__n">{{ stats().total }}</span>
+          <span class="stat__l">Retours</span>
+        </div>
+        <div class="stat">
+          <span class="stat__n">{{ stats().sessions }}</span>
+          <span class="stat__l">Testeurs</span>
+        </div>
+        <div class="stat">
+          <span class="stat__n">
+            @if (stats().avgRating !== null) { {{ stats().avgRating }}<span class="stat__u">/5</span> }
+            @else { — }
+          </span>
+          <span class="stat__l">Note moy.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Barre de filtres -->
+    <section class="filters" aria-label="Filtres">
+      <div class="filters__row">
+        <div class="ctrl">
+          <label class="ctrl__l" for="f-page">Page</label>
+          <div class="ctrl__select">
+            <select id="f-page" (change)="onSelect('route', $event)">
+              @for (o of routeOptions(); track o.value) {
+                <option [value]="o.value" [selected]="o.value === routeFilter()">{{ o.label }}</option>
+              }
+            </select>
+            <svg class="ctrl__chev" viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="ctrl">
+          <label class="ctrl__l" for="f-kind">Type</label>
+          <div class="ctrl__select">
+            <select id="f-kind" (change)="onSelect('kind', $event)">
+              @for (o of kindOptions; track o.value) {
+                <option [value]="o.value" [selected]="o.value === kindFilter()">{{ o.label }}</option>
+              }
+            </select>
+            <svg class="ctrl__chev" viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="ctrl">
+          <label class="ctrl__l" for="f-sess">Testeur</label>
+          <div class="ctrl__select">
+            <select id="f-sess" (change)="onSelect('session', $event)">
+              @for (o of sessionOptions(); track o.value) {
+                <option [value]="o.value" [selected]="o.value === sessionFilter()">{{ o.label }}</option>
+              }
+            </select>
+            <svg class="ctrl__chev" viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="ctrl">
+          <label class="ctrl__l" for="f-from">Du</label>
+          <input class="ctrl__date" id="f-from" type="date" [value]="dateFrom()" (change)="onDate('from', $event)" />
+        </div>
+        <div class="ctrl">
+          <label class="ctrl__l" for="f-to">Au</label>
+          <input class="ctrl__date" id="f-to" type="date" [value]="dateTo()" (change)="onDate('to', $event)" />
+        </div>
+        @if (activeFilterCount() > 0) {
+          <button class="filters__reset" type="button" (click)="resetFilters()">
+            Réinitialiser ({{ activeFilterCount() }})
+          </button>
+        }
+      </div>
+    </section>
+
+    <!-- Fil des retours -->
+    @if (loading()) {
+      <div class="vb-state">Chargement des retours…</div>
+    } @else if (filtered().length === 0) {
+      <div class="vb-empty">
+        <span class="vb-empty__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <p class="vb-empty__title">
+          @if (entries().length > 0) { Rien ne correspond à ces filtres }
+          @else { Pas encore de retours }
+        </p>
+        <p class="vb-empty__sub">
+          @if (entries().length > 0) { Élargis la période ou réinitialise les filtres. }
+          @else { Les retours laissés dans l'espace testeur atterrissent ici. }
+        </p>
+        @if (!usingSupabase && entries().length === 0) {
+          <button class="vb-btn vb-btn--solid" type="button" (click)="loadDemo()">Charger des exemples</button>
+        }
+      </div>
+    } @else {
+      <ul class="feed">
+        @for (e of filtered(); track e.id) {
+          <li>
+            <button type="button" class="card" (click)="openDetail(e)">
+              <span class="card__pin card__pin--{{ e.reaction || 'none' }}" aria-hidden="true">
+                @switch (e.reaction) {
+                  @case ('like') { <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M7 11v9M2 13v5a2 2 0 0 0 2 2h13.5a2 2 0 0 0 2-1.6l1.3-6.5a1.6 1.6 0 0 0-1.6-1.9H14V5a2.5 2.5 0 0 0-2.5-2.5L7 11" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg> }
+                  @case ('dislike') { <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M17 13V4M22 11V6a2 2 0 0 0-2-2H6.5a2 2 0 0 0-2 1.6L3.2 12a1.6 1.6 0 0 0 1.6 1.9H10v5a2.5 2.5 0 0 0 2.5 2.5L17 13" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg> }
+                  @case ('confused') { <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.8"/><path d="M9.2 9.3a3 3 0 0 1 5.6 1.2c0 1.8-2.8 2.3-2.8 3.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.1" fill="currentColor"/></svg> }
+                  @default { <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> }
+                }
+              </span>
+
+              <span class="card__body">
+                @if (e.comment) {
+                  <span class="card__quote">{{ e.comment }}</span>
+                } @else {
+                  <span class="card__kind">{{ kindLabel(e.kind) }}
+                    @if (reactionLabel(e.reaction); as rl) { <span class="card__kind-r">· {{ rl }}</span> }
+                  </span>
+                }
+                <span class="card__meta">
+                  <span class="card__route">{{ e.route }}</span>
+                  @if (e.target_mode === 'zone') {
+                    <span class="card__tag">zone</span>
+                  } @else if (e.target_label || e.target_text) {
+                    <span class="card__tag">{{ e.target_label || e.target_text }}</span>
+                  }
+                  <span class="card__time">{{ relTime(e.created_at) }}</span>
+                </span>
+              </span>
+
+              @if (e.rating != null) {
+                <span class="card__rating">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2l3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+                  {{ e.rating }}
+                </span>
+              }
+
+              @if (e.screenshot) {
+                <img class="card__thumb" [src]="e.screenshot" alt="" loading="lazy" />
+              }
+
+              <svg class="card__go" viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </li>
+        }
+      </ul>
+
+      @if (!usingSupabase) {
+        <div class="vb-foot">
+          <button class="vb-btn vb-btn--danger" type="button" (click)="clearLocal()">Vider le stockage local</button>
+        </div>
+      }
+    }
+  </main>
+</div>
+
+<!-- Lightbox capture -->
+@if (preview(); as shot) {
+  <div class="lightbox" (click)="preview.set(null)" role="dialog" aria-label="Capture agrandie">
+    <img [src]="shot" alt="Capture agrandie" />
+  </div>
+}
+
+<!-- Panneau de détail (slide-over) -->
+@if (detail(); as e) {
+  <div class="sheet" role="dialog" aria-label="Détail du retour">
+    <button class="sheet__scrim" type="button" aria-label="Fermer" (click)="closeDetail()"></button>
+    <aside class="sheet__panel">
+      <header class="sheet__head sheet__head--{{ e.reaction || 'none' }}">
+        <button class="sheet__close" type="button" aria-label="Fermer" (click)="closeDetail()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <span class="sheet__badge">
+          @if (reactionLabel(e.reaction); as rl) { {{ rl }} } @else { {{ kindLabel(e.kind) }} }
+        </span>
+        @if (e.rating != null) {
+          <span class="sheet__rating">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2l3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+            {{ e.rating }}<span class="sheet__rating-max">/5</span>
+          </span>
+        }
+        <time class="sheet__time">{{ formatDate(e.created_at) }}</time>
+      </header>
+
+      <div class="sheet__body">
+        @if (e.comment) {
+          <blockquote class="sheet__quote">{{ e.comment }}</blockquote>
+        }
+
+        @if (e.screenshot) {
+          <button type="button" class="sheet__shot" (click)="preview.set(e.screenshot)">
+            <img [src]="e.screenshot" alt="Capture du retour" />
+            <span class="sheet__shot-badge">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Agrandir
+            </span>
+          </button>
+        }
+
+        <section class="sheet__sec">
+          <h3 class="sheet__label">Cible</h3>
+          <span class="sheet__pill">{{ targetModeLabel(e.target_mode) }}</span>
+          @if (e.target_text) { <p class="sheet__target">« {{ e.target_text }} »</p> }
+          <dl class="kv">
+            @if (e.target_label) { <div><dt>Composants</dt><dd>{{ e.target_label }}</dd></div> }
+            @if (e.target_selector) { <div><dt>Sélecteur</dt><dd class="kv__mono">{{ e.target_selector }}</dd></div> }
+            @if (e.target_rect; as r) { <div><dt>Dimensions</dt><dd>{{ r.w }} × {{ r.h }} px</dd></div> }
+          </dl>
+        </section>
+
+        <section class="sheet__sec sheet__sec--muted">
+          <h3 class="sheet__label">Contexte</h3>
+          <dl class="kv">
+            <div><dt>Page</dt><dd class="kv__mono">{{ e.route }}</dd></div>
+            <div><dt>Testeur</dt><dd class="kv__mono">{{ shortSession(e.session_id) }}</dd></div>
+            @if (e.viewport; as v) { <div><dt>Écran</dt><dd>{{ v.w }} × {{ v.h }} px</dd></div> }
+            @if (e.user_agent) { <div><dt>Navigateur</dt><dd class="kv__ua">{{ e.user_agent }}</dd></div> }
+          </dl>
+        </section>
+      </div>
+    </aside>
+  </div>
+}
