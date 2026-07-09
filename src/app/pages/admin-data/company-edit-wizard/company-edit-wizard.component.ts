@@ -8,6 +8,7 @@ import {
   ButtonComponent,
   ButtonIconComponent,
   IconComponent,
+  TooltipDirective,
   type SelectOption,
 } from '../../../shared/ui';
 
@@ -29,7 +30,7 @@ const ALL_STEPS = STEPS.map((_, i) => i); // [0,1,2,3,4]
   standalone: true,
   imports: [
     ModalComponent, StepperComponent, InputTextComponent, SelectComponent,
-    CheckboxComponent, ButtonComponent, ButtonIconComponent, IconComponent,
+    CheckboxComponent, ButtonComponent, ButtonIconComponent, IconComponent, TooltipDirective,
   ],
   templateUrl: './company-edit-wizard.component.html',
   styleUrl: './company-edit-wizard.component.scss',

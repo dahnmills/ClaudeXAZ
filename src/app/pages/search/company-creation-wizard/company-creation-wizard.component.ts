@@ -10,6 +10,7 @@ import {
   ButtonIconComponent,
   IconComponent,
   SpinnerComponent,
+  TooltipDirective,
   type SelectOption,
 } from '../../../shared/ui';
 import { BuyerSummaryStore, type BuyerCompany } from '../../buyer-summary/buyer-summary.store';
@@ -41,7 +42,7 @@ const MATCH_COMPANY: BuyerCompany = {
   standalone: true,
   imports: [
     ModalComponent, StepperComponent, InputTextComponent, SelectComponent,
-    CheckboxComponent, ButtonComponent, ButtonIconComponent, IconComponent, SpinnerComponent,
+    CheckboxComponent, ButtonComponent, ButtonIconComponent, IconComponent, SpinnerComponent, TooltipDirective,
   ],
   templateUrl: './company-creation-wizard.component.html',
   styleUrl: './company-creation-wizard.component.scss',

@@ -50,21 +50,21 @@
               @case (0) {
                 <div class="wizard__card">
                   <div class="wizard__row">
-                    <ds-select label="Company status *" placeholder="Value" [options]="companyStatusOptions"
+                    <ds-select label="Company status *" placeholder="" [options]="companyStatusOptions"
                       [value]="fieldVal('companyStatus')" (valueChange)="setField('companyStatus', $event)" />
-                    <ds-select label="Legal form *" placeholder="Value" [options]="legalFormOptions"
+                    <ds-select label="Legal form *" placeholder="" [options]="legalFormOptions"
                       [value]="fieldVal('legalForm')" (valueChange)="setField('legalForm', $event)" />
-                    <ds-select label="Protected Buyer" placeholder="Value" [options]="yesNoOptions"
+                    <ds-select label="Protected Buyer" placeholder="" [options]="yesNoOptions"
                       [value]="fieldVal('protectedBuyer')" (valueChange)="setField('protectedBuyer', $event)" />
                   </div>
                   <div class="wizard__row">
-                    <ds-input-text label="Company name *" placeholder="Value"
+                    <ds-input-text label="Company name *" placeholder=""
                       [value]="fieldVal('companyName')" (valueChange)="setField('companyName', $event)" />
-                    <ds-input-text label="Non latin company name" placeholder="Value"
+                    <ds-input-text label="Non latin company name" placeholder=""
                       [value]="fieldVal('nonLatinName')" (valueChange)="setField('nonLatinName', $event)" />
                   </div>
                   <div class="wizard__row">
-                    <ds-select label="Identifier type" placeholder="Value" [options]="identifierTypeOptions"
+                    <ds-select label="Identifier type" placeholder="" [options]="identifierTypeOptions"
                       [value]="fieldVal('identifierType')" (valueChange)="setField('identifierType', $event)" />
                     <ds-input-text label="Identifier type (if not in the list)" placeholder="A"
                       [value]="fieldVal('identifierOther')" (valueChange)="setField('identifierOther', $event)" />
@@ -86,25 +86,25 @@
               @case (1) {
                 <div class="wizard__card">
                   <div class="wizard__row">
-                    <ds-input-text label="Street number" placeholder="Value"
+                    <ds-input-text label="Street number" placeholder=""
                       [value]="fieldVal('streetNumber')" (valueChange)="setField('streetNumber', $event)" />
-                    <ds-input-text label="Street name" placeholder="Value"
+                    <ds-input-text label="Street name" placeholder=""
                       [value]="fieldVal('streetName')" (valueChange)="setField('streetName', $event)" />
                   </div>
                   <div class="wizard__row">
-                    <ds-input-text label="Additional line" placeholder="Value"
+                    <ds-input-text label="Additional line" placeholder=""
                       [value]="fieldVal('additionalLine')" (valueChange)="setField('additionalLine', $event)" />
                   </div>
                   <div class="wizard__row">
-                    <ds-input-text label="PO Box" placeholder="Value"
+                    <ds-input-text label="PO Box" placeholder=""
                       [value]="fieldVal('poBox')" (valueChange)="setField('poBox', $event)" />
-                    <ds-input-text label="PB Code" placeholder="Value"
+                    <ds-input-text label="PB Code" placeholder=""
                       [value]="fieldVal('pbCode')" (valueChange)="setField('pbCode', $event)" />
                   </div>
                   <div class="wizard__row">
-                    <ds-input-text label="Post code" placeholder="Value"
+                    <ds-input-text label="Post code" placeholder=""
                       [value]="fieldVal('postCode')" (valueChange)="setField('postCode', $event)" />
-                    <ds-input-text label="Town" placeholder="Value"
+                    <ds-input-text label="Town" placeholder=""
                       [value]="fieldVal('town')" (valueChange)="setField('town', $event)" />
                   </div>
                   <div class="wizard__row">
@@ -122,9 +122,9 @@
                   <span class="wizard__group-title">Information</span>
                   <div class="wizard__card">
                     <div class="wizard__row">
-                      <ds-input-text label="Company phone number" placeholder="Value"
+                      <ds-input-text label="Company phone number" placeholder=""
                         [value]="fieldVal('phone')" (valueChange)="setField('phone', $event)" />
-                      <ds-input-text label="Fax number" placeholder="Value"
+                      <ds-input-text label="Fax number" placeholder=""
                         [value]="fieldVal('fax')" (valueChange)="setField('fax', $event)" />
                     </div>
                     <div class="wizard__row">
@@ -145,9 +145,9 @@
                   <div class="wizard__card">
                     @for (c of contacts(); track $index) {
                       <div class="wizard__row wizard__row--removable">
-                        <ds-input-text [label]="'Contact Name #0' + ($index + 1)" placeholder="Value"
+                        <ds-input-text [label]="'Contact Name #0' + ($index + 1)" placeholder=""
                           [value]="c.name" (valueChange)="setContact($index, 'name', $event)" />
-                        <ds-input-text label="Email" placeholder="Value"
+                        <ds-input-text label="Email" placeholder=""
                           [value]="c.email" (valueChange)="setContact($index, 'email', $event)" />
                         <ds-button-icon type="secondary" tone="default" ariaLabel="Remove contact"
                           [disabled]="contacts().length <= 1" (clicked)="removeContact($index)">
@@ -165,25 +165,25 @@
                   <div class="wizard__row">
                     <ds-select label="Currency" placeholder="EUR" [options]="currencyOptions"
                       [value]="fieldVal('currency')" (valueChange)="setField('currency', $event)" />
-                    <ds-input-text label="Share capital" placeholder="Value"
+                    <ds-input-text label="Share capital" placeholder=""
                       [value]="fieldVal('shareCapital')" (valueChange)="setField('shareCapital', $event)" />
                     <ds-input-text label="Share capital date" placeholder="DD/MM/YYYY"
                       [value]="fieldVal('shareCapitalDate')" (valueChange)="setField('shareCapitalDate', $event)" />
-                    <ds-input-text label="Issued capital" placeholder="Value"
+                    <ds-input-text label="Issued capital" placeholder=""
                       [value]="fieldVal('issuedCapital')" (valueChange)="setField('issuedCapital', $event)" />
                   </div>
                   <div class="wizard__row">
-                    <ds-select label="Contribution in kind" placeholder="Value" [options]="yesNoOptions"
+                    <ds-select label="Contribution in kind" placeholder="" [options]="yesNoOptions"
                       [value]="fieldVal('contributionKind')" (valueChange)="setField('contributionKind', $event)" />
-                    <ds-input-text label="Contribution in kind result" placeholder="Value"
+                    <ds-input-text label="Contribution in kind result" placeholder=""
                       [value]="fieldVal('contributionResult')" (valueChange)="setField('contributionResult', $event)" />
                   </div>
                   <div class="wizard__row">
-                    <ds-input-text label="Turnover" placeholder="Value"
+                    <ds-input-text label="Turnover" placeholder=""
                       [value]="fieldVal('turnover')" (valueChange)="setField('turnover', $event)" />
-                    <ds-input-text label="Turnover year" placeholder="Value"
+                    <ds-input-text label="Turnover year" placeholder=""
                       [value]="fieldVal('turnoverYear')" (valueChange)="setField('turnoverYear', $event)" />
-                    <ds-select label="Turnover type" placeholder="Value" [options]="turnoverTypeOptions"
+                    <ds-select label="Turnover type" placeholder="" [options]="turnoverTypeOptions"
                       [value]="fieldVal('turnoverType')" (valueChange)="setField('turnoverType', $event)" />
                   </div>
                 </div>
@@ -199,7 +199,7 @@
                         [value]="mainActivity().type" (valueChange)="setMainActivity('type', $event)" />
                       <ds-input-text label="Code" placeholder="Placeholder"
                         [value]="mainActivity().code" (valueChange)="setMainActivity('code', $event)" />
-                      <ds-input-text label="Meaning" placeholder="Value"
+                      <ds-input-text label="Meaning" placeholder=""
                         [value]="mainActivity().meaning" (valueChange)="setMainActivity('meaning', $event)" />
                     </div>
                   </div>
@@ -220,7 +220,7 @@
                           [value]="a.type" (valueChange)="setActivity($index, 'type', $event)" />
                         <ds-input-text label="Code" placeholder="Placeholder"
                           [value]="a.code" (valueChange)="setActivity($index, 'code', $event)" />
-                        <ds-input-text label="Meaning" placeholder="Value"
+                        <ds-input-text label="Meaning" placeholder=""
                           [value]="a.meaning" (valueChange)="setActivity($index, 'meaning', $event)" />
                         <ds-button-icon type="secondary" tone="default" ariaLabel="Remove activity"
                           (clicked)="removeActivity($index)">
@@ -249,14 +249,20 @@
       <div class="wizard__footer">
         <div class="wizard__footer-left">
           @if (currentStep() > 0) {
-            <ds-button type="plain" tone="default" [disabled]="verifying()" (clicked)="back()">
+            <ds-button type="plain" tone="default" [disabled]="verifying()"
+              [dsTooltip]="'Go back to ' + steps[currentStep() - 1].label"
+              dsTooltipPosition="top-center"
+              (clicked)="back()">
               <ds-icon slot="icon-left" name="arrow-left" [size]="16" />
               Back
             </ds-button>
           }
         </div>
         <div class="wizard__footer-right">
-          <ds-button type="primary" [loading]="verifying()" (clicked)="next()">
+          <ds-button type="primary" [loading]="verifying()"
+            [dsTooltip]="isLast() ? 'Create and open the company file' : 'Continue to ' + steps[currentStep() + 1].label"
+            dsTooltipPosition="top-center"
+            (clicked)="next()">
             {{ isLast() ? 'Create company' : 'Next' }}
           </ds-button>
         </div>
