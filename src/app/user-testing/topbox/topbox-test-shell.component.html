@@ -50,6 +50,7 @@
 
 <!-- ══ Layout : sidenav + main ══════════════════════════════════ -->
 <div class="ut-layout">
+  @if (showSidenav()) {
   <ds-side-nav [(collapsed)]="sideNavCollapsed">
     <ds-side-nav-item>
       <ds-icon slot="icon" name="home" [size]="24" />
@@ -76,6 +77,7 @@
       Applications
     </ds-side-nav-item>
   </ds-side-nav>
+  }
 
   <main class="ut-main">
     <!-- Topbox (full width au-dessus du page-header) -->

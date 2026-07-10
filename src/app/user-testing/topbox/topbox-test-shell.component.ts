@@ -42,6 +42,7 @@ import { FlyoutMenuItemComponent } from '../../shared/ui/flyout-menu/flyout-menu
 export class TopboxTestShellComponent {
   /** Pilote l'animation d'ouverture/fermeture du slot [slot=topbox-extension] */
   extensionExpanded = input<boolean>(false);
+  showSidenav       = input<boolean>(true);
   sideNavCollapsed  = signal<boolean>(true);
   accountMenuOpen   = signal<boolean>(false);
 
