@@ -14,6 +14,7 @@ export type ModalSize = 'small' | 'medium' | 'large' | 'xlarge';
   host: {
     '[class]':            'hostClasses()',
     '[attr.aria-hidden]': '!open()',
+    '[attr.title]':       'null',
     'role':               'dialog',
     'aria-modal':         'true',
   },

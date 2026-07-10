@@ -233,10 +233,10 @@
       <div class="wizard__footer-right">
         <ds-button type="secondary" dsTooltip="Cancel and close without saving" dsTooltipPosition="top-center" (clicked)="close()">Cancel</ds-button>
         <ds-button type="primary"
-          [dsTooltip]="isLast() ? 'Save all changes' : 'Continue to ' + steps[currentStep() + 1].label"
+          [dsTooltip]="isLast() ? 'Save all changes' : 'Save and continue to ' + steps[currentStep() + 1].label"
           dsTooltipPosition="top-center"
           (clicked)="next()">
-          {{ isLast() ? 'Save changes' : 'Next' }}
+          Save changes
         </ds-button>
       </div>
     </div>
