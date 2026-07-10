@@ -5,7 +5,7 @@ export interface StepperStep {
   label: string;
 }
 
-export type StepStatus = 'completed' | 'current' | 'current-completed' | 'upcoming';
+export type StepStatus = 'completed' | 'current' | 'current-completed' | 'unlocked' | 'upcoming';
 
 /**
  * Stepper vertical : liste d'étapes avec marqueur (numéro / check), libellé et
@@ -36,9 +36,11 @@ export class StepperComponent {
   statusOf(i: number): StepStatus {
     const isCompleted = this.completedSteps().includes(i);
     const isCurrent = i === this.current();
+    const isUnlocked = i <= this.navigableUpTo() && !isCompleted && !isCurrent;
     if (isCurrent && isCompleted) return 'current-completed';
     if (isCompleted) return 'completed';
     if (isCurrent) return 'current';
+    if (isUnlocked) return 'unlocked';
     return 'upcoming';
   }
 

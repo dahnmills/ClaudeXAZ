@@ -40,9 +40,15 @@
 
 // ── 4 états clairement distincts ─────────────────────────────────────────────
 
-// 1. not current + not checked (upcoming) : ring gris vide
+// 1. not current + not checked + locked (upcoming) : ring gris vide
 .ds-stepper__step--upcoming .ds-stepper__marker {
   border: 2px solid var(--semantic-color-static-border-subtle-tertiary);
+  background: transparent;
+}
+
+// 1b. débloqué mais pas complété ni courant : ring bleu clair
+.ds-stepper__step--unlocked .ds-stepper__marker {
+  border: 2px solid var(--semantic-color-interactive-background-medium-default);
   background: transparent;
 }
 
@@ -95,6 +101,9 @@
 }
 .ds-stepper__step--upcoming .ds-stepper__label {
   color: var(--semantic-color-static-text-main-tertiary);
+}
+.ds-stepper__step--unlocked .ds-stepper__label {
+  color: var(--semantic-color-static-text-main-primary);
 }
 
 .ds-stepper__step--clickable {
