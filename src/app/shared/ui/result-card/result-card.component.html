@@ -60,7 +60,9 @@
       >
         <ds-icon [name]="favorited() ? 'star-filled' : 'star'" [size]="20" />
       </ds-button-icon>
-      <ds-button-icon type="plain" tone="accent" ariaLabel="Toggle details" (clicked)="toggled.emit()">
+      <ds-button-icon type="plain" tone="accent" ariaLabel="Toggle details"
+        [disabled]="!hasDetails()"
+        (clicked)="hasDetails() && toggled.emit()">
         <ds-icon [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="20" />
       </ds-button-icon>
     </div>

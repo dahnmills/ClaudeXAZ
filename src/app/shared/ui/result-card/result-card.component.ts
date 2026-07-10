@@ -73,4 +73,10 @@ export class ResultCardComponent {
     if (d.localIds)  out.push({ title: 'Local IDs',              rows: d.localIds });
     return out;
   });
+
+  hasDetails = computed(() => {
+    if (!this.exists()) return false;
+    const d = this.data();
+    return !!(d.general?.length || d.financial?.length || d.localIds?.length || d.providers?.length);
+  });
 }
