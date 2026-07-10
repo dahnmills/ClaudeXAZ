@@ -42,9 +42,24 @@
   background: var(--semantic-color-interactive-background-strong-default);
   color: var(--semantic-color-static-text-main-reversed, #fff);
 }
+// Étape active ET déjà complétée : fond plein + ring d'accentuation
+.ds-stepper__step--current-completed .ds-stepper__marker {
+  background: var(--semantic-color-interactive-background-strong-default);
+  color: var(--semantic-color-static-text-main-reversed, #fff);
+  box-shadow: 0 0 0 3px var(--semantic-color-interactive-background-light-default);
+}
+// Étape active non-complétée : ring + point central
 .ds-stepper__step--current .ds-stepper__marker {
   border: 2px solid var(--semantic-color-interactive-background-strong-default);
   background: transparent;
+
+  &::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--semantic-color-interactive-background-strong-default);
+  }
 }
 .ds-stepper__step--upcoming .ds-stepper__marker {
   border: 2px solid var(--semantic-color-static-border-subtle-tertiary);

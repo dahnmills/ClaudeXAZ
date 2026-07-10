@@ -5,7 +5,7 @@
     (click)="isNavigable($index) && stepChange.emit($index)"
   >
     <div class="ds-stepper__marker">
-      @if (statusOf($index) === 'completed') {
+      @if (statusOf($index) === 'completed' || statusOf($index) === 'current-completed') {
         <ds-icon name="check" [size]="14" />
       }
     </div>
@@ -14,6 +14,7 @@
       <span class="ds-stepper__label">{{ s.label }}</span>
       <span class="ds-stepper__status">
         @if (statusOf($index) === 'completed') { Completed }
+      @if (statusOf($index) === 'current-completed') { Completed }
       </span>
     </div>
   </div>
