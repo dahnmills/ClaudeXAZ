@@ -64,6 +64,9 @@ export class CompanyCreationWizardComponent {
     this.completedSteps.update(c => c.includes(i) ? c : [...c, i]);
   }
 
+  /** Plus haute étape jamais atteinte — toute étape ≤ maxReached est navigable. */
+  maxReached = signal<number>(0);
+
   // ── État de vérification / matching ───────────────────────────────────
   verifying       = signal<boolean>(false);
   matchSuggestion = signal<BuyerCompany | null>(null);
@@ -122,7 +125,7 @@ export class CompanyCreationWizardComponent {
 
   // ── Navigation ────────────────────────────────────────────────────────
   back() { if (this.currentStep() > 0) this.currentStep.update(s => s - 1); }
-  goToStep(i: number) { if (this.completedSteps().includes(i) || i === this.currentStep()) this.currentStep.set(i); }
+  goToStep(i: number) { if (i <= this.maxReached()) this.currentStep.set(i); }
 
   next() {
     const cur = this.currentStep();
@@ -143,7 +146,9 @@ export class CompanyCreationWizardComponent {
         return;
       }
       this.markCompleted(cur);
-      this.currentStep.update(s => s + 1);
+      const next = cur + 1;
+      this.maxReached.update(m => Math.max(m, next));
+      this.currentStep.set(next);
     }, VERIFY_MS);
   }
 
@@ -188,6 +193,7 @@ export class CompanyCreationWizardComponent {
     // reset pour la prochaine ouverture
     this.currentStep.set(0);
     this.completedSteps.set([]);
+    this.maxReached.set(0);
     this.matchSuggestion.set(null);
     this.matchResolved = false;
     this.verifying.set(false);

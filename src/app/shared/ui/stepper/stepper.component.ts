@@ -26,6 +26,8 @@ export class StepperComponent {
   current = input<number>(0);
   /** Indices des étapes déjà complétées (restent "completed" même après Back). */
   completedSteps = input<number[]>([]);
+  /** Index max jamais atteint — toutes les étapes ≤ navigableUpTo sont cliquables. */
+  navigableUpTo = input<number>(-1);
   /** Émis quand l'user clique sur une étape navigable (completed ou current). */
   stepChange = output<number>();
 
@@ -35,5 +37,9 @@ export class StepperComponent {
     if (this.completedSteps().includes(i)) return 'completed';
     if (i === this.current()) return 'current';
     return 'upcoming';
+  }
+
+  isNavigable(i: number): boolean {
+    return this.statusOf(i) !== 'upcoming' || i <= this.navigableUpTo();
   }
 }

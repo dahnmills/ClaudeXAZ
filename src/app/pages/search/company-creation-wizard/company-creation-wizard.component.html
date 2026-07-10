@@ -10,7 +10,7 @@
     <div class="wizard__cols">
       <!-- Colonne gauche : étapes -->
       <aside class="wizard__steps">
-        <ds-stepper [steps]="steps" [current]="currentStep()" [completedSteps]="completedSteps()" (stepChange)="goToStep($event)" />
+        <ds-stepper [steps]="steps" [current]="currentStep()" [completedSteps]="completedSteps()" [navigableUpTo]="maxReached()" (stepChange)="goToStep($event)" />
       </aside>
 
       <!-- Colonne droite : formulaire -->
