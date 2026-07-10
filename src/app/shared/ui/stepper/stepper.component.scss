@@ -38,17 +38,15 @@
   z-index: 1;
 }
 
-.ds-stepper__step--completed .ds-stepper__marker {
-  background: var(--semantic-color-interactive-background-strong-default);
-  color: var(--semantic-color-static-text-main-reversed, #fff);
+// ── 4 états clairement distincts ─────────────────────────────────────────────
+
+// 1. not current + not checked (upcoming) : ring gris vide
+.ds-stepper__step--upcoming .ds-stepper__marker {
+  border: 2px solid var(--semantic-color-static-border-subtle-tertiary);
+  background: transparent;
 }
-// Étape active ET déjà complétée : fond plein + ring d'accentuation
-.ds-stepper__step--current-completed .ds-stepper__marker {
-  background: var(--semantic-color-interactive-background-strong-default);
-  color: var(--semantic-color-static-text-main-reversed, #fff);
-  box-shadow: 0 0 0 3px var(--semantic-color-interactive-background-light-default);
-}
-// Étape active non-complétée : ring + point central
+
+// 2. current + not checked : ring bleu + point central bleu
 .ds-stepper__step--current .ds-stepper__marker {
   border: 2px solid var(--semantic-color-interactive-background-strong-default);
   background: transparent;
@@ -61,9 +59,20 @@
     background: var(--semantic-color-interactive-background-strong-default);
   }
 }
-.ds-stepper__step--upcoming .ds-stepper__marker {
-  border: 2px solid var(--semantic-color-static-border-subtle-tertiary);
-  background: transparent;
+
+// 3. not current + checked (completed) : fond bleu plein + check blanc
+.ds-stepper__step--completed .ds-stepper__marker {
+  background: var(--semantic-color-interactive-background-strong-default);
+  color: var(--semantic-color-static-text-main-reversed, #fff);
+}
+
+// 4. current + checked : fond bleu + check + double ring (blanc puis bleu) = "tu es ici"
+.ds-stepper__step--current-completed .ds-stepper__marker {
+  background: var(--semantic-color-interactive-background-strong-default);
+  color: var(--semantic-color-static-text-main-reversed, #fff);
+  box-shadow:
+    0 0 0 2px var(--semantic-color-static-background-main-primary),
+    0 0 0 4px var(--semantic-color-interactive-background-strong-default);
 }
 
 .ds-stepper__text {
