@@ -133,7 +133,9 @@ export class CompanyCreationWizardComponent {
 
     // Étape déjà complétée (revenue via Back) → pas de re-vérification, on avance.
     if (this.completedSteps().includes(cur)) {
-      this.currentStep.update(s => s + 1);
+      const next = cur + 1;
+      this.maxReached.update(m => Math.max(m, next));
+      this.currentStep.set(next);
       return;
     }
 
@@ -167,7 +169,9 @@ export class CompanyCreationWizardComponent {
     this.matchResolved = true;
     this.matchSuggestion.set(null);
     this.markCompleted(this.currentStep());
-    this.currentStep.update(s => s + 1);
+    const next = this.currentStep() + 1;
+    this.maxReached.update(m => Math.max(m, next));
+    this.currentStep.set(next);
   }
 
   private genId(): string { return Math.floor(Math.random() * 1e9).toString(); }
