@@ -37,6 +37,14 @@ jobs:
       - name: Build Angular app for Pages
         run: npm run build -- --configuration production --base-href "/ClaudeXAZ/"
 
+      - name: Build Storybook
+        run: npm run build-storybook
+
+      - name: Nest Storybook under /storybook
+        run: |
+          mkdir -p dist/design-system/browser/storybook
+          cp -r dist/storybook/. dist/design-system/browser/storybook/
+
       - name: Debug artifact size
         run: |
           du -sh dist/design-system/browser
