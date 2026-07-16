@@ -1,0 +1,55 @@
+<ds-modal
+  [open]="open()"
+  title="Edit TRANS-NA-EXCL"
+  size="large"
+  [showBack]="false"
+  contentHeight="auto"
+  (closed)="closed.emit()">
+
+  <p class="te-intro">
+    Status reason codes excluded from the TRANS-NA calculation for <strong>{{ countryName() }}</strong>.
+    Changes follow the DRAFT/VALIDATED lifecycle.
+    <ds-tag type="static" label="Draft" />
+  </p>
+
+  <h4 class="te-section">Current codes</h4>
+  @if (isEmpty()) {
+    <ds-functional-notice
+      status="info"
+      message="No codes configured — saving will allow all status reason codes." />
+  } @else {
+    <div class="te-list">
+      @for (c of local(); track c.code) {
+        <div class="te-code">
+          <span class="te-key">{{ c.code }}</span>
+          <span class="te-desc">{{ c.label }}</span>
+          <ds-button-icon ariaLabel="Remove code" (clicked)="removeCode(c.code)">
+            <ds-icon name="close" [size]="14" />
+          </ds-button-icon>
+        </div>
+      }
+    </div>
+  }
+
+  <h4 class="te-section">Add codes</h4>
+  <ds-input-search
+    [value]="search()"
+    (valueChange)="search.set($event)"
+    placeholder="Search status reason codes…" />
+
+  @if (search()) {
+    <ds-flyout-menu class="te-candidates">
+      @for (c of candidates(); track c.code) {
+        <ds-flyout-menu-item [label]="c.code + ' — ' + c.label" (clicked)="add(c)" />
+      }
+      @if (candidates().length === 0) {
+        <ds-flyout-menu-item label="No matching codes" [disabled]="true" />
+      }
+    </ds-flyout-menu>
+  }
+
+  <div slot="actions">
+    <ds-button type="tertiary" (clicked)="closed.emit()">Cancel</ds-button>
+    <ds-button type="primary" (clicked)="onSave()">Save</ds-button>
+  </div>
+</ds-modal>

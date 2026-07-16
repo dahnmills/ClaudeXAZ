@@ -73,5 +73,9 @@
     [open]="freshnessOpen()" [config]="freshness()"
     (save)="onFreshnessSave($event)" (closed)="freshnessOpen.set(false)" />
 
+  <tag-trans-excl-modal
+    [open]="transExclOpen()" [codes]="exclusionCodes()" [countryName]="currentCountry().name"
+    (save)="onCodesSave($event)" (closed)="transExclOpen.set(false)" />
+
   <ds-toaster-container />
 </app-topbox-test-shell>

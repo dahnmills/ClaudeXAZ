@@ -15,9 +15,10 @@ import { TagFilterChipComponent }   from './components/tag-filter-chip.component
 import { RuleCardComponent }        from './components/rule-card.component';
 import { RuleModalComponent }       from './components/rule-modal.component';
 import { FreshnessModalComponent }  from './components/freshness-modal.component';
-import { TagRule, CountryCode, FreshnessConfig, FILTER_KEYS, FilterKey } from './tag-configuration.models';
+import { TransExclModalComponent }  from './components/trans-excl-modal.component';
+import { TagRule, CountryCode, FreshnessConfig, StatusReasonCode, FILTER_KEYS, FilterKey } from './tag-configuration.models';
 import {
-  COUNTRIES, rulesForCountry, freshnessForCountry,
+  COUNTRIES, rulesForCountry, freshnessForCountry, codesForCountry,
   SENSITIVITY_OPTIONS, GRADE_OPTIONS, GRADE_TYPE_OPTIONS, FRESHNESS_OPTIONS,
 } from './tag-configuration.data';
 
@@ -29,6 +30,7 @@ import {
     SelectComponent, LinkComponent, ButtonComponent, ButtonSplitComponent,
     ConfirmDialogComponent, ToasterContainerComponent,
     TagFilterChipComponent, RuleCardComponent, RuleModalComponent, FreshnessModalComponent,
+    TransExclModalComponent,
   ],
   templateUrl: './tag-configuration.component.html',
   styleUrl: './tag-configuration.component.scss',
@@ -54,8 +56,14 @@ export class TagConfigurationComponent {
     this.toaster.show('Freshness thresholds saved (draft)', { tone: 'success' });
   }
 
-  // TRANS-NA-EXCL body lands in Task 9
+  // TRANS-NA-EXCL modal (P3)
+  exclusionCodes = signal(codesForCountry('FR'));
   transExclOpen = signal(false);
+  onCodesSave(codes: StatusReasonCode[]): void {
+    this.exclusionCodes.set(codes);
+    this.transExclOpen.set(false);
+    this.toaster.show('Exclusion list saved (draft)', { tone: 'success' });
+  }
 
   ruleModalOpen = signal(false);
   editingRule = signal<TagRule | null>(null);
@@ -104,6 +112,7 @@ export class TagConfigurationComponent {
     this.country.set(code as CountryCode);
     this.rules.set(rulesForCountry(code as CountryCode));
     this.freshness.set(freshnessForCountry(code as CountryCode));
+    this.exclusionCodes.set(codesForCountry(code as CountryCode));
     this.resetFilters();
     this.expandedIds.set(new Set());
     this.expandedAll.set(false);
