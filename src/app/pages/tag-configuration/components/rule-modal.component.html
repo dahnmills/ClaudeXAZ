@@ -1,0 +1,148 @@
+<ds-modal
+  [open]="open()"
+  [title]="title()"
+  size="large"
+  [showBack]="false"
+  contentHeight="640px"
+  (closed)="requestClose()">
+
+  <div class="rm-groups">
+
+    <!-- Group 1 -->
+    <section class="rm-group">
+      <h4 class="rm-group__title">Sensitivity · Exposure · New autograde</h4>
+      <div class="rm-field">
+        <label class="rm-label">Sensitivity</label>
+        <div class="rm-checks">
+          @for (o of SENSITIVITY_OPTIONS; track o.value) {
+            @if (o.value !== 'Any') {
+              <ds-checkbox [label]="o.label" [checked]="sensitivity().has(o.value)" (checkedChange)="toggleSet(sensitivity, o.value)" />
+            }
+          }
+        </div>
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">Exposure</label>
+        <div class="rm-exposure">
+          <ds-select [options]="EXPOSURE_OP_OPTIONS" [value]="exposureOp()" (selectionChange)="exposureOp.set($event)" placeholder="Any" />
+          <ds-input-text [value]="exposureAmt()" (valueChange)="exposureAmt.set($event)" placeholder="Amount" />
+          <span class="rm-currency">{{ currency() }}</span>
+        </div>
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">New autograde</label>
+        <div class="rm-checks">
+          @for (o of GRADE_OPTIONS; track o.value) {
+            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="newAutoGrade().has(o.value)" (checkedChange)="toggleSet(newAutoGrade, o.value)" /> }
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Group 2 (blue — Current valid grade) -->
+    <section class="rm-group rm-group--cvg">
+      <h4 class="rm-group__title">Current valid grade</h4>
+      <div class="rm-field">
+        <label class="rm-label">Value</label>
+        <div class="rm-checks">
+          @for (o of GRADE_OPTIONS; track o.value) {
+            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="cvgValue().has(o.value)" (checkedChange)="toggleSet(cvgValue, o.value)" /> }
+          }
+        </div>
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">Type</label>
+        <div class="rm-checks">
+          @for (o of GRADE_TYPE_OPTIONS; track o.value) {
+            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="cvgType().has(o.value)" (checkedChange)="toggleSet(cvgType, o.value)" /> }
+          }
+        </div>
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">Freshness</label>
+        <ds-select [options]="FRESHNESS_OPTIONS" [value]="cvgFreshness()" (selectionChange)="cvgFreshness.set($event)" />
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">Transferred</label>
+        <ds-segmented-control [options]="TRANSFERRED_OPTIONS" [selected]="transferred()" (selectedChange)="transferred.set($event)" />
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">New AG vs CVG</label>
+        <ds-select [options]="COMPARISON_OPTIONS" [value]="newVsCvg()" (selectionChange)="newVsCvg.set($event)" />
+      </div>
+    </section>
+
+    <!-- Group 3 (orange — Last checked autograde) -->
+    <section class="rm-group rm-group--lastag">
+      <h4 class="rm-group__title">Last checked autograde</h4>
+      <div class="rm-field">
+        <label class="rm-label">Value</label>
+        <div class="rm-checks">
+          @for (o of GRADE_OPTIONS; track o.value) {
+            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="lastAgValue().has(o.value)" (checkedChange)="toggleSet(lastAgValue, o.value)" /> }
+          }
+        </div>
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">Freshness</label>
+        <ds-select [options]="FRESHNESS_OPTIONS" [value]="lastAgFreshness()" (selectionChange)="lastAgFreshness.set($event)" />
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">New AG vs Last AG</label>
+        <ds-select [options]="COMPARISON_OPTIONS" [value]="newVsLastAg()" (selectionChange)="newVsLastAg.set($event)" />
+      </div>
+    </section>
+
+    <!-- Group 4 (Other) -->
+    <section class="rm-group">
+      <h4 class="rm-group__title">Other</h4>
+      <div class="rm-field">
+        <label class="rm-label">NACE</label>
+        <div class="rm-checks">
+          @for (o of NACE_OPTIONS; track o.value) {
+            <ds-checkbox [label]="o.label" [checked]="nace().has(o.value)" (checkedChange)="toggleSet(nace, o.value)" />
+          }
+        </div>
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">Legal form</label>
+        <div class="rm-checks">
+          @for (o of LEGAL_FORM_OPTIONS; track o.value) {
+            <ds-checkbox [label]="o.label" [checked]="legalForm().has(o.value)" (checkedChange)="toggleSet(legalForm, o.value)" />
+          }
+        </div>
+      </div>
+      <div class="rm-field">
+        <label class="rm-label">Company role</label>
+        <div class="rm-checks">
+          @for (o of COMPANY_ROLE_OPTIONS; track o.value) {
+            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="companyRole().has(o.value)" (checkedChange)="toggleSet(companyRole, o.value)" /> }
+          }
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <ds-divider />
+
+  <section class="rm-group rm-group--outcome">
+    <h4 class="rm-group__title">Outcome</h4>
+    <div class="rm-field">
+      <label class="rm-label">TAG Decision</label>
+      <ds-select [options]="DECISION_OPTIONS" [value]="decision()" (selectionChange)="onDecisionChange($event)" />
+    </div>
+  </section>
+
+  <div slot="actions">
+    <ds-button type="tertiary" (clicked)="requestClose()">Cancel</ds-button>
+    <ds-button type="primary" [disabled]="!canSave()" (clicked)="onSave()">{{ isEdit() ? 'Save' : 'Create' }}</ds-button>
+  </div>
+</ds-modal>
+
+<ds-confirm-dialog
+  [open]="confirmCloseOpen()" tone="danger" title="Discard changes?"
+  confirmLabel="Discard" cancelLabel="Keep editing"
+  (confirmed)="confirmClose()" (cancelled)="cancelClose()">
+  Any unsaved changes to this rule will be lost.
+</ds-confirm-dialog>

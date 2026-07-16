@@ -1,0 +1,84 @@
+// =============================================================
+// Rule create/edit modal — 4 grouped criteria sections (accents
+// match tag-rule-card) + a divider-separated Outcome section.
+// Composition: ds-modal + ds-select/-input-text/-segmented-control/
+//              -checkbox/-divider/-button + ds-confirm-dialog (dirty guard)
+// =============================================================
+
+:host {
+  display: block;
+}
+
+.rm-groups {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-l);
+}
+
+.rm-group {
+  &__title {
+    font-size:      var(--semantic-font-text-style-size-s);
+    text-transform: uppercase;
+    letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
+    font-weight:    var(--semantic-font-text-style-font-weight-bold);
+    margin:         0 0 var(--semantic-measurement-spacing-s);
+    color:          var(--semantic-color-static-text-main-tertiary);
+    border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary);
+    padding-bottom: var(--semantic-measurement-spacing-xs);
+  }
+
+  &--cvg .rm-group__title {
+    color:               var(--semantic-color-interactive-text-strong-default);
+    border-bottom-color: var(--semantic-color-interactive-border-light-default);
+  }
+
+  &--lastag .rm-group__title {
+    color:               var(--semantic-color-static-text-main-functional-warning);
+    border-bottom-color: var(--semantic-color-static-border-subtle-functional-warning);
+  }
+
+  &--outcome {
+    margin-top: var(--semantic-measurement-spacing-l);
+  }
+}
+
+.rm-field {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+  margin-bottom:  var(--semantic-measurement-spacing-s);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.rm-label {
+  font-size:   var(--semantic-font-text-style-size-s);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+.rm-checks {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+}
+
+.rm-exposure {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+
+  ds-select {
+    flex: 0 0 auto;
+  }
+  ds-input-text {
+    flex: 1 1 120px;
+  }
+}
+
+.rm-currency {
+  font-size: var(--semantic-font-text-style-size-s);
+  color:     var(--semantic-color-static-text-main-tertiary);
+}

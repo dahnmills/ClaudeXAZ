@@ -13,6 +13,7 @@ import { ToasterContainerComponent } from '../../shared/ui/toaster/toaster-conta
 import { ToasterService }           from '../../shared/ui/toaster/toaster.service';
 import { TagFilterChipComponent }   from './components/tag-filter-chip.component';
 import { RuleCardComponent }        from './components/rule-card.component';
+import { RuleModalComponent }       from './components/rule-modal.component';
 import { TagRule, CountryCode, FILTER_KEYS, FilterKey } from './tag-configuration.models';
 import {
   COUNTRIES, rulesForCountry,
@@ -26,7 +27,7 @@ import {
     TopboxTestShellComponent, PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, PageTitleComponent,
     SelectComponent, LinkComponent, ButtonComponent, ButtonSplitComponent,
     ConfirmDialogComponent, ToasterContainerComponent,
-    TagFilterChipComponent, RuleCardComponent,
+    TagFilterChipComponent, RuleCardComponent, RuleModalComponent,
   ],
   templateUrl: './tag-configuration.component.html',
   styleUrl: './tag-configuration.component.scss',
@@ -43,11 +44,24 @@ export class TagConfigurationComponent {
   expandedAll = signal(false);
   expandedIds = signal<Set<string>>(new Set());
 
-  // toolbar modal stubs — real bodies land in Tasks 7-9
+  // toolbar modal stubs — freshness/TRANS-NA-EXCL bodies land in Tasks 8-9
   freshnessOpen = signal(false);
   transExclOpen = signal(false);
-  openCreate(): void {}
-  openEdit(_r: TagRule): void {}
+
+  ruleModalOpen = signal(false);
+  editingRule = signal<TagRule | null>(null);
+  openCreate(): void { this.editingRule.set(null); this.ruleModalOpen.set(true); }
+  openEdit(r: TagRule): void { this.editingRule.set(r); this.ruleModalOpen.set(true); }
+  onRuleSave(saved: TagRule): void {
+    const wasEdit = this.editingRule() != null;
+    this.rules.update(list => {
+      const i = list.findIndex(x => x.id === saved.id);
+      if (i >= 0) { const copy = [...list]; copy[i] = saved; return copy; }
+      return [...list, { ...saved, position: list.length + 1 }];
+    });
+    this.ruleModalOpen.set(false);
+    this.toaster.show(wasEdit ? 'Rule updated' : 'Rule created', { tone: 'success' });
+  }
 
   // filter chips
   filterOptions: Record<FilterKey, { value: string; label: string }[]> = {

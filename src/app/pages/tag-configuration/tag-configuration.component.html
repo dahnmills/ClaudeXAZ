@@ -65,5 +65,9 @@
     This action cannot be undone from here, but you'll get a chance to undo right after.
   </ds-confirm-dialog>
 
+  <tag-rule-modal
+    [open]="ruleModalOpen()" [rule]="editingRule()" [currency]="currentCountry().currency"
+    (save)="onRuleSave($event)" (closed)="ruleModalOpen.set(false)" />
+
   <ds-toaster-container />
 </app-topbox-test-shell>
