@@ -3,4 +3,19 @@
   flex-direction: column;
   gap: var(--semantic-measurement-spacing-m);
   padding: 0 var(--semantic-measurement-spacing-xl);
+
+  &__toolbar { display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s); }
+  &__spacer  { flex: 1; }
+  &__filters {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: var(--semantic-measurement-spacing-s);
+    padding: var(--semantic-measurement-spacing-s) 0;
+  }
+  &__filters-label  { font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary); font-weight: 600; }
+  &__filters-result { font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary); }
+  &__list  { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-s); }
+  &__empty {
+    padding: var(--semantic-measurement-spacing-2xl) 0; text-align: center;
+    color: var(--semantic-color-static-text-main-tertiary);
+  }
 }
