@@ -1,4 +1,4 @@
-import { Component, HostListener, computed, input, model, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, computed, inject, input, model, signal } from '@angular/core';
 import { ChipComponent } from '../../../shared/ui/chip/chip.component';
 import { CheckboxComponent } from '../../../shared/ui/checkbox/checkbox.component';
 import { LinkComponent } from '../../../shared/ui/link/link.component';
@@ -24,6 +24,8 @@ export class TagFilterChipComponent {
   selected = model<Set<string>>(new Set());
 
   open = signal(false);
+
+  private elRef = inject(ElementRef);
 
   count     = computed(() => this.selected().size);
   active    = computed(() => this.count() > 0);
@@ -54,8 +56,7 @@ export class TagFilterChipComponent {
   @HostListener('document:click', ['$event'])
   onDocClick(event: MouseEvent): void {
     if (!this.open()) return;
-    const target = event.target as HTMLElement;
-    if (!target.closest('tag-filter-chip')) this.open.set(false);
+    if (!this.elRef.nativeElement.contains(event.target as Node)) this.open.set(false);
   }
 
   @HostListener('document:keydown.escape')
