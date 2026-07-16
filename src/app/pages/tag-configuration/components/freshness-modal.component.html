@@ -1,0 +1,52 @@
+<ds-modal
+  [open]="open()"
+  title="Edit grade freshness thresholds"
+  size="large"
+  [showBack]="false"
+  contentHeight="auto"
+  (closed)="closed.emit()">
+
+  <p class="fm-intro">
+    Defines the Fresh / Outdated / Old boundaries (in months) used to compute grade freshness.
+    Changes apply to all rules for this country.
+  </p>
+
+  <div class="fm-table">
+    <div class="fm-row fm-row--head">
+      <span>Grade type</span>
+      <span>Current: Fresh up to</span>
+      <span>Current: Old after</span>
+      <span>New: Fresh up to</span>
+      <span>New: Old after</span>
+    </div>
+
+    <div class="fm-row">
+      <span class="fm-type">Last checked autograde</span>
+      <ds-input-text [value]="curLastFresh() + ''" [readonly]="true" />
+      <ds-input-text [value]="curLastOld() + ''" [readonly]="true" />
+      <ds-input-text [value]="lastFresh()" (valueChange)="lastFresh.set($event)" />
+      <ds-input-text [value]="lastOld()" (valueChange)="lastOld.set($event)" [error]="!lastValid()" />
+    </div>
+    @if (!lastValid()) {
+      <ds-functional-notice status="warning" emphasis="low" message="&quot;Old after&quot; must be greater than or equal to &quot;Fresh up to&quot;." />
+    }
+
+    <div class="fm-row">
+      <span class="fm-type">
+        Valid manual grade <em>(transferred or not)</em>
+      </span>
+      <ds-input-text [value]="curManFresh() + ''" [readonly]="true" />
+      <ds-input-text [value]="curManOld() + ''" [readonly]="true" />
+      <ds-input-text [value]="manFresh()" (valueChange)="manFresh.set($event)" />
+      <ds-input-text [value]="manOld()" (valueChange)="manOld.set($event)" [error]="!manValid()" />
+    </div>
+    @if (!manValid()) {
+      <ds-functional-notice status="warning" emphasis="low" message="&quot;Old after&quot; must be greater than or equal to &quot;Fresh up to&quot;." />
+    }
+  </div>
+
+  <div slot="actions">
+    <ds-button type="tertiary" (clicked)="closed.emit()">Cancel</ds-button>
+    <ds-button type="primary" [disabled]="!canSave()" (clicked)="onSave()">Validate</ds-button>
+  </div>
+</ds-modal>

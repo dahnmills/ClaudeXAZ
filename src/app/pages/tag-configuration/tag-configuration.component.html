@@ -69,5 +69,9 @@
     [open]="ruleModalOpen()" [rule]="editingRule()" [currency]="currentCountry().currency"
     (save)="onRuleSave($event)" (closed)="ruleModalOpen.set(false)" />
 
+  <tag-freshness-modal
+    [open]="freshnessOpen()" [config]="freshness()"
+    (save)="onFreshnessSave($event)" (closed)="freshnessOpen.set(false)" />
+
   <ds-toaster-container />
 </app-topbox-test-shell>
