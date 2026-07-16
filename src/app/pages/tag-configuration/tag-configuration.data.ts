@@ -50,6 +50,7 @@ export const COMPANY_ROLE_OPTIONS = [
 ];
 
 export const EXPOSURE_OP_OPTIONS = [
+  { value: '', label: 'Any' },
   { value: '>', label: '> (greater than)' }, { value: '<=', label: '≤ (less or equal)' },
 ];
 

@@ -7,7 +7,6 @@ import { PageTitleComponent }       from '../../shared/ui/page-title/page-title.
 import { SelectComponent }          from '../../shared/ui/select/select.component';
 import { LinkComponent }            from '../../shared/ui/link/link.component';
 import { ButtonComponent }          from '../../shared/ui/button/button.component';
-import { ButtonSplitComponent }     from '../../shared/ui/button-split/button-split.component';
 import { ConfirmDialogComponent }   from '../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { ToasterContainerComponent } from '../../shared/ui/toaster/toaster-container.component';
 import { ToasterService }           from '../../shared/ui/toaster/toaster.service';
@@ -27,7 +26,7 @@ import {
   standalone: true,
   imports: [
     TopboxTestShellComponent, PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, PageTitleComponent,
-    SelectComponent, LinkComponent, ButtonComponent, ButtonSplitComponent,
+    SelectComponent, LinkComponent, ButtonComponent,
     ConfirmDialogComponent, ToasterContainerComponent,
     TagFilterChipComponent, RuleCardComponent, RuleModalComponent, FreshnessModalComponent,
     TransExclModalComponent,
@@ -172,9 +171,12 @@ export class TagConfigurationComponent {
   confirmDelete(): void {
     const r = this.pendingDelete();
     if (r) {
+      const country = this.country();
       const snapshot = this.rules();
       this.rules.update(list => list.filter(x => x.id !== r.id).map((x, idx) => ({ ...x, position: idx + 1 })));
-      this.toaster.show('Rule deleted', { tone: 'success', actionLabel: 'Undo' }, () => this.rules.set(snapshot));
+      this.toaster.show('Rule deleted', { tone: 'success', actionLabel: 'Undo' }, () => {
+        if (this.country() === country) this.rules.set(snapshot);
+      });
     }
     this.confirmOpen.set(false);
     this.pendingDelete.set(null);
