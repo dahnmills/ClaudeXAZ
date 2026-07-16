@@ -1,0 +1,109 @@
+// =============================================================
+// Rule Card — collapsible card for one auto-grading rule (P4)
+// Composition : ds-card (noPadding) + ds-badge + ds-button-icon +
+//               ds-icon + ds-flyout-menu/-item + ds-button (Other toggle)
+// =============================================================
+
+:host {
+  display: block;
+}
+
+.rule-card {
+  &__head {
+    display:     flex;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-s);
+    padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+    cursor:      pointer;
+  }
+  &__pos {
+    flex:        0 0 auto;
+    min-width:   24px;
+    text-align:  center;
+    color:       var(--semantic-color-static-text-main-tertiary);
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+  }
+  &__summary {
+    flex:      1;
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       var(--semantic-measurement-spacing-s);
+  }
+  &__seg {
+    font-size: var(--semantic-font-text-style-size-s);
+  }
+  &__seg-label {
+    color: var(--semantic-color-static-text-main-tertiary);
+  }
+  &__seg--any {
+    color:       var(--semantic-color-static-text-main-tertiary);
+    font-style:  italic;
+  }
+  &__actions {
+    display:     flex;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-xs);
+    position:    relative;
+  }
+  &__menu {
+    position: absolute;
+    top:      calc(100% + var(--semantic-measurement-spacing-xs));
+    right:    0;
+    z-index:  10;
+  }
+  &__body {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-m);
+    padding:        var(--semantic-measurement-spacing-m);
+    border-top:     1px solid var(--semantic-color-static-border-subtle-tertiary);
+  }
+}
+
+.rule-group {
+  &__title {
+    font-size:      var(--semantic-font-text-style-size-s);
+    text-transform: uppercase;
+    letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
+    font-weight:    var(--semantic-font-text-style-font-weight-bold);
+    margin:         0 0 var(--semantic-measurement-spacing-xs);
+    color:          var(--semantic-color-static-text-main-tertiary);
+    border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary);
+    padding-bottom: var(--semantic-measurement-spacing-xs);
+  }
+
+  &--cvg .rule-group__title {
+    color:              var(--semantic-color-interactive-text-strong-default);
+    border-bottom-color: var(--semantic-color-interactive-border-light-default);
+  }
+
+  &--lastag .rule-group__title {
+    color:              var(--semantic-color-static-text-main-functional-warning);
+    border-bottom-color: var(--semantic-color-static-border-subtle-functional-warning);
+  }
+
+  &__fields {
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       var(--semantic-measurement-spacing-l);
+  }
+}
+
+.rule-field {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+
+  &__label {
+    font-size: var(--semantic-font-text-style-size-s);
+    color:     var(--semantic-color-static-text-main-tertiary);
+  }
+  &__value {
+    font-size: var(--semantic-font-text-style-size-s);
+    color:     var(--semantic-color-static-text-main-primary);
+  }
+  &__value--any {
+    color:      var(--semantic-color-static-text-main-tertiary);
+    font-style: italic;
+  }
+}
