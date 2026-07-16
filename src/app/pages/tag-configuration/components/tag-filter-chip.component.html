@@ -1,0 +1,23 @@
+<ds-chip
+  type="select"
+  [label]="chipLabel()"
+  [selected]="active()"
+  (activated)="toggleOpen()" />
+
+@if (open()) {
+  <div class="tag-filter-chip__flyout">
+    <ds-flyout-menu>
+      <div class="tag-filter-chip__options">
+        @for (opt of options(); track opt.value) {
+          <ds-checkbox
+            [label]="opt.label"
+            [checked]="isChecked(opt.value)"
+            (checkedChange)="toggleValue(opt.value)" />
+        }
+      </div>
+      <div class="tag-filter-chip__footer">
+        <ds-link href="#" tone="neutral" size="s" (click)="clear(); $event.preventDefault()">Clear</ds-link>
+      </div>
+    </ds-flyout-menu>
+  </div>
+}
