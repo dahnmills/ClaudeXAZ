@@ -14,7 +14,3 @@ export function fmtExposure(v: RuleCriteria['exposure'], currency: string): stri
 export function isAny(v: unknown): boolean {
   return v == null || (Array.isArray(v) && v.length === 0);
 }
-/** True when NACE + legal form + company role are all Any (Other group collapses by default). */
-export function otherAllAny(c: RuleCriteria): boolean {
-  return isAny(c.nace) && isAny(c.legalForm) && isAny(c.companyRole);
-}

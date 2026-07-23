@@ -1,7 +1,7 @@
 // =============================================================
-// Rule Card — collapsible card for one auto-grading rule (P4)
+// Rule Card — collapsible row for one auto-grading rule (P4)
 // Composition : ds-card (noPadding) + ds-badge + ds-button-icon +
-//               ds-icon + ds-flyout-menu/-item + ds-button (Other toggle)
+//               ds-icon + ds-flyout-menu/-item + ds-properties-panel (body)
 // =============================================================
 
 :host {
@@ -9,41 +9,106 @@
 }
 
 .rule-card {
+  // Figma "Row": 3 full-height zones (Position / Content / Action) — the
+  // verticals run the whole row height, not just alongside the text, so
+  // align-items is stretch here and each zone centers its own content with
+  // its own vertical padding.
   &__head {
     display:     flex;
-    align-items: center;
+    align-items: stretch;
     gap:         var(--semantic-measurement-spacing-s);
-    padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
     cursor:      pointer;
+    transition:  background 0.15s ease;
+
+    &:hover {
+      background: var(--semantic-color-interactive-background-light-alt-hover);
+    }
+    &:focus-visible {
+      outline:        2px solid var(--semantic-color-interactive-border-focus);
+      outline-offset: -2px;
+    }
   }
+  // Metadata, not signal — the decision badge is the answer, this is supporting detail.
   &__pos {
-    flex:        0 0 auto;
-    min-width:   var(--semantic-measurement-sizing-l);
-    text-align:  center;
-    color:       var(--semantic-color-static-text-main-tertiary);
-    font-weight: var(--semantic-font-text-style-font-weight-bold);
+    flex:          0 0 auto;
+    display:       flex;
+    align-items:   center;
+    justify-content: center;
+    min-width:     var(--semantic-measurement-sizing-l);
+    padding:       var(--semantic-measurement-spacing-m);
+    color:         var(--semantic-color-static-text-main-tertiary);
+    font-weight:   var(--semantic-font-text-style-font-weight-regular);
+    border-right:  1px solid var(--semantic-color-static-border-subtle-tertiary);
   }
   &__summary {
-    flex:      1;
-    display:   flex;
-    flex-wrap: wrap;
-    gap:       var(--semantic-measurement-spacing-s);
+    // Fixed natural width (not flex:1) — edit mode widening the action zone
+    // (3-dot + chevron) must never compress these columns; only the flexible
+    // gap before the badges should absorb that change.
+    // Columns are a fixed 150px (not minmax(0, 150px)) — each rule-card is
+    // its own independent grid, so a content-sized max-150px column resolves
+    // to a DIFFERENT width per row depending on that row's own criteria text,
+    // which shifted the badges/divider/actions after it out of alignment
+    // row-to-row. A fixed track keeps every row's summary block, and
+    // everything after it, at the same width regardless of content.
+    flex:                  0 0 auto;
+    display:               grid;
+    grid-template-columns: repeat(6, 150px);
+    gap:                   var(--semantic-measurement-spacing-m);
+    align-items:           center;
+    padding:               var(--semantic-measurement-spacing-s) 0;
   }
-  &__seg {
-    font-size: var(--semantic-font-text-style-size-s);
+  &__badges {
+    flex:            1 1 auto;
+    min-width:       0;
+    display:         flex;
+    align-items:     center;
+    justify-content: flex-end;
+    gap:             var(--semantic-measurement-spacing-xs);
   }
-  &__seg-label {
-    color: var(--semantic-color-static-text-main-tertiary);
+  &__volume {
+    // Fixed width for the widest expected value ("100.00%") so the badge
+    // doesn't reflow/jitter as different rows show different digit counts.
+    display:      inline-flex;
+    justify-content: center;
+    min-width:    64px;
+
+    ::ng-deep .ds-badge__label {
+      font-variant-numeric: tabular-nums;
+    }
   }
-  &__seg--any {
-    color:       var(--semantic-color-static-text-main-tertiary);
-    font-style:  italic;
+  &__field {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--foundation-spacing-2, 2px);
+    min-width:      0;
+  }
+  &__field-label {
+    font-size: var(--semantic-font-text-style-size-m);
+    color:     var(--semantic-color-static-text-main-tertiary);
+  }
+  &__field-value {
+    font-size:   var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+    color:       var(--semantic-color-static-text-main-primary);
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+
+    // BN P1: an "Any" value is a non-constraint — mute it so it doesn't
+    // compete for attention with rules that actually set this criterion.
+    &--any {
+      font-weight: var(--semantic-font-text-style-font-weight-regular);
+      color:       var(--semantic-color-static-text-main-tertiary);
+    }
   }
   &__actions {
-    display:     flex;
-    align-items: center;
-    gap:         var(--semantic-measurement-spacing-xs);
-    position:    relative;
+    display:      flex;
+    align-items:  center;
+    gap:          var(--semantic-measurement-spacing-xs);
+    align-self:   stretch;
+    padding:      var(--semantic-measurement-spacing-m);
+    border-left:  1px solid var(--semantic-color-static-border-subtle-tertiary);
+    position:     relative;
   }
   &__menu {
     position: absolute;
@@ -52,58 +117,7 @@
     z-index:  10;
   }
   &__body {
-    display:        flex;
-    flex-direction: column;
-    gap:            var(--semantic-measurement-spacing-m);
-    padding:        var(--semantic-measurement-spacing-m);
-    border-top:     1px solid var(--semantic-color-static-border-subtle-tertiary);
-  }
-}
-
-.rule-group {
-  &__title {
-    font-size:      var(--semantic-font-text-style-size-s);
-    text-transform: uppercase;
-    letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
-    font-weight:    var(--semantic-font-text-style-font-weight-bold);
-    margin:         0 0 var(--semantic-measurement-spacing-xs);
-    color:          var(--semantic-color-static-text-main-tertiary);
-    border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary);
-    padding-bottom: var(--semantic-measurement-spacing-xs);
-  }
-
-  &--cvg .rule-group__title {
-    color:              var(--semantic-color-interactive-text-strong-default);
-    border-bottom-color: var(--semantic-color-interactive-border-light-default);
-  }
-
-  &--lastag .rule-group__title {
-    color:              var(--semantic-color-static-text-main-functional-warning);
-    border-bottom-color: var(--semantic-color-static-border-subtle-functional-warning);
-  }
-
-  &__fields {
-    display:   flex;
-    flex-wrap: wrap;
-    gap:       var(--semantic-measurement-spacing-l);
-  }
-}
-
-.rule-field {
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-xxs);
-
-  &__label {
-    font-size: var(--semantic-font-text-style-size-s);
-    color:     var(--semantic-color-static-text-main-tertiary);
-  }
-  &__value {
-    font-size: var(--semantic-font-text-style-size-s);
-    color:     var(--semantic-color-static-text-main-primary);
-  }
-  &__value--any {
-    color:      var(--semantic-color-static-text-main-tertiary);
-    font-style: italic;
+    padding:    var(--semantic-measurement-spacing-m);
+    border-top: 1px solid var(--semantic-color-static-border-subtle-tertiary);
   }
 }

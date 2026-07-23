@@ -5,18 +5,30 @@
   height: var(--semantic-measurement-spacing-xl);
   cursor: pointer;
   user-select: none;
-  color: var(--semantic-color-interactive-text-strong-alt-default);
+  color: var(--semantic-color-interactive-text-strong-default);
   font-family: var(--semantic-font-family);
   font-size: var(--semantic-font-text-style-size-l);
   font-weight: var(--semantic-font-text-style-font-weight-regular);
   line-height: var(--semantic-font-text-style-line-height-l);
 
   &:hover:not(.ds-standalone-dropdown--disabled) {
-    color: var(--semantic-color-interactive-text-strong-alt-hover);
+    color: var(--semantic-color-interactive-text-strong-hover);
   }
 
   &:active:not(.ds-standalone-dropdown--disabled) {
-    color: var(--semantic-color-interactive-text-strong-alt-active);
+    color: var(--semantic-color-interactive-text-strong-active);
+  }
+
+  &.ds-standalone-dropdown--tone-accent {
+    color: var(--semantic-color-interactive-text-strong-alt-default);
+
+    &:hover:not(.ds-standalone-dropdown--disabled) {
+      color: var(--semantic-color-interactive-text-strong-alt-hover);
+    }
+
+    &:active:not(.ds-standalone-dropdown--disabled) {
+      color: var(--semantic-color-interactive-text-strong-alt-active);
+    }
   }
 
   &:focus-visible {

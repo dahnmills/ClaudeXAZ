@@ -25,4 +25,9 @@
   &.ds-card--no-padding {
     padding: 0;
   }
+
+  // Détachement au repos — état open/active d'une row expandable (voir DESIGN.md Elevation)
+  &.ds-card--elevated {
+    box-shadow: var(--semantic-shadow-card);
+  }
 }

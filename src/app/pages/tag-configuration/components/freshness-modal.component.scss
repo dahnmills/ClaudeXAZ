@@ -1,7 +1,12 @@
 // =============================================================
-// Freshness modal — 2 rows (grade type) x 5 cols (label, current
-// fresh/old read-only, new fresh/old editable) as a CSS grid table.
-// Composition: ds-modal + ds-input-text (readonly) + ds-functional-notice + ds-button
+// Freshness modal — grey panel + white card per grade type (same
+// rm-panel/rm-group/rm-card vocabulary as rule-modal and the company
+// wizards). Each card holds 4 small label-above-input fields (current
+// fresh/old read-only, new fresh/old editable) instead of a 5-column
+// table — a threshold is 1-3 digits, so a shared table column sized to
+// fit the longest header ("Current: Fresh up to") forced every input
+// to be pointlessly wide while the header text wrapped onto 3-4 lines.
+// Composition: ds-modal + ds-input-text (readonly) + ds-icon + ds-functional-notice + ds-button
 // =============================================================
 
 :host {
@@ -9,44 +14,108 @@
 }
 
 .fm-intro {
-  font-size:     var(--semantic-font-text-style-size-s);
-  color:         var(--semantic-color-static-text-main-tertiary);
+  font-size:     var(--semantic-font-text-style-size-l);
+  line-height:   var(--semantic-font-text-style-line-height-l);
+  color:         var(--semantic-color-static-text-main-secondary);
   margin:        0 0 var(--semantic-measurement-spacing-m);
 }
 
-.fm-table {
+.rm-panel {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        var(--semantic-measurement-spacing-l);
+  background:     var(--semantic-color-static-background-main-secondary);
+  border-radius:  var(--semantic-border-radius-s);
+}
+
+.rm-group {
   display:        flex;
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-s);
+
+  &__title {
+    font-family:    var(--semantic-font-family);
+    font-size:      var(--semantic-font-text-style-size-s);
+    font-weight:    var(--semantic-font-text-style-font-weight-bold);
+    letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+    text-transform: uppercase;
+    color:          var(--semantic-color-static-text-main-tertiary);
+  }
 }
 
-.fm-row {
-  display:             grid;
-  grid-template-columns: 1.6fr repeat(4, 1fr);
-  align-items:         center;
-  gap:                 var(--semantic-measurement-spacing-s);
+.rm-card {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        var(--semantic-measurement-spacing-m);
+  background:     var(--semantic-color-static-background-main-primary);
+  border-radius:  var(--semantic-border-radius-s);
 }
 
-.fm-row--head {
-  font-size:      var(--semantic-font-text-style-size-s);
-  text-transform: uppercase;
-  letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
-  font-weight:    var(--semantic-font-text-style-font-weight-bold);
-  color:          var(--semantic-color-static-text-main-tertiary);
-  padding-bottom: var(--semantic-measurement-spacing-xs);
-  border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary);
+.fm-type__hint {
+  font-weight:    var(--semantic-font-text-style-font-weight-regular);
+  text-transform: none;
+  letter-spacing: normal;
 }
 
-.fm-type {
-  font-weight: var(--semantic-font-text-style-font-weight-bold);
-  color:       var(--semantic-color-static-text-main-primary);
-  font-size:   var(--semantic-font-text-style-size-s);
+// 2 read-only fields, an arrow, 2 editable fields — each field sized to its
+// own 3-digit content, not to a shared column width. Gap matches rm-row's
+// field-row rhythm (24px between distinct fields) used across the other
+// two modals for the same "row of aligned fields" pattern.
+.fm-thresholds {
+  display:     flex;
+  align-items: flex-end;
+  gap:         var(--semantic-measurement-spacing-l);
+}
 
-  em {
-    display:     block;
-    font-weight: var(--semantic-font-text-style-font-weight-regular);
-    font-style:  normal;
+// Reserving the notice's layout space (even just visibility:hidden) leaves a
+// dead gap under every card when the thresholds are valid — most of the
+// time. Instead the card anchors it (position: relative) and the notice
+// floats absolutely under the fields row, so a valid card is exactly its
+// own content height and the notice never shifts the modal at rest.
+// Only when a card is actually in error does it grow by the notice's own
+// height, so the floated message doesn't overlap the group that follows —
+// still far less dead space than reserving it unconditionally on both cards.
+.fm-rm-card {
+  position: relative;
+
+  &--error {
+    margin-bottom: var(--semantic-measurement-sizing-xl);
+  }
+}
+
+.fm-notice {
+  position:   absolute;
+  left:       var(--semantic-measurement-spacing-m);
+  right:      var(--semantic-measurement-spacing-m);
+  top:        100%;
+  margin-top: var(--semantic-measurement-spacing-xs);
+}
+
+.fm-arrow {
+  flex-shrink: 0;
+  margin-bottom: var(--semantic-measurement-spacing-s);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+.fm-field {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--foundation-spacing-2, 2px);
+  flex:           0 0 auto;
+
+  &__label {
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-m);
     color:       var(--semantic-color-static-text-main-tertiary);
-    font-size:   var(--semantic-font-text-style-size-s);
+    white-space: nowrap;
+  }
+
+  // Grid cell (not a direct width on ds-input-text) so its internal
+  // width:100% resolves against a fixed track instead of stretching.
+  &__input {
+    display:               grid;
+    grid-template-columns: var(--semantic-measurement-sizing-3xl);
   }
 }

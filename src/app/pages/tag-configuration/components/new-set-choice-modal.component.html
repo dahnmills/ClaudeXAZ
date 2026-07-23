@@ -1,0 +1,37 @@
+<ds-modal
+  [open]="open()" [title]="title()" [size]="step() === 'previous' ? 'large' : 'medium'" [showBack]="step() === 'previous'"
+  contentHeight="auto" (closed)="closed.emit()" (backClicked)="back()">
+
+  @if (step() === 'choice') {
+    <span class="nscm-intro">Chose an option :</span>
+    <span class="nscm-intro__sub">You can create a new set starting from different options</span>
+
+    <div class="nscm-choices">
+      <ds-visual-button title="Previous set" [selected]="selectedAction() === 'previous'" (clicked)="select('previous')">
+        <ds-icon slot="icon" name="file-text" [size]="24" />
+      </ds-visual-button>
+      <ds-visual-button title="Blank" [selected]="selectedAction() === 'scratch'" (clicked)="select('scratch')">
+        <ds-icon slot="icon" name="plus-circle" [size]="24" />
+      </ds-visual-button>
+      <ds-visual-button title="Json upload" [selected]="selectedAction() === 'import'" (clicked)="select('import')">
+        <ds-icon slot="icon" name="upload" [size]="24" />
+      </ds-visual-button>
+    </div>
+  } @else {
+    <span class="nscm-intro">Select a previous set</span>
+
+    <div class="nscm-previous">
+      @if (history().length === 0) {
+        <div class="nscm-previous__empty">No previous set available for this country.</div>
+      } @else {
+        @for (entry of history(); track entry.id) {
+          <tag-history-row [entry]="entry" [selected]="selectedEntry()?.id === entry.id" (opened)="selectEntry(entry)" />
+        }
+      }
+    </div>
+  }
+
+  <div slot="actions">
+    <ds-button type="primary" [disabled]="!canGoNext()" (clicked)="next()">Next</ds-button>
+  </div>
+</ds-modal>

@@ -4,7 +4,6 @@ import { InputSearchComponent } from '../../../shared/ui/input-search/input-sear
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
 import { ButtonIconComponent } from '../../../shared/ui/button-icon/button-icon.component';
 import { FunctionalNoticeComponent } from '../../../shared/ui/functional-notice/functional-notice.component';
-import { TagComponent } from '../../../shared/ui/tag/tag.component';
 import { FlyoutMenuComponent } from '../../../shared/ui/flyout-menu/flyout-menu.component';
 import { FlyoutMenuItemComponent } from '../../../shared/ui/flyout-menu/flyout-menu-item.component';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
@@ -22,7 +21,7 @@ import { STATUS_REASON_REFERENTIAL } from '../tag-configuration.data';
  * explaining that saving with no codes will allow all status reason codes.
  *
  * Composition: ds-modal (self-composes header/content/footer via title input
- * + [slot=actions]) + ds-input-search + ds-flyout-menu/-item + ds-tag (static)
+ * + [slot=actions]) + ds-input-search + ds-flyout-menu/-item
  * + ds-functional-notice + ds-button + ds-button-icon.
  */
 @Component({
@@ -30,7 +29,7 @@ import { STATUS_REASON_REFERENTIAL } from '../tag-configuration.data';
   standalone: true,
   imports: [
     ModalComponent, InputSearchComponent, ButtonComponent, ButtonIconComponent,
-    FunctionalNoticeComponent, TagComponent, FlyoutMenuComponent, FlyoutMenuItemComponent,
+    FunctionalNoticeComponent, FlyoutMenuComponent, FlyoutMenuItemComponent,
     IconComponent,
   ],
   templateUrl: './trans-excl-modal.component.html',

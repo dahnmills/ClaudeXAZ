@@ -11,38 +11,64 @@
     Changes apply to all rules for this country.
   </p>
 
-  <div class="fm-table">
-    <div class="fm-row fm-row--head">
-      <span>Grade type</span>
-      <span>Current: Fresh up to</span>
-      <span>Current: Old after</span>
-      <span>New: Fresh up to</span>
-      <span>New: Old after</span>
+  <div class="rm-panel">
+
+    <div class="rm-group">
+      <span class="rm-group__title">Last checked autograde</span>
+      <div class="rm-card fm-rm-card" [class.fm-rm-card--error]="!lastValid()">
+        <div class="fm-thresholds">
+          <div class="fm-field fm-field--readonly">
+            <span class="fm-field__label">Current: fresh up to</span>
+            <ds-input-text class="fm-field__input" [value]="curLastFresh() + ''" [readonly]="true" />
+          </div>
+          <div class="fm-field fm-field--readonly">
+            <span class="fm-field__label">Current: old after</span>
+            <ds-input-text class="fm-field__input" [value]="curLastOld() + ''" [readonly]="true" />
+          </div>
+          <ds-icon class="fm-arrow" name="arrow-right" [size]="16" />
+          <div class="fm-field">
+            <span class="fm-field__label">New: fresh up to</span>
+            <ds-input-text class="fm-field__input" [value]="lastFresh()" (valueChange)="lastFresh.set($event)" />
+          </div>
+          <div class="fm-field">
+            <span class="fm-field__label">New: old after</span>
+            <ds-input-text class="fm-field__input" [value]="lastOld()" (valueChange)="lastOld.set($event)" [error]="!lastValid()" />
+          </div>
+        </div>
+        @if (!lastValid()) {
+          <ds-functional-notice class="fm-notice" status="warning" emphasis="low" [message]="thresholdOrderError" />
+        }
+      </div>
     </div>
 
-    <div class="fm-row">
-      <span class="fm-type">Last checked autograde</span>
-      <ds-input-text [value]="curLastFresh() + ''" [readonly]="true" />
-      <ds-input-text [value]="curLastOld() + ''" [readonly]="true" />
-      <ds-input-text [value]="lastFresh()" (valueChange)="lastFresh.set($event)" />
-      <ds-input-text [value]="lastOld()" (valueChange)="lastOld.set($event)" [error]="!lastValid()" />
+    <div class="rm-group">
+      <span class="rm-group__title">Valid manual grade <span class="fm-type__hint">(transferred or not)</span></span>
+      <div class="rm-card fm-rm-card" [class.fm-rm-card--error]="!manValid()">
+        <div class="fm-thresholds">
+          <div class="fm-field fm-field--readonly">
+            <span class="fm-field__label">Current: fresh up to</span>
+            <ds-input-text class="fm-field__input" [value]="curManFresh() + ''" [readonly]="true" />
+          </div>
+          <div class="fm-field fm-field--readonly">
+            <span class="fm-field__label">Current: old after</span>
+            <ds-input-text class="fm-field__input" [value]="curManOld() + ''" [readonly]="true" />
+          </div>
+          <ds-icon class="fm-arrow" name="arrow-right" [size]="16" />
+          <div class="fm-field">
+            <span class="fm-field__label">New: fresh up to</span>
+            <ds-input-text class="fm-field__input" [value]="manFresh()" (valueChange)="manFresh.set($event)" />
+          </div>
+          <div class="fm-field">
+            <span class="fm-field__label">New: old after</span>
+            <ds-input-text class="fm-field__input" [value]="manOld()" (valueChange)="manOld.set($event)" [error]="!manValid()" />
+          </div>
+        </div>
+        @if (!manValid()) {
+          <ds-functional-notice class="fm-notice" status="warning" emphasis="low" [message]="thresholdOrderError" />
+        }
+      </div>
     </div>
-    @if (!lastValid()) {
-      <ds-functional-notice status="warning" emphasis="low" message="&quot;Old after&quot; must be greater than or equal to &quot;Fresh up to&quot;." />
-    }
 
-    <div class="fm-row">
-      <span class="fm-type">
-        Valid manual grade <em>(transferred or not)</em>
-      </span>
-      <ds-input-text [value]="curManFresh() + ''" [readonly]="true" />
-      <ds-input-text [value]="curManOld() + ''" [readonly]="true" />
-      <ds-input-text [value]="manFresh()" (valueChange)="manFresh.set($event)" />
-      <ds-input-text [value]="manOld()" (valueChange)="manOld.set($event)" [error]="!manValid()" />
-    </div>
-    @if (!manValid()) {
-      <ds-functional-notice status="warning" emphasis="low" message="&quot;Old after&quot; must be greater than or equal to &quot;Fresh up to&quot;." />
-    }
   </div>
 
   <div slot="actions">

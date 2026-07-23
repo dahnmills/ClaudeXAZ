@@ -1,6 +1,8 @@
 import { Component, computed, input, output } from '@angular/core';
 import { IconComponent, type IconName } from '../icon/icon.component';
 
+export type StandaloneDropdownTone = 'default' | 'accent';
+
 @Component({
   selector: 'ds-standalone-dropdown',
   standalone: true,
@@ -20,12 +22,14 @@ import { IconComponent, type IconName } from '../icon/icon.component';
 export class StandaloneDropdownComponent {
   icon = input<IconName | null>(null);
   label = input.required<string>();
+  tone = input<StandaloneDropdownTone>('accent');
   disabled = input<boolean>(false);
 
   clicked = output<void>();
 
   hostClasses = computed(() => [
     'ds-standalone-dropdown',
+    `ds-standalone-dropdown--tone-${this.tone()}`,
     this.disabled() ? 'ds-standalone-dropdown--disabled' : '',
   ].filter(Boolean).join(' '));
 }

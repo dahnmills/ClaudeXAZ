@@ -1,13 +1,13 @@
 import {
   Country, CountryCode, TagRule, FreshnessConfig, StatusReasonCode,
-  EMPTY_CRITERIA,
+  EMPTY_CRITERIA, RuleSetVersion, RuleSetHistoryEntry,
 } from './tag-configuration.models';
 
 export const COUNTRIES: Country[] = [
   { code: 'FR', name: 'France',          currency: 'EUR' },
   { code: 'DE', name: 'Germany',         currency: 'EUR' },
   { code: 'NE', name: 'Northern Europe', currency: 'EUR' },
-  { code: 'PT', name: 'Portugal',        currency: 'EUR' },
+  { code: 'PT', name: 'Portugal',        currency: 'EUR', readOnly: true },
 ];
 
 export const SENSITIVITY_OPTIONS = [
@@ -39,10 +39,6 @@ export const COMPARISON_OPTIONS = [
   { value: 'Upgrade', label: '↑ Upgrade' }, { value: 'Same', label: '= Same' }, { value: 'Downgrade', label: '↓ Downgrade' },
 ];
 
-export const DECISION_OPTIONS = [
-  { value: 'Accept', label: 'Accept' }, { value: 'Refuse', label: 'Refuse' }, { value: 'CreateTask', label: 'Create task' },
-];
-
 export const COMPANY_ROLE_OPTIONS = [
   { value: 'Any', label: 'Any' },
   { value: 'Insured', label: 'Insured' }, { value: 'Prospect', label: 'Prospect' },
@@ -59,11 +55,11 @@ export const TRANSFERRED_OPTIONS = [
 ];
 
 export const NACE_OPTIONS = [
-  { value: '62.01', label: '62.01 — Computer programming' },
-  { value: '41.20', label: '41.20 — Construction of buildings' },
-  { value: '46.90', label: '46.90 — Non-specialised wholesale' },
-  { value: '68.20', label: '68.20 — Renting of real estate' },
-  { value: '10.71', label: '10.71 — Bread & fresh pastry' },
+  { value: '62.01', label: '62.01: Computer programming' },
+  { value: '41.20', label: '41.20: Construction of buildings' },
+  { value: '46.90', label: '46.90: Non-specialised wholesale' },
+  { value: '68.20', label: '68.20: Renting of real estate' },
+  { value: '10.71', label: '10.71: Bread & fresh pastry' },
 ];
 
 export const LEGAL_FORM_OPTIONS = [
@@ -136,6 +132,77 @@ const RULES: Record<CountryCode, TagRule[]> = {
 
 export function rulesForCountry(code: CountryCode): TagRule[] {
   return RULES[code].map(r => ({ ...r, criteria: { ...r.criteria } }));
+}
+
+// --- version history mocks (Compare rule versions) ---
+
+const FR_RULES_V1: TagRule[] = [
+  { id: 'fr-1', position: 1, decision: 'Accept', status: 'Valid',
+    criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['08', '09', '10'], cvgValue: ['04', '05'], cvgType: ['Automatic'], cvgFreshness: 'Fresh' } },
+  { id: 'fr-2', position: 2, decision: 'Refuse', status: 'Valid',
+    criteria: { ...EMPTY_CRITERIA, cvgValue: ['04', '05'], transferred: true } },
+  { id: 'fr-3', position: 3, decision: 'CreateTask', status: 'Valid',
+    criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['04'], lastAgFreshness: 'Outdated' } },
+  { id: 'fr-4', position: 4, decision: 'Accept', status: 'Valid',
+    criteria: { ...EMPTY_CRITERIA, exposure: { op: '<=', amount: 100000 }, nace: ['62.01'] } },
+  { id: 'fr-5', position: 5, decision: 'CreateTask', status: 'NC',
+    criteria: { ...EMPTY_CRITERIA, companyRole: ['Prospect'] } },
+];
+
+const FR_RULES_V2: TagRule[] = [
+  { id: 'fr-1', position: 1, decision: 'Accept', status: 'Valid',
+    criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['08', '09', '10'], cvgValue: ['04', '05', '06'], cvgType: ['Automatic'], cvgFreshness: 'Fresh' } },
+  { id: 'fr-2', position: 2, decision: 'Refuse', status: 'Valid',
+    criteria: { ...EMPTY_CRITERIA, sensitivity: ['S1'], cvgValue: ['04', '05'], transferred: true } },
+  { id: 'fr-3', position: 3, decision: 'CreateTask', status: 'Valid',
+    criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['04'], lastAgFreshness: 'Outdated' } },
+];
+
+const VERSIONS: Record<CountryCode, RuleSetVersion[]> = {
+  FR: [
+    { id: '9811580', label: '9811580 - 02-07-25', date: '2025-07-02', rules: FR_RULES_V1,
+      accepted: { pct: 30.12, count: 30 }, refused: { pct: 34.06, count: 34 }, jtd: { pct: 35.82, count: 36 } },
+    { id: '9811586', label: '9811586 - 19-08-25', date: '2025-08-19', rules: FR_RULES_V2,
+      accepted: { pct: 40.24, count: 40 }, refused: { pct: 37.04, count: 37 }, jtd: { pct: 22.72, count: 23 } },
+  ],
+  DE: [],
+  NE: [
+    { id: '9800210', label: '9800210 - 11-05-25', date: '2025-05-11', rules: neRules().slice(0, 20),
+      accepted: { pct: 28.50, count: 20 }, refused: { pct: 33.10, count: 23 }, jtd: { pct: 38.40, count: 27 } },
+  ],
+  PT: [
+    { id: '9805310', label: '9805310 - 30-03-25', date: '2025-03-30', rules: FR_RULES_V1.slice(0, 3),
+      accepted: { pct: 33.33, count: 3 }, refused: { pct: 33.33, count: 3 }, jtd: { pct: 33.34, count: 3 } },
+  ],
+};
+
+export function versionsForCountry(code: CountryCode): RuleSetVersion[] {
+  return VERSIONS[code].map(v => ({
+    ...v,
+    rules: v.rules.map(r => ({ ...r, criteria: { ...r.criteria } })),
+    accepted: { ...v.accepted }, refused: { ...v.refused }, jtd: { ...v.jtd },
+  }));
+}
+
+// --- publication history mocks (History tab) ---
+
+const HISTORY: Record<CountryCode, RuleSetHistoryEntry[]> = {
+  FR: [
+    { id: '123456791', createdLabel: '11 nov. 2025', lastUpdateLabel: '14 nov. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '12-10-25 → —', status: 'Active', rules: FR_RULES_V2 },
+    { id: '123456790', createdLabel: '19 aoû. 2025', lastUpdateLabel: '11 oct. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '19-08-25 → 12-10-25', status: 'Archived', rules: FR_RULES_V2 },
+    { id: '123456789', createdLabel: '2 jul. 2025',  lastUpdateLabel: '18 aoû. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '02-07-25 → 19-08-25', status: 'Archived', rules: FR_RULES_V1 },
+  ],
+  DE: [],
+  NE: [
+    { id: '980021099', createdLabel: '11 mai 2025', lastUpdateLabel: '11 mai 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '11-05-25 → —', status: 'Active', rules: neRules() },
+  ],
+  PT: [
+    { id: '980531099', createdLabel: '30 mar. 2025', lastUpdateLabel: '30 mar. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '30-03-25 → —', status: 'Active', rules: FR_RULES_V1.slice(0, 3) },
+  ],
+};
+
+export function historyForCountry(code: CountryCode): RuleSetHistoryEntry[] {
+  return HISTORY[code].map(h => ({ ...h, rules: h.rules.map(r => ({ ...r, criteria: { ...r.criteria } })) }));
 }
 
 const FRESHNESS: Record<CountryCode, FreshnessConfig> = {

@@ -1,30 +1,41 @@
-<ds-card [noPadding]="true">
+<ds-card [noPadding]="true" [elevated]="expanded()">
   <div class="rule-card__head" role="button" tabindex="0"
-       (click)="toggle()" (keydown.enter)="toggle()">
-    <span class="rule-card__pos">{{ rule().position }}</span>
+       [attr.aria-expanded]="expanded()" [attr.aria-label]="ariaLabel()"
+       (click)="toggle()" (keydown.enter)="toggle()" (keydown.space)="$event.preventDefault(); toggle()">
+    <span class="rule-card__pos" aria-hidden="true">{{ rule().position.toString().padStart(2, '0') }}</span>
 
     <div class="rule-card__summary">
-      @for (s of summary(); track s.label) {
-        <span class="rule-card__seg"><span class="rule-card__seg-label">{{ s.label }}</span> {{ s.value }}</span>
-      }
-      @if (summary().length === 0) {
-        <span class="rule-card__seg rule-card__seg--any">No active criteria (matches all)</span>
+      @for (row of summaryRows(); track row.label) {
+        <div class="rule-card__field">
+          <span class="rule-card__field-label">{{ row.label }}</span>
+          <span class="rule-card__field-value" [class.rule-card__field-value--any]="row.isAny" [title]="row.value">{{ row.value }}</span>
+        </div>
       }
     </div>
 
-    <ds-badge [status]="badge().status" [variant]="badge().variant" [label]="badge().label" />
+    <div class="rule-card__badges">
+      <ds-badge [status]="decisionBadge().status" [variant]="decisionBadge().variant" [label]="decisionBadge().label" />
+      <ds-badge [status]="statusBadge().status" variant="light" [label]="statusBadge().label" />
+      @if (volume() !== null) {
+        <span class="rule-card__volume">
+          <ds-badge status="neutral" variant="light" [label]="volume()!.toFixed(2) + '%'" />
+        </span>
+      }
+    </div>
 
     <div class="rule-card__actions" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
-      <ds-button-icon type="plain" tone="default" ariaLabel="Rule actions" (clicked)="toggleMenu()">
-        <ds-icon name="context-vertical" [size]="16" />
-      </ds-button-icon>
-      @if (menuOpen()) {
-        <ds-flyout-menu class="rule-card__menu">
-          <ds-flyout-menu-item label="Edit"      icon="edit"  (clicked)="onEdit()" />
-          <ds-flyout-menu-item label="Move up"   icon="arrow-up"   (clicked)="onMoveUp()" />
-          <ds-flyout-menu-item label="Move down" icon="arrow-down" (clicked)="onMoveDown()" />
-          <ds-flyout-menu-item label="Delete"    icon="trash" (clicked)="onRemove()" />
-        </ds-flyout-menu>
+      @if (mode() === 'edit') {
+        <ds-button-icon type="plain" tone="default" ariaLabel="Rule actions" (clicked)="toggleMenu()">
+          <ds-icon name="context-vertical" [size]="16" />
+        </ds-button-icon>
+        @if (menuOpen()) {
+          <ds-flyout-menu class="rule-card__menu">
+            <ds-flyout-menu-item label="Edit"      icon="edit"  (clicked)="onEdit()" />
+            <ds-flyout-menu-item label="Move up"   icon="arrow-up"   (clicked)="onMoveUp()" />
+            <ds-flyout-menu-item label="Move down" icon="arrow-down" (clicked)="onMoveDown()" />
+            <ds-flyout-menu-item label="Delete"    icon="trash" (clicked)="onRemove()" />
+          </ds-flyout-menu>
+        }
       }
       <ds-icon [name]="expanded() ? 'chevron-up' : 'chevron-down'" [size]="16" />
     </div>
@@ -32,54 +43,7 @@
 
   @if (expanded()) {
     <div class="rule-card__body">
-      <!-- Group 1 -->
-      <section class="rule-group">
-        <h4 class="rule-group__title">Sensitivity · Exposure · New autograde</h4>
-        <div class="rule-group__fields">
-          <div class="rule-field"><span class="rule-field__label">Sensitivity</span>   <span class="rule-field__value" [class.rule-field__value--any]="isAny(c().sensitivity)">{{ fmtList(c().sensitivity) }}</span></div>
-          <div class="rule-field"><span class="rule-field__label">Exposure</span>      <span class="rule-field__value" [class.rule-field__value--any]="!c().exposure">{{ fmtExposure() }}</span></div>
-          <div class="rule-field"><span class="rule-field__label">New autograde</span> <span class="rule-field__value" [class.rule-field__value--any]="isAny(c().newAutoGrade)">{{ fmtList(c().newAutoGrade) }}</span></div>
-        </div>
-      </section>
-
-      <!-- Group 2 (blue) -->
-      <section class="rule-group rule-group--cvg">
-        <h4 class="rule-group__title">Current valid grade</h4>
-        <div class="rule-group__fields">
-          <div class="rule-field"><span class="rule-field__label">Value</span>       <span class="rule-field__value" [class.rule-field__value--any]="isAny(c().cvgValue)">{{ fmtList(c().cvgValue) }}</span></div>
-          <div class="rule-field"><span class="rule-field__label">Type</span>        <span class="rule-field__value" [class.rule-field__value--any]="isAny(c().cvgType)">{{ fmtList(c().cvgType) }}</span></div>
-          <div class="rule-field"><span class="rule-field__label">Freshness</span>   <span class="rule-field__value" [class.rule-field__value--any]="!c().cvgFreshness">{{ fmtFreshness(c().cvgFreshness) }}</span></div>
-          <div class="rule-field"><span class="rule-field__label">Transferred</span> <span class="rule-field__value" [class.rule-field__value--any]="c().transferred == null">{{ fmtTransferred(c().transferred) }}</span></div>
-          <div class="rule-field"><span class="rule-field__label">New AG vs CVG</span><span class="rule-field__value" [class.rule-field__value--any]="!c().newVsCvg">{{ fmtComparison(c().newVsCvg) }}</span></div>
-        </div>
-      </section>
-
-      <!-- Group 3 (orange) -->
-      <section class="rule-group rule-group--lastag">
-        <h4 class="rule-group__title">Last checked autograde</h4>
-        <div class="rule-group__fields">
-          <div class="rule-field"><span class="rule-field__label">Value</span>          <span class="rule-field__value" [class.rule-field__value--any]="isAny(c().lastAgValue)">{{ fmtList(c().lastAgValue) }}</span></div>
-          <div class="rule-field"><span class="rule-field__label">Freshness</span>      <span class="rule-field__value" [class.rule-field__value--any]="!c().lastAgFreshness">{{ fmtFreshness(c().lastAgFreshness) }}</span></div>
-          <div class="rule-field"><span class="rule-field__label">New AG vs Last AG</span><span class="rule-field__value" [class.rule-field__value--any]="!c().newVsLastAg">{{ fmtComparison(c().newVsLastAg) }}</span></div>
-        </div>
-      </section>
-
-      <!-- Group 4 Other (collapsible) -->
-      <section class="rule-group rule-group--other">
-        @if (otherCollapsedByDefault() && !otherOpen()) {
-          <ds-button type="plain" (clicked)="toggleOther()">
-            <ds-icon slot="icon-left" name="chevron-right" [size]="14" />
-            Other — all Any
-          </ds-button>
-        } @else {
-          <h4 class="rule-group__title">Other</h4>
-          <div class="rule-group__fields">
-            <div class="rule-field"><span class="rule-field__label">NACE</span>         <span class="rule-field__value" [class.rule-field__value--any]="isAny(c().nace)">{{ fmtList(c().nace) }}</span></div>
-            <div class="rule-field"><span class="rule-field__label">Legal form</span>   <span class="rule-field__value" [class.rule-field__value--any]="isAny(c().legalForm)">{{ fmtList(c().legalForm) }}</span></div>
-            <div class="rule-field"><span class="rule-field__label">Company role</span> <span class="rule-field__value" [class.rule-field__value--any]="isAny(c().companyRole)">{{ fmtList(c().companyRole) }}</span></div>
-          </div>
-        }
-      </section>
+      <ds-properties-panel [sections]="detailSections()" [columns]="3" variant="flat" layout="stacked" />
     </div>
   }
 </ds-card>

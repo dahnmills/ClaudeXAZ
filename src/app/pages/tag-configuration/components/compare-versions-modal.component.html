@@ -1,0 +1,93 @@
+<ds-modal
+  [open]="open()"
+  title="Compare rule versions"
+  size="xlarge"
+  [showBack]="false"
+  [footer]="canValidate()"
+  contentHeight="640px"
+  (closed)="closed.emit()">
+
+  <div class="cvm-selects">
+    <ds-select label="Compare from" [options]="allOptions()" [value]="fromId()" (selectionChange)="fromId.set($event)" />
+    <ds-select label="Compare to" [options]="allOptions()" [value]="toId()" (selectionChange)="toId.set($event)" />
+  </div>
+
+  @if (toVersion(); as to) {
+    <div class="cvm-stats">
+      <ds-card class="cvm-stat">
+        <span class="cvm-stat__label">Volume Accepted</span>
+        <span class="cvm-stat__pct">{{ to.accepted.pct.toFixed(2) }}%</span>
+        <span class="cvm-stat__count">{{ to.accepted.count }} rules</span>
+      </ds-card>
+      <ds-card class="cvm-stat">
+        <span class="cvm-stat__label">Volume Refused</span>
+        <span class="cvm-stat__pct">{{ to.refused.pct.toFixed(2) }}%</span>
+        <span class="cvm-stat__count">{{ to.refused.count }} rules</span>
+      </ds-card>
+      <ds-card class="cvm-stat">
+        <span class="cvm-stat__label">Volume JTD</span>
+        <span class="cvm-stat__pct">{{ to.jtd.pct.toFixed(2) }}%</span>
+        <span class="cvm-stat__count">{{ to.jtd.count }} rules</span>
+      </ds-card>
+
+      <ds-card class="cvm-donut-card">
+        <ds-pie-chart [segments]="donutSegments()" [size]="88" [thickness]="12" />
+        <ul class="cvm-legend">
+          @for (seg of donutSegments(); track seg.label) {
+            <li class="cvm-legend__item">
+              <span class="cvm-legend__swatch" [class]="'cvm-legend__swatch--tone-' + seg.tone"></span>
+              {{ seg.label }}
+            </li>
+          }
+        </ul>
+      </ds-card>
+    </div>
+
+    <ul class="cvm-list">
+      @for (row of diffRows(); track row.position) {
+        <li class="cvm-row" [class.cvm-row--new]="row.isNew">
+          <span class="cvm-row__pos" [class.cvm-row__pos--new]="row.isNew">{{ row.position.toString().padStart(2, '0') }}</span>
+
+          <div class="cvm-row__fields">
+            @if (row.fields.length > 0) {
+              @for (f of row.fields; track f.label) {
+                <p class="cvm-row__field">
+                  <span class="cvm-row__field-label">{{ f.label }}:</span>
+                  @if (f.changed) {
+                    <span class="cvm-diff__old">{{ f.oldValue }}</span>
+                    <ds-icon name="arrow-right" [size]="12" />
+                    <span class="cvm-diff__new">{{ f.newValue }}</span>
+                  } @else {
+                    <span class="cvm-row__field-value">{{ f.newValue }}</span>
+                  }
+                </p>
+              }
+            } @else {
+              <p class="cvm-row__field cvm-row__field--empty">No criteria changed</p>
+            }
+          </div>
+
+          <div class="cvm-row__badge">
+            @if (row.badgeChanged) {
+              <span class="cvm-pill cvm-pill--old">{{ row.oldPct }}</span>
+              <ds-icon name="arrow-right" [size]="12" />
+              <span class="cvm-pill cvm-pill--new">{{ row.newPct }}</span>
+            } @else {
+              <span class="cvm-pill cvm-pill--new">{{ row.newPct }}</span>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (canValidate()) {
+    <div slot="actions">
+      <ds-button type="secondary" (clicked)="editRequested.emit()">
+        <ds-icon slot="icon-left" name="edit" [size]="16" />
+        Edit the new version
+      </ds-button>
+      <ds-button type="primary" (clicked)="validateRequested.emit()">Validate the new version</ds-button>
+    </div>
+  }
+</ds-modal>

@@ -3,28 +3,37 @@ import { ModalComponent } from '../../../shared/ui/modal/modal.component';
 import { InputTextComponent } from '../../../shared/ui/input-text/input-text.component';
 import { FunctionalNoticeComponent } from '../../../shared/ui/functional-notice/functional-notice.component';
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
+import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import { FreshnessConfig } from '../tag-configuration.models';
+
+const THRESHOLD_ORDER_ERROR = '"Old after" must be greater than or equal to "Fresh up to".';
 
 /**
  * Edit grade freshness thresholds modal (P2) — 3-state model (Fresh / Outdated / Old),
  * 2 thresholds (freshUpToMonths, oldAfterMonths) x 2 grade types (Last checked autograde,
- * Valid manual grade). Current values are read-only display columns; New values are the
- * editable draft. Per-row constraint: oldAfterMonths >= freshUpToMonths.
+ * Valid manual grade). Current values are read-only; New values are the editable draft.
+ * Per-group constraint: oldAfterMonths >= freshUpToMonths.
+ *
+ * Layout: one rm-card per grade type, each with 4 small label-above-input fields
+ * (not a 5-column table) — a threshold value is 1-3 digits, so sizing every field
+ * to fit its own label (instead of a shared table column) keeps inputs compact.
  *
  * Composition: ds-modal (self-composes header/content/footer via title input +
- * [slot=actions]) + ds-input-text (readonly for current cols) + ds-functional-notice
- * (inline warning) + ds-button.
+ * [slot=actions]) + ds-input-text (readonly for current fields) + ds-icon
+ * (current → new arrow) + ds-functional-notice (inline warning) + ds-button.
  */
 @Component({
   selector: 'tag-freshness-modal',
   standalone: true,
-  imports: [ModalComponent, InputTextComponent, FunctionalNoticeComponent, ButtonComponent],
+  imports: [ModalComponent, InputTextComponent, FunctionalNoticeComponent, ButtonComponent, IconComponent],
   templateUrl: './freshness-modal.component.html',
   styleUrl: './freshness-modal.component.scss',
 })
 export class FreshnessModalComponent {
   open   = input<boolean>(false);
   config = input.required<FreshnessConfig>();
+
+  readonly thresholdOrderError = THRESHOLD_ORDER_ERROR;
 
   save   = output<FreshnessConfig>();
   closed = output<void>();

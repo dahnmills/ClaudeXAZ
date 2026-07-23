@@ -89,3 +89,4 @@ export * from './timeline/timeline.component';
 export * from './timeline/timeline-event.component';
 export * from './collapsible-table/collapsible-table.component';
 export * from './grid-selection/grid-selection.component';
+export * from './pie-chart/pie-chart.component';

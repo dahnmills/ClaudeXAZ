@@ -38,6 +38,32 @@ export interface TagRule {
   criteria: RuleCriteria;
 }
 
+export interface VolumeStat { pct: number; count: number; }
+
+/** A saved rule-set snapshot, comparable against another via Compare rule versions. */
+export interface RuleSetVersion {
+  id: string;
+  label: string;
+  date: string;
+  rules: TagRule[];
+  accepted: VolumeStat;
+  refused: VolumeStat;
+  jtd: VolumeStat;
+}
+
+export type RuleSetStatus = 'Draft' | 'Active' | 'Archived';
+
+/** One row of the History tab — a past rule-set publication. Dates are display-ready strings (mock, no live formatting). */
+export interface RuleSetHistoryEntry {
+  id: string;
+  createdLabel: string;
+  lastUpdateLabel: string;
+  lastUpdateBy: string;
+  activePeriodLabel: string;
+  status: RuleSetStatus;
+  rules: TagRule[];
+}
+
 export interface FreshnessConfig {
   lastCheckedAutograde: { freshUpToMonths: number; oldAfterMonths: number };
   validManualGrade:     { freshUpToMonths: number; oldAfterMonths: number };
@@ -45,7 +71,7 @@ export interface FreshnessConfig {
 
 export interface StatusReasonCode { code: string; label: string; }
 
-export interface Country { code: CountryCode; name: string; currency: string; }
+export interface Country { code: CountryCode; name: string; currency: string; readOnly?: boolean; }
 
 export const EMPTY_CRITERIA: RuleCriteria = {
   sensitivity: null, exposure: null, newAutoGrade: null,

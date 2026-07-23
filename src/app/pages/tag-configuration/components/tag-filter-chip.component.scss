@@ -8,11 +8,98 @@
   display:  inline-block;
 }
 
+:host:has(.tag-filter-chip__field-container) {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--foundation-spacing-2, 2px);
+  width:          100%;
+}
+
+.tag-filter-chip__field-label {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.tag-filter-chip__field-container {
+  position:      relative;
+  display:       flex;
+  align-items:   center;
+  height:        var(--semantic-measurement-spacing-xl);
+  border-radius: var(--semantic-border-radius-s);
+  border:        var(--semantic-border-size-s) solid var(--semantic-color-interactive-border-strong-alt-default);
+  background:    var(--semantic-color-static-background-main-primary);
+  transition:    border-color 120ms ease;
+
+  &:hover {
+    border-color: var(--semantic-color-interactive-border-strong-alt-hover);
+  }
+  &:has(.tag-filter-chip__field[aria-expanded='true']) {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+  }
+  &:has(.tag-filter-chip__field:focus-visible) {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.tag-filter-chip__field {
+  flex:        1 1 auto;
+  display:     flex;
+  align-items: center;
+  height:      100%;
+  padding:     0 var(--semantic-measurement-spacing-xl) 0 var(--semantic-measurement-spacing-s);
+  background:  transparent;
+  border:      0;
+  outline:     none;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+  cursor:      pointer;
+  text-align:  left;
+}
+
+.tag-filter-chip__field-value {
+  display:      inline-block;
+  width:        100%;
+  white-space:  nowrap;
+  overflow:     hidden;
+  text-overflow: ellipsis;
+}
+
+.tag-filter-chip__field-value--placeholder {
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+.tag-filter-chip__field-chevron {
+  position:       absolute;
+  right:          var(--semantic-measurement-spacing-xs);
+  top:            50%;
+  transform:      translateY(-50%);
+  color:          var(--semantic-color-static-text-main-secondary);
+  pointer-events: none;
+}
+
 .tag-filter-chip__flyout {
   position:  absolute;
   top:       calc(100% + var(--semantic-measurement-spacing-xs));
   left:      0;
   z-index:   10;
+}
+
+.tag-filter-chip__flyout--field {
+  right: 0;
+  left:  0;
+}
+
+.tag-filter-chip__flyout--field ::ng-deep .ds-flyout-menu {
+  display:    block;
+  width:      100%;
+  min-width:  0;
+  box-sizing: border-box;
 }
 
 .tag-filter-chip__options {

@@ -1,84 +1,119 @@
 // =============================================================
-// Rule create/edit modal — 4 grouped criteria sections (accents
-// match tag-rule-card) + a divider-separated Outcome section.
-// Composition: ds-modal + ds-select/-input-text/-segmented-control/
-//              -checkbox/-divider/-button + ds-confirm-dialog (dirty guard)
+// Rule create/edit modal — grey outer panel + white card per criteria
+// group, same vocabulary as the company creation/edit wizards
+// (wizard__panel / __group / __card): rm-panel is the grey background,
+// rm-group holds a small uppercase title, rm-card is the white surface
+// that actually contains the fields. Fields wrap at a content-sized
+// minimum instead of a blind N-column grid, so a 5-facet concept
+// (Current valid grade) stays on one visual line instead of being split
+// 3+2 by an arbitrary column count. Outcome is a 3-way ds-radio-card
+// picker, tone-coded per decision.
+// Composition: ds-modal + ds-radio-card + ds-select/-input-text/
+//              -segmented-control/-button + tag-filter-chip(field) +
+//              ds-confirm-dialog
 // =============================================================
 
 :host {
   display: block;
 }
 
-.rm-groups {
+.rm-panel {
   display:        flex;
   flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-l);
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        var(--semantic-measurement-spacing-l);
+  background:     var(--semantic-color-static-background-main-secondary);
+  border-radius:  var(--semantic-border-radius-s);
 }
 
 .rm-group {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+
   &__title {
+    font-family:    var(--semantic-font-family);
     font-size:      var(--semantic-font-text-style-size-s);
-    text-transform: uppercase;
-    letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
     font-weight:    var(--semantic-font-text-style-font-weight-bold);
-    margin:         0 0 var(--semantic-measurement-spacing-s);
+    letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+    text-transform: uppercase;
     color:          var(--semantic-color-static-text-main-tertiary);
-    border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary);
-    padding-bottom: var(--semantic-measurement-spacing-xs);
+  }
+}
+
+.rm-card {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        var(--semantic-measurement-spacing-m);
+  background:     var(--semantic-color-static-background-main-primary);
+  border-radius:  var(--semantic-border-radius-s);
+}
+
+// Base row layout: wrap at a content-sized minimum, not a fixed column
+// count — a field only takes the 3-column width when 3 actually fit.
+// align-items: flex-end keeps every control (dropdown / input / segmented
+// control) level along the bottom even when one field's label wraps onto
+// 2 lines and others don't — the field itself never needs to be widened
+// just to fit a long label (that would make e.g. an "Upgrade/Downgrade"
+// dropdown pointlessly wide); the label is left to wrap in its own column.
+.rm-row {
+  display:     flex;
+  flex-wrap:   wrap;
+  align-items: flex-end;
+  gap:         var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-m);
+
+  &--3 > * {
+    flex: 1 1 220px;
   }
 
-  &--cvg .rm-group__title {
-    color:               var(--semantic-color-interactive-text-strong-default);
-    border-bottom-color: var(--semantic-color-interactive-border-light-default);
+  // Current valid grade: 5 facets of ONE concept — same row, each sized to
+  // its own control (segmented control and short selects don't need 220px).
+  &--cvg > * {
+    flex: 1 1 160px;
   }
+}
 
-  &--lastag .rm-group__title {
-    color:               var(--semantic-color-static-text-main-functional-warning);
-    border-bottom-color: var(--semantic-color-static-border-subtle-functional-warning);
-  }
-
-  &--outcome {
-    margin-top: var(--semantic-measurement-spacing-l);
-  }
+.rm-outcome-cards {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--semantic-measurement-spacing-m);
 }
 
 .rm-field {
   display:        flex;
   flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-xs);
-  margin-bottom:  var(--semantic-measurement-spacing-s);
+  gap:            var(--foundation-spacing-2, 2px);
+}
 
-  &:last-child {
-    margin-bottom: 0;
-  }
+// Reset native fieldset chrome — semantic grouping for a compound control
+// (Exposure, Transferred), visually identical to a plain labeled field.
+.rm-fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
 }
 
 .rm-label {
-  font-size:   var(--semantic-font-text-style-size-s);
-  font-weight: var(--semantic-font-text-style-font-weight-bold);
-  color:       var(--semantic-color-static-text-main-secondary);
-}
-
-.rm-checks {
-  display:   flex;
-  flex-wrap: wrap;
-  gap:       var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
 }
 
 .rm-exposure {
-  display:     flex;
-  align-items: center;
-  gap:         var(--semantic-measurement-spacing-xs);
+  display:               grid;
+  // Operator select carries the long label ("> (greater than)"); amount is
+  // just digits — give the select the room, keep amount to a sane minimum.
+  grid-template-columns: minmax(0, 3fr) minmax(var(--semantic-measurement-sizing-3xl), 2fr) auto;
+  align-items:           center;
+  gap:                   var(--semantic-measurement-spacing-xs);
 
-  ds-select {
-    flex: 0 0 auto;
+  &__currency {
+    font-size:   var(--semantic-font-text-style-size-l);
+    color:       var(--semantic-color-static-text-main-tertiary);
+    white-space: nowrap;
   }
-  ds-input-text {
-    flex: 1 1 120px;
-  }
-}
-
-.rm-currency {
-  font-size: var(--semantic-font-text-style-size-s);
-  color:     var(--semantic-color-static-text-main-tertiary);
 }

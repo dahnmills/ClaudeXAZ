@@ -1,8 +1,10 @@
 // =============================================================
-// TRANS-NA-EXCL modal — read-only "Current codes" list + search-add
-// candidates from the status reason referential. Empty list allowed.
+// TRANS-NA-EXCL modal — grey panel + white card per group (same
+// rm-panel/rm-group/rm-card vocabulary as rule-modal and the company
+// wizards): "Current codes" (read-only list) and "Add codes"
+// (search-add from the status reason referential). Empty list allowed.
 // Composition: ds-modal + ds-input-search + ds-flyout-menu(-item) +
-// ds-tag (static) + ds-functional-notice + ds-button(-icon)
+// ds-functional-notice + ds-button(-icon)
 // =============================================================
 
 :host {
@@ -10,22 +12,43 @@
 }
 
 .te-intro {
-  display:     flex;
-  align-items: center;
-  flex-wrap:   wrap;
-  gap:         var(--semantic-measurement-spacing-xs);
-  font-size:   var(--semantic-font-text-style-size-s);
-  color:       var(--semantic-color-static-text-main-tertiary);
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-secondary);
   margin:      0 0 var(--semantic-measurement-spacing-m);
 }
 
-.te-section {
-  font-size:      var(--semantic-font-text-style-size-s);
-  text-transform: uppercase;
-  letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
-  font-weight:    var(--semantic-font-text-style-font-weight-bold);
-  color:          var(--semantic-color-static-text-main-tertiary);
-  margin:         var(--semantic-measurement-spacing-m) 0 var(--semantic-measurement-spacing-s);
+.rm-panel {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        var(--semantic-measurement-spacing-l);
+  background:     var(--semantic-color-static-background-main-secondary);
+  border-radius:  var(--semantic-border-radius-s);
+}
+
+.rm-group {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+
+  &__title {
+    font-family:    var(--semantic-font-family);
+    font-size:      var(--semantic-font-text-style-size-s);
+    font-weight:    var(--semantic-font-text-style-font-weight-bold);
+    letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+    text-transform: uppercase;
+    color:          var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+.rm-card {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        var(--semantic-measurement-spacing-m);
+  background:     var(--semantic-color-static-background-main-primary);
+  border-radius:  var(--semantic-border-radius-s);
 }
 
 .te-list {
@@ -50,18 +73,32 @@
 
 .te-key {
   font-weight: var(--semantic-font-text-style-font-weight-bold);
+  font-size:   var(--semantic-font-text-style-size-l);
   color:       var(--semantic-color-interactive-text-strong-default);
-  min-width:   64px;
+  min-width:   var(--semantic-measurement-sizing-3xl);
 }
 
 .te-desc {
   flex:      1;
   color:     var(--semantic-color-static-text-main-secondary);
-  font-size: var(--semantic-font-text-style-size-s);
+  font-size: var(--semantic-font-text-style-size-l);
+}
+
+// Anchors the flyout directly under the search field instead of leaving it
+// in the card's flex flow — the card's own gap (spacing-m, 16px) plus the
+// flyout's margin-top stacked on top of it read as "the dropdown is
+// floating away from its trigger" instead of an attached menu.
+.te-search-wrap {
+  position: relative;
 }
 
 .te-candidates {
-  margin-top: var(--semantic-measurement-spacing-xs);
-  max-height: 220px;
+  position:   absolute;
+  top:        calc(100% + var(--semantic-measurement-spacing-xs));
+  left:       0;
+  right:      0;
+  z-index:    10;
+  // ~5 flyout-menu-items visible before scrolling (each ~40px: 8px padding × 2 + 24px line-height)
+  max-height: calc(var(--semantic-measurement-sizing-3xl) * 3 + var(--semantic-measurement-spacing-xs));
   overflow-y: auto;
 }

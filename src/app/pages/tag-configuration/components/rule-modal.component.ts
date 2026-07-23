@@ -3,31 +3,45 @@ import { ModalComponent } from '../../../shared/ui/modal/modal.component';
 import { SelectComponent } from '../../../shared/ui/select/select.component';
 import { InputTextComponent } from '../../../shared/ui/input-text/input-text.component';
 import { SegmentedControlComponent } from '../../../shared/ui/segmented-control/segmented-control.component';
-import { CheckboxComponent } from '../../../shared/ui/checkbox/checkbox.component';
-import { DividerComponent } from '../../../shared/ui/divider/divider.component';
+import { RadioCardComponent, RadioCardTone } from '../../../shared/ui/radio-card/radio-card.component';
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
+import { TagFilterChipComponent } from './tag-filter-chip.component';
 import {
   TagRule, RuleCriteria, EMPTY_CRITERIA, Decision, Grade, Sensitivity, GradeType, Freshness, Comparison,
 } from '../tag-configuration.models';
 import {
   SENSITIVITY_OPTIONS, GRADE_OPTIONS, GRADE_TYPE_OPTIONS, FRESHNESS_OPTIONS,
-  COMPARISON_OPTIONS, DECISION_OPTIONS, COMPANY_ROLE_OPTIONS, NACE_OPTIONS, LEGAL_FORM_OPTIONS,
+  COMPARISON_OPTIONS, COMPANY_ROLE_OPTIONS, NACE_OPTIONS, LEGAL_FORM_OPTIONS,
   EXPOSURE_OP_OPTIONS, TRANSFERRED_OPTIONS,
 } from '../tag-configuration.data';
 
+const DECISION_CARDS: { value: Decision; label: string; sublabel: string; tone: RadioCardTone }[] = [
+  { value: 'Accept',     label: 'Accept',      sublabel: 'Auto-grade the company, no manual review', tone: 'success' },
+  { value: 'Refuse',     label: 'Refuse',      sublabel: 'Reject the new grade automatically',        tone: 'error' },
+  { value: 'CreateTask', label: 'Create task', sublabel: 'Send to manual review before applying',     tone: 'warning' },
+];
+
 /**
- * Create/Edit rule modal — 4 grouped criteria sections (matching rule-card accents)
- * + a divider-separated Outcome (TAG Decision) section.
- * Local editable state is seeded from `rule()` on open via an effect; multi-selects
- * are held as Set<string>, single-selects as string ('Any' means "no constraint" / null).
+ * Create/Edit rule modal — reuses the "grey panel + white card per group"
+ * pattern from the company creation/edit wizards (rm-panel / rm-group /
+ * rm-card) so each criteria group reads as a distinct section instead of
+ * blending into one flat page. Groups: Base criteria, Current valid grade,
+ * Last checked autograde, Company profile, Outcome. Inside a card, fields
+ * that describe ONE concept (e.g. CVG's Value/Type/Freshness/Transferred/
+ * Comparison) are laid out on their own row sized to their content, not
+ * forced into a uniform 3-column grid that splits a 5-field concept into
+ * an arbitrary 3+2. Outcome is a 3-way radio-card picker, tone-coded per
+ * DECISION_CARDS. Local editable state is seeded from `rule()` on open via
+ * an effect; multi-selects are held as Set<string>, single-selects as
+ * string ('Any' means "no constraint" / null).
  */
 @Component({
   selector: 'tag-rule-modal',
   standalone: true,
   imports: [
     ModalComponent, SelectComponent, InputTextComponent, SegmentedControlComponent,
-    CheckboxComponent, DividerComponent, ButtonComponent, ConfirmDialogComponent,
+    RadioCardComponent, ButtonComponent, ConfirmDialogComponent, TagFilterChipComponent,
   ],
   templateUrl: './rule-modal.component.html',
   styleUrl: './rule-modal.component.scss',
@@ -43,7 +57,7 @@ export class RuleModalComponent {
   // option lists exposed to the template
   SENSITIVITY_OPTIONS = SENSITIVITY_OPTIONS; GRADE_OPTIONS = GRADE_OPTIONS;
   GRADE_TYPE_OPTIONS = GRADE_TYPE_OPTIONS; FRESHNESS_OPTIONS = FRESHNESS_OPTIONS;
-  COMPARISON_OPTIONS = COMPARISON_OPTIONS; DECISION_OPTIONS = DECISION_OPTIONS;
+  COMPARISON_OPTIONS = COMPARISON_OPTIONS; DECISION_CARDS = DECISION_CARDS;
   COMPANY_ROLE_OPTIONS = COMPANY_ROLE_OPTIONS; NACE_OPTIONS = NACE_OPTIONS;
   LEGAL_FORM_OPTIONS = LEGAL_FORM_OPTIONS; EXPOSURE_OP_OPTIONS = EXPOSURE_OP_OPTIONS;
   TRANSFERRED_OPTIONS = TRANSFERRED_OPTIONS;
@@ -93,7 +107,12 @@ export class RuleModalComponent {
       this.legalForm.set(new Set(c.legalForm ?? []));
       this.companyRole.set(new Set(c.companyRole ?? []));
       this.decision.set(r?.decision ?? 'Accept');
-      this.baseline = this.snapshot();
+
+      // Snapshot straight from the source data (c / r), never via buildCriteria()/
+      // the signals — reading those signals here would register them as effect
+      // dependencies, turning every field edit into a re-run that resets the form
+      // back to c (EMPTY_CRITERIA in create mode).
+      this.baseline = JSON.stringify(c) + (r?.decision ?? 'Accept');
     });
   }
 
@@ -129,7 +148,7 @@ export class RuleModalComponent {
     const next = new Set(sig()); next.has(value) ? next.delete(value) : next.add(value); sig.set(next);
   }
 
-  onDecisionChange(value: string): void { this.decision.set(value as Decision); }
+  selectDecision(value: Decision): void { this.decision.set(value); }
 
   onSave(): void {
     if (!this.canSave()) return;

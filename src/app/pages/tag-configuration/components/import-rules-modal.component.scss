@@ -1,0 +1,37 @@
+.irm-file-input {
+  display: none;
+}
+
+.irm-drop {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--semantic-measurement-spacing-s);
+  padding:        var(--semantic-measurement-spacing-xl);
+  color:          var(--semantic-color-static-text-main-tertiary);
+
+  &__text {
+    margin:      0;
+    font-size:   var(--semantic-font-text-style-size-l);
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+}
+
+.irm-file {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s);
+  padding:       var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+  color:         var(--semantic-color-static-text-main-primary);
+
+  &__name { flex: 1; font-size: var(--semantic-font-text-style-size-m); }
+  &__remove { cursor: pointer; color: var(--semantic-color-static-text-main-functional-negative); }
+
+  &--error {
+    border-color: var(--semantic-color-static-border-main-functional-negative);
+    color:        var(--semantic-color-static-text-main-functional-negative);
+  }
+}

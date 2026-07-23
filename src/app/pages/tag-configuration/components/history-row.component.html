@@ -1,0 +1,31 @@
+<ds-card [noPadding]="true" class="history-row" [class.history-row--selected]="selected()" role="button" tabindex="0" (click)="opened.emit()" (keydown.enter)="opened.emit()">
+  <div class="history-row__field">
+    <span class="history-row__label">ID</span>
+    <span class="history-row__value">{{ entry().id }}</span>
+  </div>
+  <div class="history-row__field">
+    <span class="history-row__label">Created</span>
+    <span class="history-row__value">{{ entry().createdLabel }}</span>
+  </div>
+  <div class="history-row__field">
+    <span class="history-row__label">Last update</span>
+    <span class="history-row__value">{{ entry().lastUpdateLabel }}</span>
+  </div>
+  <div class="history-row__field">
+    <span class="history-row__label">Last update by</span>
+    <span class="history-row__value">{{ entry().lastUpdateBy }}</span>
+  </div>
+  <div class="history-row__field">
+    <span class="history-row__label">Active period</span>
+    <span class="history-row__value">{{ entry().activePeriodLabel }}</span>
+  </div>
+
+  <div class="history-row__end">
+    <span class="history-row__badge-slot">
+      @if (statusBadge(); as b) {
+        <ds-badge [status]="b.status" variant="light" [label]="b.label" />
+      }
+    </span>
+    <ds-icon name="chevron-right" [size]="16" />
+  </div>
+</ds-card>

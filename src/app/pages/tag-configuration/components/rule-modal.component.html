@@ -6,133 +6,86 @@
   contentHeight="640px"
   (closed)="requestClose()">
 
-  <div class="rm-groups">
+  <!-- Grey outer panel + white cards per group — same pattern as the company
+       creation/edit wizards (wizard__panel / __group / __card), so criteria
+       groups read as distinct sections instead of blending into one page. -->
+  <div class="rm-panel">
 
-    <!-- Group 1 -->
-    <section class="rm-group">
-      <h4 class="rm-group__title">Sensitivity · Exposure · New autograde</h4>
-      <div class="rm-field">
-        <label class="rm-label">Sensitivity</label>
-        <div class="rm-checks">
-          @for (o of SENSITIVITY_OPTIONS; track o.value) {
-            @if (o.value !== 'Any') {
-              <ds-checkbox [label]="o.label" [checked]="sensitivity().has(o.value)" (checkedChange)="toggleSet(sensitivity, o.value)" />
-            }
-          }
+    <div class="rm-group">
+      <span class="rm-group__title">Base criteria</span>
+      <div class="rm-card">
+        <div class="rm-row rm-row--3">
+          <tag-filter-chip variant="field" label="Sensitivity" [options]="SENSITIVITY_OPTIONS" [selected]="sensitivity()" (selectedChange)="sensitivity.set($event)" />
+          <fieldset class="rm-field rm-fieldset">
+            <legend class="rm-label">Exposure</legend>
+            <div class="rm-exposure">
+              <ds-select class="rm-exposure__op" [options]="EXPOSURE_OP_OPTIONS" [value]="exposureOp()" (selectionChange)="exposureOp.set($event)" placeholder="Any" />
+              <ds-input-text class="rm-exposure__amt" inputmode="numeric" [value]="exposureAmt()" (valueChange)="exposureAmt.set($event)" placeholder="Amount" />
+              <span class="rm-exposure__currency">{{ currency() }}</span>
+            </div>
+          </fieldset>
+          <tag-filter-chip variant="field" label="New autograde" [options]="GRADE_OPTIONS" [selected]="newAutoGrade()" (selectedChange)="newAutoGrade.set($event)" />
         </div>
       </div>
-      <div class="rm-field">
-        <label class="rm-label">Exposure</label>
-        <div class="rm-exposure">
-          <ds-select [options]="EXPOSURE_OP_OPTIONS" [value]="exposureOp()" (selectionChange)="exposureOp.set($event)" placeholder="Any" />
-          <ds-input-text [value]="exposureAmt()" (valueChange)="exposureAmt.set($event)" placeholder="Amount" />
-          <span class="rm-currency">{{ currency() }}</span>
-        </div>
-      </div>
-      <div class="rm-field">
-        <label class="rm-label">New autograde</label>
-        <div class="rm-checks">
-          @for (o of GRADE_OPTIONS; track o.value) {
-            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="newAutoGrade().has(o.value)" (checkedChange)="toggleSet(newAutoGrade, o.value)" /> }
-          }
-        </div>
-      </div>
-    </section>
+    </div>
 
-    <!-- Group 2 (blue — Current valid grade) -->
-    <section class="rm-group rm-group--cvg">
-      <h4 class="rm-group__title">Current valid grade</h4>
-      <div class="rm-field">
-        <label class="rm-label">Value</label>
-        <div class="rm-checks">
-          @for (o of GRADE_OPTIONS; track o.value) {
-            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="cvgValue().has(o.value)" (checkedChange)="toggleSet(cvgValue, o.value)" /> }
-          }
+    <div class="rm-group">
+      <span class="rm-group__title">Current valid grade</span>
+      <div class="rm-card">
+        <!-- One concept, 5 facets — kept on their own row instead of split
+             across an unrelated 3-column grid. -->
+        <div class="rm-row rm-row--cvg">
+          <tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="cvgValue()" (selectedChange)="cvgValue.set($event)" />
+          <tag-filter-chip variant="field" label="Type" [options]="GRADE_TYPE_OPTIONS" [selected]="cvgType()" (selectedChange)="cvgType.set($event)" />
+          <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="cvgFreshness()" (selectionChange)="cvgFreshness.set($event)" />
+          <fieldset class="rm-field rm-fieldset">
+            <legend class="rm-label">Transferred</legend>
+            <ds-segmented-control [options]="TRANSFERRED_OPTIONS" [selected]="transferred()" (selectedChange)="transferred.set($event)" />
+          </fieldset>
+          <ds-select label="New autograde vs current valid grade" [options]="COMPARISON_OPTIONS" [value]="newVsCvg()" (selectionChange)="newVsCvg.set($event)" />
         </div>
       </div>
-      <div class="rm-field">
-        <label class="rm-label">Type</label>
-        <div class="rm-checks">
-          @for (o of GRADE_TYPE_OPTIONS; track o.value) {
-            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="cvgType().has(o.value)" (checkedChange)="toggleSet(cvgType, o.value)" /> }
-          }
-        </div>
-      </div>
-      <div class="rm-field">
-        <label class="rm-label">Freshness</label>
-        <ds-select [options]="FRESHNESS_OPTIONS" [value]="cvgFreshness()" (selectionChange)="cvgFreshness.set($event)" />
-      </div>
-      <div class="rm-field">
-        <label class="rm-label">Transferred</label>
-        <ds-segmented-control [options]="TRANSFERRED_OPTIONS" [selected]="transferred()" (selectedChange)="transferred.set($event)" />
-      </div>
-      <div class="rm-field">
-        <label class="rm-label">New AG vs CVG</label>
-        <ds-select [options]="COMPARISON_OPTIONS" [value]="newVsCvg()" (selectionChange)="newVsCvg.set($event)" />
-      </div>
-    </section>
+    </div>
 
-    <!-- Group 3 (orange — Last checked autograde) -->
-    <section class="rm-group rm-group--lastag">
-      <h4 class="rm-group__title">Last checked autograde</h4>
-      <div class="rm-field">
-        <label class="rm-label">Value</label>
-        <div class="rm-checks">
-          @for (o of GRADE_OPTIONS; track o.value) {
-            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="lastAgValue().has(o.value)" (checkedChange)="toggleSet(lastAgValue, o.value)" /> }
-          }
+    <div class="rm-group">
+      <span class="rm-group__title">Last checked autograde</span>
+      <div class="rm-card">
+        <div class="rm-row rm-row--3">
+          <tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="lastAgValue()" (selectedChange)="lastAgValue.set($event)" />
+          <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="lastAgFreshness()" (selectionChange)="lastAgFreshness.set($event)" />
+          <ds-select label="New autograde vs last checked autograde" [options]="COMPARISON_OPTIONS" [value]="newVsLastAg()" (selectionChange)="newVsLastAg.set($event)" />
         </div>
       </div>
-      <div class="rm-field">
-        <label class="rm-label">Freshness</label>
-        <ds-select [options]="FRESHNESS_OPTIONS" [value]="lastAgFreshness()" (selectionChange)="lastAgFreshness.set($event)" />
-      </div>
-      <div class="rm-field">
-        <label class="rm-label">New AG vs Last AG</label>
-        <ds-select [options]="COMPARISON_OPTIONS" [value]="newVsLastAg()" (selectionChange)="newVsLastAg.set($event)" />
-      </div>
-    </section>
+    </div>
 
-    <!-- Group 4 (Other) -->
-    <section class="rm-group">
-      <h4 class="rm-group__title">Other</h4>
-      <div class="rm-field">
-        <label class="rm-label">NACE</label>
-        <div class="rm-checks">
-          @for (o of NACE_OPTIONS; track o.value) {
-            <ds-checkbox [label]="o.label" [checked]="nace().has(o.value)" (checkedChange)="toggleSet(nace, o.value)" />
+    <div class="rm-group">
+      <span class="rm-group__title">Company profile</span>
+      <div class="rm-card">
+        <div class="rm-row rm-row--3">
+          <tag-filter-chip variant="field" label="NACE" [options]="NACE_OPTIONS" [selected]="nace()" (selectedChange)="nace.set($event)" />
+          <tag-filter-chip variant="field" label="Legal form" [options]="LEGAL_FORM_OPTIONS" [selected]="legalForm()" (selectedChange)="legalForm.set($event)" />
+          <tag-filter-chip variant="field" label="Company role" [options]="COMPANY_ROLE_OPTIONS" [selected]="companyRole()" (selectedChange)="companyRole.set($event)" />
+        </div>
+      </div>
+    </div>
+
+    <div class="rm-group">
+      <span class="rm-group__title">Outcome</span>
+      <div class="rm-card">
+        <div class="rm-outcome-cards" role="radiogroup" aria-label="Rule outcome">
+          @for (card of DECISION_CARDS; track card.value) {
+            <ds-radio-card
+              [label]="card.label"
+              [sublabel]="card.sublabel"
+              [tone]="card.tone"
+              [selected]="decision() === card.value"
+              (selectedChange)="selectDecision(card.value)" />
           }
         </div>
       </div>
-      <div class="rm-field">
-        <label class="rm-label">Legal form</label>
-        <div class="rm-checks">
-          @for (o of LEGAL_FORM_OPTIONS; track o.value) {
-            <ds-checkbox [label]="o.label" [checked]="legalForm().has(o.value)" (checkedChange)="toggleSet(legalForm, o.value)" />
-          }
-        </div>
-      </div>
-      <div class="rm-field">
-        <label class="rm-label">Company role</label>
-        <div class="rm-checks">
-          @for (o of COMPANY_ROLE_OPTIONS; track o.value) {
-            @if (o.value !== 'Any') { <ds-checkbox [label]="o.label" [checked]="companyRole().has(o.value)" (checkedChange)="toggleSet(companyRole, o.value)" /> }
-          }
-        </div>
-      </div>
-    </section>
+    </div>
 
   </div>
-
-  <ds-divider />
-
-  <section class="rm-group rm-group--outcome">
-    <h4 class="rm-group__title">Outcome</h4>
-    <div class="rm-field">
-      <label class="rm-label">TAG Decision</label>
-      <ds-select [options]="DECISION_OPTIONS" [value]="decision()" (selectionChange)="onDecisionChange($event)" />
-    </div>
-  </section>
 
   <div slot="actions">
     <ds-button type="tertiary" (clicked)="requestClose()">Cancel</ds-button>

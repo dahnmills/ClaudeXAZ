@@ -1,68 +1,172 @@
-<app-topbox-test-shell>
-  <ds-page-header [topbox]="false" [breadcrumb]="true">
+<app-topbox-test-shell [headerDimmed]="mode() === 'edit'">
+  <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="mode() === 'view' && !historyDetail()">
     <ds-breadcrumbs slot="breadcrumbs">
       <ds-crumb label="Home" href="#" />
-      <ds-crumb label="TAG Configuration" [currentPage]="true" />
+      @if (activeTab() === 'history' && historyDetail(); as detail) {
+        <ds-crumb label="TAG Configuration" (clicked)="closeHistoryDetail()" />
+        <ds-crumb [label]="detail.id" [currentPage]="true" />
+      } @else {
+        <ds-crumb label="TAG Configuration" [currentPage]="true" />
+      }
     </ds-breadcrumbs>
     <ds-page-title slot="title" title="Task After Grading Configuration" />
+    @if (mode() === 'view') {
+      <div slot="tabs" class="tag-config__tabs">
+        <ds-tab [selected]="activeTab() === 'configuration'" (clicked)="activeTab.set('configuration')">Configuration</ds-tab>
+        <ds-tab [selected]="activeTab() === 'history'" (clicked)="activeTab.set('history')">History</ds-tab>
+      </div>
+    }
   </ds-page-header>
 
-  <div class="tag-config">
-    <!-- Toolbar -->
-    <div class="tag-config__toolbar">
-      <ds-select [options]="countryOptions" [value]="country()" (selectionChange)="onCountryChange($event)" />
-      @if (hasRules()) {
-        <ds-link (click)="toggleExpandAll(); $event.preventDefault()">{{ expandedAll() ? 'Collapse all' : 'Expand all' }}</ds-link>
+  <!-- Only one persistent snackbar can occupy this slot at a time — test
+       status takes priority over the generic draft-mode message since it's
+       the more specific, time-sensitive state. -->
+  @if (testState() === 'running') {
+    <ds-snackbar class="tag-config__draft-snackbar" text="Rules are being tested. Leaving will not stop the test">
+      <ds-link slot="action" tone="reversed" (click)="stopTest(); $event.preventDefault()">Stop</ds-link>
+      <ds-link slot="action" tone="reversed" (click)="$event.preventDefault()">Leave</ds-link>
+    </ds-snackbar>
+  } @else if (testState() === 'done') {
+    <ds-snackbar class="tag-config__draft-snackbar" text="Test have been done successfully">
+      <ds-link slot="action" tone="reversed" (click)="dismissTestDone(); $event.preventDefault()">Leave</ds-link>
+    </ds-snackbar>
+  } @else if (mode() === 'edit') {
+    <ds-snackbar class="tag-config__draft-snackbar" text="Draft mode: your work is automatically saved">
+      <ds-link slot="action" tone="reversed" (click)="exitEdit(); $event.preventDefault()">Leave</ds-link>
+    </ds-snackbar>
+  }
+
+  @if (activeTab() === 'configuration') {
+    <div class="tag-config">
+      <!-- Toolbar -->
+      <div class="tag-config__toolbar">
+        <ds-select class="tag-config__country" [options]="countryOptions" [value]="country()" (selectionChange)="onCountryChange($event)" />
+
+        @if (hasRules()) {
+          <ds-button type="secondary" (clicked)="openDrawer()">
+            Filter@if (activeFilterCount() > 0) { ({{ activeFilterCount() }}) }
+          </ds-button>
+          <ds-button type="tertiary" (clicked)="toggleExpandAll()">
+            {{ expandedAll() ? 'Collapse all' : 'Expand all' }}
+            <ds-icon slot="icon-right" [name]="expandedAll() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+          </ds-button>
+        }
+
+        <span class="tag-config__spacer"></span>
+
+        @if (mode() === 'view') {
+          <ds-button type="tertiary" [disabled]="testState() === 'running' || isReadOnly()" (clicked)="compareOpen.set(true)">Compare version</ds-button>
+
+          @if (hasRules()) {
+            <ds-button type="secondary" [disabled]="isReadOnly()" (clicked)="enterEdit()">Edit rules</ds-button>
+          }
+
+          <ds-button type="primary" [disabled]="isReadOnly()" (clicked)="newSetChoiceOpen.set(true)">Create new set</ds-button>
+        } @else {
+          <ds-button type="tertiary" [disabled]="testState() === 'running'" (clicked)="startTest()">
+            <ds-icon slot="icon-left" name="play" [size]="16" />
+            Test rules
+          </ds-button>
+
+          <div class="tag-config__settings-menu">
+            <ds-standalone-dropdown icon="settings" label="Settings" tone="default" (clicked)="settingsMenuOpen.set(!settingsMenuOpen())" />
+            @if (settingsMenuOpen()) {
+              <ds-flyout-menu class="tag-config__settings-flyout">
+                <ds-flyout-menu-item label="Edit freshness" (clicked)="settingsMenuOpen.set(false); freshnessOpen.set(true)" />
+                <ds-flyout-menu-item label="Edit TRANS-NA-EXCL" (clicked)="settingsMenuOpen.set(false); transExclOpen.set(true)" />
+              </ds-flyout-menu>
+            }
+          </div>
+
+          <ds-button-split type="secondary" (primaryClicked)="openCreate()">
+            Create rule
+            <ds-flyout-menu slot="menu">
+              <ds-flyout-menu-item label="Import from JSON" (clicked)="importOpen.set(true)" />
+            </ds-flyout-menu>
+          </ds-button-split>
+
+          <ds-button type="primary" [disabled]="testState() === 'running'" (clicked)="compareOpen.set(true)">Validate rules</ds-button>
+        }
+      </div>
+
+      @if (isReadOnly()) {
+        <ds-functional-notice status="warning" emphasis="low" title="Read only"
+          message="You don't have the right to edit those rules. If it's an error, please contact your administrator." />
       }
-      <span class="tag-config__spacer"></span>
-      <ds-button type="secondary" (clicked)="freshnessOpen.set(true)">Edit freshness</ds-button>
-      <ds-button type="secondary" (clicked)="transExclOpen.set(true)">Edit TRANS-NA-EXCL</ds-button>
-      <ds-button type="primary" (clicked)="openCreate()">Create rule</ds-button>
+
+      @if (testState() === 'running') {
+        <ds-functional-notice status="info" emphasis="low" title="Test in progress" message="A simulation of the rules are in progress." />
+      }
+
+      @if (activeFilterCount() > 0) {
+        <div class="tag-config__filters-result">
+          <span>{{ filteredRules().length }} of {{ rules().length }} rules</span>
+          <ds-button type="plain" (clicked)="clearFilters()">Clear filters</ds-button>
+        </div>
+      }
+
+      <!-- List -->
+      @if (!hasRules()) {
+        <div class="tag-config__empty">No rules have been set up for this country.</div>
+      } @else if (filteredRules().length === 0) {
+        <div class="tag-config__empty">No rules match the active filters.</div>
+      } @else {
+        <div class="tag-config__list" cdkDropList [cdkDropListDisabled]="mode() !== 'edit' || !canReorder()" (cdkDropListDropped)="onRuleDrop($event)">
+          @for (r of filteredRules(); track r.id) {
+            <div class="tag-config__drag-row" cdkDrag [cdkDragDisabled]="mode() !== 'edit' || !canReorder()">
+              @if (mode() === 'edit') {
+                <span class="tag-config__drag-handle" cdkDragHandle>
+                  <ds-icon name="drag-handle" [size]="16" />
+                </span>
+              }
+              <tag-rule-card
+                [rule]="r" [currency]="currentCountry().currency" [expanded]="isExpanded(r)" [mode]="mode()"
+                [volume]="ruleVolumes()?.[r.id] ?? null"
+                (toggled)="toggleCard(r)"
+                (edit)="openEdit(r)"
+                (remove)="requestDelete(r)"
+                (moveUp)="moveUp(r)"
+                (moveDown)="moveDown(r)" />
+            </div>
+          }
+        </div>
+      }
     </div>
-
-    <!-- Filter chips (P4) -->
-    @if (hasRules()) {
-      <div class="tag-config__filters">
-        <span class="tag-config__filters-label">Filters:</span>
-        @for (key of filterKeys; track key) {
-          <tag-filter-chip
-            [label]="filterLabels[key]"
-            [options]="filterOptions[key]"
-            [selected]="filters()[key]"
-            (selectedChange)="setFilter(key, $event)" />
-        }
-        @if (activeFilterCount() > 0) {
-          <span class="tag-config__filters-result">{{ filteredRules().length }} of {{ rules().length }} rules</span>
-          <ds-link (click)="resetFilters(); $event.preventDefault()">Clear filters</ds-link>
-        }
+  } @else {
+    @if (historyDetail(); as detail) {
+      <div class="tag-config">
+        <div class="tag-config__list">
+          @for (r of detail.rules; track r.id) {
+            <tag-rule-card
+              [rule]="r" [currency]="currentCountry().currency" [expanded]="isHistoryDetailExpanded(r)" mode="view"
+              (toggled)="toggleHistoryDetailCard(r)" />
+          }
+        </div>
       </div>
-    }
-
-    <!-- List -->
-    @if (!hasRules()) {
-      <div class="tag-config__empty">No rules have been set up for this country.</div>
-    } @else if (filteredRules().length === 0) {
-      <div class="tag-config__empty">No rules match the active filters.</div>
     } @else {
-      <div class="tag-config__list">
-        @for (r of filteredRules(); track r.id) {
-          <tag-rule-card
-            [rule]="r" [currency]="currentCountry().currency" [expanded]="isExpanded(r)"
-            (toggled)="toggleCard(r)"
-            (edit)="openEdit(r)"
-            (remove)="requestDelete(r)"
-            (moveUp)="moveUp(r)"
-            (moveDown)="moveDown(r)" />
+      <div class="tag-config">
+        <div class="tag-config__toolbar">
+          <ds-select class="tag-config__country" [options]="countryOptions" [value]="country()" (selectionChange)="onCountryChange($event)" />
+        </div>
+
+        @if (historyRows().length === 0) {
+          <div class="tag-config__empty">No rule-set history for this country.</div>
+        } @else {
+          <div class="tag-config__list">
+            @for (h of historyRows(); track h.id) {
+              <tag-history-row [entry]="h" (opened)="openHistoryDetail(h)" />
+            }
+          </div>
         }
       </div>
     }
-  </div>
+  }
 
   <!-- delete confirm -->
   <ds-confirm-dialog
     [open]="confirmOpen()" tone="danger" title="Delete rule?" confirmLabel="Delete" cancelLabel="Cancel"
     (confirmed)="confirmDelete()" (cancelled)="cancelDelete()">
-    This action cannot be undone from here, but you'll get a chance to undo right after.
+    This action cannot be undone.
   </ds-confirm-dialog>
 
   <tag-rule-modal
@@ -77,5 +181,26 @@
     [open]="transExclOpen()" [codes]="exclusionCodes()" [countryName]="currentCountry().name"
     (save)="onCodesSave($event)" (closed)="transExclOpen.set(false)" />
 
+  <tag-compare-versions-modal
+    [open]="compareOpen()" [versions]="pastVersions()" [currentDraft]="currentDraftVersion()" [currency]="currentCountry().currency"
+    [allowValidate]="mode() === 'edit'"
+    (closed)="compareOpen.set(false)" (editRequested)="compareOpen.set(false); enterEdit()" (validateRequested)="onValidateVersion()" />
+
+  <tag-import-rules-modal [open]="importOpen()" (imported)="onRulesImported($event)" (closed)="importOpen.set(false)" />
+
+  <tag-new-set-choice-modal
+    [open]="newSetChoiceOpen()" [history]="history()"
+    (chosen)="onNewSetChosen($event)" (fromPrevious)="onNewSetFromPrevious($event)" (closed)="newSetChoiceOpen.set(false)" />
+
   <ds-toaster-container />
 </app-topbox-test-shell>
+
+<ds-filter-drawer
+  [open]="drawerOpen()"
+  title="Filters"
+  [filters]="filters"
+  [currentFilters]="currentFilters()"
+  (currentFiltersChange)="currentFilters.set($event)"
+  (closed)="closeDrawer()"
+  (applied)="onFiltersApplied($event)"
+/>

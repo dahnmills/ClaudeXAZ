@@ -1,0 +1,25 @@
+<ds-modal [open]="open()" title="Import rules" size="small" [showBack]="false" contentHeight="auto" (closed)="onClose()">
+  <input #fileInput type="file" accept=".json" class="irm-file-input" (change)="onFileSelected($event)" />
+
+  @if (error()) {
+    <ds-functional-notice status="error" emphasis="low" message="Your file is not correct, please upload a new one." />
+  }
+
+  @if (fileName(); as name) {
+    <div class="irm-file" [class.irm-file--error]="error()">
+      <ds-icon name="file-text" [size]="20" />
+      <span class="irm-file__name">{{ name }}</span>
+      <ds-icon name="close" [size]="16" class="irm-file__remove" (click)="removeFile()" />
+    </div>
+  } @else {
+    <div class="irm-drop">
+      <ds-icon name="upload" [size]="40" />
+      <p class="irm-drop__text">Select a JSON file to import</p>
+      <ds-button type="primary" (clicked)="browse()">Browse files</ds-button>
+    </div>
+  }
+
+  <div slot="actions">
+    <ds-button type="primary" [disabled]="!fileName() || error()" (clicked)="onImport()">Import</ds-button>
+  </div>
+</ds-modal>

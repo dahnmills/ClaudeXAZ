@@ -1,21 +1,89 @@
+// Persistent draft-mode indicator (replaces a "Done" toolbar button per
+// Figma: dark snackbar fixed under the header, with a "Leave" action link
+// instead of a plain button, for the whole duration of edit mode).
+.tag-config__draft-snackbar {
+  top:    calc(var(--semantic-measurement-sizing-3xl) + var(--semantic-measurement-spacing-m));
+  bottom: auto;
+  // ds-snackbar defaults to z-index 10001 (above everything, incl. modals) —
+  // this snackbar is persistent for the whole edit session, so it must sit
+  // below modal (1000) / confirm-dialog (1100) / toaster (2000) instead.
+  z-index: 500;
+}
+
+.tag-config__tabs {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-xl);
+}
+
 .tag-config {
   display: flex;
   flex-direction: column;
   gap: var(--semantic-measurement-spacing-m);
-  padding: 0 var(--semantic-measurement-spacing-xl);
+  // 24px between the page-header's border-bottom and the toolbar below —
+  // per Figma (Content frame starts 24px after the header block).
+  padding: var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl) 0;
 
   &__toolbar { display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s); }
-  &__spacer  { flex: 1; }
-  &__filters {
-    display: flex; align-items: center; flex-wrap: wrap;
-    gap: var(--semantic-measurement-spacing-s);
-    padding: var(--semantic-measurement-spacing-s) 0;
+  &__settings-menu { position: relative; }
+  &__settings-flyout {
+    position: absolute;
+    top:      calc(100% + var(--semantic-measurement-spacing-xs));
+    left:     0;
+    min-width: 200px;
+    z-index:  50;
   }
-  &__filters-label  { font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary); font-weight: 600; }
-  &__filters-result { font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary); }
+  &__country {
+    flex:      0 1 220px;
+    min-width: var(--semantic-measurement-sizing-none);
+  }
+  &__spacer  { flex: 1; }
+  &__filters-result {
+    display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s);
+    font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary);
+  }
   &__list  { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-s); }
+  &__drag-row {
+    position: relative;
+  }
+  // Absolutely positioned in the row's own left margin so its presence never
+  // changes the card's box width/position between view and edit mode — the
+  // card must render pixel-identical in both, per user report of boxes
+  // "décalé[es] sur la droite" when the handle occupied a layout column.
+  &__drag-handle {
+    position:        absolute;
+    top:             0;
+    left:            calc(-1 * var(--semantic-measurement-sizing-l));
+    bottom:          0;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    width:           var(--semantic-measurement-sizing-l);
+    color:           var(--semantic-color-static-text-main-tertiary);
+    cursor:          grab;
+    transition:      color 0.15s ease;
+
+    &:hover  { color: var(--semantic-color-static-text-main-primary); }
+    &:active { cursor: grabbing; }
+  }
   &__empty {
     padding: var(--semantic-measurement-spacing-2xl) 0; text-align: center;
     color: var(--semantic-color-static-text-main-tertiary);
   }
+}
+
+.cdk-drag-preview {
+  box-shadow: var(--semantic-shadow-flyout);
+  border-radius: var(--semantic-border-radius-s);
+}
+
+.cdk-drag-placeholder {
+  opacity: var(--semantic-measurement-opacity-disabled);
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.tag-config__list.cdk-drop-list-dragging tag-rule-card:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }

@@ -52,8 +52,13 @@ export class ButtonSplitComponent {
 
   @HostListener('document:click', ['$event'])
   onDocClick(ev: MouseEvent): void {
-    const target = ev.target as Element;
-    if (!target.closest('ds-button-split')) this.closeMenu();
+    // Use composedPath (captured at dispatch time), not ev.target — the
+    // toggle's own click flips menuOpen synchronously, which re-renders the
+    // chevron icon's inner SVG ([innerHTML]) before this document-level
+    // handler runs; ev.target can then point at an already-detached node,
+    // making closest() return null and closing the menu on its own opening click.
+    const path = ev.composedPath() as Element[];
+    if (!path.some(el => el.tagName?.toLowerCase() === 'ds-button-split')) this.closeMenu();
   }
 
   @HostListener('document:keydown.escape')
