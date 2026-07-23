@@ -1,0 +1,27 @@
+<svg
+  [attr.width]="size()"
+  [attr.height]="size()"
+  [attr.viewBox]="'0 0 ' + size() + ' ' + size()"
+  role="img">
+  <g [attr.transform]="'rotate(-90 ' + size() / 2 + ' ' + size() / 2 + ')'">
+    @for (arc of arcs(); track arc.label) {
+      <circle
+        class="ds-pie-chart__segment"
+        [class.ds-pie-chart__segment--hovered]="hovered() === arc.index"
+        [class]="'ds-pie-chart__segment--tone-' + arc.tone"
+        [attr.cx]="size() / 2"
+        [attr.cy]="size() / 2"
+        [attr.r]="(size() - thickness()) / 2"
+        [attr.stroke-width]="thickness()"
+        [attr.stroke-dasharray]="arc.dasharray"
+        [attr.stroke-dashoffset]="arc.dashoffset"
+        fill="none"
+        (mouseenter)="onEnter(arc.index)"
+        (mouseleave)="onLeave()" />
+    }
+  </g>
+</svg>
+
+@if (hoveredTooltip(); as text) {
+  <div class="ds-pie-chart__tooltip">{{ text }}</div>
+}

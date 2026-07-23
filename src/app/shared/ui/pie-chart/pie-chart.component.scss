@@ -1,0 +1,31 @@
+:host {
+  position: relative;
+  display:  inline-block;
+}
+
+.ds-pie-chart__segment {
+  stroke:           var(--semantic-color-interactive-background-strong-default);
+  stroke-linecap:   round;
+  transition:       opacity 0.15s ease;
+
+  &--tone-positive { stroke: var(--semantic-color-static-background-functional-positive); }
+  &--tone-warning  { stroke: var(--semantic-color-static-background-functional-warning); }
+  &--tone-negative { stroke: var(--semantic-color-static-background-functional-negative); }
+
+  &--hovered { opacity: 0.7; }
+}
+
+.ds-pie-chart__tooltip {
+  position:      absolute;
+  top:           calc(100% + var(--semantic-measurement-spacing-xs));
+  left:          50%;
+  transform:     translateX(-50%);
+  white-space:   nowrap;
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border-radius: var(--semantic-border-radius-s);
+  background:    var(--semantic-color-static-background-accent-primary);
+  color:         var(--semantic-color-static-text-subtle-primary);
+  font-size:     var(--semantic-font-text-style-size-s);
+  z-index:       10;
+  pointer-events: none;
+}

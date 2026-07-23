@@ -41,6 +41,75 @@
     cursor:         default;
     pointer-events: none;
   }
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+
+  // Tone — selected state tints toward a functional color instead of the
+  // default interactive blue. Unselected state is identical across tones.
+  // :hover/:active on --selected above outrank these on specificity (extra
+  // pseudo-class), so they must be repeated here or the tone gets clobbered
+  // back to blue on hover/active.
+  &.ds-radio-card--tone-success.ds-radio-card--selected {
+    border-color: var(--semantic-color-static-border-main-functional-positive);
+    background:   var(--semantic-color-static-background-subtle-functional-positive);
+
+    &:hover:not(.ds-radio-card--disabled),
+    &:active:not(.ds-radio-card--disabled) {
+      border-color: var(--semantic-color-static-border-main-functional-positive);
+    }
+  }
+  &.ds-radio-card--tone-warning.ds-radio-card--selected {
+    border-color: var(--semantic-color-static-border-main-functional-warning);
+    background:   var(--semantic-color-static-background-subtle-functional-warning);
+
+    &:hover:not(.ds-radio-card--disabled),
+    &:active:not(.ds-radio-card--disabled) {
+      border-color: var(--semantic-color-static-border-main-functional-warning);
+    }
+  }
+  &.ds-radio-card--tone-error.ds-radio-card--selected {
+    border-color: var(--semantic-color-static-border-main-functional-negative);
+    background:   var(--semantic-color-static-background-subtle-functional-negative);
+
+    &:hover:not(.ds-radio-card--disabled),
+    &:active:not(.ds-radio-card--disabled) {
+      border-color: var(--semantic-color-static-border-main-functional-negative);
+    }
+  }
+}
+
+:host.ds-radio-card--tone-success.ds-radio-card--selected .ds-radio-card__circle,
+:host.ds-radio-card--tone-success.ds-radio-card--selected:hover:not(.ds-radio-card--disabled) .ds-radio-card__circle,
+:host.ds-radio-card--tone-success.ds-radio-card--selected:active:not(.ds-radio-card--disabled) .ds-radio-card__circle {
+  border-color: var(--semantic-color-static-border-main-functional-positive);
+}
+:host.ds-radio-card--tone-success.ds-radio-card--selected .ds-radio-card__dot,
+:host.ds-radio-card--tone-success.ds-radio-card--selected:hover:not(.ds-radio-card--disabled) .ds-radio-card__dot,
+:host.ds-radio-card--tone-success.ds-radio-card--selected:active:not(.ds-radio-card--disabled) .ds-radio-card__dot {
+  background: var(--semantic-color-static-text-main-functional-positive);
+}
+:host.ds-radio-card--tone-warning.ds-radio-card--selected .ds-radio-card__circle,
+:host.ds-radio-card--tone-warning.ds-radio-card--selected:hover:not(.ds-radio-card--disabled) .ds-radio-card__circle,
+:host.ds-radio-card--tone-warning.ds-radio-card--selected:active:not(.ds-radio-card--disabled) .ds-radio-card__circle {
+  border-color: var(--semantic-color-static-border-main-functional-warning);
+}
+:host.ds-radio-card--tone-warning.ds-radio-card--selected .ds-radio-card__dot,
+:host.ds-radio-card--tone-warning.ds-radio-card--selected:hover:not(.ds-radio-card--disabled) .ds-radio-card__dot,
+:host.ds-radio-card--tone-warning.ds-radio-card--selected:active:not(.ds-radio-card--disabled) .ds-radio-card__dot {
+  background: var(--semantic-color-static-text-main-functional-warning);
+}
+:host.ds-radio-card--tone-error.ds-radio-card--selected .ds-radio-card__circle,
+:host.ds-radio-card--tone-error.ds-radio-card--selected:hover:not(.ds-radio-card--disabled) .ds-radio-card__circle,
+:host.ds-radio-card--tone-error.ds-radio-card--selected:active:not(.ds-radio-card--disabled) .ds-radio-card__circle {
+  border-color: var(--semantic-color-static-border-main-functional-negative);
+}
+:host.ds-radio-card--tone-error.ds-radio-card--selected .ds-radio-card__dot,
+:host.ds-radio-card--tone-error.ds-radio-card--selected:hover:not(.ds-radio-card--disabled) .ds-radio-card__dot,
+:host.ds-radio-card--tone-error.ds-radio-card--selected:active:not(.ds-radio-card--disabled) .ds-radio-card__dot {
+  background: var(--semantic-color-static-text-main-functional-negative);
 }
 
 // ── Radio circle ─────────────────────────────────────────────

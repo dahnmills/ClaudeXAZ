@@ -2,6 +2,8 @@ import { Component, computed, input, output } from '@angular/core';
 import { RadioComponent } from '../radio/radio.component';
 import { BadgeComponent } from '../badge/badge.component';
 
+export type RadioCardTone = 'default' | 'success' | 'warning' | 'error';
+
 @Component({
   selector: 'ds-radio-card',
   standalone: true,
@@ -23,6 +25,7 @@ export class RadioCardComponent {
   label      = input.required<string>();
   sublabel   = input<string>('');
   badge      = input<string>('');
+  tone       = input<RadioCardTone>('default');
   selected   = input<boolean>(false);
   disabled   = input<boolean>(false);
 
@@ -30,6 +33,7 @@ export class RadioCardComponent {
 
   hostClasses = computed(() => [
     'ds-radio-card',
+    `ds-radio-card--tone-${this.tone()}`,
     this.selected() ? 'ds-radio-card--selected' : '',
     this.disabled() ? 'ds-radio-card--disabled' : '',
   ].filter(Boolean).join(' '));
