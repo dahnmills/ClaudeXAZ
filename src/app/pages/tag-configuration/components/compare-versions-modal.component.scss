@@ -17,7 +17,7 @@
 .cvm-stat {
   display:        flex;
   flex-direction: column;
-  gap:            var(--foundation-spacing-2, 2px);
+  gap:            var(--semantic-measurement-spacing-xxs);
 
   &__label { font-size: var(--semantic-font-text-style-size-m); color: var(--semantic-color-static-text-main-tertiary); }
   &__pct   { font-size: var(--semantic-font-text-style-size-l); font-weight: var(--semantic-font-text-style-font-weight-bold); color: var(--semantic-color-static-text-main-primary); }
@@ -81,7 +81,7 @@
   }
 
   &__pos {
-    font-size:   var(--semantic-font-text-style-size-m);
+    font-size:   var(--semantic-font-text-style-size-l);
     font-weight: var(--semantic-font-text-style-font-weight-bold);
     color:       var(--semantic-color-static-text-main-primary);
 
@@ -90,7 +90,7 @@
   &__fields {
     display:        flex;
     flex-direction: column;
-    gap:            var(--foundation-spacing-2, 2px);
+    gap:            var(--semantic-measurement-spacing-xxs);
   }
   &__field {
     margin:      0;
@@ -141,11 +141,11 @@
 .cvm-diff {
   &__old {
     text-decoration: line-through;
-    color:           var(--semantic-color-static-text-main-functional-negative);
-    font-weight:     var(--semantic-font-text-style-font-weight-semi-bold);
+    color:           var(--semantic-color-static-text-main-tertiary);
+    font-weight:     var(--semantic-font-text-style-font-weight-regular);
   }
   &__new {
     color:       var(--semantic-color-static-text-main-functional-positive);
-    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
   }
 }

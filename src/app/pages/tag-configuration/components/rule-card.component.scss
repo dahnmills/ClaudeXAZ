@@ -79,7 +79,7 @@
   &__field {
     display:        flex;
     flex-direction: column;
-    gap:            var(--foundation-spacing-2, 2px);
+    gap:            var(--semantic-measurement-spacing-xxs);
     min-width:      0;
   }
   &__field-label {
@@ -115,6 +115,11 @@
     top:      calc(100% + var(--semantic-measurement-spacing-xs));
     right:    0;
     z-index:  10;
+  }
+  &__chevron {
+    display:     inline-flex;
+    cursor:      pointer;
+    color:       var(--semantic-color-static-text-main-tertiary);
   }
   &__body {
     padding:    var(--semantic-measurement-spacing-m);

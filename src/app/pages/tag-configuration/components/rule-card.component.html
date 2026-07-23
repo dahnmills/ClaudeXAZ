@@ -37,7 +37,9 @@
           </ds-flyout-menu>
         }
       }
-      <ds-icon [name]="expanded() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+      <span class="rule-card__chevron" role="button" tabindex="-1" (click)="toggle()">
+        <ds-icon [name]="expanded() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+      </span>
     </div>
   </div>
 

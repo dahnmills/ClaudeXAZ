@@ -6,7 +6,7 @@
 
   &__sub {
     display:   block;
-    margin-top: var(--foundation-spacing-2, 2px);
+    margin-top: var(--semantic-measurement-spacing-xxs);
     font-size: var(--semantic-font-text-style-size-m);
     color:     var(--semantic-color-static-text-main-secondary);
   }

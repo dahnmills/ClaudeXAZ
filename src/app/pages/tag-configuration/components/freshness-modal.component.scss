@@ -102,7 +102,7 @@
 .fm-field {
   display:        flex;
   flex-direction: column;
-  gap:            var(--foundation-spacing-2, 2px);
+  gap:            var(--semantic-measurement-spacing-xxs);
   flex:           0 0 auto;
 
   &__label {

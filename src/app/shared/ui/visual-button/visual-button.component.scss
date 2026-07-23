@@ -9,7 +9,8 @@
 :host {
   display:        inline-flex;
   flex-direction: column;
-  align-items:    flex-start;
+  align-items:    center;
+  text-align:     center;
   gap:            var(--semantic-measurement-spacing-m);
   width:          240px;
   padding:        var(--semantic-measurement-spacing-l);
