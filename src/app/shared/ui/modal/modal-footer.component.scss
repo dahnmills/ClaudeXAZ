@@ -46,4 +46,16 @@
   margin-left: auto;
 
   &:empty { display: none; }
+
+  // The consumer's own `div[slot=actions]` (and this component's own slot
+  // wrapper around it) must stay transparent to layout — otherwise they sit
+  // between this flex container and the ds-button children as block boxes,
+  // and inline-flex buttons baseline-align against each other's content
+  // instead of centering as a flex item (a button with a leading icon then
+  // sits visibly lower than a plain-text button). ::ng-deep is required:
+  // projected `<div slot=actions>` keeps the caller's own encapsulation
+  // attribute, not this component's, so a plain scoped `> div` never matches.
+  ::ng-deep div {
+    display: contents;
+  }
 }

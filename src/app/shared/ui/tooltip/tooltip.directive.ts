@@ -37,9 +37,13 @@ export class TooltipDirective implements OnDestroy {
     this.timer = setTimeout(() => this.show(), this.dsTooltipDelay());
   }
 
-  @HostListener('mouseleave') onLeave() { this.cancel(); }
-  @HostListener('focusout')   onBlur()  { this.cancel(); }
-  @HostListener('click')      onClick() { this.cancel(); }
+  // focusin (not focus) so it fires even when the trigger itself isn't
+  // focusable but wraps a disabled control — e.g. a disabled button inside
+  // a tabindex="0" wrapper still needs its tooltip reachable by keyboard.
+  @HostListener('focusin')    onFocusIn() { this.show(); }
+  @HostListener('mouseleave') onLeave()   { this.cancel(); }
+  @HostListener('focusout')   onBlur()    { this.cancel(); }
+  @HostListener('click')      onClick()   { this.cancel(); }
 
   ngOnDestroy() { this.cancel(); }
 

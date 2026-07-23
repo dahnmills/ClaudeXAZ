@@ -12,6 +12,7 @@ export type SnackbarTone = 'neutral' | 'success' | 'error';
       <ds-icon [name]="icon()!" [size]="16" />
     }
     <span class="ds-snackbar__text">{{ text() }}</span>
+    <ng-content select="[slot=action]" />
   `,
   styleUrl: './snackbar.component.scss',
   encapsulation: ViewEncapsulation.None,

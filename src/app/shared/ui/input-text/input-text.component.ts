@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 export class InputTextComponent {
   label       = input<string>('');
   placeholder = input<string>('');
+  inputmode   = input<'text' | 'numeric' | 'decimal' | 'email' | 'tel' | 'url' | 'search' | 'none'>('text');
   variant     = input<'default' | 'inline'>('default');
   optional    = input<boolean>(false);
   disabled    = input<boolean>(false);

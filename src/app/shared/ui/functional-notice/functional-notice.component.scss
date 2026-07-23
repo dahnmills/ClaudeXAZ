@@ -46,7 +46,7 @@
   }
 
   &.ds-functional-notice--info {
-    background: var(--semantic-color-interactive-background-strong-info-default);
+    background: var(--semantic-color-static-background-functional-informative);
     .ds-functional-notice__icon { color: var(--semantic-color-static-text-subtle-primary); }
   }
   &.ds-functional-notice--success {
@@ -54,7 +54,7 @@
     .ds-functional-notice__icon { color: var(--semantic-color-static-text-subtle-primary); }
   }
   &.ds-functional-notice--warning {
-    background: var(--semantic-color-interactive-background-strong-warning-default);
+    background: var(--semantic-color-static-background-functional-warning);
     .ds-functional-notice__icon { color: var(--semantic-color-static-text-subtle-primary); }
   }
   &.ds-functional-notice--error {
@@ -98,25 +98,29 @@
 }
 
 // ── Emphasis: Low (ghost — no bg, just tinted text + icon) ────
+// Low emphasis never carries a title, only a single-line message, so the
+// icon centers on that line instead of pinning to the top like the other
+// emphases (which must anchor above a title + message stack).
 .ds-functional-notice--emphasis-low {
+  align-items: center;
   padding: var(--semantic-measurement-spacing-xs) 0;
   background: transparent;
 
   &.ds-functional-notice--info {
     .ds-functional-notice__icon,
-    .ds-functional-notice__message { color: var(--semantic-color-static-text-info-primary); }
+    .ds-functional-notice__message { color: var(--semantic-color-static-text-main-functional-informative); }
   }
   &.ds-functional-notice--success {
     .ds-functional-notice__icon,
-    .ds-functional-notice__message { color: var(--semantic-color-static-text-positive-primary); }
+    .ds-functional-notice__message { color: var(--semantic-color-static-text-main-functional-positive); }
   }
   &.ds-functional-notice--warning {
     .ds-functional-notice__icon,
-    .ds-functional-notice__message { color: var(--semantic-color-static-text-warning-primary); }
+    .ds-functional-notice__message { color: var(--semantic-color-static-text-main-functional-warning); }
   }
   &.ds-functional-notice--error {
     .ds-functional-notice__icon,
-    .ds-functional-notice__message { color: var(--semantic-color-static-text-negative-primary); }
+    .ds-functional-notice__message { color: var(--semantic-color-static-text-main-functional-negative); }
   }
   &.ds-functional-notice--default {
     .ds-functional-notice__icon,

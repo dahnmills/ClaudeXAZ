@@ -11,6 +11,14 @@
   font-family:    var(--semantic-font-family);
 }
 
+// Dims the global nav header without affecting page content — used while
+// a persistent draft-mode snackbar is shown, so attention stays on the
+// in-progress edit instead of the (still clickable, but visually secondary) nav.
+.ut-header--dimmed {
+  opacity:    var(--semantic-measurement-opacity-disabled);
+  transition: opacity 150ms ease;
+}
+
 .ut-layout {
   display:  flex;
   flex:     1;

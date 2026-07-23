@@ -15,6 +15,7 @@
       class="ds-input-text__input"
       [id]="inputId()"
       type="text"
+      [attr.inputmode]="inputmode() !== 'text' ? inputmode() : null"
       [placeholder]="placeholder()"
       [disabled]="disabled()"
       [readOnly]="readonly()"

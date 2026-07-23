@@ -43,6 +43,8 @@ export class TopboxTestShellComponent {
   /** Pilote l'animation d'ouverture/fermeture du slot [slot=topbox-extension] */
   extensionExpanded = input<boolean>(false);
   showSidenav       = input<boolean>(true);
+  /** Dims the global nav header (e.g. while a draft-mode snackbar is shown) without touching page content. */
+  headerDimmed      = input<boolean>(false);
   sideNavCollapsed  = signal<boolean>(true);
   accountMenuOpen   = signal<boolean>(false);
 
