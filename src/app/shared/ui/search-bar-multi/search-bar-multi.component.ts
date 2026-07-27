@@ -7,6 +7,7 @@ import { FlyoutMenuComponent } from '../flyout-menu/flyout-menu.component';
 import { FlyoutMenuItemComponent } from '../flyout-menu/flyout-menu-item.component';
 import { FlagComponent, type FlagCode } from '../flag/flag.component';
 import { DividerComponent } from '../divider/divider.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 export type SearchType = 'company-id' | 'id' | 'name' | 'phone' | 'manager';
 export type IdTypeOption = 'DUN' | 'TVA' | 'SIREN' | 'SIRET';
@@ -54,7 +55,7 @@ export const DIAL_CODES: Record<FlagCode, string> = {
 @Component({
   selector: 'ds-search-bar-multi',
   standalone: true,
-  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent, DividerComponent],
+  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent, DividerComponent, TooltipDirective],
   templateUrl: './search-bar-multi.component.html',
   styleUrl: './search-bar-multi.component.scss',
   host: { 'class': 'ds-search-bar-multi' },
@@ -81,7 +82,10 @@ export class SearchBarMultiComponent {
     const t = this.type();
     return t === 'id' || t === 'name' || t === 'phone';
   });
-  idTypeEnabled = computed(() => this.type() === 'id');
+  /** ID Type n'existe que pour le type de recherche "ID" (masqué pour les autres). */
+  idTypeVisible = computed(() => this.type() === 'id');
+  /** Il faut choisir le pays avant de pouvoir choisir l'ID Type. */
+  idTypeEnabled = computed(() => this.idTypeVisible() && !!this.country());
 
   countryLabel = computed(() => {
     const c = this.country();
@@ -95,6 +99,32 @@ export class SearchBarMultiComponent {
   });
   inputDisabled = computed(() => this.type() === 'phone' && !this.country());
 
+  /** Tooltip affiché sur l'ID Type tant que le pays n'a pas été choisi. */
+  idTypeTooltip = computed(() => this.idTypeVisible() && !this.country() ? 'Select a country before choosing an ID Type' : '');
+
+  // ── Validation des champs obligatoires (par type de recherche) ─────────
+  // Un seul flag partagé : l'ID Type reste désactivé (donc jamais blurable)
+  // tant que le pays n'est pas choisi, un "touched" par champ le bloquerait
+  // à jamais. Quitter n'importe quel champ de la barre suffit à révéler
+  // toutes les erreurs d'un coup (cohérent avec un clic Search bloqué).
+  attempted = signal(false);
+
+  countryRequired = computed(() => this.type() === 'phone' || this.type() === 'id');
+  idTypeRequired = computed(() => this.idTypeVisible());
+
+  // Un dropdown désactivé ne peut jamais être en erreur : on n'affiche
+  // l'erreur que si le champ est activé (donc réellement remplissable).
+  countryError = computed(() => this.attempted() && this.countryEnabled() && this.countryRequired() && !this.country());
+  idTypeError = computed(() => this.attempted() && this.idTypeEnabled() && this.idTypeRequired() && !this.idType());
+  queryError = computed(() => this.attempted() && !this.query().trim());
+
+  searchValid = computed(() => {
+    if (!this.query().trim()) return false;
+    if (this.type() === 'phone') return !!this.country();
+    if (this.type() === 'id') return !!this.country() && !!this.idType();
+    return true;
+  });
+
   toggle(which: 'type' | 'country' | 'id-type') {
     this.openFlyout.update(v => v === which ? null : which);
   }
@@ -103,7 +133,8 @@ export class SearchBarMultiComponent {
   pickType(t: SearchType) {
     this.type.set(t);
     if (!this.countryEnabled()) this.country.set(null);
-    if (!this.idTypeEnabled()) this.idType.set(null);
+    if (t !== 'id') this.idType.set(null);
+    this.attempted.set(false);
     this.close();
   }
   pickCountry(c: FlagCode) {
@@ -113,6 +144,10 @@ export class SearchBarMultiComponent {
   pickIdType(it: IdTypeOption) {
     this.idType.set(it);
     this.close();
+  }
+
+  markTouched() {
+    this.attempted.set(true);
   }
 
   onInput(ev: Event) {

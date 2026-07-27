@@ -1,5 +1,6 @@
 :host {
   display: block;
+  position: relative;
   width: 100%;
   background: var(--semantic-color-interactive-background-neutral-default);
   border: 1px solid var(--semantic-color-static-border-subtle-tertiary);
@@ -23,10 +24,15 @@
 .ds-search-bar-multi__type   { width: 142px; }
 .ds-search-bar-multi__country { width: 167px; }
 .ds-search-bar-multi__id-type { width: 108px; }
+.ds-search-bar-multi__field-slot { flex: 1 0 0; min-width: 0; }
 
 .ds-search-bar-multi__flyout {
   position: absolute;
-  top: calc(100% + 12px);
+  // 100% = bas du CONTENU du slot (~24-32px), qui est à l'intérieur du
+  // padding vertical de la carte. On ajoute padding-m pour franchir ce
+  // padding (sinon le flyout chevauche le bas de la carte), puis xs de
+  // respiration → le flyout s'ouvre juste sous la carte.
+  top: calc(100% + var(--semantic-measurement-spacing-m) + var(--semantic-measurement-spacing-xs));
   left: 0;
   min-width: 200px;
   z-index: 50;
@@ -38,6 +44,90 @@
   height: var(--semantic-measurement-spacing-l);
   align-self: center;
   flex-shrink: 0;
+
+  // Divider directement avant un champ en erreur : rouge, 2px, hauteur de la
+  // rangée de contenu (pas de bleed dans le padding vertical). align-self:
+  // stretch le fait remplir exactement la ligne flex = hauteur du panneau
+  // rouge adjacent, sans avoir à recalculer une valeur en dur.
+  // Border rouge : pleine hauteur de la carte (padding vertical du host
+  // inclus). stretch → hauteur de la rangée ; margin négatif → déborde dans
+  // le padding sans FORCER la croissance de la rangée (une hauteur fixe
+  // trop grande étirait toute la barre). Résultat : pile la hauteur carte.
+  &.ds-search-bar-multi__divider--error-adjacent {
+    width: 2px;
+    align-self: stretch;
+    height: auto;
+    margin-top: calc(var(--semantic-measurement-spacing-m) * -1);
+    margin-bottom: calc(var(--semantic-measurement-spacing-m) * -1);
+    // Le border passe de 1px (normal) à 2px : le pixel en plus est absorbé
+    // à GAUCHE (margin-left -1px) pour que le bord droit — donc le champ et
+    // son placeholder — ne bouge pas quand on entre en erreur.
+    margin-left: -1px;
+    background: var(--semantic-color-static-border-main-functional-negative);
+  }
+}
+
+// ── État erreur (champ obligatoire vide, après blur) ────────────────────
+// Figma node 3718:14832 (Search Bar — Error), vérifié via les assets réels :
+//   - Le panneau rouge (Red/050) remplit la HAUTEUR DE LA RANGÉE uniquement
+//     (le padding vertical du host reste blanc, cf. cible) ET comble tout le
+//     flex-gap de part et d'autre pour toucher les dividers adjacents.
+//   - Le helper text est rendu HORS de la barre (sous la carte, centré) —
+//     voir .ds-search-bar-multi__error-msg.
+.ds-search-bar-multi__slot--error {
+  position: relative;
+  // stretch : le slot en erreur (sinon centré à ~24px dans une rangée de
+  // 32px) remplit toute la hauteur de la rangée flex. Sans ça, le panneau
+  // ::before (ancré au slot) et le helper (top:100% du slot) ratent les
+  // bords de la carte → 4px blancs en haut/bas + helper à cheval sur la
+  // bordure. stretch aligne slot=rangée → ::before -m/-m touche pile les
+  // bords carte, et le helper franchit bien le bas.
+  align-self: stretch;
+  // stretch top-aligne le contenu du slot (input/dropdown) dans une rangée
+  // plus haute → décalage vers le haut. On recentre verticalement pour que
+  // le placeholder garde EXACTEMENT sa position hors-erreur.
+  display: flex;
+  align-items: center;
+  // isolation:isolate crée un contexte d'empilement local : le z-index
+  // négatif du panneau ne descend que sous SES propres enfants, pas sous
+  // le fond du host (sinon le panneau devient invisible derrière la carte).
+  isolation: isolate;
+
+  // z-index négatif : peint derrière le contenu statique (icônes/texte/input)
+  // sans avoir besoin de repositionner ces enfants (évite d'écraser le
+  // position:absolute du helper text ou le z-index du flyout).
+  // top/bottom 0 : pas de bleed vertical → padding du host reste blanc.
+  // left/right négatifs : comble le flex-gap pour toucher les dividers.
+  // top/bottom négatifs : bleed dans le padding vertical du host → panneau
+  // rouge pleine hauteur de la barre. left/right : comble le flex-gap.
+  &::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--semantic-measurement-spacing-m) * -1);
+    bottom: calc(var(--semantic-measurement-spacing-m) * -1);
+    left: calc(var(--semantic-measurement-spacing-m) * -1);
+    right: calc(var(--semantic-measurement-spacing-m) * -1);
+    background: var(--semantic-color-static-background-subtle-functional-negative);
+    z-index: -1;
+  }
+}
+
+// Helper text HORS de la carte, aligné à gauche (sous l'icône/placeholder
+// du champ). Absolute dans le slot (left:0 = bord gauche du contenu). Offset
+// vertical = padding-m (pour franchir le bas de la carte) + xs (respiration),
+// sinon le texte chevauche la bordure inférieure du host.
+.ds-search-bar-multi__error-msg {
+  position: absolute;
+  top: calc(100% + var(--semantic-measurement-spacing-m) + var(--semantic-measurement-spacing-xs));
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--foundation-spacing-4);
+  white-space: nowrap;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color: var(--semantic-color-static-text-main-functional-negative);
 }
 
 .ds-search-bar-multi__field {
@@ -56,6 +146,18 @@
       color: var(--semantic-color-static-text-main-tertiary);
     }
     .ds-search-bar-multi__input { cursor: not-allowed; }
+  }
+
+  &--error {
+    .ds-search-bar-multi__field-icon {
+      color: var(--semantic-color-static-icon-main-functional-negative);
+    }
+    .ds-search-bar-multi__input {
+      color: var(--semantic-color-static-text-main-functional-negative);
+    }
+    .ds-search-bar-multi__input::placeholder {
+      color: var(--semantic-color-static-text-main-functional-negative);
+    }
   }
 }
 

@@ -15,15 +15,23 @@
       </div>
     }
   </div>
-  <ds-divider class="ds-search-bar-multi__divider" orientation="vertical" />
+  <ds-divider
+    class="ds-search-bar-multi__divider"
+    [class.ds-search-bar-multi__divider--error-adjacent]="countryError()"
+    orientation="vertical"
+  />
 
-  <div class="ds-search-bar-multi__slot ds-search-bar-multi__country">
+  <div
+    class="ds-search-bar-multi__slot ds-search-bar-multi__country"
+    [class.ds-search-bar-multi__slot--error]="countryError()"
+  >
     @if (country(); as c) {
       <ds-standalone-dropdown
         [icon]="null"
         [label]="countryLabel()"
         [disabled]="!countryEnabled()"
         (clicked)="toggle('country')"
+        (blur)="markTouched()"
       >
         <ds-flag slot="icon" [code]="c" />
       </ds-standalone-dropdown>
@@ -33,6 +41,7 @@
         [label]="countryLabel()"
         [disabled]="!countryEnabled()"
         (clicked)="toggle('country')"
+        (blur)="markTouched()"
       />
     }
     @if (openFlyout() === 'country') {
@@ -46,55 +55,96 @@
         </ds-flyout-menu>
       </div>
     }
-  </div>
-  <ds-divider class="ds-search-bar-multi__divider" orientation="vertical" />
-
-  <div class="ds-search-bar-multi__slot ds-search-bar-multi__id-type">
-    <ds-standalone-dropdown
-      icon="hash"
-      [label]="idTypeLabel()"
-      [disabled]="!idTypeEnabled()"
-      (clicked)="toggle('id-type')"
-    />
-    @if (openFlyout() === 'id-type') {
-      <div class="ds-search-bar-multi__flyout">
-        <ds-flyout-menu>
-          @for (it of idTypes; track it) {
-            <ds-flyout-menu-item [label]="it" (clicked)="pickIdType(it)" />
-          }
-        </ds-flyout-menu>
-      </div>
+    @if (countryError()) {
+      <span class="ds-search-bar-multi__error-msg">
+        <ds-icon name="error-circle" [size]="16" />
+        This field is required
+      </span>
     }
   </div>
-  <ds-divider class="ds-search-bar-multi__divider" orientation="vertical" />
+  <ds-divider
+    class="ds-search-bar-multi__divider"
+    [class.ds-search-bar-multi__divider--error-adjacent]="idTypeVisible() ? idTypeError() : queryError()"
+    orientation="vertical"
+  />
+
+  @if (idTypeVisible()) {
+    <div
+      class="ds-search-bar-multi__slot ds-search-bar-multi__id-type"
+      [class.ds-search-bar-multi__slot--error]="idTypeError()"
+      [dsTooltip]="idTypeTooltip()"
+      dsTooltipPosition="top-center"
+    >
+      <ds-standalone-dropdown
+        icon="hash"
+        [label]="idTypeLabel()"
+        [disabled]="!idTypeEnabled()"
+        (clicked)="toggle('id-type')"
+        (blur)="markTouched()"
+      />
+      @if (openFlyout() === 'id-type') {
+        <div class="ds-search-bar-multi__flyout">
+          <ds-flyout-menu>
+            @for (it of idTypes; track it) {
+              <ds-flyout-menu-item [label]="it" (clicked)="pickIdType(it)" />
+            }
+          </ds-flyout-menu>
+        </div>
+      }
+      @if (idTypeError()) {
+        <span class="ds-search-bar-multi__error-msg">
+          <ds-icon name="error-circle" [size]="16" />
+          This field is required
+        </span>
+      }
+    </div>
+    <ds-divider
+      class="ds-search-bar-multi__divider"
+      [class.ds-search-bar-multi__divider--error-adjacent]="queryError()"
+      orientation="vertical"
+    />
+  }
 
   <div
-    class="ds-search-bar-multi__field"
-    [class.ds-search-bar-multi__field--disabled]="inputDisabled()"
+    class="ds-search-bar-multi__slot ds-search-bar-multi__field-slot"
+    [class.ds-search-bar-multi__slot--error]="queryError()"
   >
-    <ds-icon name="search" [size]="24" class="ds-search-bar-multi__field-icon" />
-    @if (phonePrefix(); as p) {
-      <span class="ds-search-bar-multi__phone-prefix">{{ p }}</span>
-    }
-    <input
-      type="text"
-      class="ds-search-bar-multi__input"
-      [placeholder]="meta().placeholder"
-      [value]="query()"
-      [attr.disabled]="inputDisabled() ? '' : null"
-      (input)="onInput($event)"
-      (keydown.enter)="searchClicked.emit()"
-    />
-    @if (query() && !inputDisabled()) {
-      <ds-button-icon
-        class="ds-search-bar-multi__clear"
-        type="plain"
-        size="s"
-        ariaLabel="Clear"
-        (clicked)="clearQuery()"
-      >
-        <ds-icon name="close" [size]="16" />
-      </ds-button-icon>
+    <div
+      class="ds-search-bar-multi__field"
+      [class.ds-search-bar-multi__field--disabled]="inputDisabled()"
+      [class.ds-search-bar-multi__field--error]="queryError()"
+    >
+      <ds-icon name="search" [size]="24" class="ds-search-bar-multi__field-icon" />
+      @if (phonePrefix(); as p) {
+        <span class="ds-search-bar-multi__phone-prefix">{{ p }}</span>
+      }
+      <input
+        type="text"
+        class="ds-search-bar-multi__input"
+        [placeholder]="meta().placeholder"
+        [value]="query()"
+        [attr.disabled]="inputDisabled() ? '' : null"
+        (input)="onInput($event)"
+        (blur)="markTouched()"
+        (keydown.enter)="searchClicked.emit()"
+      />
+      @if (query() && !inputDisabled()) {
+        <ds-button-icon
+          class="ds-search-bar-multi__clear"
+          type="plain"
+          size="s"
+          ariaLabel="Clear"
+          (clicked)="clearQuery()"
+        >
+          <ds-icon name="close" [size]="16" />
+        </ds-button-icon>
+      }
+    </div>
+    @if (queryError()) {
+      <span class="ds-search-bar-multi__error-msg">
+        <ds-icon name="error-circle" [size]="16" />
+        This field is required
+      </span>
     }
   </div>
   <ds-divider class="ds-search-bar-multi__divider" orientation="vertical" />
@@ -103,5 +153,5 @@
     <ds-icon slot="icon-left" name="sliders" [size]="16" />
     More criteria ({{ criteriaCount() }})
   </ds-button>
-  <ds-button type="primary" (clicked)="searchClicked.emit()">Search</ds-button>
+  <ds-button type="primary" [disabled]="!searchValid()" (clicked)="searchClicked.emit()">Search</ds-button>
 </div>
