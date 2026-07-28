@@ -10,7 +10,8 @@ import {
   ButtonComponent,
   SpinnerComponent,
 } from '../../shared/ui';
-import { SearchBarMultiComponent, type SearchType } from '../../shared/ui/search-bar-multi/search-bar-multi.component';
+import { SearchBarMultiComponent, type SearchType, type IdTypeOption } from '../../shared/ui/search-bar-multi/search-bar-multi.component';
+import type { FlagCode } from '../../shared/ui/flag/flag.component';
 import { MoreCriteriaComponent } from '../../shared/ui/more-criteria/more-criteria.component';
 import { ResultCardComponent, type ResultCardData } from '../../shared/ui/result-card/result-card.component';
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
@@ -22,6 +23,8 @@ type TabId = 'search' | 'recent' | 'favorites';
 interface RecentEntry {
   type: SearchType;
   query: string;
+  country: FlagCode | null;
+  idType: IdTypeOption | null;
   ts: number;
 }
 
@@ -157,6 +160,8 @@ export class SearchComponent {
   expandedIdx = signal<number | null>(null);
 
   searchType = signal<SearchType>('company-id');
+  searchCountry = signal<FlagCode | null>(null);
+  searchIdType = signal<IdTypeOption | null>(null);
   searchQuery = signal<string>('');
   /** Requête réellement appliquée (figée au clic Search — pas à la volée). */
   appliedQuery = signal<string>('');
@@ -313,7 +318,24 @@ export class SearchComponent {
     const q = this.searchQuery().trim();
     this.appliedQuery.set(q.toLowerCase());
     if (q) {
-      this.recents.update(r => [{ type: this.searchType(), query: q, ts: Date.now() }, ...r].slice(0, 10));
+      const entry: Omit<RecentEntry, 'ts'> = {
+        type: this.searchType(),
+        query: q,
+        country: this.searchCountry(),
+        idType: this.searchIdType(),
+      };
+      this.recents.update(r => {
+        // Pas d'empilement : si la recherche est identique à la plus récente
+        // (mêmes type/query/country/idType), on ne ré-enregistre pas. Spammer
+        // Search ne crée qu'une entrée. Changer puis revenir aux mêmes critères
+        // → la tête a changé entre-temps → on ré-enregistre.
+        const head = r[0];
+        if (head && head.type === entry.type && head.query === entry.query
+            && head.country === entry.country && head.idType === entry.idType) {
+          return r;
+        }
+        return [{ ...entry, ts: Date.now() }, ...r].slice(0, 10);
+      });
     }
     this.activeTab.set('search');
     setTimeout(() => this.maybeFill());
@@ -321,6 +343,8 @@ export class SearchComponent {
 
   pickRecent(entry: RecentEntry) {
     this.searchType.set(entry.type);
+    this.searchCountry.set(entry.country);
+    this.searchIdType.set(entry.idType);
     this.searchQuery.set(entry.query);
     this.appliedQuery.set(entry.query.trim().toLowerCase());
     this.visibleCount.set(this.PAGE_SIZE);

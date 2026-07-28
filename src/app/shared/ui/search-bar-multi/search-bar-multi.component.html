@@ -31,7 +31,6 @@
         [label]="countryLabel()"
         [disabled]="!countryEnabled()"
         (clicked)="toggle('country')"
-        (blur)="markTouched()"
       >
         <ds-flag slot="icon" [code]="c" />
       </ds-standalone-dropdown>
@@ -41,7 +40,6 @@
         [label]="countryLabel()"
         [disabled]="!countryEnabled()"
         (clicked)="toggle('country')"
-        (blur)="markTouched()"
       />
     }
     @if (openFlyout() === 'country') {
@@ -80,7 +78,6 @@
         [label]="idTypeLabel()"
         [disabled]="!idTypeEnabled()"
         (clicked)="toggle('id-type')"
-        (blur)="markTouched()"
       />
       @if (openFlyout() === 'id-type') {
         <div class="ds-search-bar-multi__flyout">

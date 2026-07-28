@@ -80,7 +80,7 @@ export class SearchBarMultiComponent {
 
   countryEnabled = computed(() => {
     const t = this.type();
-    return t === 'id' || t === 'name' || t === 'phone';
+    return t === 'company-id' || t === 'id' || t === 'name' || t === 'phone';
   });
   /** ID Type n'existe que pour le type de recherche "ID" (masqué pour les autres). */
   idTypeVisible = computed(() => this.type() === 'id');
