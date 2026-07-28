@@ -74,6 +74,9 @@
                 </ds-button>
               </div>
             } @else {
+              <div class="search-page__results-header">
+                {{ resultCount() }} {{ resultCount() === 1 ? 'result' : 'results' }}
+              </div>
               <div class="search-page__results">
                 @for (entry of visibleResults(); track entry.i) {
                   <ds-result-card

@@ -66,6 +66,16 @@ ds-page-header {
   scrollbar-gutter: stable;
 }
 
+// Compteur de résultats, aligné à gauche au-dessus de la liste. Dégage aussi
+// l'espace sous la barre pour que le helper text d'erreur ne chevauche plus
+// la 1re carte.
+.search-page__results-header {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
 .search-page__results {
   display: flex;
   flex-direction: column;

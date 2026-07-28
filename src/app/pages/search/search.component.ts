@@ -201,6 +201,9 @@ export class SearchComponent {
 
   allLoaded = computed(() => this.visibleCount() >= this.filtered().length);
 
+  /** Nombre total de résultats de la recherche (pas seulement les visibles). */
+  resultCount = computed(() => this.filtered().length);
+
   /** Aucun résultat après une recherche (≠ état initial avant recherche). */
   noResults = computed(() => this.isResults() && this.filtered().length === 0);
 
