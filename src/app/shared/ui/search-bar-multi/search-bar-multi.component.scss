@@ -26,6 +26,16 @@
 .ds-search-bar-multi__id-type { width: 108px; }
 .ds-search-bar-multi__field-slot { flex: 1 0 0; min-width: 0; }
 
+// Dropdowns : occupent toute la largeur de leur slot (largeur fixe) pour que
+// le chevron soit poussé à droite — position constante quel que soit le label
+// (le label garde flex:1). Sinon le dropdown est inline-flex et rétrécit au
+// contenu, collant le chevron au texte.
+.ds-search-bar-multi__type,
+.ds-search-bar-multi__country,
+.ds-search-bar-multi__id-type {
+  ds-standalone-dropdown { display: flex; width: 100%; }
+}
+
 .ds-search-bar-multi__flyout {
   position: absolute;
   // 100% = bas du CONTENU du slot (~24-32px), qui est à l'intérieur du
