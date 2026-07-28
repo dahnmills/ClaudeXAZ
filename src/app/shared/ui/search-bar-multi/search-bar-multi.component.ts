@@ -78,9 +78,11 @@ export class SearchBarMultiComponent {
 
   meta = computed<TypeMeta>(() => TYPE_META[this.type()]);
 
+  /** Le pays n'a aucun sens pour une recherche par Company ID → slot masqué. */
+  countryVisible = computed(() => this.type() !== 'company-id');
   countryEnabled = computed(() => {
     const t = this.type();
-    return t === 'company-id' || t === 'id' || t === 'name' || t === 'phone';
+    return t === 'id' || t === 'name' || t === 'phone';
   });
   /** ID Type n'existe que pour le type de recherche "ID" (masqué pour les autres). */
   idTypeVisible = computed(() => this.type() === 'id');

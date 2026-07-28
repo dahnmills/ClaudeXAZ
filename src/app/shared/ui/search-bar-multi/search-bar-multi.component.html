@@ -21,6 +21,7 @@
     orientation="vertical"
   />
 
+  @if (countryVisible()) {
   <div
     class="ds-search-bar-multi__slot ds-search-bar-multi__country"
     [class.ds-search-bar-multi__slot--error]="countryError()"
@@ -65,6 +66,7 @@
     [class.ds-search-bar-multi__divider--error-adjacent]="idTypeVisible() ? idTypeError() : queryError()"
     orientation="vertical"
   />
+  }
 
   @if (idTypeVisible()) {
     <div
