@@ -1,0 +1,13 @@
+<!-- Fond : la vraie page buyer (shell, nav, breadcrumb, widgets) -->
+<app-buyer-summary />
+
+<!-- La palette se superpose au fond (position: fixed). Rien n'est indiqué
+     sur la page elle-même : elle s'ouvre au ⌘K / Ctrl+K. -->
+<ds-spotlight
+  [(open)]="spotlightOpen"
+  [(query)]="query"
+  [items]="corpus"
+  [recents]="recents"
+  (selected)="onSelected($event)"
+  (copied)="onCopied($event)"
+/>

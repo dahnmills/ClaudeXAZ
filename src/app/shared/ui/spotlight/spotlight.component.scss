@@ -1,0 +1,290 @@
+:host {
+  display: contents;
+
+  // ── Courbes de mouvement (locales : pas de token motion dans le DS) ─────────
+  // Spring léger pour l'entrée, ease standard pour le reste. Durées courtes :
+  // premium = rapide + précis, jamais lent. La courbe spring reproduit le
+  // « pop » élastique de Spotlight macOS (léger dépassement à l'arrivée).
+  --sp-ease-spring: cubic-bezier(0.34, 1.4, 0.5, 1);
+  --sp-ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --sp-dur-panel: 300ms;
+  --sp-dur-backdrop: 180ms;
+  --sp-dur-row: 240ms;
+}
+
+// ── Backdrop ────────────────────────────────────────────────────────────────
+.ds-spotlight__backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--semantic-color-overlay-backdrop);
+  z-index: 1000;
+  animation: sp-backdrop-in var(--sp-dur-backdrop) var(--sp-ease-out) both;
+}
+
+@keyframes sp-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// ── Panneau ─────────────────────────────────────────────────────────────────
+// Une seule surface (barre + résultats), ancrée par le HAUT : `translateX`
+// seul → le haut reste fixe quelle que soit la hauteur du dropdown. La barre
+// ne bouge donc jamais quand les résultats apparaissent.
+.ds-spotlight__panel {
+  position: fixed;
+  top: 26vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  max-width: calc(100vw - var(--semantic-measurement-spacing-xl));
+  z-index: 1001;
+  background: var(--semantic-color-static-background-main-primary);
+  border: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  // Coins plus ronds (proche du chrome macOS) + ombre modale plus présente.
+  border-radius: var(--semantic-border-radius-l);
+  box-shadow: var(--semantic-shadow-modal);
+  overflow: hidden; // les coins arrondis rognent la barre et le dropdown
+  // Entrée : fondu + léger recul en profondeur + descente, avec ressort.
+  transform-origin: top center;
+  animation: sp-panel-in var(--sp-dur-panel) var(--sp-ease-spring) both;
+  will-change: transform, opacity;
+}
+
+@keyframes sp-panel-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(0.96); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0)      scale(1); }
+}
+
+// ── Barre de recherche ────────────────────────────────────────────────────────
+// Pas de bordure/ombre propre : elle vit dans le panneau. Une bordure basse
+// sert de séparateur avec les résultats (collés, sans espace).
+.ds-spotlight__search {
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+  height: 56px;
+  padding: 0 var(--semantic-measurement-spacing-m);
+}
+
+// Séparateur animé : la bordure « se dessine » quand les résultats arrivent.
+.ds-spotlight__search {
+  border-bottom: var(--semantic-border-size-s) solid transparent;
+  transition: border-color var(--sp-dur-row) var(--sp-ease-out);
+}
+.ds-spotlight__panel--with-results .ds-spotlight__search {
+  border-bottom-color: var(--semantic-color-static-border-subtle-tertiary);
+}
+
+.ds-spotlight__search-icon {
+  color: var(--semantic-color-static-icon-main-tertiary);
+}
+
+// Champ : contient l'input réel + la complétion fantôme, superposés et
+// parfaitement alignés (mêmes métriques typographiques).
+.ds-spotlight__field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+// Métriques partagées input / fantôme → alignement au pixel.
+%sp-field-type {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-title-size-xs);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  letter-spacing: normal;
+}
+
+.ds-spotlight__input {
+  @extend %sp-field-type;
+  position: relative;
+  z-index: 1; // au-dessus du fantôme
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--semantic-color-static-text-main-primary);
+
+  &::placeholder {
+    color: var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+// Fantôme : calque non interactif sous le curseur. Le texte tapé est rendu
+// transparent (il ne sert qu'à positionner le suffixe), le suffixe apparaît en
+// pastille accent claire — l'analyste voit la fin du mot proposée.
+.ds-spotlight__ghost {
+  @extend %sp-field-type;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.ds-spotlight__ghost-typed {
+  color: transparent;
+}
+
+.ds-spotlight__ghost-suffix {
+  color: var(--semantic-color-interactive-text-strong-default);
+  background: var(--semantic-color-interactive-background-light-default);
+  border-radius: var(--semantic-border-radius-s);
+  // Léger renfoncement pour la pastille sans décaler le texte suivant.
+  padding: 0 var(--semantic-measurement-spacing-xxs);
+  margin: 0 calc(-1 * var(--semantic-measurement-spacing-xxs));
+}
+
+.ds-spotlight__clear {
+  flex-shrink: 0;
+  animation: sp-fade-in 160ms var(--sp-ease-out) both;
+}
+
+// ── Dropdown résultats ──────────────────────────────────────────────────────
+// Collé directement sous la barre (aucune marge) : c'est la même surface.
+// Entrée : fondu + légère descente. La barre reste fixe (ancrage haut).
+.ds-spotlight__dropdown {
+  padding: var(--semantic-measurement-spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-xxs);
+  animation: sp-dropdown-in var(--sp-dur-row) var(--sp-ease-out) both;
+}
+
+@keyframes sp-dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Ligne de résultat ─────────────────────────────────────────────────────────
+.ds-spotlight__row {
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+  width: 100%;
+  padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-s);
+  border: none;
+  border-radius: var(--semantic-border-radius-m);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--semantic-font-family);
+  color: var(--semantic-color-static-text-main-primary);
+  // Surbrillance douce au clavier/survol + micro-réactivité au clic.
+  transition:
+    background-color 130ms var(--sp-ease-out),
+    color 130ms var(--sp-ease-out),
+    transform 130ms var(--sp-ease-out);
+  // Apparition en cascade : chaque ligne décalée selon son rang.
+  animation: sp-row-in var(--sp-dur-row) var(--sp-ease-spring) both;
+  animation-delay: calc(var(--row-index, 0) * 30ms);
+
+  // Sélection teintée accent (bleu), comme la surbrillance de Spotlight macOS.
+  &--active {
+    background: var(--semantic-color-interactive-background-light-default);
+    color: var(--semantic-color-interactive-text-strong-default);
+
+    .ds-spotlight__row-icon,
+    .ds-spotlight__row-id {
+      color: var(--semantic-color-interactive-text-strong-default);
+    }
+  }
+
+  &:active {
+    transform: scale(0.985);
+  }
+}
+
+@keyframes sp-row-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ds-spotlight__row-icon {
+  flex-shrink: 0;
+  color: var(--semantic-color-static-icon-main-secondary);
+  transition: color 130ms var(--sp-ease-out);
+}
+
+.ds-spotlight__row-name {
+  font-size: var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  white-space: nowrap;
+}
+
+// ID + copie : poussés à droite de la ligne
+.ds-spotlight__row-id {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-xs);
+  font-size: var(--semantic-font-text-style-size-s);
+  color: var(--semantic-color-static-text-main-secondary);
+  white-space: nowrap;
+  transition: color 130ms var(--sp-ease-out);
+}
+
+.ds-spotlight__row-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--semantic-measurement-spacing-xxs);
+  border-radius: var(--semantic-border-radius-s);
+  color: var(--semantic-color-static-icon-main-tertiary);
+  cursor: pointer;
+  transition:
+    background-color 120ms var(--sp-ease-out),
+    color 120ms var(--sp-ease-out),
+    transform 120ms var(--sp-ease-out);
+
+  &:hover {
+    background: var(--semantic-color-static-background-main-tertiary);
+    color: var(--semantic-color-static-icon-main-secondary);
+  }
+
+  &:active {
+    transform: scale(0.88);
+  }
+
+  &:focus-visible {
+    outline: var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+    outline-offset: -1px;
+  }
+}
+
+// ── État vide (aucun résultat après saisie) ─────────────────────────────────
+.ds-spotlight__empty {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-l);
+  color: var(--semantic-color-static-text-main-tertiary);
+  font-size: var(--semantic-font-text-style-size-m);
+}
+
+@keyframes sp-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// ── Accessibilité : coupe toute animation si l'OS le demande ────────────────
+@media (prefers-reduced-motion: reduce) {
+  .ds-spotlight__backdrop,
+  .ds-spotlight__panel,
+  .ds-spotlight__dropdown,
+  .ds-spotlight__row,
+  .ds-spotlight__clear {
+    animation: none;
+  }
+  .ds-spotlight__row,
+  .ds-spotlight__row-copy,
+  .ds-spotlight__search {
+    transition: none;
+  }
+}

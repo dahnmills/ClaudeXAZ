@@ -1,0 +1,87 @@
+@if (open()) {
+  <div class="ds-spotlight__backdrop" (click)="onBackdrop()"></div>
+
+  <div
+    class="ds-spotlight__panel"
+    [class.ds-spotlight__panel--with-results]="hasResults() || emptyState()"
+    role="dialog"
+    aria-label="Quick search"
+  >
+    <!-- Barre de recherche -->
+    <div class="ds-spotlight__search">
+      <ds-icon name="search" [size]="24" class="ds-spotlight__search-icon" />
+      <!-- Champ + complétion fantôme superposée (façon Spotlight macOS) -->
+      <div class="ds-spotlight__field">
+        @if (completion(); as c) {
+          <div class="ds-spotlight__ghost" aria-hidden="true">
+            <span class="ds-spotlight__ghost-typed">{{ c.typed }}</span><span class="ds-spotlight__ghost-suffix">{{ c.ghost }}</span>
+          </div>
+        }
+        <input
+          #search
+          type="text"
+          class="ds-spotlight__input"
+          [placeholder]="placeholder()"
+          [value]="query()"
+          (input)="onInput($event)"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      @if (query()) {
+        <ds-button-icon
+          class="ds-spotlight__clear"
+          type="plain"
+          size="s"
+          ariaLabel="Clear search"
+          (clicked)="clear()"
+        >
+          <ds-icon name="close" [size]="16" />
+        </ds-button-icon>
+      }
+    </div>
+
+    <!-- Dropdown résultats -->
+    @if (hasResults()) {
+      <div class="ds-spotlight__dropdown">
+        @for (section of sections(); track section.key) {
+          @for (ranked of section.items; track ranked.item.id) {
+            <button
+              type="button"
+              class="ds-spotlight__row"
+              [class.ds-spotlight__row--active]="isActive(ranked.index)"
+              [style.--row-index]="ranked.index"
+              (click)="pick(ranked.item)"
+              (mouseenter)="activeIndex.set(ranked.index)"
+            >
+              <ds-icon [name]="ranked.item.icon ?? 'file-text'" [size]="16" class="ds-spotlight__row-icon" />
+              <span class="ds-spotlight__row-name">{{ ranked.item.name }}</span>
+
+              @if (ranked.item.id) {
+                <span class="ds-spotlight__row-id">
+                  <ds-icon name="hash" [size]="12" />
+                  {{ ranked.item.id }}
+                  <span
+                    class="ds-spotlight__row-copy"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Copy ID"
+                    (click)="copy($event, ranked.item)"
+                    (keydown.enter)="copy($event, ranked.item)"
+                  >
+                    <ds-icon name="copy" [size]="16" />
+                  </span>
+                </span>
+              }
+            </button>
+          }
+        }
+      </div>
+    } @else if (emptyState()) {
+      <div class="ds-spotlight__dropdown ds-spotlight__empty">
+        <ds-icon name="search" [size]="20" />
+        <span>No result for “{{ query() }}”</span>
+      </div>
+    }
+  </div>
+}
