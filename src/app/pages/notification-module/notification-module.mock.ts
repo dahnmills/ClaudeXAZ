@@ -185,4 +185,76 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
       ],
     },
   },
+  {
+    // Cas « gros volume » : 12 distributions pour tester le scroll de la liste de gauche.
+    id: 'n-10',
+    bu: 'NL05', policyId: '1120884', extensionId: 'EXT-42210', notifType: 'Limit decision',
+    buyerId: '318842007', executionTime: '2026-08-09 15:30', statusLabel: 'Partially delivered', statusTone: 'warning',
+    details: {
+      info: { status: 'Partial', irpNumber: 'IRP-2026-011208', notificationId: 'NOTIF-42210-J' },
+      generalStatus: 'partial',
+      distributions: [
+        {
+          id: 'd-10-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Papermail',
+          normal: { status: 'distributed', mediaType: 'Email',     receiver: 'finance@rotterdam-freight.nl', details: 'Delivered 15:30 · read receipt OK' },
+          backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Coolsingel 40, Rotterdam',      details: 'Handed to carrier 15:31' },
+        },
+        {
+          id: 'd-10-2', label: 'Distribution 2', status: 'distributed', mediaType: 'Email',
+          normal: { status: 'distributed', mediaType: 'Email', receiver: 'ap@rotterdam-freight.nl', details: 'Delivered 15:30' },
+          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                       details: 'Not started' },
+        },
+        {
+          id: 'd-10-3', label: 'Distribution 3', status: 'ongoing', mediaType: 'Email · Fax',
+          normal: { status: 'partial', mediaType: 'Email', receiver: 'treasury@rotterdam-freight.nl', details: 'Sending…' },
+          backup: { status: 'partial', mediaType: 'Fax',   receiver: '+31 10 200 0000',              details: 'Dialing…' },
+        },
+        {
+          id: 'd-10-4', label: 'Distribution 4', status: 'alerting', mediaType: 'Papermail',
+          normal: { status: 'partial',     mediaType: 'Papermail', receiver: 'Weena 200, Rotterdam', details: 'Print queued · SLA at risk' },
+          backup: { status: 'not-started', mediaType: '—',         receiver: '—',                    details: 'Not started' },
+        },
+        {
+          id: 'd-10-5', label: 'Distribution 5', status: 'failed', mediaType: 'Email',
+          normal: { status: 'failed',      mediaType: 'Email', receiver: 'bounce@rotterdam-freight.nl', details: 'Bounced · mailbox full' },
+          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                          details: 'Not started' },
+        },
+        {
+          id: 'd-10-6', label: 'Distribution 6', status: 'distributed', mediaType: 'Email · Papermail',
+          normal: { status: 'distributed', mediaType: 'Email',     receiver: 'ops-eu@rotterdam-freight.nl', details: 'Delivered 15:32' },
+          backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Blaak 34, Rotterdam',        details: 'Handed to carrier 15:33' },
+        },
+        {
+          id: 'd-10-7', label: 'Distribution 7', status: 'distributed', mediaType: 'Email',
+          normal: { status: 'distributed', mediaType: 'Email', receiver: 'legal@rotterdam-freight.nl', details: 'Delivered 15:33' },
+          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                          details: 'Not started' },
+        },
+        {
+          id: 'd-10-8', label: 'Distribution 8', status: 'ongoing', mediaType: 'Fax',
+          normal: { status: 'partial',     mediaType: 'Fax', receiver: '+31 10 300 0000', details: 'Retry 2/5 · next in 5 min' },
+          backup: { status: 'not-started', mediaType: '—',   receiver: '—',               details: 'Not started' },
+        },
+        {
+          id: 'd-10-9', label: 'Distribution 9', status: 'distributed', mediaType: 'Papermail',
+          normal: { status: 'distributed', mediaType: 'Papermail', receiver: 'Wilhelminakade 909, Rotterdam', details: 'Handed to carrier 15:34' },
+          backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Wilhelminakade 909, Rotterdam', details: 'Duplicate copy 15:34' },
+        },
+        {
+          id: 'd-10-10', label: 'Distribution 10', status: 'alerting', mediaType: 'Email',
+          normal: { status: 'partial',     mediaType: 'Email', receiver: 'compliance@rotterdam-freight.nl', details: 'Awaiting recipient action' },
+          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                               details: 'Not started' },
+        },
+        {
+          id: 'd-10-11', label: 'Distribution 11', status: 'failed', mediaType: 'Email · Fax',
+          normal: { status: 'failed', mediaType: 'Email', receiver: 'invalid@rotterdam-freight.nl', details: 'SMTP 550 · relay denied' },
+          backup: { status: 'failed', mediaType: 'Fax',   receiver: '+31 10 400 0000',              details: 'No answer after 5 retries' },
+        },
+        {
+          id: 'd-10-12', label: 'Distribution 12', status: 'distributed', mediaType: 'Email · Papermail',
+          normal: { status: 'distributed', mediaType: 'Email',     receiver: 'board@rotterdam-freight.nl', details: 'Delivered 15:35' },
+          backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Coolsingel 40, Rotterdam',    details: 'Handed to carrier 15:36' },
+        },
+      ],
+    },
+  },
 ];
