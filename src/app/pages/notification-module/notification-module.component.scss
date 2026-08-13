@@ -1,0 +1,564 @@
+:host {
+  display: block;
+}
+
+// ══ Teintes fonctionnelles ═══════════════════════════════════════════════════
+// Chaque classe expose trois variables locales (fond léger, bordure, texte)
+// que les blocs consommateurs (pastille, entête, bordure de colonne) lisent.
+// Une seule source par statut → cohérence garantie.
+.nm-tone--positive {
+  --nm-bg:     var(--semantic-color-static-background-subtle-functional-positive);
+  --nm-border: var(--semantic-color-static-border-main-functional-positive);
+  --nm-fg:     var(--semantic-color-static-text-main-functional-positive);
+}
+.nm-tone--negative {
+  --nm-bg:     var(--semantic-color-static-background-subtle-functional-negative);
+  --nm-border: var(--semantic-color-static-border-main-functional-negative);
+  --nm-fg:     var(--semantic-color-static-text-main-functional-negative);
+}
+.nm-tone--warning {
+  --nm-bg:     var(--semantic-color-static-background-subtle-functional-warning);
+  --nm-border: var(--semantic-color-static-border-main-functional-warning);
+  --nm-fg:     var(--semantic-color-static-text-main-functional-warning);
+}
+.nm-tone--informative {
+  --nm-bg:     var(--semantic-color-static-background-subtle-functional-informative);
+  --nm-border: var(--semantic-color-static-border-main-functional-informative);
+  --nm-fg:     var(--semantic-color-static-text-main-functional-informative);
+}
+.nm-tone--neutral {
+  --nm-bg:     var(--semantic-color-static-background-main-secondary);
+  --nm-border: var(--semantic-color-static-border-subtle-tertiary);
+  --nm-fg:     var(--semantic-color-static-text-main-tertiary);
+}
+
+// ══ Corps de la page de fond ═════════════════════════════════════════════════
+.nm-body {
+  padding: var(--semantic-measurement-spacing-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-l);
+}
+
+// Bloc de recherche sans encadré (réf. Figma Search v2) : grille 4 colonnes,
+// 2 rangées, bouton Search aligné à droite.
+.nm-search {
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--semantic-measurement-spacing-m);
+  }
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--semantic-measurement-spacing-l);
+  }
+}
+
+// Champ Date : calendrier flottant (ds-date-range) ancré sous le champ.
+.nm-datefield {
+  position: relative;
+
+  &__trigger { cursor: pointer; }
+
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+  }
+
+  // Positionnement seul : ds-date-range apporte déjà son propre fond/bordure/radius.
+  // On ajoute juste l'ombre flottante — pas de 2e boîte.
+  &__panel {
+    position: absolute;
+    top: calc(100% + var(--semantic-measurement-spacing-xs));
+    left: 0;
+    z-index: 11;
+
+    ds-date-range { box-shadow: var(--semantic-shadow-popover); }
+  }
+}
+
+// Le tableau : conteneur propre pour que les rangées se collent (56px chacune),
+// sans hériter du gap 24px de .nm-body qui les espaçait faussement.
+.nm-table {
+  display: flex;
+  flex-direction: column;
+}
+
+// Cellule Execution time : date sur 2 lignes (date + heure secondaire).
+.nm-exec {
+  display: flex;
+  flex-direction: column;
+  &__date {
+    color: var(--semantic-color-static-text-main-primary);
+  }
+  &__time {
+    font-size: var(--semantic-font-text-style-size-s);
+    color: var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+// ══ Modale ═══════════════════════════════════════════════════════════════════
+.nm-modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-l);
+  font-family: var(--semantic-font-family);
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--semantic-measurement-spacing-m);
+  }
+
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--semantic-measurement-spacing-s);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: var(--semantic-measurement-spacing-l);
+    align-items: start;
+  }
+}
+
+// ── Boîte bleue d'info ────────────────────────────────────────────────────────
+.nm-infobox {
+  // 4 zones de largeur égale, bien réparties (Status / Detail / IRP / Notif ID).
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--semantic-measurement-spacing-l);
+  padding: var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-l);
+  background: var(--semantic-color-static-background-subtle-functional-informative);
+  border: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-functional-informative);
+  border-radius: var(--semantic-border-radius-m);
+
+  // Chaque zone : libellé (14) au-dessus + valeur (14 SemiBold).
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--semantic-measurement-spacing-xs);
+    min-width: 0; // autorise le wrap/truncate du contenu long
+  }
+
+  // Libellé de zone — SemiBold + primaire pour bien le voir.
+  &__key {
+    font-size: var(--semantic-font-text-style-size-m);       // 14
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    line-height: var(--semantic-font-text-style-line-height-m);
+    color: var(--semantic-color-static-text-main-primary);
+  }
+  // Valeur d'une zone.
+  &__val {
+    font-size: var(--semantic-font-text-style-size-m);       // 14
+    line-height: var(--semantic-font-text-style-line-height-m);
+    color: var(--semantic-color-static-text-main-secondary);
+  }
+
+  &__copy {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--semantic-measurement-spacing-xs);
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--semantic-color-interactive-text-strong-default);
+
+    .nm-infobox__val { color: inherit; }
+
+    ds-icon { color: var(--semantic-color-interactive-text-strong-default); }
+
+    &:hover { text-decoration: underline; }
+    &:focus-visible {
+      outline: var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--semantic-border-radius-xs);
+    }
+  }
+}
+
+// ── Chips de filtre (single-select — réf. Figma Chip 3541:7191) ──────────────
+// Pill : padding 8/16, radius pill, typo 14 SemiBold lh16 tracking 1px.
+// Non-sélectionné : fond blanc, bordure + texte grey-700 (→ grey-600/500 states).
+// Sélectionné : fond bleu plein (blue-a-400 → 500 → 700), texte blanc.
+.nm-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m); // 8 / 16
+  border: var(--semantic-border-size-s) solid var(--semantic-color-static-text-main-secondary); // grey-700
+  border-radius: var(--semantic-border-radius-round);
+  background: var(--semantic-color-static-background-main-primary); // blanc
+  color: var(--semantic-color-static-text-main-secondary);          // grey-700
+  font-family: inherit;
+  font-size: var(--semantic-font-text-style-size-m);                // 14
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: var(--semantic-font-text-style-line-height-s);       // 16
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-l); // 1px
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+
+  &:hover {
+    border-color: var(--semantic-color-static-text-main-primary);   // grey-600-ish (plus foncé)
+    color: var(--semantic-color-static-text-main-primary);
+  }
+
+  // Sélectionné : plein bleu, texte blanc. Redéclaré au hover (spécificité pseudo-classe).
+  &--selected,
+  &--selected:hover {
+    border-color: var(--semantic-color-interactive-background-strong-default);
+    background: var(--semantic-color-interactive-background-strong-default);
+    color: var(--semantic-color-interactive-text-neutral-default);  // blanc
+  }
+  &--selected:hover {
+    border-color: var(--semantic-color-interactive-background-strong-hover);
+    background: var(--semantic-color-interactive-background-strong-hover);
+  }
+
+  &:focus-visible {
+    outline: var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+// ── Cartes de sélection des distributions (gauche) ────────────────────────────
+// Réf. Figma StatusCard (3538:5712) : padding 16, radius 8, w flex.
+// Icône = petit carré 20px teinté (radius 4), pas de rond.
+// Title 14 SemiBold #414141 lh20 · Subdata 14 #767676 lh16 tracking .2.
+.nm-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-s);
+
+}
+
+// État vide (aucune distribution pour le filtre) : centré sur toute la largeur.
+.nm-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--semantic-measurement-spacing-s);
+  min-height: 200px;
+  padding: var(--semantic-measurement-spacing-2xl);
+  text-align: center;
+  color: var(--semantic-color-static-text-main-tertiary);
+  font-size: var(--semantic-font-text-style-size-m);
+
+  ds-icon { color: var(--semantic-color-static-icon-main-tertiary); }
+}
+
+.nm-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-m);
+  border: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary); // grey-200 #D9D9D9
+  border-radius: var(--semantic-border-radius-m);            // 8
+  background: var(--semantic-color-static-background-subtle-primary);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background-color 120ms ease, border-color 120ms ease;
+
+  // Default grey-200 ; hover/active bordure plus marquée (grey-500).
+  &:hover,
+  &:active { border-color: var(--semantic-color-static-border-main-tertiary); }    // grey-500
+
+  // Sélectionnée : fond bleu clair + bordure accent bleue.
+  &--selected,
+  &--selected:hover,
+  &--selected:active {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    background: var(--semantic-color-interactive-background-light-default);
+  }
+
+  &:focus-visible {
+    outline: var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+
+  // Icône : carré 20px teinté selon le statut, radius 4, padding 2.
+  &__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: var(--semantic-measurement-spacing-xxs);        // 2
+    border-radius: var(--semantic-border-radius-s);          // 4
+    background: var(--nm-bg);
+    color: var(--nm-fg);
+
+    ds-icon { color: var(--nm-fg); }
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  &__title {
+    font-size: var(--semantic-font-text-style-size-m);       // 14
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    line-height: var(--semantic-font-text-style-line-height-m); // 20
+    color: var(--semantic-color-static-text-main-secondary);    // grey-700 #414141
+  }
+  // 2e ligne : statut final de la distribution, écrit dans la couleur fonctionnelle
+  // (pas un tag) — vert=distributed, rouge=failed, etc. via --nm-fg de la tone class.
+  &__status {
+    font-size: var(--semantic-font-text-style-size-m);       // 14
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    line-height: var(--semantic-font-text-style-line-height-s); // 16
+    letter-spacing: var(--semantic-font-text-style-letter-spacing-s); // .2
+    color: var(--nm-fg);
+  }
+}
+
+// ── Deux boîtes média séparées (Normal / Backup), statuts indépendants ────────
+.nm-boxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--semantic-measurement-spacing-m);
+  align-items: stretch; // 2 boîtes toujours à la même hauteur, même vides
+}
+
+// Réf. Figma Comparison (3538:6238) : fond de couleur sur TOUTE la boîte
+// (~5 % fonctionnel), bordure fonctionnelle pleine, radius 8, padding 16.
+// Pas de barre d'entête — titre + badge posés sur le même fond.
+.nm-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  height: 100%;                                              // remplit la hauteur de rangée
+  box-sizing: border-box;
+  padding: var(--semantic-measurement-spacing-m);            // 16
+  border: var(--semantic-border-size-s) solid var(--nm-border);
+  border-radius: var(--semantic-border-radius-m);            // 8
+  background: var(--nm-bg);                                  // fond teinté global
+
+  &--idle {
+    border-style: dashed;
+    border-color: var(--semantic-color-static-border-subtle-tertiary);
+    background: var(--semantic-color-static-background-main-secondary); // grey-050
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--semantic-measurement-spacing-s);
+  }
+  &__title {
+    font-size: var(--semantic-font-text-style-size-l);       // 16 — plus gros pour identifier vite
+    font-weight: var(--semantic-font-text-style-font-weight-bold); // bold
+    line-height: var(--semantic-font-text-style-line-height-l);
+    color: var(--semantic-color-static-text-main-secondary); // grey-700 #414141
+  }
+
+  &__rows {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--semantic-measurement-spacing-s);
+  }
+  &__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--semantic-measurement-spacing-xxs);
+
+    dt {
+      font-size: var(--semantic-font-text-style-size-m);     // 14
+      line-height: var(--semantic-font-text-style-line-height-s);
+      color: var(--semantic-color-static-text-main-tertiary); // grey-500 #767676
+    }
+    dd {
+      margin: 0;
+      font-size: var(--semantic-font-text-style-size-m);     // 14
+      font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+      line-height: var(--semantic-font-text-style-line-height-m);
+      color: var(--semantic-color-static-text-main-secondary); // grey-700 #414141
+      word-break: break-word;
+    }
+  }
+
+  &__idle {
+    flex: 1 1 auto;                                          // occupe l'espace restant → hauteur égale
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--semantic-measurement-spacing-xs);
+    padding: var(--semantic-measurement-spacing-m);
+    color: var(--semantic-color-static-text-main-tertiary);
+    font-size: var(--semantic-font-text-style-size-m);
+    text-align: center;
+
+    ds-icon { color: var(--semantic-color-static-icon-main-tertiary); }
+  }
+}
+
+// ══ Lecteur PDF simulé ═══════════════════════════════════════════════════════
+// Bleed hors du padding de ds-modal-content (24/32) pour occuper toute la modale.
+.nm-pdf {
+  display: flex;
+  flex-direction: column;
+  margin: calc(-1 * var(--semantic-measurement-spacing-l)) calc(-1 * var(--semantic-measurement-spacing-xl));
+  height: calc(100% + 2 * var(--semantic-measurement-spacing-l));
+  font-family: var(--semantic-font-family);
+
+  // Barre d'outils du lecteur (nom fichier + zoom + download).
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--semantic-measurement-spacing-m);
+    padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+    background: var(--semantic-color-static-background-main-primary);
+    border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  }
+  &__file {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--semantic-measurement-spacing-xs);
+    font-size: var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color: var(--semantic-color-static-text-main-primary);
+
+    ds-icon { color: var(--semantic-color-static-icon-main-secondary); }
+  }
+  &__tools {
+    display: flex;
+    align-items: center;
+    gap: var(--semantic-measurement-spacing-s);
+  }
+  &__zoom {
+    min-width: 48px;
+    text-align: center;
+    font-size: var(--semantic-font-text-style-size-m);
+    color: var(--semantic-color-static-text-main-secondary);
+  }
+
+  // Zone de visualisation : fond gris foncé façon viewer, page centrée scrollable.
+  &__viewport {
+    flex: 1 1 auto;
+    overflow: auto;
+    padding: var(--semantic-measurement-spacing-xl);
+    background: var(--semantic-color-static-background-inverse-primary, #33322f);
+    display: flex;
+    justify-content: center;
+  }
+
+  // La « page » A4 blanche.
+  &__page {
+    box-sizing: border-box;
+    max-width: 100%;
+    align-self: flex-start;
+    padding: var(--semantic-measurement-spacing-2xl);
+    background: var(--semantic-color-static-background-main-primary);
+    box-shadow: var(--semantic-shadow-popover);
+    color: var(--semantic-color-static-text-main-primary);
+  }
+
+  &__page-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: var(--semantic-measurement-spacing-m);
+    border-bottom: var(--semantic-border-size-m) solid var(--semantic-color-static-border-main-tertiary);
+  }
+  &__brand {
+    font-size: var(--semantic-font-title-size-m, 20px);
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+    letter-spacing: var(--semantic-font-text-style-letter-spacing-l);
+    color: var(--semantic-color-interactive-text-strong-default);
+  }
+  &__doc-type {
+    font-size: var(--semantic-font-text-style-size-m);
+    color: var(--semantic-color-static-text-main-tertiary);
+    text-transform: uppercase;
+    letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+  }
+
+  &__title {
+    margin: var(--semantic-measurement-spacing-l) 0 var(--semantic-measurement-spacing-m);
+    font-size: var(--semantic-font-title-size-s, 18px);
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+    color: var(--semantic-color-static-text-main-primary);
+  }
+
+  &__meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--semantic-measurement-spacing-m);
+    margin: 0 0 var(--semantic-measurement-spacing-l);
+
+    div { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-xxs); }
+    dt {
+      font-size: var(--semantic-font-text-style-size-s);
+      color: var(--semantic-color-static-text-main-tertiary);
+    }
+    dd {
+      margin: 0;
+      font-size: var(--semantic-font-text-style-size-m);
+      font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+      color: var(--semantic-color-static-text-main-primary);
+    }
+  }
+
+  &__summary {
+    margin: 0 0 var(--semantic-measurement-spacing-l);
+    font-size: var(--semantic-font-text-style-size-m);
+    line-height: var(--semantic-font-text-style-line-height-m);
+    color: var(--semantic-color-static-text-main-secondary);
+  }
+
+  &__section { margin-bottom: var(--semantic-measurement-spacing-l); }
+  &__section-title {
+    margin: 0 0 var(--semantic-measurement-spacing-s);
+    font-size: var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+    color: var(--semantic-color-static-text-main-primary);
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--semantic-font-text-style-size-s);
+
+    th, td {
+      padding: var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+      text-align: left;
+      border: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+      vertical-align: top;
+    }
+    thead th {
+      background: var(--semantic-color-static-background-main-secondary);
+      color: var(--semantic-color-static-text-main-tertiary);
+      font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    }
+    tbody th {
+      background: var(--semantic-color-static-background-main-secondary);
+      color: var(--semantic-color-static-text-main-secondary);
+      font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+      width: 72px;
+    }
+    tbody td { color: var(--semantic-color-static-text-main-primary); }
+  }
+
+  &__page-foot {
+    margin-top: var(--semantic-measurement-spacing-xl);
+    padding-top: var(--semantic-measurement-spacing-m);
+    border-top: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+    font-size: var(--semantic-font-text-style-size-s);
+    color: var(--semantic-color-static-text-main-tertiary);
+    text-align: center;
+  }
+}

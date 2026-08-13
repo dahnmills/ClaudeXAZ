@@ -9,7 +9,9 @@ import { FiltersTestPageComponent } from './user-testing/filters/filters-test-pa
 import { AdminDataComponent } from './pages/admin-data/admin-data.component';
 import { BuyerSummaryComponent } from './pages/buyer-summary/buyer-summary.component';
 import { TagConfigurationComponent } from './pages/tag-configuration/tag-configuration.component';
+import { GradeStoryComponent } from './pages/grade-story/grade-story.component';
 import { SpotlightPage } from './pages/spotlight/spotlight.page';
+import { NotificationModuleComponent } from './pages/notification-module/notification-module.component';
 import { ReviewShellComponent } from './shared/feedback/review-shell.component';
 import { ResultsComponent } from './pages/results/results.component';
 import { HubPage } from './pages/hub/hub.page';
@@ -32,7 +34,9 @@ const PROTO_PAGES: Route[] = [
   { path: 'admin-data', component: AdminDataComponent },
   { path: 'buyer-summary/:id', component: BuyerSummaryComponent },
   { path: 'tag-configuration', component: TagConfigurationComponent },
+  { path: 'grade-story', component: GradeStoryComponent },
   { path: 'spotlight', component: SpotlightPage },
+  { path: 'notification-module', component: NotificationModuleComponent },
 ];
 
 export const appRoutes: Routes = [

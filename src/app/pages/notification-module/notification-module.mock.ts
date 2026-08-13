@@ -1,0 +1,188 @@
+import { type NotificationRow } from './notification-module.model';
+
+// Jeu de données riche : 9 notifications aux statuts variés pour tester les
+// filtres et le scroll de la liste des distributions. Les payloads « details »
+// couvrent les trois configurations décrites dans le ticket (Distributed /
+// Partial / Failed) plus Ongoing / Alerting / Not started.
+
+export const NOTIFICATION_ROWS: NotificationRow[] = [
+  {
+    id: 'n-1',
+    bu: 'FR01', policyId: '4471023', extensionId: 'EXT-88120', notifType: 'Grade change',
+    buyerId: '137381425', executionTime: '2026-08-11 09:42', statusLabel: 'Delivered', statusTone: 'success',
+    details: {
+      info: { status: 'Generated', irpNumber: 'IRP-2026-004471', notificationId: 'NOTIF-88120-A' },
+      generalStatus: 'generated',
+      distributions: [
+        {
+          id: 'd-1-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Papermail',
+          normal: { status: 'distributed', mediaType: 'Email',     receiver: 'risk@amazon.co.uk',      details: 'Delivered 09:42 · read receipt OK' },
+          backup: { status: 'distributed', mediaType: 'Papermail',  receiver: '1 Principal Pl, London', details: 'Handed to carrier 09:43' },
+        },
+        {
+          id: 'd-1-2', label: 'Distribution 2', status: 'distributed', mediaType: 'Email',
+          normal: { status: 'distributed', mediaType: 'Email', receiver: 'ops@amazon.co.uk', details: 'Delivered 09:42' },
+          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                details: 'Not started' },
+        },
+      ],
+    },
+  },
+  {
+    id: 'n-2',
+    bu: 'DE04', policyId: '5580117', extensionId: 'EXT-33091', notifType: 'Limit decision',
+    buyerId: '770042913', executionTime: '2026-08-11 08:15', statusLabel: 'Partially delivered', statusTone: 'warning',
+    details: {
+      info: { status: 'Partial', irpNumber: 'IRP-2026-005580', notificationId: 'NOTIF-33091-B' },
+      generalStatus: 'partial',
+      distributions: [
+        {
+          id: 'd-2-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Fax',
+          normal: { status: 'distributed', mediaType: 'Email', receiver: 'kredit@stahlbau-mueller.de', details: 'Delivered 08:15' },
+          backup: { status: 'partial',     mediaType: 'Fax',   receiver: '+49 89 1234 000',            details: 'Page 1/2 sent · retry pending' },
+        },
+        {
+          id: 'd-2-2', label: 'Distribution 2', status: 'alerting', mediaType: 'Papermail',
+          normal: { status: 'partial',     mediaType: 'Papermail', receiver: 'Werkstr. 4, München', details: 'Print queued · SLA at risk' },
+          backup: { status: 'not-started', mediaType: '—',         receiver: '—',                   details: 'Not started' },
+        },
+        {
+          id: 'd-2-3', label: 'Distribution 3', status: 'ongoing', mediaType: 'Email',
+          normal: { status: 'partial',     mediaType: 'Email', receiver: 'backup@stahlbau-mueller.de', details: 'Sending…' },
+          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                          details: 'Not started' },
+        },
+      ],
+    },
+  },
+  {
+    id: 'n-3',
+    bu: 'FR01', policyId: '4471023', extensionId: 'EXT-88155', notifType: 'Grade change',
+    buyerId: '204558719', executionTime: '2026-08-11 07:58', statusLabel: 'Distribution failed', statusTone: 'error',
+    details: {
+      info: { status: 'Failed', irpNumber: 'IRP-2026-004472', notificationId: 'NOTIF-88155-C' },
+      generalStatus: 'failed',
+      distributions: [
+        {
+          id: 'd-3-1', label: 'Distribution 1', status: 'failed', mediaType: 'Email · Papermail',
+          normal: { status: 'failed', mediaType: 'Email',     receiver: 'unknown@group-amazon.fr', details: 'Bounced · mailbox not found' },
+          backup: { status: 'failed', mediaType: 'Papermail', receiver: 'Address incomplete',       details: 'Rejected by carrier' },
+        },
+        {
+          id: 'd-3-2', label: 'Distribution 2', status: 'failed', mediaType: 'Fax',
+          normal: { status: 'failed',      mediaType: 'Fax', receiver: '+33 1 0000 000', details: 'No answer after 5 retries' },
+          backup: { status: 'not-started', mediaType: '—',   receiver: '—',              details: 'Not started' },
+        },
+      ],
+    },
+  },
+  {
+    id: 'n-4',
+    bu: 'ES02', policyId: '6621480', extensionId: 'EXT-70410', notifType: 'Cancellation',
+    buyerId: '482290117', executionTime: '2026-08-10 18:20', statusLabel: 'Retry 3/5', statusTone: 'warning',
+    details: {
+      info: { status: 'Partial', irpNumber: 'IRP-2026-006621', notificationId: 'NOTIF-70410-D' },
+      generalStatus: 'partial',
+      distributions: [
+        {
+          id: 'd-4-1', label: 'Distribution 1', status: 'ongoing', mediaType: 'Email',
+          normal: { status: 'partial',     mediaType: 'Email', receiver: 'compliance@galaxy-pharma.es', details: 'Retry 3/5 · next in 10 min' },
+          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                            details: 'Not started' },
+        },
+        {
+          id: 'd-4-2', label: 'Distribution 2', status: 'distributed', mediaType: 'Papermail',
+          normal: { status: 'distributed', mediaType: 'Papermail', receiver: 'Calle Mayor 1, Madrid', details: 'Handed to carrier 18:20' },
+          backup: { status: 'not-started', mediaType: '—',         receiver: '—',                     details: 'Not started' },
+        },
+      ],
+    },
+  },
+  {
+    id: 'n-5',
+    bu: 'US09', policyId: '7712095', extensionId: 'EXT-11002', notifType: 'Action required',
+    buyerId: '900215674', executionTime: '2026-08-10 16:05', statusLabel: 'Action required', statusTone: 'info',
+    details: {
+      info: { status: 'Partial', irpNumber: 'IRP-2026-007712', notificationId: 'NOTIF-11002-E' },
+      generalStatus: 'partial',
+      distributions: [
+        {
+          id: 'd-5-1', label: 'Distribution 1', status: 'alerting', mediaType: 'Email · Papermail',
+          normal: { status: 'partial',     mediaType: 'Email',     receiver: 'ap@atlantic-seafood.com', details: 'Awaiting recipient action' },
+          backup: { status: 'distributed', mediaType: 'Papermail', receiver: '200 Pier Ave, Boston',    details: 'Delivered 16:06' },
+        },
+      ],
+    },
+  },
+  {
+    id: 'n-6',
+    bu: 'IT03', policyId: '8890321', extensionId: 'EXT-55210', notifType: 'Grade change',
+    buyerId: '551023884', executionTime: '2026-08-10 14:47', statusLabel: 'Delivered', statusTone: 'success',
+    details: {
+      info: { status: 'Generated', irpNumber: 'IRP-2026-008890', notificationId: 'NOTIF-55210-F' },
+      generalStatus: 'generated',
+      distributions: [
+        {
+          id: 'd-6-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email',
+          normal: { status: 'distributed', mediaType: 'Email', receiver: 'info@amazing-loco.it', details: 'Delivered 14:47' },
+          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                     details: 'Not started' },
+        },
+        {
+          id: 'd-6-2', label: 'Distribution 2', status: 'distributed', mediaType: 'Papermail',
+          normal: { status: 'distributed', mediaType: 'Papermail', receiver: 'Via Roma 10, Milano', details: 'Handed to carrier 14:48' },
+          backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Via Roma 10, Milano', details: 'Duplicate copy 14:48' },
+        },
+      ],
+    },
+  },
+  {
+    id: 'n-7',
+    bu: 'FR01', policyId: '4471023', extensionId: 'EXT-88190', notifType: 'Limit decision',
+    buyerId: '693118250', executionTime: '2026-08-10 11:33', statusLabel: 'Ongoing', statusTone: 'info',
+    details: {
+      info: { status: 'Partial', irpNumber: 'IRP-2026-004473', notificationId: 'NOTIF-88190-G' },
+      generalStatus: 'partial',
+      distributions: [
+        {
+          id: 'd-7-1', label: 'Distribution 1', status: 'ongoing', mediaType: 'Email · Fax',
+          normal: { status: 'partial',     mediaType: 'Email', receiver: 'contact@amaze-me.fr', details: 'Sending…' },
+          backup: { status: 'partial',     mediaType: 'Fax',   receiver: '+33 4 0000 000',      details: 'Dialing…' },
+        },
+      ],
+    },
+  },
+  {
+    id: 'n-8',
+    bu: 'DE04', policyId: '5580117', extensionId: 'EXT-33140', notifType: 'Cancellation',
+    buyerId: '770042913', executionTime: '2026-08-09 22:10', statusLabel: 'Distribution failed', statusTone: 'error',
+    details: {
+      info: { status: 'Failed', irpNumber: 'IRP-2026-005581', notificationId: 'NOTIF-33140-H' },
+      generalStatus: 'failed',
+      distributions: [
+        {
+          id: 'd-8-1', label: 'Distribution 1', status: 'failed', mediaType: 'Email',
+          normal: { status: 'failed',      mediaType: 'Email', receiver: 'noreply@stahlbau-mueller.de', details: 'SMTP 550 · relay denied' },
+          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                           details: 'Not started' },
+        },
+        {
+          id: 'd-8-2', label: 'Distribution 2', status: 'alerting', mediaType: 'Papermail',
+          normal: { status: 'partial',     mediaType: 'Papermail', receiver: 'Werkstr. 4, München', details: 'Print error · manual check' },
+          backup: { status: 'not-started', mediaType: '—',         receiver: '—',                   details: 'Not started' },
+        },
+      ],
+    },
+  },
+  {
+    id: 'n-9',
+    bu: 'GB07', policyId: '9930442', extensionId: 'EXT-99001', notifType: 'Grade change',
+    buyerId: '137381425', executionTime: '2026-08-09 19:55', statusLabel: 'Delivered', statusTone: 'success',
+    details: {
+      info: { status: 'Generated', irpNumber: 'IRP-2026-009930', notificationId: 'NOTIF-99001-I' },
+      generalStatus: 'generated',
+      distributions: [
+        {
+          id: 'd-9-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Papermail',
+          normal: { status: 'distributed', mediaType: 'Email',     receiver: 'risk@amazon.co.uk',      details: 'Delivered 19:55' },
+          backup: { status: 'distributed', mediaType: 'Papermail', receiver: '1 Principal Pl, London', details: 'Handed to carrier 19:56' },
+        },
+      ],
+    },
+  },
+];

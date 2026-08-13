@@ -1,0 +1,13 @@
+<div class="gs-row">
+  <span class="gs-row__date">{{ entry().date }}</span>
+
+  <button type="button" class="gs-row__score" (click)="scoreClicked.emit()" aria-label="View TRAM score details">
+    <ds-grade [type]="entry().gradeType" [grade]="entry().gradeValue" [score]="entry().score" />
+    <ds-icon name="chart" [size]="14" />
+  </button>
+
+  <button type="button" class="gs-row__status" (click)="statusClicked.emit()" aria-label="View TAG explanation">
+    <ds-badge [status]="statusBadge().status" variant="light" [label]="statusBadge().label" />
+    <ds-icon name="help" [size]="14" />
+  </button>
+</div>

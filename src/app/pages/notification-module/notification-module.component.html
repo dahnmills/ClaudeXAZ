@@ -1,0 +1,338 @@
+<app-topbox-test-shell [showSidenav]="true">
+  <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="false">
+    <ds-breadcrumbs slot="breadcrumbs">
+      <ds-crumb label="Home" href="#" />
+      <ds-crumb label="Tools" href="#" />
+      <ds-crumb label="Notification management" [currentPage]="true" />
+    </ds-breadcrumbs>
+
+    <ds-page-title slot="title" title="Notification management" />
+  </ds-page-header>
+
+  <div class="nm-body">
+    <!-- ── Bloc de recherche (sans encadré — réf. Figma Search v2) ─────────── -->
+    <div class="nm-search">
+      <div class="nm-search__grid">
+        <ds-select label="Status code" [options]="statusCodeOptions" [(value)]="statusCodeFilter" />
+        <ds-select label="BU" [options]="buOptions" [(value)]="buFilter" />
+        <ds-select label="Notification type" [options]="typeOptions" [(value)]="typeFilter" />
+        <div class="nm-datefield">
+          <div class="nm-datefield__trigger" (click)="toggleDate()">
+            <ds-input-text label="Date" placeholder="e.g. Jul 2022 - Nov 2024"
+              [value]="dateQuery()">
+              <ds-icon slot="append" name="calendar" [size]="16" />
+            </ds-input-text>
+          </div>
+          @if (dateOpen()) {
+            <div class="nm-datefield__backdrop" (click)="closeDate()"></div>
+            <div class="nm-datefield__panel">
+              <ds-date-range [(startDate)]="dateStart" [(endDate)]="dateEnd" />
+            </div>
+          }
+        </div>
+
+        <ds-input-text label="Policy ID" placeholder="e.g. 4471023" [(value)]="policyQuery" />
+        <ds-input-text label="Extension ID" placeholder="e.g. EXT-88120" [(value)]="extensionQuery" />
+        <ds-input-text label="Buyer ID" placeholder="e.g. 137381425" [(value)]="buyerQuery" />
+        <ds-input-text label="Notification ID" placeholder="e.g. NOTIF-88120-A" [(value)]="notifIdQuery" />
+      </div>
+      <div class="nm-search__actions">
+        <ds-button type="primary">Search</ds-button>
+      </div>
+    </div>
+
+    <!-- ── Tableau des notifications ───────────────────────────────────────── -->
+    <div class="nm-table">
+    <ds-table-row>
+      <ds-cell-header type="selection"
+        [allSelected]="allSelected()"
+        [allIndeterminate]="selectedRows().size > 0 && !allSelected()"
+        (allSelectedChange)="toggleAll($event)" />
+      <ds-cell-header style="flex:1;"   type="default" title="BU" />
+      <ds-cell-header style="flex:1;"   type="default" title="Policy ID" />
+      <ds-cell-header style="flex:1;"   type="default" title="Extension ID" />
+      <ds-cell-header style="flex:1.4;" type="default" title="Notif type" />
+      <ds-cell-header style="flex:1;"   type="default" title="Buyer ID" />
+      <ds-cell-header style="flex:1.2;" type="default" title="Execution time"
+        [sortable]="true" [sortDirection]="sortDir()" (sortClicked)="toggleSort()" />
+      <ds-cell-header style="flex:1.4;" type="default" title="Status" />
+      <ds-cell-header type="action" />
+    </ds-table-row>
+
+    @for (row of rows; track row.id) {
+      <ds-table-row
+        [state]="active()?.id === row.id ? 'active' : 'default'"
+        [interactive]="true"
+        (clicked)="openDetails(row)"
+      >
+        <ds-cell-selection control="check"
+          [checked]="isRowSelected(row.id)"
+          (checkedChange)="toggleRow(row.id, $event)"
+          (click)="$event.stopPropagation()" />
+        <ds-cell style="flex:1;">{{ row.bu }}</ds-cell>
+        <ds-cell style="flex:1;">{{ row.policyId }}</ds-cell>
+        <ds-cell style="flex:1;">{{ row.extensionId }}</ds-cell>
+        <ds-cell style="flex:1.4;">{{ row.notifType }}</ds-cell>
+        <ds-cell style="flex:1;">{{ row.buyerId }}</ds-cell>
+        <ds-cell style="flex:1.2;">
+          <span class="nm-exec">
+            <span class="nm-exec__date">{{ execDate(row) }}</span>
+            <span class="nm-exec__time">{{ execTime(row) }}</span>
+          </span>
+        </ds-cell>
+        <ds-cell style="flex:1.4;">
+          <ds-badge [label]="row.statusLabel" [status]="row.statusTone" variant="strong" size="s" />
+        </ds-cell>
+        <ds-cell-action ariaLabel="Notification actions">
+          <ds-flyout-menu slot="menu">
+            <ds-flyout-menu-item label="View distribution" icon="eye" (clicked)="openDetails(row)" />
+            <ds-flyout-menu-item label="Download report"   icon="download" (clicked)="download()" />
+            <ds-flyout-menu-item label="Resend"            icon="refresh" />
+          </ds-flyout-menu>
+        </ds-cell-action>
+      </ds-table-row>
+    }
+    </div>
+  </div>
+
+  <!-- ══ Modale « Distribution Details » (hors scroll container) ═══════════════ -->
+  <ds-modal
+    slot="modals"
+    [open]="modalOpen()"
+    size="xlarge"
+    title="Distribution Details"
+    [footer]="true"
+    contentHeight="560px"
+    (closed)="closeModal()"
+  >
+    @if (active(); as row) {
+      <div class="nm-modal">
+        <!-- En-tête : boîte bleue (statut général intégré) -->
+        <div class="nm-modal__head">
+          <div class="nm-infobox">
+            <div class="nm-infobox__item">
+              <span class="nm-infobox__key">Status</span>
+              <ds-badge
+                [label]="generalLabel(row)"
+                [status]="generalBadgeTone(row)"
+                variant="strong"
+                size="m"
+              />
+            </div>
+            <div class="nm-infobox__item">
+              <span class="nm-infobox__key">Detail</span>
+              <span class="nm-infobox__val">{{ generalMessage(row) }}</span>
+            </div>
+            <div class="nm-infobox__item">
+              <span class="nm-infobox__key">IRP Number</span>
+              <span class="nm-infobox__val">{{ row.details.info.irpNumber }}</span>
+            </div>
+            <div class="nm-infobox__item">
+              <span class="nm-infobox__key">Notification ID</span>
+              <button type="button" class="nm-infobox__copy" (click)="copyNotificationId()">
+                <span class="nm-infobox__val">{{ row.details.info.notificationId }}</span>
+                <ds-icon name="copy" [size]="16" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtres de statut (single-select, chips pill — réf. Figma 3541:7191) -->
+        <div class="nm-modal__filters">
+          <button
+            type="button"
+            class="nm-pill"
+            [class.nm-pill--selected]="isStatusActive('all')"
+            (click)="setStatusFilter('all')"
+          >All ({{ totalCount() }})</button>
+
+          @for (s of filterStatuses; track s) {
+            <button
+              type="button"
+              class="nm-pill"
+              [class.nm-pill--selected]="isStatusActive(s)"
+              (click)="setStatusFilter(s)"
+            >{{ distLabel(s) }} ({{ statusCount(s) }})</button>
+          }
+        </div>
+
+        <!-- Corps : cartes de sélection à gauche + 2 boîtes média à droite -->
+        @if (visibleDistributions().length === 0) {
+          <!-- État vide : centré sur toute la largeur du corps -->
+          <div class="nm-empty">
+            <ds-icon name="minus-circle" [size]="32" />
+            <span>No distribution for this filter.</span>
+          </div>
+        } @else {
+        <div class="nm-modal__grid">
+          <!-- Cartes de sélection des distributions -->
+          <div class="nm-cards">
+            @for (d of visibleDistributions(); track d.id) {
+              <button
+                type="button"
+                class="nm-card"
+                [class]="distToneClass(d.status)"
+                [class.nm-card--selected]="isDistSelected(d.id)"
+                (click)="selectDistribution(d.id)"
+              >
+                <span class="nm-card__icon">
+                  <ds-icon [name]="distIcon(d.status)" [size]="16" />
+                </span>
+                <span class="nm-card__text">
+                  <span class="nm-card__title">{{ d.label }}</span>
+                  <span class="nm-card__status">{{ distLabel(d.status) }}</span>
+                </span>
+              </button>
+            }
+          </div>
+
+          <!-- 2 boîtes séparées : Normal / Backup (statuts indépendants). -->
+          <!-- Fond de couleur sur toute la boîte, pas de barre d'entête. -->
+          @if (currentDist(); as d) {
+            <div class="nm-boxes">
+              @for (box of mediaBoxes(); track box.key) {
+                <section
+                  class="nm-box"
+                  [class]="mediaToneClass(box.detail)"
+                  [class.nm-box--idle]="!isMediaStarted(box.detail)"
+                >
+                  <div class="nm-box__top">
+                    <span class="nm-box__title">{{ box.title }}</span>
+                    @if (isMediaStarted(box.detail)) {
+                      <ds-badge
+                        [label]="mediaLabel[box.detail.status]"
+                        [status]="mediaBadgeTone(box.detail)"
+                        variant="strong"
+                        size="s"
+                      />
+                    } @else {
+                      <ds-badge label="Not started" status="neutral" variant="strong" size="s" />
+                    }
+                  </div>
+
+                  @if (isMediaStarted(box.detail)) {
+                    <dl class="nm-box__rows">
+                      <div class="nm-box__row">
+                        <dt>Media type</dt>
+                        <dd>{{ box.detail.mediaType }}</dd>
+                      </div>
+                      <div class="nm-box__row">
+                        <dt>Receiver</dt>
+                        <dd>{{ box.detail.receiver }}</dd>
+                      </div>
+                      <div class="nm-box__row">
+                        <dt>Details</dt>
+                        <dd>{{ box.detail.details }}</dd>
+                      </div>
+                    </dl>
+                  } @else {
+                    <div class="nm-box__idle">
+                      <ds-icon name="minus-circle" [size]="20" />
+                      <span>This media was not started.</span>
+                    </div>
+                  }
+                </section>
+              }
+            </div>
+          }
+        </div>
+        }
+      </div>
+    }
+
+    <div slot="actions">
+      <ds-button type="primary" (clicked)="download()">
+        <ds-icon slot="icon-left" name="download" [size]="16" />
+        Download
+      </ds-button>
+    </div>
+  </ds-modal>
+
+  <!-- ══ Lecteur PDF simulé ═════════════════════════════════════════════════════ -->
+  <ds-modal
+    slot="modals"
+    [open]="pdfOpen()"
+    size="xlarge"
+    [title]="pdfName()"
+    [footer]="false"
+    contentHeight="600px"
+    (closed)="closePdf()"
+  >
+    @if (active(); as row) {
+      <div class="nm-pdf">
+        <!-- Barre d'outils façon lecteur PDF -->
+        <div class="nm-pdf__toolbar">
+          <span class="nm-pdf__file">
+            <ds-icon name="file-text" [size]="16" />
+            {{ pdfName() }}
+          </span>
+          <div class="nm-pdf__tools">
+            <ds-button-icon ariaLabel="Zoom out" type="secondary" size="s" (clicked)="zoomOut()">
+              <ds-icon name="minus-circle" [size]="16" />
+            </ds-button-icon>
+            <span class="nm-pdf__zoom">{{ pdfZoom() }}%</span>
+            <ds-button-icon ariaLabel="Zoom in" type="secondary" size="s" (clicked)="zoomIn()">
+              <ds-icon name="plus-circle" [size]="16" />
+            </ds-button-icon>
+            <ds-button type="secondary" (clicked)="savePdf()">
+              <ds-icon slot="icon-left" name="download" [size]="16" />
+              Download
+            </ds-button>
+          </div>
+        </div>
+
+        <!-- Zone de visualisation (fond gris) + page A4 zoomable -->
+        <div class="nm-pdf__viewport">
+          <article class="nm-pdf__page" [style.width.%]="pdfZoom()">
+            <header class="nm-pdf__page-head">
+              <span class="nm-pdf__brand">QIRIN</span>
+              <span class="nm-pdf__doc-type">Distribution report</span>
+            </header>
+
+            <h1 class="nm-pdf__title">Notification {{ row.details.info.notificationId }}</h1>
+
+            <dl class="nm-pdf__meta">
+              <div><dt>IRP Number</dt><dd>{{ row.details.info.irpNumber }}</dd></div>
+              <div><dt>General status</dt><dd>{{ generalLabel(row) }}</dd></div>
+              <div><dt>Business unit</dt><dd>{{ row.bu }}</dd></div>
+              <div><dt>Policy ID</dt><dd>{{ row.policyId }}</dd></div>
+              <div><dt>Buyer ID</dt><dd>{{ row.buyerId }}</dd></div>
+              <div><dt>Execution time</dt><dd>{{ row.executionTime }}</dd></div>
+            </dl>
+
+            <p class="nm-pdf__summary">{{ generalMessage(row) }}</p>
+
+            @for (d of row.details.distributions; track d.id) {
+              <section class="nm-pdf__section">
+                <h2 class="nm-pdf__section-title">{{ d.label }} — {{ distLabel(d.status) }}</h2>
+                <table class="nm-pdf__table">
+                  <thead>
+                    <tr><th></th><th>Media type</th><th>Receiver</th><th>Details</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th>Normal</th>
+                      <td>{{ d.normal.mediaType }}</td>
+                      <td>{{ d.normal.receiver }}</td>
+                      <td>{{ d.normal.details }}</td>
+                    </tr>
+                    <tr>
+                      <th>Backup</th>
+                      <td>{{ d.backup.mediaType }}</td>
+                      <td>{{ d.backup.receiver }}</td>
+                      <td>{{ d.backup.details }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+            }
+
+            <footer class="nm-pdf__page-foot">
+              Generated by Qirin · {{ pdfName() }} · page 1 / 1
+            </footer>
+          </article>
+        </div>
+      </div>
+    }
+  </ds-modal>
+</app-topbox-test-shell>

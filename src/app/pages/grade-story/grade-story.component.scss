@@ -1,0 +1,9 @@
+.grade-story {
+  padding: var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl);
+
+  &__list {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-s);
+  }
+}

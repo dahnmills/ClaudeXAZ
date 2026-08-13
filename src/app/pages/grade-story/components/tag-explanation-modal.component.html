@@ -1,0 +1,16 @@
+@if (entry(); as e) {
+  <ds-modal [open]="open()" title="TAG explanation" size="xlarge" [showBack]="false" contentHeight="auto" (closed)="closed.emit()">
+    <div class="tag-explain">
+      <ds-properties-panel [sections]="inputSections()" [columns]="3" variant="card" layout="stacked" />
+
+      <div class="tag-explain__rule">
+        <span class="tag-explain__rule-title">TAG rule applied</span>
+        <tag-rule-card [rule]="e.tagRule" [expanded]="true" mode="view" />
+      </div>
+    </div>
+
+    <div slot="actions">
+      <ds-button type="primary" (clicked)="closed.emit()">Close</ds-button>
+    </div>
+  </ds-modal>
+}

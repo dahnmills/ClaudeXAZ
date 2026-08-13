@@ -1,0 +1,43 @@
+.gs-row {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m);
+  padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  border:      1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+
+  &__date {
+    flex:      0 0 auto;
+    min-width: var(--semantic-measurement-sizing-xl);
+    font-size: var(--semantic-font-text-style-size-m);
+    color:     var(--semantic-color-static-text-main-tertiary);
+  }
+
+  // Each clickable zone gets its own border + hover fill — the visual
+  // indicator the BN asks for, so the two zones read as distinct targets
+  // rather than one row that happens to react differently depending on
+  // where you click.
+  &__score,
+  &__status {
+    display:       flex;
+    align-items:   center;
+    gap:           var(--semantic-measurement-spacing-xs);
+    padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+    border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+    border-radius: var(--semantic-border-radius-s);
+    background:    var(--semantic-color-static-background-main-primary);
+    cursor:        pointer;
+    font:          inherit;
+    color:         var(--semantic-color-static-text-main-tertiary);
+    transition:    background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      background:  var(--semantic-color-interactive-background-light-alt-hover);
+      border-color: var(--semantic-color-interactive-border-medium-alt-default);
+    }
+    &:focus-visible {
+      outline:        2px solid var(--semantic-color-interactive-border-focus);
+      outline-offset: 2px;
+    }
+  }
+}

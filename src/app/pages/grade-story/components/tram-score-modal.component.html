@@ -1,0 +1,9 @@
+@if (entry(); as e) {
+  <ds-modal [open]="open()" title="TRAM score details" size="medium" [showBack]="false" contentHeight="auto" (closed)="closed.emit()">
+    <ds-properties-panel [sections]="sections(e)" [columns]="2" variant="flat" layout="stacked" />
+
+    <div slot="actions">
+      <ds-button type="primary" (clicked)="closed.emit()">Close</ds-button>
+    </div>
+  </ds-modal>
+}
