@@ -55,7 +55,7 @@ const SEED_RESULTS: ResultCardData[] = [
     name: 'Immobilière du Marais',
     city: 'BHV',
     address: '34 RUE DE LA VERRIÈRE - 75004 - PARIS 4 - FRANCE',
-    companyId: '137381425',
+    companyId: '137381426',
     score: 0.6,
     exists: true,
   },
@@ -194,6 +194,10 @@ export class SearchComponent {
   filtered = computed(() => {
     const q = this.appliedQuery();
     if (!q) return this.indexed();
+    // Company ID = identifiant précis → match EXACT (un seul résultat), pas de substring.
+    if (this.appliedType() === 'company-id') {
+      return this.indexed().filter(x => (x.r.companyId ?? '') === q);
+    }
     return this.indexed().filter(x =>
       x.r.name.toLowerCase().includes(q) || (x.r.companyId ?? '').includes(q),
     );
