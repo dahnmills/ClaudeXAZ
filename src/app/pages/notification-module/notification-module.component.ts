@@ -1,4 +1,5 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { LowerCasePipe } from '@angular/common';
 import {
   PageHeaderComponent,
   BreadcrumbsComponent,
@@ -9,6 +10,8 @@ import {
   ButtonComponent,
   ButtonIconComponent,
   CardComponent,
+  CheckboxComponent,
+  DividerComponent,
   SelectComponent,
   InputTextComponent,
   ModalComponent,
@@ -21,6 +24,7 @@ import {
   CellSelectionComponent,
   DateRangeComponent,
   SnackbarService,
+  type DateRangeValue,
   type SelectOption,
 } from '../../shared/ui';
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
@@ -29,21 +33,26 @@ import {
   type NotificationRow,
   type Distribution,
   type DistributionStatus,
+  type GenerationStatus,
   type MediaDetail,
   distributionTone,
   mediaTone,
   generalTone,
+  generationTone,
   toneToBadge,
   DISTRIBUTION_LABEL,
   MEDIA_LABEL,
   GENERAL_LABEL,
   GENERAL_MESSAGE,
+  GENERATION_LABEL,
+  GENERATION_PENDING_MESSAGE,
+  ALERTING_MESSAGE,
 } from './notification-module.model';
 
 /** Une boîte média (Normal ou Backup) — statuts indépendants. */
 interface MediaBox {
   key:    'normal' | 'backup';
-  title:  string;
+  title:  string;   // « Normal media » / « Backup media »
   detail: MediaDetail;
 }
 
@@ -51,10 +60,12 @@ interface MediaBox {
   selector: 'app-notification-module',
   standalone: true,
   imports: [
+    LowerCasePipe,
     TopboxTestShellComponent,
     PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, PageTitleComponent,
     IconComponent, BadgeComponent,
     ButtonComponent, ButtonIconComponent, CardComponent,
+    CheckboxComponent, DividerComponent,
     SelectComponent, InputTextComponent, ModalComponent,
     FlyoutMenuComponent, FlyoutMenuItemComponent,
     TableRowComponent, CellComponent, CellHeaderComponent, CellActionComponent,
@@ -105,27 +116,30 @@ export class NotificationModuleComponent {
   dateStart        = signal<Date | null>(null);
   dateEnd          = signal<Date | null>(null);
 
-  constructor() {
-    // Ferme le calendrier dès que la plage est complète (start + end).
-    effect(() => {
-      const start = this.dateStart();
-      const end = this.dateEnd();
-      if (start && end) {
-        // Plage jour-précise. Même année → n'affiche l'année qu'une fois : « Aug 8 - Aug 12, 2026 ».
-        const dm = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        const y = (d: Date) => d.getFullYear();
-        const label = y(start) === y(end)
-          ? `${dm(start)} - ${dm(end)}, ${y(end)}`
-          : `${dm(start)}, ${y(start)} - ${dm(end)}, ${y(end)}`;
-        this.dateQuery.set(label);
-        this.dateOpen.set(false);
-      }
-    });
+  /** Applique la plage date + heure (bouton Apply du ds-date-range) et ferme le flyout. */
+  applyDate(v: DateRangeValue) {
+    const { startDate: start, endDate: end, startTime, endTime } = v;
+    if (start && end) {
+      // Plage jour + heure : « Aug 8, 09:00 - Aug 12, 18:30, 2026 ».
+      const dm = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const y = (d: Date) => d.getFullYear();
+      const label = y(start) === y(end)
+        ? `${dm(start)}, ${startTime} - ${dm(end)}, ${endTime}, ${y(end)}`
+        : `${dm(start)}, ${startTime}, ${y(start)} - ${dm(end)}, ${endTime}, ${y(end)}`;
+      this.dateQuery.set(label);
+    }
+    this.dateOpen.set(false);
   }
   policyQuery      = signal<string>('');
   extensionQuery   = signal<string>('');
   buyerQuery       = signal<string>('');
   notifIdQuery     = signal<string>('');
+  /** Case « Include copy » du module de recherche (réf. Figma DS Draft Search 57:629). */
+  includeCopy      = signal<boolean>(false);
+  /** Rangée « More criteria » dépliée. */
+  moreCriteriaOpen = signal<boolean>(false);
+
+  toggleMoreCriteria() { this.moreCriteriaOpen.update(o => !o); }
 
   /** Sélection multiple des lignes (checkbox de tête de ligne). */
   selectedRows = signal<Set<string>>(new Set());
@@ -173,6 +187,21 @@ export class NotificationModuleComponent {
       { key: 'backup', title: 'Backup media', detail: d.backup },
     ];
   });
+
+  // ── Étape 1 : génération du document ─────────────────────────────────────────
+  /** true si le document est prêt → la distribution peut avoir eu lieu. */
+  isGenerated(r: NotificationRow) { return r.details.generationStatus === 'generated'; }
+  generationLabel(s: GenerationStatus) { return GENERATION_LABEL[s]; }
+  generationBadgeTone(s: GenerationStatus) { return toneToBadge(generationTone(s)); }
+  /** Message affiché dans la modale quand le document est encore en génération. */
+  generationPendingMessage(r: NotificationRow) {
+    const g = r.details.generationStatus;
+    return g === 'generated' ? '' : GENERATION_PENDING_MESSAGE[g];
+  }
+
+  // ── Alerte distribution (2 médias échoués) ───────────────────────────────────
+  readonly alertingMessage = ALERTING_MESSAGE;
+  isAlerting(d: Distribution | null) { return d?.status === 'alerting'; }
 
   // ── Helpers de rendu (couleurs / libellés) ──────────────────────────────────
   distLabel(s: DistributionStatus)  { return DISTRIBUTION_LABEL[s]; }
@@ -260,6 +289,14 @@ export class NotificationModuleComponent {
     if (!id) return;
     navigator.clipboard?.writeText(id).catch(() => {});
     this.snackbar.show(`Notification ID ${id} copied`, { tone: 'success', icon: 'copy' });
+  }
+
+  /** Copie l'ID de la distribution affichée (au-dessus des boîtes de comparaison). */
+  copyDistributionId() {
+    const id = this.currentDist()?.id;
+    if (!id) return;
+    navigator.clipboard?.writeText(id).catch(() => {});
+    this.snackbar.show(`Distribution ID ${id} copied`, { tone: 'success', icon: 'copy' });
   }
 
   // ── Lecteur PDF simulé ───────────────────────────────────────────────────────

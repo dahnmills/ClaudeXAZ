@@ -34,24 +34,52 @@
 
 // ══ Corps de la page de fond ═════════════════════════════════════════════════
 .nm-body {
-  padding: var(--semantic-measurement-spacing-2xl);
+  padding: var(--semantic-measurement-spacing-xl);
   display: flex;
   flex-direction: column;
-  gap: var(--semantic-measurement-spacing-l);
+  gap: var(--semantic-measurement-spacing-m);
 }
 
-// Bloc de recherche sans encadré (réf. Figma Search v2) : grille 4 colonnes,
-// 2 rangées, bouton Search aligné à droite.
+// Module de recherche (réf. Figma DS Draft Search 57:629) : carte grise,
+// rangée principale (4 filtres + Include copy + Search), divider, bascule
+// « More criteria » à droite, puis rangée secondaire dépliable.
 .nm-search {
-  &__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-m);
+  background: var(--semantic-color-static-background-main-secondary);
+  border-radius: var(--semantic-border-radius-m);
+
+  // Rangée principale : les 4 filtres prennent l'espace, l'aside reste compact.
+  &__main {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--semantic-measurement-spacing-l);
+  }
+
+  // Grille des filtres (4 colonnes égales), réutilisée par la rangée secondaire.
+  &__fields {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--semantic-measurement-spacing-m);
+    min-width: 0;
   }
-  &__actions {
+
+  // Include copy + Search alignés en bas de la rangée (sur la ligne des champs).
+  &__aside {
+    display: flex;
+    align-items: center;
+    gap: var(--semantic-measurement-spacing-l);
+    padding-bottom: var(--semantic-measurement-spacing-xs);
+    flex: none;
+  }
+
+  // Bascule « More/Less criteria » alignée à droite sous le divider.
+  &__toggle {
     display: flex;
     justify-content: flex-end;
-    margin-top: var(--semantic-measurement-spacing-l);
   }
 }
 
@@ -69,10 +97,11 @@
 
   // Positionnement seul : ds-date-range apporte déjà son propre fond/bordure/radius.
   // On ajoute juste l'ombre flottante — pas de 2e boîte.
+  // Ancré à droite : le calendrier dual (2 mois) est large, on évite le débord.
   &__panel {
     position: absolute;
     top: calc(100% + var(--semantic-measurement-spacing-xs));
-    left: 0;
+    right: 0;
     z-index: 11;
 
     ds-date-range { box-shadow: var(--semantic-shadow-popover); }
@@ -264,6 +293,20 @@
   font-size: var(--semantic-font-text-style-size-m);
 
   ds-icon { color: var(--semantic-color-static-icon-main-tertiary); }
+
+  // Titre de l'état vide (ex : « Document ongoing ») — plus visible que la phrase.
+  &__title {
+    font-size: var(--semantic-font-text-style-size-l);
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+    line-height: var(--semantic-font-text-style-line-height-l);
+    color: var(--semantic-color-static-text-main-secondary);
+    text-transform: capitalize;
+  }
+}
+
+// Tiret « — » quand la distribution n'a pas encore démarré (document non généré).
+.nm-dash {
+  color: var(--semantic-color-static-text-main-tertiary);
 }
 
 .nm-card {
@@ -334,12 +377,50 @@
   }
 }
 
-// ── Deux boîtes média séparées (Normal / Backup), statuts indépendants ────────
+// ── Colonne de droite : ID de distribution + alerte + 2 boîtes média ──────────
 .nm-boxes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: var(--semantic-measurement-spacing-m);
-  align-items: stretch; // 2 boîtes toujours à la même hauteur, même vides
+
+  // Paire Normal / Backup : 2 colonnes égales, même hauteur.
+  &__pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--semantic-measurement-spacing-m);
+    align-items: stretch;
+  }
+}
+
+// ID de distribution copiable, au-dessus des boîtes (même style que Notif ID).
+.nm-distid {
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+
+  &__key {
+    font-size: var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    line-height: var(--semantic-font-text-style-line-height-m);
+    color: var(--semantic-color-static-text-main-primary);
+  }
+}
+
+// Bandeau d'alerte orange : les 2 médias ont échoué (statut alerting).
+.nm-alert {
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  border: var(--semantic-border-size-s) solid var(--semantic-color-static-border-main-functional-warning);
+  border-radius: var(--semantic-border-radius-m);
+  background: var(--semantic-color-static-background-subtle-functional-warning);
+  color: var(--semantic-color-static-text-main-functional-warning);
+  font-size: var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: var(--semantic-font-text-style-line-height-m);
+
+  ds-icon { color: var(--semantic-color-static-icon-main-functional-warning); flex-shrink: 0; }
 }
 
 // Réf. Figma Comparison (3538:6238) : fond de couleur sur TOUTE la boîte
@@ -373,6 +454,11 @@
     font-weight: var(--semantic-font-text-style-font-weight-bold); // bold
     line-height: var(--semantic-font-text-style-line-height-l);
     color: var(--semantic-color-static-text-main-secondary); // grey-700 #414141
+  }
+  // Media type accolé au titre : « Normal media · Email » — poids normal, secondaire.
+  &__media {
+    font-weight: var(--semantic-font-text-style-font-weight-regular);
+    color: var(--semantic-color-static-text-main-tertiary);
   }
 
   &__rows {

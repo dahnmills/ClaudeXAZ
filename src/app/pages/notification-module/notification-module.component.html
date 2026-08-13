@@ -10,35 +10,67 @@
   </ds-page-header>
 
   <div class="nm-body">
-    <!-- ── Bloc de recherche (sans encadré — réf. Figma Search v2) ─────────── -->
+    <!-- ── Module de recherche (réf. Figma DS Draft Search 57:629) ──────────── -->
+    <!-- Rangée principale : 4 filtres + Include copy + Search. -->
     <div class="nm-search">
-      <div class="nm-search__grid">
-        <ds-select label="Status code" [options]="statusCodeOptions" [(value)]="statusCodeFilter" />
-        <ds-select label="BU" [options]="buOptions" [(value)]="buFilter" />
-        <ds-select label="Notification type" [options]="typeOptions" [(value)]="typeFilter" />
-        <div class="nm-datefield">
-          <div class="nm-datefield__trigger" (click)="toggleDate()">
-            <ds-input-text label="Date" placeholder="e.g. Jul 2022 - Nov 2024"
-              [value]="dateQuery()">
-              <ds-icon slot="append" name="calendar" [size]="16" />
-            </ds-input-text>
-          </div>
-          @if (dateOpen()) {
-            <div class="nm-datefield__backdrop" (click)="closeDate()"></div>
-            <div class="nm-datefield__panel">
-              <ds-date-range [(startDate)]="dateStart" [(endDate)]="dateEnd" />
+      <div class="nm-search__main">
+        <div class="nm-search__fields">
+          <ds-select label="Status code" [options]="statusCodeOptions" [(value)]="statusCodeFilter" />
+          <ds-select label="BU" [options]="buOptions" [(value)]="buFilter" />
+          <ds-select label="Notification type" [options]="typeOptions" [(value)]="typeFilter" />
+          <div class="nm-datefield">
+            <div class="nm-datefield__trigger" (click)="toggleDate()">
+              <ds-input-text label="Execution date" placeholder="e.g. Jul 2022 - Nov 2024"
+                [value]="dateQuery()">
+                <ds-icon slot="append" name="calendar" [size]="16" />
+              </ds-input-text>
             </div>
-          }
+            @if (dateOpen()) {
+              <div class="nm-datefield__backdrop" (click)="closeDate()"></div>
+              <div class="nm-datefield__panel">
+                <ds-date-range
+                  type="dual"
+                  [(startDate)]="dateStart"
+                  [(endDate)]="dateEnd"
+                  [showTime]="true"
+                  [showFooter]="true"
+                  (applied)="applyDate($event)"
+                  (cancelled)="closeDate()"
+                />
+              </div>
+            }
+          </div>
         </div>
 
-        <ds-input-text label="Policy ID" placeholder="e.g. 4471023" [(value)]="policyQuery" />
-        <ds-input-text label="Extension ID" placeholder="e.g. EXT-88120" [(value)]="extensionQuery" />
-        <ds-input-text label="Buyer ID" placeholder="e.g. 137381425" [(value)]="buyerQuery" />
-        <ds-input-text label="Notification ID" placeholder="e.g. NOTIF-88120-A" [(value)]="notifIdQuery" />
+        <div class="nm-search__aside">
+          <ds-checkbox
+            label="Include copy"
+            [checked]="includeCopy()"
+            (checkedChange)="includeCopy.set($event)"
+          />
+          <ds-button type="primary">Search</ds-button>
+        </div>
       </div>
-      <div class="nm-search__actions">
-        <ds-button type="primary">Search</ds-button>
+
+      <ds-divider />
+
+      <!-- Bascule « More criteria » alignée à droite. -->
+      <div class="nm-search__toggle">
+        <ds-button type="plain" (clicked)="toggleMoreCriteria()">
+          {{ moreCriteriaOpen() ? 'Less criteria' : 'More criteria' }}
+          <ds-icon slot="icon-right" [name]="moreCriteriaOpen() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+        </ds-button>
       </div>
+
+      <!-- Rangée secondaire dépliable. -->
+      @if (moreCriteriaOpen()) {
+        <div class="nm-search__fields">
+          <ds-input-text label="Policy ID" placeholder="e.g. 4471023" [(value)]="policyQuery" />
+          <ds-input-text label="Extension ID" placeholder="e.g. EXT-88120" [(value)]="extensionQuery" />
+          <ds-input-text label="Buyer ID" placeholder="e.g. 137381425" [(value)]="buyerQuery" />
+          <ds-input-text label="Notification ID" placeholder="e.g. NOTIF-88120-A" [(value)]="notifIdQuery" />
+        </div>
+      }
     </div>
 
     <!-- ── Tableau des notifications ───────────────────────────────────────── -->
@@ -55,6 +87,7 @@
       <ds-cell-header style="flex:1;"   type="default" title="Buyer ID" />
       <ds-cell-header style="flex:1.2;" type="default" title="Execution time"
         [sortable]="true" [sortDirection]="sortDir()" (sortClicked)="toggleSort()" />
+      <ds-cell-header style="flex:1.3;" type="default" title="Document generation" />
       <ds-cell-header style="flex:1.4;" type="default" title="Status" />
       <ds-cell-header type="action" />
     </ds-table-row>
@@ -80,8 +113,22 @@
             <span class="nm-exec__time">{{ execTime(row) }}</span>
           </span>
         </ds-cell>
+        <!-- Étape 1 : génération du document (Generated en vert devant, sinon état en cours). -->
+        <ds-cell style="flex:1.3;">
+          <ds-badge
+            [label]="generationLabel(row.details.generationStatus)"
+            [status]="generationBadgeTone(row.details.generationStatus)"
+            variant="strong"
+            size="s"
+          />
+        </ds-cell>
+        <!-- Étape 2 : statut de distribution — vide tant que le document n'est pas généré. -->
         <ds-cell style="flex:1.4;">
-          <ds-badge [label]="row.statusLabel" [status]="row.statusTone" variant="strong" size="s" />
+          @if (isGenerated(row)) {
+            <ds-badge [label]="row.statusLabel" [status]="row.statusTone" variant="strong" size="s" />
+          } @else {
+            <span class="nm-dash">-</span>
+          }
         </ds-cell>
         <ds-cell-action ariaLabel="Notification actions">
           <ds-flyout-menu slot="menu">
@@ -137,6 +184,15 @@
           </div>
         </div>
 
+        <!-- Étape 1 non terminée : document encore en génération → aucune distribution. -->
+        @if (!isGenerated(row)) {
+          <div class="nm-empty">
+            <ds-icon name="in-progress" [size]="32" />
+            <span class="nm-empty__title">Document {{ generationLabel(row.details.generationStatus) | lowercase }}</span>
+            <span>{{ generationPendingMessage(row) }}</span>
+          </div>
+        } @else {
+
         <!-- Filtres de statut (single-select, chips pill — réf. Figma 3541:7191) -->
         <div class="nm-modal__filters">
           <button
@@ -186,10 +242,27 @@
             }
           </div>
 
-          <!-- 2 boîtes séparées : Normal / Backup (statuts indépendants). -->
-          <!-- Fond de couleur sur toute la boîte, pas de barre d'entête. -->
+          <!-- Colonne de droite : ID de distribution copiable + éventuelle alerte, puis boîtes. -->
           @if (currentDist(); as d) {
             <div class="nm-boxes">
+              <!-- ID de distribution (copiable) au-dessus des boîtes de comparaison. -->
+              <div class="nm-distid">
+                <span class="nm-distid__key">Distribution ID</span>
+                <button type="button" class="nm-infobox__copy" (click)="copyDistributionId()">
+                  <span class="nm-infobox__val">{{ d.id }}</span>
+                  <ds-icon name="copy" [size]="16" />
+                </button>
+              </div>
+
+              <!-- Alerte : les deux médias ont échoué. -->
+              @if (isAlerting(d)) {
+                <div class="nm-alert">
+                  <ds-icon name="warning-triangle" [size]="20" />
+                  <span>{{ alertingMessage }}</span>
+                </div>
+              }
+
+              <div class="nm-boxes__pair">
               @for (box of mediaBoxes(); track box.key) {
                 <section
                   class="nm-box"
@@ -197,7 +270,9 @@
                   [class.nm-box--idle]="!isMediaStarted(box.detail)"
                 >
                   <div class="nm-box__top">
-                    <span class="nm-box__title">{{ box.title }}</span>
+                    <span class="nm-box__title">
+                      {{ box.title }}@if (isMediaStarted(box.detail)) {<span class="nm-box__media"> - {{ box.detail.mediaType }}</span>}
+                    </span>
                     @if (isMediaStarted(box.detail)) {
                       <ds-badge
                         [label]="mediaLabel[box.detail.status]"
@@ -212,10 +287,6 @@
 
                   @if (isMediaStarted(box.detail)) {
                     <dl class="nm-box__rows">
-                      <div class="nm-box__row">
-                        <dt>Media type</dt>
-                        <dd>{{ box.detail.mediaType }}</dd>
-                      </div>
                       <div class="nm-box__row">
                         <dt>Receiver</dt>
                         <dd>{{ box.detail.receiver }}</dd>
@@ -233,9 +304,11 @@
                   }
                 </section>
               }
+              </div>
             </div>
           }
         </div>
+        }
         }
       </div>
     }
@@ -304,7 +377,7 @@
 
             @for (d of row.details.distributions; track d.id) {
               <section class="nm-pdf__section">
-                <h2 class="nm-pdf__section-title">{{ d.label }} — {{ distLabel(d.status) }}</h2>
+                <h2 class="nm-pdf__section-title">{{ d.label }} - {{ distLabel(d.status) }}</h2>
                 <table class="nm-pdf__table">
                   <thead>
                     <tr><th></th><th>Media type</th><th>Receiver</th><th>Details</th></tr>

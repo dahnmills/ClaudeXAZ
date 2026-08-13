@@ -1,9 +1,12 @@
 import { type NotificationRow } from './notification-module.model';
 
-// Jeu de données riche : 9 notifications aux statuts variés pour tester les
-// filtres et le scroll de la liste des distributions. Les payloads « details »
-// couvrent les trois configurations décrites dans le ticket (Distributed /
-// Partial / Failed) plus Ongoing / Alerting / Not started.
+// Jeu de données riche : notifications aux statuts variés pour tester les filtres,
+// le pipeline en 2 étapes (génération → distribution) et le scroll de la liste.
+//
+// Règles métier reflétées ici :
+//   • generationStatus ≠ 'generated' (ongoing / action-required / retry)
+//     → document encore en génération → AUCUNE distribution.
+//   • distribution 'alerting' → les 2 médias (Normal + Backup) sont 'failed'.
 
 export const NOTIFICATION_ROWS: NotificationRow[] = [
   {
@@ -13,16 +16,17 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
     details: {
       info: { status: 'Generated', irpNumber: 'IRP-2026-004471', notificationId: 'NOTIF-88120-A' },
       generalStatus: 'generated',
+      generationStatus: 'generated',
       distributions: [
         {
-          id: 'd-1-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Papermail',
+          id: 'DIST-88120-01', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Papermail',
           normal: { status: 'distributed', mediaType: 'Email',     receiver: 'risk@amazon.co.uk',      details: 'Delivered 09:42 · read receipt OK' },
           backup: { status: 'distributed', mediaType: 'Papermail',  receiver: '1 Principal Pl, London', details: 'Handed to carrier 09:43' },
         },
         {
-          id: 'd-1-2', label: 'Distribution 2', status: 'distributed', mediaType: 'Email',
+          id: 'DIST-88120-02', label: 'Distribution 2', status: 'distributed', mediaType: 'Email',
           normal: { status: 'distributed', mediaType: 'Email', receiver: 'ops@amazon.co.uk', details: 'Delivered 09:42' },
-          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                details: 'Not started' },
+          backup: { status: 'not-started', mediaType: '-',     receiver: '-',                details: 'Not started' },
         },
       ],
     },
@@ -34,21 +38,17 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
     details: {
       info: { status: 'Partial', irpNumber: 'IRP-2026-005580', notificationId: 'NOTIF-33091-B' },
       generalStatus: 'partial',
+      generationStatus: 'generated',
       distributions: [
         {
-          id: 'd-2-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Fax',
+          id: 'DIST-33091-01', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Fax',
           normal: { status: 'distributed', mediaType: 'Email', receiver: 'kredit@stahlbau-mueller.de', details: 'Delivered 08:15' },
           backup: { status: 'partial',     mediaType: 'Fax',   receiver: '+49 89 1234 000',            details: 'Page 1/2 sent · retry pending' },
         },
         {
-          id: 'd-2-2', label: 'Distribution 2', status: 'alerting', mediaType: 'Papermail',
-          normal: { status: 'partial',     mediaType: 'Papermail', receiver: 'Werkstr. 4, München', details: 'Print queued · SLA at risk' },
-          backup: { status: 'not-started', mediaType: '—',         receiver: '—',                   details: 'Not started' },
-        },
-        {
-          id: 'd-2-3', label: 'Distribution 3', status: 'ongoing', mediaType: 'Email',
-          normal: { status: 'partial',     mediaType: 'Email', receiver: 'backup@stahlbau-mueller.de', details: 'Sending…' },
-          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                          details: 'Not started' },
+          id: 'DIST-33091-02', label: 'Distribution 2', status: 'alerting', mediaType: 'Papermail · Fax',
+          normal: { status: 'failed', mediaType: 'Papermail', receiver: 'Werkstr. 4, München', details: 'Print rejected · address invalid' },
+          backup: { status: 'failed', mediaType: 'Fax',       receiver: '+49 89 1234 999',    details: 'No answer after 5 retries' },
         },
       ],
     },
@@ -60,55 +60,43 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
     details: {
       info: { status: 'Failed', irpNumber: 'IRP-2026-004472', notificationId: 'NOTIF-88155-C' },
       generalStatus: 'failed',
+      generationStatus: 'generated',
       distributions: [
         {
-          id: 'd-3-1', label: 'Distribution 1', status: 'failed', mediaType: 'Email · Papermail',
+          id: 'DIST-88155-01', label: 'Distribution 1', status: 'failed', mediaType: 'Email · Papermail',
           normal: { status: 'failed', mediaType: 'Email',     receiver: 'unknown@group-amazon.fr', details: 'Bounced · mailbox not found' },
           backup: { status: 'failed', mediaType: 'Papermail', receiver: 'Address incomplete',       details: 'Rejected by carrier' },
         },
         {
-          id: 'd-3-2', label: 'Distribution 2', status: 'failed', mediaType: 'Fax',
+          id: 'DIST-88155-02', label: 'Distribution 2', status: 'failed', mediaType: 'Fax',
           normal: { status: 'failed',      mediaType: 'Fax', receiver: '+33 1 0000 000', details: 'No answer after 5 retries' },
-          backup: { status: 'not-started', mediaType: '—',   receiver: '—',              details: 'Not started' },
+          backup: { status: 'not-started', mediaType: '-',   receiver: '-',              details: 'Not started' },
         },
       ],
     },
   },
   {
+    // Génération : RETRY → document en cours de nouvelle tentative, AUCUNE distribution.
     id: 'n-4',
     bu: 'ES02', policyId: '6621480', extensionId: 'EXT-70410', notifType: 'Cancellation',
     buyerId: '482290117', executionTime: '2026-08-10 18:20', statusLabel: 'Retry 3/5', statusTone: 'warning',
     details: {
       info: { status: 'Partial', irpNumber: 'IRP-2026-006621', notificationId: 'NOTIF-70410-D' },
       generalStatus: 'partial',
-      distributions: [
-        {
-          id: 'd-4-1', label: 'Distribution 1', status: 'ongoing', mediaType: 'Email',
-          normal: { status: 'partial',     mediaType: 'Email', receiver: 'compliance@galaxy-pharma.es', details: 'Retry 3/5 · next in 10 min' },
-          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                            details: 'Not started' },
-        },
-        {
-          id: 'd-4-2', label: 'Distribution 2', status: 'distributed', mediaType: 'Papermail',
-          normal: { status: 'distributed', mediaType: 'Papermail', receiver: 'Calle Mayor 1, Madrid', details: 'Handed to carrier 18:20' },
-          backup: { status: 'not-started', mediaType: '—',         receiver: '—',                     details: 'Not started' },
-        },
-      ],
+      generationStatus: 'retry',
+      distributions: [],
     },
   },
   {
+    // Génération : ACTION REQUIRED → nécessite une action avant distribution, AUCUNE distribution.
     id: 'n-5',
     bu: 'US09', policyId: '7712095', extensionId: 'EXT-11002', notifType: 'Action required',
     buyerId: '900215674', executionTime: '2026-08-10 16:05', statusLabel: 'Action required', statusTone: 'info',
     details: {
       info: { status: 'Partial', irpNumber: 'IRP-2026-007712', notificationId: 'NOTIF-11002-E' },
       generalStatus: 'partial',
-      distributions: [
-        {
-          id: 'd-5-1', label: 'Distribution 1', status: 'alerting', mediaType: 'Email · Papermail',
-          normal: { status: 'partial',     mediaType: 'Email',     receiver: 'ap@atlantic-seafood.com', details: 'Awaiting recipient action' },
-          backup: { status: 'distributed', mediaType: 'Papermail', receiver: '200 Pier Ave, Boston',    details: 'Delivered 16:06' },
-        },
-      ],
+      generationStatus: 'action-required',
+      distributions: [],
     },
   },
   {
@@ -118,14 +106,15 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
     details: {
       info: { status: 'Generated', irpNumber: 'IRP-2026-008890', notificationId: 'NOTIF-55210-F' },
       generalStatus: 'generated',
+      generationStatus: 'generated',
       distributions: [
         {
-          id: 'd-6-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email',
+          id: 'DIST-55210-01', label: 'Distribution 1', status: 'distributed', mediaType: 'Email',
           normal: { status: 'distributed', mediaType: 'Email', receiver: 'info@amazing-loco.it', details: 'Delivered 14:47' },
-          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                     details: 'Not started' },
+          backup: { status: 'not-started', mediaType: '-',     receiver: '-',                     details: 'Not started' },
         },
         {
-          id: 'd-6-2', label: 'Distribution 2', status: 'distributed', mediaType: 'Papermail',
+          id: 'DIST-55210-02', label: 'Distribution 2', status: 'distributed', mediaType: 'Papermail',
           normal: { status: 'distributed', mediaType: 'Papermail', receiver: 'Via Roma 10, Milano', details: 'Handed to carrier 14:48' },
           backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Via Roma 10, Milano', details: 'Duplicate copy 14:48' },
         },
@@ -133,19 +122,15 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
     },
   },
   {
+    // Génération : ONGOING → document en cours de génération, AUCUNE distribution.
     id: 'n-7',
     bu: 'FR01', policyId: '4471023', extensionId: 'EXT-88190', notifType: 'Limit decision',
     buyerId: '693118250', executionTime: '2026-08-10 11:33', statusLabel: 'Ongoing', statusTone: 'info',
     details: {
       info: { status: 'Partial', irpNumber: 'IRP-2026-004473', notificationId: 'NOTIF-88190-G' },
       generalStatus: 'partial',
-      distributions: [
-        {
-          id: 'd-7-1', label: 'Distribution 1', status: 'ongoing', mediaType: 'Email · Fax',
-          normal: { status: 'partial',     mediaType: 'Email', receiver: 'contact@amaze-me.fr', details: 'Sending…' },
-          backup: { status: 'partial',     mediaType: 'Fax',   receiver: '+33 4 0000 000',      details: 'Dialing…' },
-        },
-      ],
+      generationStatus: 'ongoing',
+      distributions: [],
     },
   },
   {
@@ -155,16 +140,17 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
     details: {
       info: { status: 'Failed', irpNumber: 'IRP-2026-005581', notificationId: 'NOTIF-33140-H' },
       generalStatus: 'failed',
+      generationStatus: 'generated',
       distributions: [
         {
-          id: 'd-8-1', label: 'Distribution 1', status: 'failed', mediaType: 'Email',
+          id: 'DIST-33140-01', label: 'Distribution 1', status: 'failed', mediaType: 'Email',
           normal: { status: 'failed',      mediaType: 'Email', receiver: 'noreply@stahlbau-mueller.de', details: 'SMTP 550 · relay denied' },
-          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                           details: 'Not started' },
+          backup: { status: 'not-started', mediaType: '-',     receiver: '-',                           details: 'Not started' },
         },
         {
-          id: 'd-8-2', label: 'Distribution 2', status: 'alerting', mediaType: 'Papermail',
-          normal: { status: 'partial',     mediaType: 'Papermail', receiver: 'Werkstr. 4, München', details: 'Print error · manual check' },
-          backup: { status: 'not-started', mediaType: '—',         receiver: '—',                   details: 'Not started' },
+          id: 'DIST-33140-02', label: 'Distribution 2', status: 'alerting', mediaType: 'Papermail · Email',
+          normal: { status: 'failed', mediaType: 'Papermail', receiver: 'Werkstr. 4, München',          details: 'Print error · manual check failed' },
+          backup: { status: 'failed', mediaType: 'Email',     receiver: 'backup@stahlbau-mueller.de',   details: 'Bounced · mailbox full' },
         },
       ],
     },
@@ -176,9 +162,10 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
     details: {
       info: { status: 'Generated', irpNumber: 'IRP-2026-009930', notificationId: 'NOTIF-99001-I' },
       generalStatus: 'generated',
+      generationStatus: 'generated',
       distributions: [
         {
-          id: 'd-9-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Papermail',
+          id: 'DIST-99001-01', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Papermail',
           normal: { status: 'distributed', mediaType: 'Email',     receiver: 'risk@amazon.co.uk',      details: 'Delivered 19:55' },
           backup: { status: 'distributed', mediaType: 'Papermail', receiver: '1 Principal Pl, London', details: 'Handed to carrier 19:56' },
         },
@@ -193,64 +180,65 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
     details: {
       info: { status: 'Partial', irpNumber: 'IRP-2026-011208', notificationId: 'NOTIF-42210-J' },
       generalStatus: 'partial',
+      generationStatus: 'generated',
       distributions: [
         {
-          id: 'd-10-1', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Papermail',
+          id: 'DIST-42210-01', label: 'Distribution 1', status: 'distributed', mediaType: 'Email · Papermail',
           normal: { status: 'distributed', mediaType: 'Email',     receiver: 'finance@rotterdam-freight.nl', details: 'Delivered 15:30 · read receipt OK' },
           backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Coolsingel 40, Rotterdam',      details: 'Handed to carrier 15:31' },
         },
         {
-          id: 'd-10-2', label: 'Distribution 2', status: 'distributed', mediaType: 'Email',
+          id: 'DIST-42210-02', label: 'Distribution 2', status: 'distributed', mediaType: 'Email',
           normal: { status: 'distributed', mediaType: 'Email', receiver: 'ap@rotterdam-freight.nl', details: 'Delivered 15:30' },
-          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                       details: 'Not started' },
+          backup: { status: 'not-started', mediaType: '-',     receiver: '-',                       details: 'Not started' },
         },
         {
-          id: 'd-10-3', label: 'Distribution 3', status: 'ongoing', mediaType: 'Email · Fax',
+          id: 'DIST-42210-03', label: 'Distribution 3', status: 'ongoing', mediaType: 'Email · Fax',
           normal: { status: 'partial', mediaType: 'Email', receiver: 'treasury@rotterdam-freight.nl', details: 'Sending…' },
           backup: { status: 'partial', mediaType: 'Fax',   receiver: '+31 10 200 0000',              details: 'Dialing…' },
         },
         {
-          id: 'd-10-4', label: 'Distribution 4', status: 'alerting', mediaType: 'Papermail',
-          normal: { status: 'partial',     mediaType: 'Papermail', receiver: 'Weena 200, Rotterdam', details: 'Print queued · SLA at risk' },
-          backup: { status: 'not-started', mediaType: '—',         receiver: '—',                    details: 'Not started' },
+          id: 'DIST-42210-04', label: 'Distribution 4', status: 'alerting', mediaType: 'Papermail · Email',
+          normal: { status: 'failed', mediaType: 'Papermail', receiver: 'Weena 200, Rotterdam',          details: 'Print queued · carrier rejected' },
+          backup: { status: 'failed', mediaType: 'Email',     receiver: 'ops-eu@rotterdam-freight.nl',  details: 'Bounced · mailbox not found' },
         },
         {
-          id: 'd-10-5', label: 'Distribution 5', status: 'failed', mediaType: 'Email',
+          id: 'DIST-42210-05', label: 'Distribution 5', status: 'failed', mediaType: 'Email',
           normal: { status: 'failed',      mediaType: 'Email', receiver: 'bounce@rotterdam-freight.nl', details: 'Bounced · mailbox full' },
-          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                          details: 'Not started' },
+          backup: { status: 'not-started', mediaType: '-',     receiver: '-',                          details: 'Not started' },
         },
         {
-          id: 'd-10-6', label: 'Distribution 6', status: 'distributed', mediaType: 'Email · Papermail',
+          id: 'DIST-42210-06', label: 'Distribution 6', status: 'distributed', mediaType: 'Email · Papermail',
           normal: { status: 'distributed', mediaType: 'Email',     receiver: 'ops-eu@rotterdam-freight.nl', details: 'Delivered 15:32' },
           backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Blaak 34, Rotterdam',        details: 'Handed to carrier 15:33' },
         },
         {
-          id: 'd-10-7', label: 'Distribution 7', status: 'distributed', mediaType: 'Email',
+          id: 'DIST-42210-07', label: 'Distribution 7', status: 'distributed', mediaType: 'Email',
           normal: { status: 'distributed', mediaType: 'Email', receiver: 'legal@rotterdam-freight.nl', details: 'Delivered 15:33' },
-          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                          details: 'Not started' },
+          backup: { status: 'not-started', mediaType: '-',     receiver: '-',                          details: 'Not started' },
         },
         {
-          id: 'd-10-8', label: 'Distribution 8', status: 'ongoing', mediaType: 'Fax',
+          id: 'DIST-42210-08', label: 'Distribution 8', status: 'ongoing', mediaType: 'Fax',
           normal: { status: 'partial',     mediaType: 'Fax', receiver: '+31 10 300 0000', details: 'Retry 2/5 · next in 5 min' },
-          backup: { status: 'not-started', mediaType: '—',   receiver: '—',               details: 'Not started' },
+          backup: { status: 'not-started', mediaType: '-',   receiver: '-',               details: 'Not started' },
         },
         {
-          id: 'd-10-9', label: 'Distribution 9', status: 'distributed', mediaType: 'Papermail',
+          id: 'DIST-42210-09', label: 'Distribution 9', status: 'distributed', mediaType: 'Papermail',
           normal: { status: 'distributed', mediaType: 'Papermail', receiver: 'Wilhelminakade 909, Rotterdam', details: 'Handed to carrier 15:34' },
           backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Wilhelminakade 909, Rotterdam', details: 'Duplicate copy 15:34' },
         },
         {
-          id: 'd-10-10', label: 'Distribution 10', status: 'alerting', mediaType: 'Email',
-          normal: { status: 'partial',     mediaType: 'Email', receiver: 'compliance@rotterdam-freight.nl', details: 'Awaiting recipient action' },
-          backup: { status: 'not-started', mediaType: '—',     receiver: '—',                               details: 'Not started' },
+          id: 'DIST-42210-10', label: 'Distribution 10', status: 'alerting', mediaType: 'Email · Fax',
+          normal: { status: 'failed', mediaType: 'Email', receiver: 'compliance@rotterdam-freight.nl', details: 'Bounced · policy block' },
+          backup: { status: 'failed', mediaType: 'Fax',   receiver: '+31 10 500 0000',                 details: 'No answer after 5 retries' },
         },
         {
-          id: 'd-10-11', label: 'Distribution 11', status: 'failed', mediaType: 'Email · Fax',
+          id: 'DIST-42210-11', label: 'Distribution 11', status: 'failed', mediaType: 'Email · Fax',
           normal: { status: 'failed', mediaType: 'Email', receiver: 'invalid@rotterdam-freight.nl', details: 'SMTP 550 · relay denied' },
           backup: { status: 'failed', mediaType: 'Fax',   receiver: '+31 10 400 0000',              details: 'No answer after 5 retries' },
         },
         {
-          id: 'd-10-12', label: 'Distribution 12', status: 'distributed', mediaType: 'Email · Papermail',
+          id: 'DIST-42210-12', label: 'Distribution 12', status: 'distributed', mediaType: 'Email · Papermail',
           normal: { status: 'distributed', mediaType: 'Email',     receiver: 'board@rotterdam-freight.nl', details: 'Delivered 15:35' },
           backup: { status: 'distributed', mediaType: 'Papermail', receiver: 'Coolsingel 40, Rotterdam',    details: 'Handed to carrier 15:36' },
         },

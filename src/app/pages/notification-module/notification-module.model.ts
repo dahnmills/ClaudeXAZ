@@ -3,6 +3,13 @@ import { type BadgeStatus } from '../../shared/ui';
 /** Statut d'une distribution (colonne de gauche + filtres). */
 export type DistributionStatus = 'distributed' | 'failed' | 'alerting' | 'ongoing';
 
+/**
+ * Étape 1 du pipeline : génération du document.
+ * `generated` = document prêt → la distribution peut commencer (vert).
+ * ongoing / action-required / retry = encore en génération → aucune distribution.
+ */
+export type GenerationStatus = 'generated' | 'ongoing' | 'action-required' | 'retry';
+
 /** Statut général de la notification (badge en haut de la modale). */
 export type GeneralStatus = 'generated' | 'partial' | 'failed';
 
@@ -36,9 +43,11 @@ export interface DistributionInfo {
 
 /** Payload complet d'une notification (ouverte via une ligne du tableau de fond). */
 export interface NotificationDetails {
-  info:          DistributionInfo;
-  generalStatus: GeneralStatus;
-  distributions: Distribution[];
+  info:            DistributionInfo;
+  generalStatus:   GeneralStatus;
+  /** Étape 1 : génération du document. Si ≠ 'generated', aucune distribution. */
+  generationStatus: GenerationStatus;
+  distributions:   Distribution[];
 }
 
 /** Une ligne du tableau de fond (page « Notification management »). */
@@ -77,6 +86,16 @@ export function mediaTone(s: MediaStatus): FunctionalTone {
     case 'partial':     return 'warning';
     case 'failed':      return 'negative';
     case 'not-started': return 'neutral';
+  }
+}
+
+/** Statut de génération → couleur fonctionnelle. Generated = vert, sinon décalé/attente. */
+export function generationTone(s: GenerationStatus): FunctionalTone {
+  switch (s) {
+    case 'generated':       return 'positive';
+    case 'ongoing':         return 'informative';
+    case 'action-required': return 'warning';
+    case 'retry':           return 'warning';
   }
 }
 
@@ -122,9 +141,26 @@ export const GENERAL_LABEL: Record<GeneralStatus, string> = {
   failed:    'Failed',
 };
 
+export const GENERATION_LABEL: Record<GenerationStatus, string> = {
+  generated:         'Generated',
+  ongoing:           'Ongoing',
+  'action-required': 'Action required',
+  retry:             'Retry',
+};
+
+/** Phrase affichée dans la modale quand le document est encore en génération (0 distribution). */
+export const GENERATION_PENDING_MESSAGE: Record<Exclude<GenerationStatus, 'generated'>, string> = {
+  ongoing:           'The document is still being generated. Distribution will start once generation completes.',
+  'action-required': 'Document generation requires an action before distribution can start.',
+  retry:             'Document generation failed and is being retried. No distribution yet.',
+};
+
+/** Phrase orange affichée au-dessus des boîtes média quand la distribution est en alerte (2 médias échoués). */
+export const ALERTING_MESSAGE = 'Both media failed to deliver - the back office has been notified to handle it manually.';
+
 /** Phrase d'accompagnement du statut général (sous le badge, réf. Figma 1887:49743). */
 export const GENERAL_MESSAGE: Record<GeneralStatus, string> = {
   generated: 'Successfully delivered via the Normal Media.',
-  partial:   'Partially delivered — some media are still pending.',
-  failed:    'Distribution failed — no media could be delivered.',
+  partial:   'Partially delivered - some media are still pending.',
+  failed:    'Distribution failed - no media could be delivered.',
 };
