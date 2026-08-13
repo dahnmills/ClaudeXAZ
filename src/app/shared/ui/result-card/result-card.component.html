@@ -81,10 +81,10 @@
         variant="flat"
       />
     }
-    @if (data().providers) {
+    @if (displayProviders(); as providers) {
       <div class="ds-result-card__col">
         <span class="ds-result-card__col-title">Info providers</span>
-        @for (p of data().providers!; track p) {
+        @for (p of providers; track p) {
           <span class="ds-result-card__col-value">{{ p }}</span>
         }
       </div>

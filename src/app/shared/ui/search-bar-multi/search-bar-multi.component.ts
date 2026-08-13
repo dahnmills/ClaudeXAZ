@@ -1,4 +1,4 @@
-import { Component, computed, input, model, output, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, computed, inject, input, model, output, signal } from '@angular/core';
 import { IconComponent, type IconName } from '../icon/icon.component';
 import { StandaloneDropdownComponent } from '../standalone-dropdown/standalone-dropdown.component';
 import { ButtonComponent } from '../button/button.component';
@@ -104,6 +104,10 @@ export class SearchBarMultiComponent {
   /** Tooltip affiché sur l'ID Type tant que le pays n'a pas été choisi. */
   idTypeTooltip = computed(() => this.idTypeVisible() && !this.country() ? 'Select a country before choosing an ID Type' : '');
 
+  /** « More criteria » désactivé pour la recherche par Company ID (interne : critères inutiles). */
+  moreCriteriaEnabled = computed(() => this.type() !== 'company-id');
+  moreCriteriaTooltip = computed(() => this.moreCriteriaEnabled() ? '' : 'Not available for a Company ID search');
+
   // ── Validation des champs obligatoires (par type de recherche) ─────────
   // Un seul flag partagé : l'ID Type reste désactivé (donc jamais blurable)
   // tant que le pays n'est pas choisi, un "touched" par champ le bloquerait
@@ -126,6 +130,16 @@ export class SearchBarMultiComponent {
     if (this.type() === 'id') return !!this.country() && !!this.idType();
     return true;
   });
+
+  private host = inject(ElementRef<HTMLElement>);
+
+  /** Ferme le flyout ouvert dès qu'on clique en dehors du composant. */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(ev: MouseEvent) {
+    if (this.openFlyout() && !this.host.nativeElement.contains(ev.target as Node)) {
+      this.close();
+    }
+  }
 
   toggle(which: 'type' | 'country' | 'id-type') {
     this.openFlyout.update(v => v === which ? null : which);

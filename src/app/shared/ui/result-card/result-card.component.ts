@@ -37,6 +37,11 @@ export class ResultCardComponent {
   data = input.required<ResultCardData>();
   open = input<boolean>(false);
   favorited = input<boolean>(false);
+  /**
+   * Résultat issu d'une recherche interne (par Company ID) : la donnée ne vient
+   * pas d'un provider externe → Info provider forcé à « ES » (Euler Hermes interne).
+   */
+  internal = input<boolean>(false);
 
   toggled = output<void>();
   added = output<void>();
@@ -70,9 +75,22 @@ export class ResultCardComponent {
     const out: PropertySection[] = [];
     if (d.general)   out.push({ title: 'General information',   rows: d.general });
     if (d.financial) out.push({ title: 'Financial information', rows: d.financial });
-    if (d.localIds)  out.push({ title: 'Local IDs',              rows: d.localIds });
+    if (d.localIds)  out.push({ title: 'Local IDs',              rows: this.mapProviderRows(d.localIds) });
     return out;
   });
+
+  /** Provider affiché : « ES » en interne, sinon la liste fournie. */
+  displayProviders = computed<string[] | undefined>(() => {
+    const p = this.data().providers;
+    if (!p) return p;
+    return this.internal() ? ['ES'] : p;
+  });
+
+  /** Force toute ligne « Info provider » à « ES » quand le résultat est interne. */
+  private mapProviderRows(rows: InfoRow[]): InfoRow[] {
+    if (!this.internal()) return rows;
+    return rows.map(r => r.label === 'Info provider' ? { ...r, value: 'ES' } : r);
+  }
 
   hasDetails = computed(() => {
     if (!this.exists()) return false;

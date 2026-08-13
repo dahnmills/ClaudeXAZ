@@ -83,6 +83,7 @@
                     [data]="entry.r"
                     [open]="expandedIdx() === entry.i"
                     [favorited]="isFavorite(entry.i)"
+                    [internal]="isInternalSearch()"
                     (toggled)="toggleCard(entry.i)"
                     (starred)="toggleFavorite(entry.i)"
                     (added)="addCompany(entry.i)"

@@ -148,9 +148,16 @@
   </div>
   <ds-divider class="ds-search-bar-multi__divider" orientation="vertical" />
 
-  <ds-button type="tertiary" tone="accent" (clicked)="moreCriteriaClicked.emit()">
-    <ds-icon slot="icon-left" name="sliders" [size]="16" />
-    More criteria ({{ criteriaCount() }})
-  </ds-button>
+  <span [dsTooltip]="moreCriteriaTooltip()" dsTooltipPosition="top-center">
+    <ds-button
+      type="tertiary"
+      tone="accent"
+      [disabled]="!moreCriteriaEnabled()"
+      (clicked)="moreCriteriaEnabled() && moreCriteriaClicked.emit()"
+    >
+      <ds-icon slot="icon-left" name="sliders" [size]="16" />
+      More criteria ({{ criteriaCount() }})
+    </ds-button>
+  </span>
   <ds-button type="primary" [disabled]="!searchValid()" (clicked)="searchClicked.emit()">Search</ds-button>
 </div>

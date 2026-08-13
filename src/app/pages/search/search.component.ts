@@ -95,7 +95,7 @@ const SEED_RESULTS: ResultCardData[] = [
   { name: 'Iberia Cafés y Tostados SL', city: 'Madrid', address: 'CALLE DE ALCALÁ 120 - 28009 - MADRID - SPAIN', score: 0.41, exists: false },
   { name: 'Northwind Trading Ltd', city: 'London', address: '221B BAKER STREET - NW1 6XE - LONDON - UNITED KINGDOM', companyId: '693118250', score: 0.69, exists: true,
     general: [{ label: 'Trade sector', value: 'WHOLESALE' }, { label: 'Legal form', value: 'LTD' }, { label: 'States', value: 'Active' }],
-    localIds: [{ label: 'CRN', value: '06931182' }], providers: ['EH'] },
+    localIds: [{ label: 'CRN', value: '06931182' }, { label: 'Info provider', value: 'ES' }], providers: ['ES'] },
   { name: 'Verde Agricoltura SpA', city: 'Bologna', address: 'VIA EMILIA 230 - 40139 - BOLOGNA - ITALY', score: 0.36, exists: false },
   { name: 'Marais Immobilier Conseil', city: 'Paris', address: '12 RUE DE TURENNE - 75004 - PARIS 4 - FRANCE', companyId: '118994372', score: 0.81, exists: true,
     general: [{ label: 'Trade sector', value: 'REAL ESTATE' }, { label: 'Legal form', value: 'SAS' }, { label: 'States', value: 'Active' }],
@@ -106,7 +106,8 @@ const SEED_RESULTS: ResultCardData[] = [
     financial: [{ label: 'Turnover amount', value: 'CHF 14 200 000' }], providers: ['DNB', 'EH'] },
   { name: 'Le Petit Comptoir SAS', address: '3 RUE DE BRETAGNE - 75003 - PARIS 3 - FRANCE', score: 0.18, exists: false },
   { name: 'Atlantic Seafood Imports Inc', city: 'Boston', address: '88 SEAPORT BLVD - 02210 - BOSTON MA - USA', companyId: '900215674', score: 0.77, exists: true,
-    general: [{ label: 'Trade sector', value: 'SEAFOOD IMPORT' }, { label: 'Legal form', value: 'INC' }, { label: 'States', value: 'Active' }], providers: ['DNB'] },
+    general: [{ label: 'Trade sector', value: 'SEAFOOD IMPORT' }, { label: 'Legal form', value: 'INC' }, { label: 'States', value: 'Active' }],
+    localIds: [{ label: 'Info provider', value: 'ES' }], providers: ['ES'] },
   { name: 'Lumière Studio Créatif', city: 'Lyon', address: '45 RUE DE LA RÉPUBLIQUE - 69002 - LYON - FRANCE', score: 0.31, exists: false },
   { name: 'Polaris Tech Nordic AB', city: 'Stockholm', address: 'KUNGSGATAN 32 - 11135 - STOCKHOLM - SWEDEN', companyId: '556677001', score: 0.58, exists: true,
     general: [{ label: 'Trade sector', value: 'SOFTWARE & IT SERVICES' }, { label: 'Legal form', value: 'AB' }, { label: 'States', value: 'Active' }],
@@ -165,6 +166,14 @@ export class SearchComponent {
   searchQuery = signal<string>('');
   /** Requête réellement appliquée (figée au clic Search — pas à la volée). */
   appliedQuery = signal<string>('');
+  /** Type de recherche figé au clic Search (sert à qualifier les résultats). */
+  appliedType = signal<SearchType>('company-id');
+
+  /**
+   * Recherche interne : par Company ID, la donnée est déjà dans le SI (pas de
+   * provider externe) → tous les résultats affichent « ES » comme Info provider.
+   */
+  isInternalSearch = computed(() => this.isResults() && this.appliedType() === 'company-id');
 
   results = signal<ResultCardData[]>(SEED_RESULTS);
   hasSearched = signal<boolean>(false);
@@ -318,6 +327,7 @@ export class SearchComponent {
   runSearch() {
     this.hasSearched.set(true);
     this.visibleCount.set(this.PAGE_SIZE);
+    this.appliedType.set(this.searchType());
     const q = this.searchQuery().trim();
     this.appliedQuery.set(q.toLowerCase());
     if (q) {
@@ -346,6 +356,7 @@ export class SearchComponent {
 
   pickRecent(entry: RecentEntry) {
     this.searchType.set(entry.type);
+    this.appliedType.set(entry.type);
     this.searchCountry.set(entry.country);
     this.searchIdType.set(entry.idType);
     this.searchQuery.set(entry.query);
