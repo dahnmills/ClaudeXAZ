@@ -17,6 +17,7 @@ import { ResultCardComponent, type ResultCardData } from '../../shared/ui/result
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
 import { BuyerSummaryStore } from '../buyer-summary/buyer-summary.store';
 import { CompanyCreationWizardComponent } from './company-creation-wizard/company-creation-wizard.component';
+import { ToasterService } from '../../shared/ui/toaster/toaster.service';
 
 type TabId = 'search' | 'recent' | 'favorites';
 
@@ -269,6 +270,7 @@ export class SearchComponent {
 
   private router = inject(Router);
   private buyerStore = inject(BuyerSummaryStore);
+  private toaster = inject(ToasterService);
 
   /** Index du résultat en attente de confirmation de création (null = popin fermée). */
   pendingCreateIdx = signal<number | null>(null);
@@ -305,8 +307,9 @@ export class SearchComponent {
     if (created) {
       this.buyerStore.set(
         { name: created.name, companyId: id, city: created.city, address: created.address },
-        true,
+        false,
       );
+      this.toaster.show('Company created', { tone: 'success', title: 'Success' });
     }
 
     this.pendingCreateIdx.set(null);
