@@ -1,11 +1,12 @@
 import { Component, computed, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { SCREENS, versionLabel } from '../../user-testing/screens.data';
 import { CATEGORY_LABELS, ReleaseCategory, RELEASE_NOTES } from './release-notes.data';
 
 @Component({
   selector: 'app-release-notes',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './release-notes.component.html',
   styleUrl: './release-notes.component.scss',
 })

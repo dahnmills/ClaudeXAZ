@@ -1,8 +1,13 @@
 <main class="rn">
+  <a class="rn__back" routerLink="/">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back to Hub
+  </a>
+
   <header class="rn__head">
     <span class="rn__eyebrow">Changelog</span>
-    <h1 class="rn__title">Notes de version</h1>
-    <p class="rn__lead">Historique des évolutions du prototype, écran par écran.</p>
+    <h1 class="rn__title">Release Notes</h1>
+    <p class="rn__lead">History of prototype changes, screen by screen.</p>
   </header>
 
   <div class="rn__filters">
@@ -20,29 +25,28 @@
     </div>
 
     <select class="rn__select" [value]="selectedScreen()" (change)="onScreenChange($any($event.target).value)">
-      <option value="">Tous les écrans</option>
+      <option value="">All screens</option>
       @for (s of screens; track s.path) {
         <option [value]="s.path">{{ s.label }}</option>
       }
     </select>
 
     @if (hasActiveFilter()) {
-      <button type="button" class="rn__reset" (click)="resetFilters()">Réinitialiser</button>
+      <button type="button" class="rn__reset" (click)="resetFilters()">Reset</button>
     }
   </div>
 
   @if (entries().length === 0) {
-    <p class="rn__empty">Aucune note pour ces filtres.</p>
+    <p class="rn__empty">No notes match these filters.</p>
   } @else {
     <ul class="rn__list">
-      @for (entry of entries(); track entry.date + entry.title) {
+      @for (entry of entries(); track entry.id) {
         <li class="rn__entry">
           <div class="rn__entry-head">
             <span class="rn__date">{{ entry.date }}</span>
             <span class="rn__badge rn__badge--{{ entry.category }}">{{ categoryLabels[entry.category] }}</span>
           </div>
           <h2 class="rn__entry-title">{{ entry.title }}</h2>
-          <p class="rn__entry-desc">{{ entry.description }}</p>
           @if (entry.screens.length > 0) {
             <div class="rn__tags">
               @for (path of entry.screens; track path) {
@@ -50,6 +54,10 @@
               }
             </div>
           }
+          <a class="rn__details" [routerLink]="['/release-notes', entry.id]">
+            View details
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
         </li>
       }
     </ul>

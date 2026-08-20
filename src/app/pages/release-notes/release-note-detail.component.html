@@ -1,0 +1,35 @@
+<main class="rnd">
+  <a class="rnd__back" routerLink="/release-notes">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back to Release Notes
+  </a>
+
+  @if (entry) {
+    <article class="rnd__entry">
+      <div class="rnd__entry-head">
+        <span class="rnd__date">{{ entry.date }}</span>
+        <span class="rnd__badge rnd__badge--{{ entry.category }}">{{ categoryLabels[entry.category] }}</span>
+      </div>
+      <h1 class="rnd__title">{{ entry.title }}</h1>
+      <p class="rnd__desc">{{ entry.description }}</p>
+
+      @if (entry.changes.length > 0) {
+        <ul class="rnd__changes">
+          @for (change of entry.changes; track change) {
+            <li>{{ change }}</li>
+          }
+        </ul>
+      }
+
+      @if (entry.screens.length > 0) {
+        <div class="rnd__tags">
+          @for (path of entry.screens; track path) {
+            <span class="rnd__tag">{{ screenLabel(path) }} · {{ screenVersion(path) }}</span>
+          }
+        </div>
+      }
+    </article>
+  } @else {
+    <p class="rnd__empty">This release note doesn't exist.</p>
+  }
+</main>

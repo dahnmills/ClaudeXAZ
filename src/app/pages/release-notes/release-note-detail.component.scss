@@ -1,0 +1,106 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f6f5fa;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.rnd {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 72px 24px 96px;
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 28px;
+    color: #56526b;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover { color: #1a4fe0; }
+    &:focus-visible { outline: 2px solid #2b6bff; outline-offset: 2px; }
+  }
+
+  &__entry {
+    padding: 28px 28px 32px;
+    border: 1px solid #e9e7f2;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(23, 21, 31, 0.04);
+  }
+  &__entry-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  &__date {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 12px;
+    color: #8b8798;
+  }
+  &__badge {
+    padding: 2px 9px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+    &--feature { background: #e7eeff; color: #1a4fe0; }
+    &--fix { background: #fde8e6; color: #c23b2e; }
+    &--design { background: #efeaff; color: #6a4be0; }
+    &--content { background: #e4f6ee; color: #0f9e6e; }
+  }
+  &__title {
+    margin: 0 0 12px;
+    font-family: 'Bricolage Grotesque', 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    color: #17151f;
+  }
+  &__desc {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #56526b;
+  }
+  &__changes {
+    margin: 18px 0 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #3d3a4d;
+
+    li { padding-left: 2px; }
+    li::marker { color: #8b8798; }
+  }
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 20px;
+  }
+  &__tag {
+    padding: 3px 9px;
+    border-radius: 100px;
+    background: #f6f5fa;
+    color: #56526b;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+  }
+
+  &__empty { color: #8b8798; font-size: 14px; }
+}
+
+@media (max-width: 560px) {
+  .rnd__entry { padding: 22px 20px 26px; }
+}

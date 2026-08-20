@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Blocks pushes that touch a Qirin product screen without touching the
+# release notes data. Meta/harness code (hub, prototype/isolated listings,
+# the release notes system itself, results dashboard, dev inspector, Echo
+# widget, shared/ui atoms) is out of scope for the changelog.
+# Deliberate bypass: git push --no-verify
+
+zero="0000000000000000000000000000000000000000"
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue
+
+  if [ "$remote_sha" = "$zero" ]; then
+    range="$local_sha"
+  else
+    range="$remote_sha..$local_sha"
+  fi
+
+  changed=$(git diff --name-only "$range" 2>/dev/null)
+  [ -z "$changed" ] && continue
+
+  touches_app=$(printf '%s\n' "$changed" | grep -E '^src/app/pages/' | grep -vE '^src/app/pages/(hub|release-notes|results)/')
+  touches_release_notes=$(printf '%s\n' "$changed" | grep -F 'src/app/pages/release-notes/release-notes.data.ts')
+
+  if [ -n "$touches_app" ] && [ -z "$touches_release_notes" ]; then
+    echo ""
+    echo "pre-push: a Qirin screen changed but release-notes.data.ts was not updated."
+    echo "Add a release note entry (and bump the affected screen's version in screens.data.ts) before pushing."
+    echo "Deliberate bypass: git push --no-verify"
+    echo ""
+    exit 1
+  fi
+done
+
+exit 0

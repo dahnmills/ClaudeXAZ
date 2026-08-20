@@ -11,6 +11,19 @@
   margin: 0 auto;
   padding: 72px 24px 96px;
 
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    color: #56526b;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover { color: #1a4fe0; }
+    &:focus-visible { outline: 2px solid #2b6bff; outline-offset: 2px; }
+  }
   &__head { margin-bottom: 36px; }
   &__eyebrow {
     display: inline-block;

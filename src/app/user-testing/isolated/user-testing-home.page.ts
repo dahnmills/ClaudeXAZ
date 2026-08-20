@@ -39,7 +39,7 @@ export class UserTestingHomePage {
   }
 
   copyLabel(label: string): string {
-    return `Copier l'URL de ${label}`;
+    return `Copy URL for ${label}`;
   }
 
   copy(path: string): void {

@@ -15,6 +15,7 @@ import { NotificationModuleComponent } from './pages/notification-module/notific
 import { ReviewShellComponent } from './shared/feedback/review-shell.component';
 import { ResultsComponent } from './pages/results/results.component';
 import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
+import { ReleaseNoteDetailComponent } from './pages/release-notes/release-note-detail.component';
 import { HubPage } from './pages/hub/hub.page';
 import { UserTestingShellComponent } from './user-testing/isolated/user-testing-shell.component';
 import { UserTestingHomePage } from './user-testing/isolated/user-testing-home.page';
@@ -64,6 +65,7 @@ export const appRoutes: Routes = [
 
   // ── Notes de version ────────────────────────────────────────────────────
   { path: 'release-notes', component: ReleaseNotesComponent },
+  { path: 'release-notes/:id', component: ReleaseNoteDetailComponent },
 
   // ── Espace testeur : mêmes pages, AVEC le compagnon de feedback ─────────
   {
