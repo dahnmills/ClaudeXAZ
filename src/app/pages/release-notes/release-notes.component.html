@@ -1,0 +1,57 @@
+<main class="rn">
+  <header class="rn__head">
+    <span class="rn__eyebrow">Changelog</span>
+    <h1 class="rn__title">Notes de version</h1>
+    <p class="rn__lead">Historique des évolutions du prototype, écran par écran.</p>
+  </header>
+
+  <div class="rn__filters">
+    <div class="rn__pills">
+      @for (cat of categories; track cat) {
+        <button
+          type="button"
+          class="rn__pill"
+          [class.rn__pill--active]="isActive(cat)"
+          (click)="toggleCategory(cat)"
+        >
+          {{ categoryLabels[cat] }}
+        </button>
+      }
+    </div>
+
+    <select class="rn__select" [value]="selectedScreen()" (change)="onScreenChange($any($event.target).value)">
+      <option value="">Tous les écrans</option>
+      @for (s of screens; track s.path) {
+        <option [value]="s.path">{{ s.label }}</option>
+      }
+    </select>
+
+    @if (hasActiveFilter()) {
+      <button type="button" class="rn__reset" (click)="resetFilters()">Réinitialiser</button>
+    }
+  </div>
+
+  @if (entries().length === 0) {
+    <p class="rn__empty">Aucune note pour ces filtres.</p>
+  } @else {
+    <ul class="rn__list">
+      @for (entry of entries(); track entry.date + entry.title) {
+        <li class="rn__entry">
+          <div class="rn__entry-head">
+            <span class="rn__date">{{ entry.date }}</span>
+            <span class="rn__badge rn__badge--{{ entry.category }}">{{ categoryLabels[entry.category] }}</span>
+          </div>
+          <h2 class="rn__entry-title">{{ entry.title }}</h2>
+          <p class="rn__entry-desc">{{ entry.description }}</p>
+          @if (entry.screens.length > 0) {
+            <div class="rn__tags">
+              @for (path of entry.screens; track path) {
+                <span class="rn__tag">{{ screenLabel(path) }} · {{ screenVersion(path) }}</span>
+              }
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</main>
