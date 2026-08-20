@@ -13,12 +13,12 @@
     <div class="vb-top__actions">
       <button class="vb-btn vb-btn--ghost" type="button" (click)="load()">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M23 4v6h-6M1 20v-6h6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Actualiser
+        Refresh
       </button>
       <button class="vb-btn vb-btn--ghost" type="button" (click)="exportCsv()">CSV</button>
       <button class="vb-btn vb-btn--solid" type="button" (click)="exportJson()">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Exporter
+        Export
       </button>
     </div>
   </header>
@@ -29,10 +29,10 @@
     }
 
     <!-- SIGNATURE : « The Room » — le verdict de la salle -->
-    <section class="room room--{{ verdict().tone }}" aria-label="Sentiment général">
+    <section class="room room--{{ verdict().tone }}" aria-label="Overall sentiment">
       <div class="room__glow" aria-hidden="true"></div>
       <div class="room__content">
-        <span class="room__eyebrow">Ce que dit la salle</span>
+        <span class="room__eyebrow">What the room is saying</span>
         <h1 class="room__headline">{{ verdict().headline }}</h1>
         <p class="room__sub">{{ verdict().sub }}</p>
 
@@ -49,9 +49,9 @@
             }
           </div>
           <div class="room__legend">
-            <span><i class="room__dot room__dot--pos"></i>{{ stats().likes }} positif · {{ stats().likePct }}%</span>
-            <span><i class="room__dot room__dot--conf"></i>{{ stats().confused }} confus · {{ stats().confusedPct }}%</span>
-            <span><i class="room__dot room__dot--neg"></i>{{ stats().dislikes }} négatif · {{ stats().dislikePct }}%</span>
+            <span><i class="room__dot room__dot--pos"></i>{{ stats().likes }} positive · {{ stats().likePct }}%</span>
+            <span><i class="room__dot room__dot--conf"></i>{{ stats().confused }} confused · {{ stats().confusedPct }}%</span>
+            <span><i class="room__dot room__dot--neg"></i>{{ stats().dislikes }} negative · {{ stats().dislikePct }}%</span>
           </div>
         }
       </div>
@@ -59,18 +59,18 @@
       <div class="room__stats">
         <div class="stat">
           <span class="stat__n">{{ stats().total }}</span>
-          <span class="stat__l">Retours</span>
+          <span class="stat__l">Feedback</span>
         </div>
         <div class="stat">
           <span class="stat__n">{{ stats().sessions }}</span>
-          <span class="stat__l">Testeurs</span>
+          <span class="stat__l">Testers</span>
         </div>
         <div class="stat">
           <span class="stat__n">
             @if (stats().avgRating !== null) { {{ stats().avgRating }}<span class="stat__u">/5</span> }
             @else { — }
           </span>
-          <span class="stat__l">Note moy.</span>
+          <span class="stat__l">Avg rating</span>
         </div>
       </div>
     </section>
@@ -101,7 +101,7 @@
           </div>
         </div>
         <div class="ctrl">
-          <label class="ctrl__l" for="f-sess">Testeur</label>
+          <label class="ctrl__l" for="f-sess">Tester</label>
           <div class="ctrl__select">
             <select id="f-sess" (change)="onSelect('session', $event)">
               @for (o of sessionOptions(); track o.value) {
@@ -112,16 +112,16 @@
           </div>
         </div>
         <div class="ctrl">
-          <label class="ctrl__l" for="f-from">Du</label>
+          <label class="ctrl__l" for="f-from">From</label>
           <input class="ctrl__date" id="f-from" type="date" [value]="dateFrom()" (change)="onDate('from', $event)" />
         </div>
         <div class="ctrl">
-          <label class="ctrl__l" for="f-to">Au</label>
+          <label class="ctrl__l" for="f-to">To</label>
           <input class="ctrl__date" id="f-to" type="date" [value]="dateTo()" (change)="onDate('to', $event)" />
         </div>
         @if (activeFilterCount() > 0) {
           <button class="filters__reset" type="button" (click)="resetFilters()">
-            Réinitialiser ({{ activeFilterCount() }})
+            Reset ({{ activeFilterCount() }})
           </button>
         }
       </div>
@@ -129,22 +129,22 @@
 
     <!-- Fil des retours -->
     @if (loading()) {
-      <div class="vb-state">Chargement des retours…</div>
+      <div class="vb-state">Loading feedback…</div>
     } @else if (filtered().length === 0) {
       <div class="vb-empty">
         <span class="vb-empty__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="28" height="28" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
         <p class="vb-empty__title">
-          @if (entries().length > 0) { Rien ne correspond à ces filtres }
-          @else { Pas encore de retours }
+          @if (entries().length > 0) { Nothing matches these filters }
+          @else { No feedback yet }
         </p>
         <p class="vb-empty__sub">
-          @if (entries().length > 0) { Élargis la période ou réinitialise les filtres. }
-          @else { Les retours laissés dans l'espace testeur atterrissent ici. }
+          @if (entries().length > 0) { Widen the date range or reset the filters. }
+          @else { Feedback left in the tester space lands here. }
         </p>
         @if (!usingSupabase && entries().length === 0) {
-          <button class="vb-btn vb-btn--solid" type="button" (click)="loadDemo()">Charger des exemples</button>
+          <button class="vb-btn vb-btn--solid" type="button" (click)="loadDemo()">Load sample data</button>
         }
       </div>
     } @else {
@@ -199,7 +199,7 @@
 
       @if (!usingSupabase) {
         <div class="vb-foot">
-          <button class="vb-btn vb-btn--danger" type="button" (click)="clearLocal()">Vider le stockage local</button>
+          <button class="vb-btn vb-btn--danger" type="button" (click)="clearLocal()">Clear local storage</button>
         </div>
       }
     }
@@ -208,18 +208,18 @@
 
 <!-- Lightbox capture -->
 @if (preview(); as shot) {
-  <div class="lightbox" (click)="preview.set(null)" role="dialog" aria-label="Capture agrandie">
-    <img [src]="shot" alt="Capture agrandie" />
+  <div class="lightbox" (click)="preview.set(null)" role="dialog" aria-label="Enlarged screenshot">
+    <img [src]="shot" alt="Enlarged screenshot" />
   </div>
 }
 
 <!-- Panneau de détail (slide-over) -->
 @if (detail(); as e) {
-  <div class="sheet" role="dialog" aria-label="Détail du retour">
-    <button class="sheet__scrim" type="button" aria-label="Fermer" (click)="closeDetail()"></button>
+  <div class="sheet" role="dialog" aria-label="Feedback detail">
+    <button class="sheet__scrim" type="button" aria-label="Close" (click)="closeDetail()"></button>
     <aside class="sheet__panel">
       <header class="sheet__head sheet__head--{{ e.reaction || 'none' }}">
-        <button class="sheet__close" type="button" aria-label="Fermer" (click)="closeDetail()">
+        <button class="sheet__close" type="button" aria-label="Close" (click)="closeDetail()">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
         <span class="sheet__badge">
@@ -241,32 +241,32 @@
 
         @if (e.screenshot) {
           <button type="button" class="sheet__shot" (click)="preview.set(e.screenshot)">
-            <img [src]="e.screenshot" alt="Capture du retour" />
+            <img [src]="e.screenshot" alt="Feedback screenshot" />
             <span class="sheet__shot-badge">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Agrandir
+              Enlarge
             </span>
           </button>
         }
 
         <section class="sheet__sec">
-          <h3 class="sheet__label">Cible</h3>
+          <h3 class="sheet__label">Target</h3>
           <span class="sheet__pill">{{ targetModeLabel(e.target_mode) }}</span>
           @if (e.target_text) { <p class="sheet__target">« {{ e.target_text }} »</p> }
           <dl class="kv">
-            @if (e.target_label) { <div><dt>Composants</dt><dd>{{ e.target_label }}</dd></div> }
-            @if (e.target_selector) { <div><dt>Sélecteur</dt><dd class="kv__mono">{{ e.target_selector }}</dd></div> }
+            @if (e.target_label) { <div><dt>Components</dt><dd>{{ e.target_label }}</dd></div> }
+            @if (e.target_selector) { <div><dt>Selector</dt><dd class="kv__mono">{{ e.target_selector }}</dd></div> }
             @if (e.target_rect; as r) { <div><dt>Dimensions</dt><dd>{{ r.w }} × {{ r.h }} px</dd></div> }
           </dl>
         </section>
 
         <section class="sheet__sec sheet__sec--muted">
-          <h3 class="sheet__label">Contexte</h3>
+          <h3 class="sheet__label">Context</h3>
           <dl class="kv">
             <div><dt>Page</dt><dd class="kv__mono">{{ e.route }}</dd></div>
-            <div><dt>Testeur</dt><dd class="kv__mono">{{ shortSession(e.session_id) }}</dd></div>
-            @if (e.viewport; as v) { <div><dt>Écran</dt><dd>{{ v.w }} × {{ v.h }} px</dd></div> }
-            @if (e.user_agent) { <div><dt>Navigateur</dt><dd class="kv__ua">{{ e.user_agent }}</dd></div> }
+            <div><dt>Tester</dt><dd class="kv__mono">{{ shortSession(e.session_id) }}</dd></div>
+            @if (e.viewport; as v) { <div><dt>Screen</dt><dd>{{ v.w }} × {{ v.h }} px</dd></div> }
+            @if (e.user_agent) { <div><dt>Browser</dt><dd class="kv__ua">{{ e.user_agent }}</dd></div> }
           </dl>
         </section>
       </div>

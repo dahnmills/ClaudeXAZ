@@ -99,7 +99,7 @@ export class CompanyEditWizardComponent implements OnChanges {
     this.contacts.update(c => c.map((row, idx) => idx === i ? { ...row, [key]: val } : row));
   }
 
-  mainActivity = signal<ActivityRow>({ type: 'nace', code: '6210', meaning: 'Transports aériens réguliers' });
+  mainActivity = signal<ActivityRow>({ type: 'nace', code: '6210', meaning: 'Scheduled air transport' });
   setMainActivity(key: keyof ActivityRow, val: string) {
     this.mainActivity.update(a => ({ ...a, [key]: val }));
   }

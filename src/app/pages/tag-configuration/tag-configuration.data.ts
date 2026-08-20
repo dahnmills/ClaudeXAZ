@@ -73,7 +73,7 @@ export const STATUS_REASON_REFERENTIAL: StatusReasonCode[] = [
   { code: 'CESJU', label: 'Dissolved' },
   { code: 'SAUVG', label: 'Chapter 11' },
   { code: 'SURSI', label: 'Moratorium' },
-  { code: 'LIQSI', label: 'Liquidation simplifiée' },
+  { code: 'LIQSI', label: 'Simplified liquidation' },
   { code: 'CLOFA', label: 'Closure of bankruptcy' },
   { code: 'CESEC', label: 'Ceased to trade' },
   { code: 'INTER', label: 'Disqualified' },
@@ -188,16 +188,16 @@ export function versionsForCountry(code: CountryCode): RuleSetVersion[] {
 
 const HISTORY: Record<CountryCode, RuleSetHistoryEntry[]> = {
   FR: [
-    { id: '123456791', createdLabel: '11 nov. 2025', lastUpdateLabel: '14 nov. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '12-10-25 → —', status: 'Active', rules: FR_RULES_V2 },
-    { id: '123456790', createdLabel: '19 aoû. 2025', lastUpdateLabel: '11 oct. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '19-08-25 → 12-10-25', status: 'Archived', rules: FR_RULES_V2 },
-    { id: '123456789', createdLabel: '2 jul. 2025',  lastUpdateLabel: '18 aoû. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '02-07-25 → 19-08-25', status: 'Archived', rules: FR_RULES_V1 },
+    { id: '123456791', createdLabel: '11 Nov. 2025', lastUpdateLabel: '14 Nov. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '12-10-25 → —', status: 'Active', rules: FR_RULES_V2 },
+    { id: '123456790', createdLabel: '19 Aug. 2025', lastUpdateLabel: '11 Oct. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '19-08-25 → 12-10-25', status: 'Archived', rules: FR_RULES_V2 },
+    { id: '123456789', createdLabel: '2 Jul. 2025',  lastUpdateLabel: '18 Aug. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '02-07-25 → 19-08-25', status: 'Archived', rules: FR_RULES_V1 },
   ],
   DE: [],
   NE: [
-    { id: '980021099', createdLabel: '11 mai 2025', lastUpdateLabel: '11 mai 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '11-05-25 → —', status: 'Active', rules: neRules() },
+    { id: '980021099', createdLabel: '11 May 2025', lastUpdateLabel: '11 May 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '11-05-25 → —', status: 'Active', rules: neRules() },
   ],
   PT: [
-    { id: '980531099', createdLabel: '30 mar. 2025', lastUpdateLabel: '30 mar. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '30-03-25 → —', status: 'Active', rules: FR_RULES_V1.slice(0, 3) },
+    { id: '980531099', createdLabel: '30 Mar. 2025', lastUpdateLabel: '30 Mar. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '30-03-25 → —', status: 'Active', rules: FR_RULES_V1.slice(0, 3) },
   ],
 };
 

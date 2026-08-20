@@ -365,7 +365,7 @@ export class FeedbackCompanionComponent {
       screenshot: this.screenshot(),
     };
     void this.feedback.submit(draft);
-    this.snackbar.show('Merci pour votre retour', { tone: 'success', icon: 'check' });
+    this.snackbar.show('Thank you for your feedback', { tone: 'success', icon: 'check' });
     this.closeEditor();
   }
 

@@ -64,8 +64,8 @@ export class ResultsComponent {
       }
     } catch {
       this.loadError.set(
-        "Lecture Supabase bloquée depuis le navigateur (RLS interdit le select anonyme, c'est voulu). " +
-        'Exporte le brut depuis Supabase, ou reste en mode local.',
+        'Reading from Supabase is blocked from the browser (RLS forbids anonymous select, by design). ' +
+        'Export the raw data from Supabase, or stay in local mode.',
       );
       this.entries.set([]);
     } finally {
@@ -89,16 +89,16 @@ export class ResultsComponent {
   }
 
   // ── Options de filtre (dérivées du brut) ─────────────────────────────────
-  routeOptions = computed(() => this.optionsFrom((e) => e.route, 'Toutes les pages'));
+  routeOptions = computed(() => this.optionsFrom((e) => e.route, 'All pages'));
   sessionOptions = computed(() =>
-    this.optionsFrom((e) => e.session_id, 'Toutes les sessions', (v) => v.slice(0, 8)),
+    this.optionsFrom((e) => e.session_id, 'All testers', (v) => v.slice(0, 8)),
   );
   readonly kindOptions = [
-    { value: ALL, label: 'Tous les types' },
-    { value: 'reaction', label: 'Réaction' },
-    { value: 'rating', label: 'Note' },
-    { value: 'comment', label: 'Commentaire' },
-    { value: 'screen', label: 'Avis écran' },
+    { value: ALL, label: 'All types' },
+    { value: 'reaction', label: 'Reaction' },
+    { value: 'rating', label: 'Rating' },
+    { value: 'comment', label: 'Comment' },
+    { value: 'screen', label: 'Screen feedback' },
   ];
 
   private optionsFrom(
@@ -157,7 +157,7 @@ export class ResultsComponent {
 
   sentimentAria = computed(() => {
     const s = this.stats();
-    return `${s.likePct}% positif, ${s.dislikePct}% négatif, ${s.confusedPct}% confus`;
+    return `${s.likePct}% positive, ${s.dislikePct}% negative, ${s.confusedPct}% confused`;
   });
 
   // ── Agrégats ──────────────────────────────────────────────────────────────
@@ -190,61 +190,61 @@ export class ResultsComponent {
   verdict = computed<Verdict>(() => {
     const s = this.stats();
     if (s.total === 0) {
-      return { headline: 'La salle est vide', tone: 'quiet', sub: 'Aucun retour pour ces filtres.' };
+      return { headline: 'The room is empty', tone: 'quiet', sub: 'No feedback for these filters.' };
     }
     if (s.reacted === 0) {
-      return { headline: 'Signaux silencieux', tone: 'quiet', sub: `${s.comments} commentaire(s), aucune réaction chiffrée.` };
+      return { headline: 'Silent signals', tone: 'quiet', sub: `${s.comments} comment(s), no scored reactions.` };
     }
     const pos = s.likePct, neg = s.dislikePct, conf = s.confusedPct;
     if (pos >= 60 && neg <= 20) {
-      return { headline: 'La salle est conquise', tone: 'warm', sub: `${pos}% des réactions sont positives.` };
+      return { headline: 'The room is won over', tone: 'warm', sub: `${pos}% of reactions are positive.` };
     }
     if (neg >= 40) {
-      return { headline: 'Friction détectée', tone: 'friction', sub: `${neg}% des réactions sont négatives.` };
+      return { headline: 'Friction detected', tone: 'friction', sub: `${neg}% of reactions are negative.` };
     }
     if (conf >= 30) {
-      return { headline: 'Ça coince quelque part', tone: 'mixed', sub: `${conf}% des testeurs sont perdus.` };
+      return { headline: 'Something is not clicking', tone: 'mixed', sub: `${conf}% of testers are lost.` };
     }
-    return { headline: 'Signaux partagés', tone: 'mixed', sub: `${pos}% positif · ${neg}% négatif · ${conf}% confus.` };
+    return { headline: 'Mixed signals', tone: 'mixed', sub: `${pos}% positive · ${neg}% negative · ${conf}% confused.` };
   });
 
   // ── Rendu ─────────────────────────────────────────────────────────────────
   kindLabel(kind: FeedbackKind): string {
-    return { reaction: 'Réaction', rating: 'Note', comment: 'Commentaire', screen: 'Avis écran' }[kind];
+    return { reaction: 'Reaction', rating: 'Rating', comment: 'Comment', screen: 'Screen feedback' }[kind];
   }
 
   reactionLabel(reaction: string | null): string {
     switch (reaction) {
-      case 'like': return 'Positif';
-      case 'dislike': return 'Négatif';
-      case 'confused': return 'Confus';
+      case 'like': return 'Positive';
+      case 'dislike': return 'Negative';
+      case 'confused': return 'Confused';
       default: return '';
     }
   }
 
   formatDate(iso: string): string {
     const d = new Date(iso);
-    return isNaN(d.getTime()) ? iso : d.toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    return isNaN(d.getTime()) ? iso : d.toLocaleString('en-US', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
   }
 
-  /** Temps relatif compact (« il y a 3 h »). */
+  /** Compact relative time ("3 h ago"). */
   relTime(iso: string): string {
     const then = new Date(iso).getTime();
     if (isNaN(then)) return '';
     const diff = new Date().getTime() - then;
     const min = Math.round(diff / 60000);
-    if (min < 1) return "à l'instant";
-    if (min < 60) return `il y a ${min} min`;
+    if (min < 1) return 'just now';
+    if (min < 60) return `${min} min ago`;
     const h = Math.round(min / 60);
-    if (h < 24) return `il y a ${h} h`;
+    if (h < 24) return `${h} h ago`;
     const d = Math.round(h / 24);
-    return `il y a ${d} j`;
+    return `${d} d ago`;
   }
 
   targetModeLabel(mode: 'element' | 'zone' | null): string {
-    if (mode === 'zone') return 'Zone sélectionnée';
-    if (mode === 'element') return 'Élément pointé';
-    return 'Écran entier';
+    if (mode === 'zone') return 'Selected zone';
+    if (mode === 'element') return 'Pointed element';
+    return 'Whole screen';
   }
 
   shortSession(id: string): string {

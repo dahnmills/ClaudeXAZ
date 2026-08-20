@@ -33,7 +33,7 @@ interface Activity {
 }
 
 const ACTIVITIES: Activity[] = [
-  { id: 'aerien-reg',    label: 'Transports aériens réguliers', nace: '6210' },
+  { id: 'aerien-reg',    label: 'Scheduled air transport', nace: '6210' },
   { id: 'air-transport', label: 'Air Transport',                nace: '5100' },
 ];
 
@@ -91,7 +91,7 @@ export class AdminDataComponent {
       { label: 'Legal creation', value: '1995-03-17' },
     ]},
     { rows: [
-      { label: 'Trade sector',  value: 'Transports aériens réguliers' },
+      { label: 'Trade sector',  value: 'Scheduled air transport' },
       { label: 'Legal form',    value: 'LTD' },
       { label: 'Public buyer',  value: 'N' },
     ]},
@@ -140,7 +140,7 @@ export class AdminDataComponent {
       { label: 'Name',                  value: 'EASYJET AIRLINE COMPANY LIMITED' },
       { label: 'Business start',        value: '2000-01-01' },
       { label: 'Legal creation',        value: '1995-03-17' },
-      { label: 'Trade sector',          value: 'Transports aériens réguliers' },
+      { label: 'Trade sector',          value: 'Scheduled air transport' },
       { label: 'Company status - Origin', value: { kind: 'tags', tags: [
         { label: 'Active', tone: 'info' }, { label: 'Activity continued', tone: 'warning' },
       ]}},

@@ -11,7 +11,7 @@ import { Component } from '@angular/core';
   standalone: true,
   template: `
     <main class="ut-dead">
-      <p class="ut-dead__text">Écran de test indisponible.</p>
+      <p class="ut-dead__text">Test screen unavailable.</p>
     </main>
   `,
   styles: [`

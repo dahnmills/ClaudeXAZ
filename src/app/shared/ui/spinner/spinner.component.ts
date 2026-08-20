@@ -11,7 +11,7 @@ export type SpinnerTone = 'default' | 'current';
   host: {
     '[class]': 'hostClasses()',
     'role': 'status',
-    'aria-label': 'Chargement en cours',
+    'aria-label': 'Loading',
   },
 })
 export class SpinnerComponent {

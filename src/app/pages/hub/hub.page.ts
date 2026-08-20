@@ -16,30 +16,30 @@ interface Zone {
 const ALL_ZONES: Zone[] = [
   {
     path: '/prototype', eyebrow: 'Dev', title: 'Prototype', accent: 'ink', icon: 'proto',
-    desc: 'Naviguez librement dans tous les écrans, avec l\'inspecteur de handoff (Alt+I). Votre bac à sable de développement.',
-    cta: 'Ouvrir les écrans',
+    desc: 'Browse freely through all screens, with the handoff inspector (Alt+I). Your development sandbox.',
+    cta: 'Open the screens',
   },
   {
-    path: '/review', eyebrow: 'Testeurs', title: 'Espace de review', accent: 'blue', icon: 'review',
-    desc: 'Les mêmes écrans, avec le widget Echo activé : les testeurs laissent réactions, notes et commentaires en continu.',
-    cta: 'Entrer en review',
+    path: '/review', eyebrow: 'Testers', title: 'Review space', accent: 'blue', icon: 'review',
+    desc: 'The same screens, with the Echo widget enabled: testers leave reactions, ratings and comments continuously.',
+    cta: 'Enter review',
     adminOnly: true,
   },
   {
-    path: '/user-testing', eyebrow: 'Useberry', title: 'Univers isolés', accent: 'violet', icon: 'isolated',
-    desc: 'Chaque écran cloisonné, sans inspecteur ni feedback, verrouillé sur lui-même. Prêt à coller dans un test Useberry.',
-    cta: 'Voir les univers',
+    path: '/user-testing', eyebrow: 'Useberry', title: 'Isolated universes', accent: 'violet', icon: 'isolated',
+    desc: 'Each screen isolated, with no inspector or feedback, locked to itself. Ready to paste into a Useberry test.',
+    cta: 'View the universes',
   },
   {
-    path: '/results', eyebrow: 'Analyse', title: 'Résultats Echo', accent: 'green', icon: 'results',
-    desc: 'Le tableau de bord des retours : sentiment de la salle, verbatims, captures, filtres et export du brut.',
-    cta: 'Ouvrir le dashboard',
+    path: '/results', eyebrow: 'Analytics', title: 'Echo results', accent: 'green', icon: 'results',
+    desc: 'The feedback dashboard: room sentiment, verbatims, captures, filters and raw data export.',
+    cta: 'Open the dashboard',
     adminOnly: true,
   },
   {
-    path: '/release-notes', eyebrow: 'Changelog', title: 'Notes de version', accent: 'amber', icon: 'notes',
-    desc: 'Historique des évolutions par écran : features, fixes, ajustements de design et de contenu, filtrables.',
-    cta: 'Voir les notes',
+    path: '/release-notes', eyebrow: 'Changelog', title: 'Release notes', accent: 'amber', icon: 'notes',
+    desc: 'History of changes per screen: features, fixes, design and content adjustments, filterable.',
+    cta: 'View the notes',
   },
 ];
 
