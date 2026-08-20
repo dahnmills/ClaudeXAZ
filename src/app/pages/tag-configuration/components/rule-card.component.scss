@@ -41,25 +41,28 @@
     border-right:  1px solid var(--semantic-color-static-border-subtle-tertiary);
   }
   &__summary {
-    // Fixed natural width (not flex:1) — edit mode widening the action zone
-    // (3-dot + chevron) must never compress these columns; only the flexible
-    // gap before the badges should absorb that change.
-    // Columns are a fixed 150px (not minmax(0, 150px)) — each rule-card is
-    // its own independent grid, so a content-sized max-150px column resolves
-    // to a DIFFERENT width per row depending on that row's own criteria text,
-    // which shifted the badges/divider/actions after it out of alignment
-    // row-to-row. A fixed track keeps every row's summary block, and
-    // everything after it, at the same width regardless of content.
-    flex:                  0 0 auto;
+    // Fill layout: columns share the row's available width equally (Figma
+    // "fill" auto-layout) and grow with the viewport instead of staying
+    // pinned to a fixed pixel width. `__badges` reserves a fixed max width
+    // (below) so every row's summary block — and its 1fr columns — resolves
+    // to the exact same width regardless of that row's badge content.
+    flex:                  1 1 auto;
+    min-width:             0;
     display:               grid;
-    grid-template-columns: repeat(6, 150px);
+    grid-template-columns: repeat(7, 1fr);
     gap:                   var(--semantic-measurement-spacing-m);
     align-items:           center;
     padding:               var(--semantic-measurement-spacing-s) 0;
   }
   &__badges {
-    flex:            1 1 auto;
-    min-width:       0;
+    // Fixed width, sized for the longest combination without the optional
+    // volume badge (decision "Create task" + status) — every row's badges
+    // dock flush against the actions divider on the right, at the exact
+    // same position, regardless of that row's own label lengths. The rare
+    // row with a volume% badge (after "Test rules") simply grows past this
+    // floor instead of being clipped.
+    flex:            0 0 auto;
+    min-width:       156px;
     display:         flex;
     align-items:     center;
     justify-content: flex-end;

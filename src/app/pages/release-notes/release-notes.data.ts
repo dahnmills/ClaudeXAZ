@@ -23,6 +23,22 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog — it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'tag-configuration-rule-card-fill-layout',
+    date: '2026-08-20',
+    category: 'design',
+    screens: ['tag-configuration'],
+    title: 'TAG Configuration: fill-width rule columns, reordered',
+    description:
+      'The rule list header now uses the row\'s full width instead of a fixed pixel layout, and shows two criteria that used to be hidden in the expanded detail.',
+    changes: [
+      'Changed the rule row header from fixed 150px columns to fill columns that scale with the available width',
+      'Reordered columns: Sensitivity, Exposure, New autograde, Last checked autograde, Current valid grade, Valid grade type, Valid grade freshness',
+      'Removed NACE from the header row (still shown in the expanded "Other" section)',
+      'Promoted valid grade type and freshness from the expanded detail into the header row; removed the now-duplicated rows from the detail panel',
+      'Reserved a fixed width for the decision/status badges so they always dock at the same position against the row\'s actions divider, regardless of label length',
+    ],
+  },
+  {
     id: 'translate-qirin-screens-to-english',
     date: '2026-08-20',
     category: 'content',

@@ -13,12 +13,12 @@ interface SummaryField { label: string; value: string; isAny: boolean; }
 
 /**
  * Rule card — collapsible row for one auto-grading rule (P4 list).
- * Header always renders 6 fixed columns (Sensitivity, Exposure, New
- * autograde, Current valid grade, Last checked autograde, NACE) matching the
- * BN's order-of-importance — label above / bold value below. An "Any" value
- * is muted (isAny flag) so it doesn't compete with rules that actually
- * constrain that criterion. Body (expanded) adds the remaining 8 V2 criteria
- * the same way.
+ * Header always renders 7 fill-width columns (Sensitivity, Exposure, New
+ * autograde, Last checked autograde, Current valid grade, Valid grade type,
+ * Valid grade freshness) matching the BN's order-of-importance — label above
+ * / bold value below. An "Any" value is muted (isAny flag) so it doesn't
+ * compete with rules that actually constrain that criterion. Body (expanded)
+ * adds the remaining criteria the same way.
  *
  * `mode="view"` (read-only, default page state): single "Valid"/"N/C" status
  * badge, chevron only — no drag handle, no 3-dot menu, nothing editable.
@@ -63,9 +63,10 @@ export class RuleCardComponent {
       row('Sensitivity',            F.fmtList(c.sensitivity),                              F.isAny(c.sensitivity)),
       row('Exposure',               F.fmtExposure(c.exposure, this.currency()),             F.isAny(c.exposure)),
       row('New autograde',          F.fmtList(c.newAutoGrade),                              F.isAny(c.newAutoGrade)),
-      row('Current valid grade',    F.fmtList(c.cvgValue),                                  F.isAny(c.cvgValue)),
       row('Last checked autograde', F.fmtList(c.lastAgValue),                               F.isAny(c.lastAgValue)),
-      row('NACE',                   F.fmtList(c.nace),                                      F.isAny(c.nace)),
+      row('Current valid grade',    F.fmtList(c.cvgValue),                                  F.isAny(c.cvgValue)),
+      row('Valid grade type',       F.fmtList(c.cvgType),                                   F.isAny(c.cvgType)),
+      row('Valid grade freshness',  F.fmtFreshness(c.cvgFreshness),                         F.isAny(c.cvgFreshness)),
     ];
   });
 
@@ -80,16 +81,14 @@ export class RuleCardComponent {
   /**
    * ds-properties-panel maps each section to one grid column (see admin-data
    * usage) — 3 sections side by side matching the create/edit modal's own
-   * card groups (Current valid grade / Last checked autograde / Other), so
-   * the expanded body stays within roughly the same height as the tallest
-   * section (CVG, 4 rows) instead of stacking a 4th block underneath.
+   * card groups (Current valid grade / Last checked autograde / Other). Type
+   * and Freshness for the current valid grade now live in the header summary
+   * (promoted there), so this section doesn't repeat them.
    */
   detailSections = computed<PropertySection[]>(() => {
     const c = this.c();
     return [
       { title: 'Current valid grade', rows: [
-        { label: 'Type',                            value: F.fmtList(c.cvgType) },
-        { label: 'Freshness',                       value: F.fmtFreshness(c.cvgFreshness) },
         { label: 'Transferred',                     value: F.fmtTransferred(c.transferred) },
         { label: 'New autograde vs current valid grade', value: F.fmtComparison(c.newVsCvg) },
       ] },
