@@ -46,12 +46,6 @@
     color: #17151f;
     text-wrap: balance;
   }
-  &__lead {
-    margin: 0;
-    font-size: 16px;
-    color: #56526b;
-  }
-
   &__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
