@@ -1,49 +1,15 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SCREENS, versionLabel } from '../screens.data';
 
 @Component({
   selector: 'app-index-page',
   standalone: true,
   imports: [RouterLink],
-  template: `
-    <main class="ut-index">
-      <h1>Prototype Qirin</h1>
-      <p>Choisissez un écran à ouvrir.</p>
-      <ul>
-        <li><a routerLink="home">Home</a></li>
-        <li><a routerLink="accordion">With Accordion</a></li>
-        <li><a routerLink="modal">With Modal</a></li>
-        <li><a routerLink="filters">Filters</a></li>
-        <li><a routerLink="search">Search</a></li>
-        <li><a routerLink="admin-data">Admin Data</a></li>
-        <li><a routerLink="tag-configuration">TAG Configuration</a></li>
-        <li><a routerLink="grade-story">Grade Story</a></li>
-        <li><a routerLink="spotlight">Spotlight</a></li>
-        <li><a routerLink="notification-module">Notification Module</a></li>
-        <li><a routerLink="buyer-summary/137381425">Buyer Summary</a></li>
-      </ul>
-    </main>
-  `,
-  styles: [`
-    .ut-index {
-      max-width: 640px;
-      margin: 64px auto;
-      padding: 0 24px;
-      font-family: var(--semantic-font-family);
-    }
-    .ut-index h1 { font-size: 24px; margin: 0 0 8px; }
-    .ut-index p { margin: 0 0 24px; color: var(--semantic-color-static-text-main-secondary); }
-    .ut-index ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
-    .ut-index a {
-      display: block;
-      padding: 16px 20px;
-      border: 1px solid var(--semantic-color-static-border-subtle-tertiary);
-      border-radius: 8px;
-      color: var(--semantic-color-interactive-text-strong-default);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .ut-index a:hover { background: var(--semantic-color-static-background-main-secondary); }
-  `],
+  templateUrl: './index.page.html',
+  styleUrl: './index.page.scss',
 })
-export class IndexPage {}
+export class IndexPage {
+  readonly screens = SCREENS;
+  readonly versionLabel = versionLabel;
+}

@@ -1,0 +1,25 @@
+<main class="ix">
+  <header class="ix__head">
+    <span class="ix__eyebrow">Dev · Bac à sable</span>
+    <h1 class="ix__title">Prototype Qirin</h1>
+    <p class="ix__lead">
+      Naviguez librement dans tous les écrans, avec l'inspecteur de handoff (Alt+I).
+      Choisissez un écran à ouvrir.
+    </p>
+  </header>
+
+  <ul class="ix__list">
+    @for (s of screens; track s.path) {
+      <li class="ix__item">
+        <a class="ix__open" [routerLink]="s.path">
+          <span class="ix__label-row">
+            <span class="ix__label">{{ s.label }}</span>
+            <span class="ix__version">{{ versionLabel(s.version) }}</span>
+          </span>
+          <span class="ix__hint">{{ s.hint }}</span>
+          <code class="ix__url">/{{ s.path }}</code>
+        </a>
+      </li>
+    }
+  </ul>
+</main>
