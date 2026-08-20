@@ -1,21 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SCREENS, Screen, versionLabel } from '../screens.data';
 
-interface Universe {
-  path: string;
-  label: string;
-  hint: string;
-}
-
-const UNIVERSES: Universe[] = [
-  { path: 'search', label: 'Search', hint: 'Recherche d\'entreprises' },
-  { path: 'admin-data', label: 'Admin Data', hint: 'Édition des données admin' },
-  { path: 'buyer-summary/137381425', label: 'Buyer Summary', hint: 'Dossier acheteur' },
-  { path: 'tag-configuration', label: 'TAG Configuration', hint: 'Règles d\'auto-grading' },
-  { path: 'home', label: 'Home', hint: 'Accueil du produit' },
-  { path: 'filters', label: 'Filters', hint: 'Filtres de recherche' },
-  { path: 'accordion', label: 'Topbox · Accordion', hint: 'Variante accordéon' },
-  { path: 'modal', label: 'Topbox · Modal', hint: 'Variante modale' },
+// Not every screen is Useberry-eligible — this curated order is intentional.
+const CURATED_PATHS = [
+  'search',
+  'admin-data',
+  'buyer-summary/137381425',
+  'tag-configuration',
+  'home',
+  'filters',
+  'accordion',
+  'modal',
 ];
 
 /**
@@ -31,7 +27,10 @@ const UNIVERSES: Universe[] = [
   styleUrl: './user-testing-home.page.scss',
 })
 export class UserTestingHomePage {
-  readonly universes = UNIVERSES;
+  readonly universes: Screen[] = CURATED_PATHS.map(
+    (path) => SCREENS.find((s) => s.path === path)!,
+  );
+  readonly versionLabel = versionLabel;
   copied = signal<string | null>(null);
 
   /** URL absolue avec hash, prête à coller dans Useberry. */

@@ -13,7 +13,10 @@
     @for (u of universes; track u.path) {
       <li class="uth__item">
         <a class="uth__open" [routerLink]="u.path">
-          <span class="uth__label">{{ u.label }}</span>
+          <span class="uth__label-row">
+            <span class="uth__label">{{ u.label }}</span>
+            <span class="uth__version">{{ versionLabel(u.version) }}</span>
+          </span>
           <span class="uth__hint">{{ u.hint }}</span>
           <code class="uth__url">/user-testing/{{ u.path }}</code>
         </a>
