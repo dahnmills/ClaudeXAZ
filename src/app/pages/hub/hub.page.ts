@@ -8,8 +8,8 @@ interface Zone {
   title: string;
   desc: string;
   cta: string;
-  accent: 'blue' | 'violet' | 'green' | 'ink';
-  icon: 'proto' | 'review' | 'isolated' | 'results';
+  accent: 'blue' | 'violet' | 'green' | 'ink' | 'amber';
+  icon: 'proto' | 'review' | 'isolated' | 'results' | 'notes';
   adminOnly?: boolean;
 }
 
@@ -35,6 +35,11 @@ const ALL_ZONES: Zone[] = [
     desc: 'Le tableau de bord des retours : sentiment de la salle, verbatims, captures, filtres et export du brut.',
     cta: 'Ouvrir le dashboard',
     adminOnly: true,
+  },
+  {
+    path: '/release-notes', eyebrow: 'Changelog', title: 'Notes de version', accent: 'amber', icon: 'notes',
+    desc: 'Historique des évolutions par écran : features, fixes, ajustements de design et de contenu, filtrables.',
+    cta: 'Voir les notes',
   },
 ];
 
