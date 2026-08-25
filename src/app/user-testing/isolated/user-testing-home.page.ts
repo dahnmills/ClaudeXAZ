@@ -12,6 +12,7 @@ const CURATED_PATHS = [
   'filters',
   'accordion',
   'modal',
+  'maintenance',
 ];
 
 /**

@@ -23,6 +23,20 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog — it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'maintenance-screen',
+    date: '2026-08-25',
+    category: 'feature',
+    screens: ['maintenance'],
+    title: 'Add a maintenance screen',
+    description:
+      'A full-screen "Qirin is down" state for planned outages: no navigation, no shell — when the product is unavailable there is nowhere else to send the user.',
+    changes: [
+      'Added the maintenance screen with the product\'s brand blue, Allianz Neo type, and a bespoke abstract network illustration',
+      'No header, side-nav, links, or buttons — the page is intentionally a dead end',
+      'Added to the screen catalogue and the isolated-universe listing so it can be tested standalone',
+    ],
+  },
+  {
     id: 'tag-configuration-rule-card-fill-layout',
     date: '2026-08-20',
     category: 'design',

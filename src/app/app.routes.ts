@@ -12,6 +12,7 @@ import { TagConfigurationComponent } from './pages/tag-configuration/tag-configu
 import { GradeStoryComponent } from './pages/grade-story/grade-story.component';
 import { SpotlightPage } from './pages/spotlight/spotlight.page';
 import { NotificationModuleComponent } from './pages/notification-module/notification-module.component';
+import { MaintenanceComponent } from './pages/maintenance/maintenance.component';
 import { ReviewShellComponent } from './shared/feedback/review-shell.component';
 import { ResultsComponent } from './pages/results/results.component';
 import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
@@ -39,6 +40,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'grade-story', component: GradeStoryComponent },
   { path: 'spotlight', component: SpotlightPage },
   { path: 'notification-module', component: NotificationModuleComponent },
+  { path: 'maintenance', component: MaintenanceComponent },
 ];
 
 export const appRoutes: Routes = [
