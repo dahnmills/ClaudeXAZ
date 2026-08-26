@@ -77,8 +77,8 @@ export const DS_COMPONENTS: DsComponentEntry[] = [
   { name: 'Stepper', folder: 'stepper', category: 'Navigation', storybookTitle: 'Design System/Navigation/Stepper', hasAutodocs: true, usageCount: 2, usagePages: ['company-creation-wizard', 'company-edit-wizard'], status: 'niche' },
   { name: 'Tag Filter Chip', folder: 'tag-filter-chip', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Tag Filter Chip', hasAutodocs: true, usageCount: 1, usagePages: ['tag-configuration (via rule-modal)'], status: 'niche', note: "Promu depuis pages/tag-configuration/components/ le 2026-08-26 — était déjà bien construit, juste jamais déplacé." },
 
-  // ── Chip vs Tag : pas un vrai doublon mort, un doublon actif ────────────
-  { name: 'Chip', folder: 'chip', category: 'Action', storybookTitle: 'Design System/Action/Chip', hasAutodocs: true, usageCount: 1, usagePages: ['tag-filter-chip (interne)'], status: 'internal', note: "Même API/comportement que Tag (type static/filter/select, mêmes ARIA), mais PAS mort : c'est le déclencheur de Tag Filter Chip (variant chip), qui atteint tag-configuration. Garder les deux pour l'instant, ou migrer Tag Filter Chip vers Tag en vérifiant le rendu au pixel avant de supprimer Chip." },
+  // ── Chip vs Tag vs Badge : distincts dans Figma — pas un doublon, ne pas fusionner ──
+  { name: 'Chip', folder: 'chip', category: 'Action', storybookTitle: 'Design System/Action/Chip', hasAutodocs: true, usageCount: 1, usagePages: ['tag-filter-chip (interne)'], status: 'internal', note: "L'audit initial le comparait à Tag sur la seule API (props/ARIA similaires) — mais Chip, Tag et Badge sont 3 composants distincts dans Figma. Source de vérité = Figma, pas le code : pas une fusion à faire, malgré la ressemblance de surface." },
   { name: 'Tag', folder: 'tag', category: 'Action', storybookTitle: 'Design System/Action/Tag', hasAutodocs: true, usageCount: null, usagePages: ['properties-panel (interne)', 'action-card (interne)'], status: 'internal' },
 
   // ── Select Button / Tile : requalifié — pas un doublon (specs visuelles distinctes) ──
@@ -134,6 +134,8 @@ export interface MutualizationTarget {
   description: string;
   occurrences: string[];
   effort: 'faible' | 'moyen' | 'élevé';
+  /** En pause sur décision produit — cf. note. Pas abandonné, juste pas priorisé. */
+  onHold?: string;
 }
 
 export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
@@ -145,6 +147,7 @@ export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
       'pages/admin-data/company-edit-wizard/company-edit-wizard.component.html',
     ],
     effort: 'élevé',
+    onHold: "Mis en pause le 2026-08-26 — on ne mutualise aucun des 3 patterns pour le moment.",
   },
   {
     title: 'Clickable option row',
@@ -155,6 +158,7 @@ export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
       'pages/search/search.component.html (recent-search row)',
     ],
     effort: 'moyen',
+    onHold: "Mis en pause le 2026-08-26 — on ne mutualise aucun des 3 patterns pour le moment.",
   },
   {
     title: 'Empty state',
@@ -164,12 +168,14 @@ export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
       'pages/tag-configuration/tag-configuration.component.html (×2)',
     ],
     effort: 'moyen',
+    onHold: "Mis en pause le 2026-08-26 — on ne mutualise aucun des 3 patterns pour le moment.",
   },
   {
     title: 'Boutons natifs dans buyer-summary',
-    description: "~17 <button> natifs qui réinventent des atomes qui existent déjà (ds-tab, ds-tile, ds-radio-card, ds-checkbox-card, ds-button-icon, ds-segmented-control). Pas un nouveau composant à créer — juste un remplacement.",
+    description: "L'audit initial supposait ~17 <button> natifs réutilisables tels quels (ds-tab, ds-tile, ds-radio-card, ds-checkbox-card, ds-button-icon, ds-segmented-control). Vérifié CSS par CSS le 2026-08-26 : chaque bouton a un style bespoke délibéré (bordures dashed sur les CTA, dimensions/indicateur différents de ds-tab, formes propres pour les pickers de taille/layout/bloc). Aucun n'est un remplacement au pixel sans changer le rendu — même schéma que Select Button/Tile.",
     occurrences: ['pages/buyer-summary/buyer-summary.component.html'],
     effort: 'moyen',
+    onHold: "Décision du 2026-08-26 : on ne force pas ces boutons vers des atomes DS sans vérification Figma/visuelle au préalable — risque de changement de rendu.",
   },
   {
     title: 'Upload de fichier',

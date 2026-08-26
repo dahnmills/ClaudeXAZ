@@ -110,6 +110,9 @@
           <div class="target__head">
             <h3 class="target__title">{{ t.title }}</h3>
             <span class="target__effort target__effort--{{ t.effort }}">{{ t.effort }}</span>
+            @if (t.onHold) {
+              <span class="target__hold" [title]="t.onHold">En pause</span>
+            }
           </div>
           <p class="target__desc">{{ t.description }}</p>
           <ul class="target__occurrences">
