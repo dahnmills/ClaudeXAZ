@@ -1,10 +1,12 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, computed, inject, isDevMode, signal } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import {
   DS_COMPONENTS,
   DsComponentEntry,
   storybookHref as resolveStorybookHref,
+  storybookIframeSrc,
 } from '../design-system-audit/design-system-audit.data';
 
 @Component({
@@ -16,6 +18,7 @@ import {
 })
 export class DesignSystemComponentsComponent {
   private readonly document = inject(DOCUMENT);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly query = signal('');
 
@@ -35,5 +38,10 @@ export class DesignSystemComponentsComponent {
 
   storybookHref(entry: DsComponentEntry): string | null {
     return resolveStorybookHref(entry, { baseURI: this.document.baseURI, devMode: isDevMode() });
+  }
+
+  previewSrc(entry: DsComponentEntry): SafeResourceUrl | null {
+    const src = storybookIframeSrc(entry, { baseURI: this.document.baseURI, devMode: isDevMode() });
+    return src ? this.sanitizer.bypassSecurityTrustResourceUrl(src) : null;
   }
 }

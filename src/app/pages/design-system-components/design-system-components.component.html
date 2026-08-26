@@ -25,6 +25,13 @@
   <div class="dsc__grid">
     @for (c of filtered(); track c.name + c.folder) {
       <div class="dsc-card">
+        <div class="dsc-card__preview">
+          @if (previewSrc(c)) {
+            <iframe [src]="previewSrc(c)" loading="lazy" title="{{ c.name }} preview" tabindex="-1"></iframe>
+          } @else {
+            <span class="dsc-card__no-preview">Pas d'aperçu</span>
+          }
+        </div>
         <span class="dsc-card__category">{{ c.category }}</span>
         <h2 class="dsc-card__name">{{ c.name }}</h2>
         <span class="dsc-card__folder">shared/ui/{{ c.folder }}</span>

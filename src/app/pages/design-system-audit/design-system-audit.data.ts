@@ -216,3 +216,114 @@ export function storybookHref(
   const base = opts.devMode ? 'http://localhost:6006/' : `${opts.baseURI}storybook/`;
   return `${base}?path=${page}`;
 }
+
+/**
+ * meta.title -> id of the FIRST real story (not the autodocs page), for
+ * embedding a live thumbnail. Extracted from `dist/storybook/index.json`
+ * on 2026-08-26 (`npm run build-storybook`) — a snapshot, not computed at
+ * runtime, since the app can't read Storybook's build manifest live.
+ * Regenerate by rebuilding Storybook and re-running the same extraction
+ * whenever component stories are added/renamed/reordered.
+ */
+const STORYBOOK_FIRST_STORY_ID: Record<string, string> = {
+  'Design System/Data Display/Accordion': 'design-system-data-display-accordion--playground',
+  'Design System/Data Display/Action Card': 'design-system-data-display-action-card--default',
+  'Design System/Feedback/Badge': 'design-system-feedback-badge--default',
+  'Design System/Action/Breadcrumbs': 'design-system-action-breadcrumbs--default',
+  'Design System/Action/Button Icon': 'design-system-action-button-icon--default',
+  'Design System/Action/Button Range Group': 'design-system-action-button-range-group--range-mode',
+  'Design System/Action/Button Range': 'design-system-action-button-range--default',
+  'Design System/Action/Button Split': 'design-system-action-button-split--default',
+  'Design System/Action/Button': 'design-system-action-button--primary',
+  'Design System/Data Display/Card': 'design-system-data-display-card--default',
+  'Design System/Data Display/Chart': 'design-system-data-display-chart--grade',
+  'Design System/Data Entry/Checkbox Card': 'design-system-data-entry-checkbox-card--playground',
+  'Design System/Data Entry/Checkbox': 'design-system-data-entry-checkbox--default',
+  'Design System/Action/Chip': 'design-system-action-chip--static',
+  'Design System/Data Display/Collapsible Table': 'design-system-data-display-collapsible-table--tokens',
+  'Design System/Feedback/Popin': 'design-system-feedback-popin--warning',
+  'Design System/Action/Crumb': 'design-system-action-crumb--default',
+  'Design System/Data Entry/Date Range': 'design-system-data-entry-date-range--range-single-calendar',
+  'Design System/Foundation/Divider': 'design-system-foundation-divider--horizontal',
+  'Design System/Layout/Drawer': 'design-system-layout-drawer--default',
+  'Design System/Layout/Filter Drawer': 'design-system-layout-filter-drawer--default',
+  'Design System/Foundation/Flag': 'design-system-foundation-flag--france',
+  'Design System/Internals/Flyout Menu Item': 'design-system-internals-flyout-menu-item--default',
+  'Design System/Action/Flyout Menu': 'design-system-action-flyout-menu--four-actions',
+  'Design System/Internals/Flyout Item': 'design-system-internals-flyout-item--default',
+  'Design System/Internals/Flyout Section': 'design-system-internals-flyout-section--highlighted',
+  'Design System/Layout/Flyout': 'design-system-layout-flyout--policies-flyout',
+  'Design System/Feedback/Functional Notice': 'design-system-feedback-functional-notice--playground',
+  'Design System/Data Display/Grade': 'design-system-data-display-grade--playground',
+  'Design System/Data Entry/Grid Selection': 'design-system-data-entry-grid-selection--default',
+  'Design System/Layout/Header': 'design-system-layout-header--qirin',
+  'Design System/Foundation/Icon Tile': 'design-system-foundation-icon-tile--default',
+  'Design System/Foundation/Icon': 'design-system-foundation-icon--default',
+  'Design System/Data Entry/Inline Edit': 'design-system-data-entry-inline-edit--default',
+  'Design System/Data Entry/Input Date': 'design-system-data-entry-input-date--playground',
+  'Design System/Data Entry/Input Email': 'design-system-data-entry-input-email--playground',
+  'Design System/Data Entry/Input Search': 'design-system-data-entry-input-search--playground',
+  'Design System/Data Entry/Input Text': 'design-system-data-entry-input-text--default',
+  'Design System/Action/Link': 'design-system-action-link--default',
+  'Design System/Data Display/List Widget': 'design-system-data-display-list-widget--job-to-do',
+  'Design System/Foundation/Logo': 'design-system-foundation-logo--default',
+  'Design System/Internals/Modal Content': 'design-system-internals-modal-content--default',
+  'Design System/Internals/Modal Footer': 'design-system-internals-modal-footer--full',
+  'Design System/Internals/Modal Header': 'design-system-internals-modal-header--default',
+  'Design System/Layout/Modal': 'design-system-layout-modal--medium',
+  'Design System/Data Entry/More Criteria': 'design-system-data-entry-more-criteria--default',
+  'Design System/Data Display/Newsfeed': 'design-system-data-display-newsfeed--default',
+  'Design System/Layout/Page Header': 'design-system-layout-page-header--full',
+  'Design System/Layout/Page Title': 'design-system-layout-page-title--default',
+  'Design System/Action/Pagination': 'design-system-action-pagination--playground',
+  'Design System/Data Display/Pie Chart': 'design-system-data-display-pie-chart--default',
+  'Design System/Feedback/Popover': 'design-system-feedback-popover--playground',
+  'Design System/Feedback/Progress Bar': 'design-system-feedback-progress-bar--default',
+  'Design System/Data Display/Properties Panel': 'design-system-data-display-properties-panel--two-columns-cards',
+  'Design System/Data Entry/Radio Card': 'design-system-data-entry-radio-card--playground',
+  'Design System/Data Entry/Radio': 'design-system-data-entry-radio--default',
+  'Design System/Data Display/Result Card': 'design-system-data-display-result-card--closed',
+  'Design System/Data Entry/Search Bar Multi': 'design-system-data-entry-search-bar-multi--default',
+  'Design System/Data Entry/Search Bar': 'design-system-data-entry-search-bar--default',
+  'Design System/Action/Segmented Control': 'design-system-action-segmented-control--playground',
+  'Design System/Data Entry/Select Button': 'design-system-data-entry-select-button--playground',
+  'Design System/Data Entry/Select': 'design-system-data-entry-select--default',
+  'Design System/Internals/Side Nav Item': 'design-system-internals-side-nav-item--default',
+  'Design System/Layout/Side Nav': 'design-system-layout-side-nav--default',
+  'Design System/Feedback/Skeleton Item': 'design-system-feedback-skeleton-item--text-lines',
+  'Design System/Feedback/Snackbar': 'design-system-feedback-snackbar--default',
+  'Design System/Feedback/Spinner': 'design-system-feedback-spinner--default',
+  'Design System/Action/Standalone Dropdown': 'design-system-action-standalone-dropdown--default',
+  'Design System/Navigation/Stepper': 'design-system-navigation-stepper--default',
+  'Design System/Action/Tab': 'design-system-action-tab--default',
+  'Design System/Data Display/Table/Cell Action': 'design-system-data-display-table-cell-action--default',
+  'Design System/Data Display/Table/Cell Header': 'design-system-data-display-table-cell-header--default',
+  'Design System/Data Display/Table/Cell Selection': 'design-system-data-display-table-cell-selection--check',
+  'Design System/Data Display/Table/Cell': 'design-system-data-display-table-cell--default',
+  'Design System/Data Display/Table/Table Row': 'design-system-data-display-table-table-row--default',
+  'Design System/Data Entry/Tag Filter Chip': 'design-system-data-entry-tag-filter-chip--chip',
+  'Design System/Action/Tag': 'design-system-action-tag--static',
+  'Design System/Data Entry/Textarea': 'design-system-data-entry-textarea--default',
+  'Design System/Action/Tile': 'design-system-action-tile--playground',
+  'Design System/Internals/Timeline Event': 'design-system-internals-timeline-event--default',
+  'Design System/Data Display/Timeline': 'design-system-data-display-timeline--default',
+  'Design System/Feedback/Toaster': 'design-system-feedback-toaster--playground',
+  'Design System/Data Entry/Toggle': 'design-system-data-entry-toggle--default',
+  'Design System/Feedback/Tooltip': 'design-system-feedback-tooltip--static',
+  'Design System/Layout/Topbox': 'design-system-layout-topbox--buyer-full',
+  'Design System/Action/Visual Button': 'design-system-action-visual-button--default',
+  'Design System/Data Display/Widget Card': 'design-system-data-display-widget-card--figures',
+  'UI/Spotlight': 'ui-spotlight--empty',
+};
+
+/** Live embed of the component's first story — the visual, not a description. */
+export function storybookIframeSrc(
+  entry: DsComponentEntry,
+  opts: { baseURI: string; devMode: boolean },
+): string | null {
+  if (!entry.storybookTitle) return null;
+  const storyId = STORYBOOK_FIRST_STORY_ID[entry.storybookTitle];
+  if (!storyId) return null;
+  const base = opts.devMode ? 'http://localhost:6006/' : `${opts.baseURI}storybook/`;
+  return `${base}iframe.html?id=${storyId}&viewMode=story`;
+}
