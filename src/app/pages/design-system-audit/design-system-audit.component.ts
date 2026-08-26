@@ -9,6 +9,10 @@ import {
   ORPHAN_CANDIDATES,
   storybookSlug,
 } from './design-system-audit.data';
+import { ActionCardComponent } from '../../shared/ui/action-card/action-card.component';
+import { FlyoutComponent } from '../../shared/ui/flyout/flyout.component';
+import { ButtonIconComponent } from '../../shared/ui/button-icon/button-icon.component';
+import { IconComponent } from '../../shared/ui/icon/icon.component';
 
 type StatusFilter = 'all' | ComponentStatus;
 
@@ -23,7 +27,7 @@ const STATUS_LABELS: Record<ComponentStatus, string> = {
 @Component({
   selector: 'app-design-system-audit',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ActionCardComponent, FlyoutComponent, ButtonIconComponent, IconComponent],
   templateUrl: './design-system-audit.component.html',
   styleUrl: './design-system-audit.component.scss',
 })

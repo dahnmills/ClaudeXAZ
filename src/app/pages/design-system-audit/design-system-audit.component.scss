@@ -264,7 +264,130 @@
     color: #56526b;
   }
   &__desc { margin: 0 0 6px; color: #56526b; font-size: 13px; line-height: 1.5; }
-  &__caveat { margin: 0; color: #d97706; font-size: 12.5px; line-height: 1.5; }
+  &__caveat { margin: 12px 0 0; color: #d97706; font-size: 12.5px; line-height: 1.5; }
+}
+
+// ── Visual swap: "what we have" vs "replace with this" ─────────────────
+.swap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 14px 0 4px;
+  flex-wrap: wrap;
+
+  &__side {
+    flex: 1 1 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #8b8798;
+  }
+  &__stage {
+    width: 100%;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #f6f5fa;
+    border: 1px dashed #d7d3e8;
+    border-radius: 10px;
+  }
+  &__arrow {
+    flex-shrink: 0;
+    color: #8b8798;
+  }
+  &__caption {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: #8b8798;
+    text-align: center;
+  }
+}
+
+// Static reproduction of buyer-summary's .bs-toolbar (no hover-reveal, no
+// absolute positioning — this is a thumbnail, not the live interaction).
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  background: var(--semantic-color-static-background-main-primary);
+  border: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-m);
+  box-shadow: var(--semantic-shadow-flyout);
+}
+
+.preview-flyout {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+}
+
+// Static reproduction of hub.page's .zone tile, scoped locally (this
+// dashboard doesn't use hub's tokens/fonts elsewhere on purpose).
+.preview-zone {
+  --accent: #2b6bff;
+  --accent-wash: #e7eeff;
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  padding: 20px 20px 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e9e7f2;
+  box-shadow: 0 1px 2px rgba(23, 21, 31, 0.04);
+  text-decoration: none;
+  cursor: default;
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 14px;
+    border-radius: 11px;
+    background: var(--accent-wash);
+    color: var(--accent);
+  }
+  &__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  &__title {
+    margin: 4px 0 6px;
+    font-family: 'Bricolage Grotesque', 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    color: #17151f;
+  }
+  &__desc {
+    margin: 0 0 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #56526b;
+  }
+  &__cta {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+}
+
+.preview-action-card {
+  width: 220px;
 }
 
 .target {

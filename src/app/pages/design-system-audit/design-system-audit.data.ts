@@ -200,23 +200,11 @@ export interface OrphanCandidate {
 // dans pages/** qui pourrait raisonnablement l'adopter ? Vérifié CSS par CSS
 // avant de suggérer quoi que ce soit — après le coup Select Button/Tile, une
 // ressemblance de forme ne suffit pas, il faut un vrai match visuel.
+// Flyout et Action Card ont un vrai candidat trouvé et sont rendus comme un
+// comparatif visuel gauche/droite directement dans le template du dashboard
+// (design-system-audit.component.html) plutôt que décrits ici en texte —
+// évite deux sources de vérité pour le même contenu.
 export const ORPHAN_CANDIDATES: OrphanCandidate[] = [
-  {
-    orphanFolder: 'flyout',
-    orphanName: 'Flyout (panel de base)',
-    candidateFound: true,
-    site: 'pages/buyer-summary/buyer-summary.component.html:96-126 (.bs-toolbar) et :603-620 (.bs-cv-toolbar)',
-    description: "Les deux toolbars flottantes de buyer-summary réinventent à la main exactement le chrome de ds-flyout — même token --semantic-shadow-flyout, même border-radius. Le match le plus littéral des 5.",
-    caveat: "ds-flyout est role=\"dialog\" avec min-width 290px, pensé pour un menu déroulant — ces toolbars sont compactes, déclenchées au survol/sélection, pas par un cycle ouverture/fermeture. Adapter l'atome (ou accepter le mismatch de largeur/sémantique) avant de swapper.",
-  },
-  {
-    orphanFolder: 'action-card',
-    orphanName: 'Action Card',
-    candidateFound: true,
-    site: 'pages/hub/hub.page.html:12-34 (.zone)',
-    description: "Les tuiles du hub (icône + eyebrow/titre + description + CTA fléché) ont quasiment la même forme que le variant standard de ds-action-card.",
-    caveat: "hub.page est délibérément hors-DS (couleurs hex en dur, palette --accent par tuile, police Bricolage Grotesque, animation de survol propre). Swap = perdre ce theming à moins d'étendre l'atome. Déjà correctement utilisé ailleurs (admin-data, variant selectable) — ce n'est plus un vrai orphelin.",
-  },
   {
     orphanFolder: 'toggle',
     orphanName: 'Toggle',

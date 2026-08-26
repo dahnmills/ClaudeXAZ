@@ -133,24 +133,89 @@
       (cf. Select Button / Tile).
     </p>
     <ul class="dsa__candidates">
-      @for (c of orphanCandidates; track c.orphanFolder) {
-        <li class="candidate" [class.candidate--found]="c.candidateFound">
-          <div class="candidate__head">
-            <h3 class="candidate__title">{{ c.orphanName }}</h3>
-            <span class="candidate__verdict">
-              {{ c.candidateFound ? '→ remplacer par celui-là' : 'Pas de candidat' }}
-            </span>
+      <!-- ── Flyout : buyer-summary's hand-built toolbar chrome → ds-flyout ── -->
+      <li class="candidate candidate--found">
+        <div class="candidate__head">
+          <h3 class="candidate__title">Flyout (panel de base)</h3>
+          <span class="candidate__verdict">→ remplacer par celui-là</span>
+        </div>
+        <div class="swap">
+          <div class="swap__side">
+            <span class="swap__label">Ce qu'on a</span>
+            <div class="swap__stage">
+              <div class="preview-toolbar">
+                <ds-button-icon type="plain" tone="default" ariaLabel="Duplicate"><ds-icon name="copy" [size]="16" /></ds-button-icon>
+                <ds-button-icon type="plain" tone="default" ariaLabel="Edit"><ds-icon name="edit" [size]="16" /></ds-button-icon>
+                <ds-button-icon type="plain" tone="default" ariaLabel="Remove"><ds-icon name="trash" [size]="16" /></ds-button-icon>
+              </div>
+            </div>
+            <span class="swap__caption">buyer-summary.component.html:96-126 — .bs-toolbar (div natif)</span>
           </div>
-          @if (c.candidateFound) {
-            <p class="candidate__site">{{ c.site }}</p>
+          <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="swap__side">
+            <span class="swap__label">Remplacer par</span>
+            <div class="swap__stage">
+              <ds-flyout class="preview-flyout">
+                <ds-button-icon type="plain" tone="default" ariaLabel="Duplicate"><ds-icon name="copy" [size]="16" /></ds-button-icon>
+                <ds-button-icon type="plain" tone="default" ariaLabel="Edit"><ds-icon name="edit" [size]="16" /></ds-button-icon>
+                <ds-button-icon type="plain" tone="default" ariaLabel="Remove"><ds-icon name="trash" [size]="16" /></ds-button-icon>
+              </ds-flyout>
+            </div>
+            <span class="swap__caption">ds-flyout — Design System/Layout/Flyout</span>
+          </div>
+        </div>
+        <p class="candidate__caveat">⚠ ds-flyout est un role="dialog" avec min-width 290px (visible ci-dessus, plus large que le toolbar compact) — pensé pour un menu déroulant, pas une toolbar au survol. À adapter avant de swapper pour de vrai.</p>
+      </li>
+
+      <!-- ── Action Card : hub's .zone tile → ds-action-card ── -->
+      <li class="candidate candidate--found">
+        <div class="candidate__head">
+          <h3 class="candidate__title">Action Card</h3>
+          <span class="candidate__verdict">→ remplacer par celui-là</span>
+        </div>
+        <div class="swap">
+          <div class="swap__side">
+            <span class="swap__label">Ce qu'on a</span>
+            <div class="swap__stage">
+              <a class="preview-zone">
+                <span class="preview-zone__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.8"/></svg>
+                </span>
+                <span class="preview-zone__eyebrow">Dev</span>
+                <span class="preview-zone__title">Prototype</span>
+                <span class="preview-zone__desc">Browse freely through all screens, with the handoff inspector.</span>
+                <span class="preview-zone__cta">Open the screens →</span>
+              </a>
+            </div>
+            <span class="swap__caption">hub.page.html:12-34 — .zone (a natif)</span>
+          </div>
+          <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="swap__side">
+            <span class="swap__label">Remplacer par</span>
+            <div class="swap__stage">
+              <div class="preview-action-card">
+                <ds-action-card title="Prototype" description="Browse freely through all screens, with the handoff inspector." linkLabel="Open the screens">
+                  <svg slot="icon" viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.8"/></svg>
+                </ds-action-card>
+              </div>
+            </div>
+            <span class="swap__caption">ds-action-card — Design System/Data Display/Action Card</span>
+          </div>
+        </div>
+        <p class="candidate__caveat">⚠ hub.page est délibérément hors-DS (couleurs par tuile, police Bricolage Grotesque, animation de lift au survol) — swapper perdrait ce theming à moins d'étendre l'atome.</p>
+      </li>
+
+      <!-- ── Sans candidat honnête ── -->
+      @for (c of orphanCandidates; track c.orphanFolder) {
+        @if (!c.candidateFound) {
+          <li class="candidate">
+            <div class="candidate__head">
+              <h3 class="candidate__title">{{ c.orphanName }}</h3>
+              <span class="candidate__verdict">Pas de candidat</span>
+            </div>
             <p class="candidate__desc">{{ c.description }}</p>
-            @if (c.caveat) {
-              <p class="candidate__caveat">⚠ {{ c.caveat }}</p>
-            }
-          } @else {
-            <p class="candidate__desc">{{ c.description }}</p>
-          }
-        </li>
+          </li>
+        }
       }
     </ul>
   </section>
