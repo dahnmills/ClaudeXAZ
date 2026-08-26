@@ -1,0 +1,190 @@
+/**
+ * Snapshot des audits du 2026-08-25/26 (portability + cartography). Pas un
+ * scan live : toute évolution du DS depuis cette date ne sera pas reflétée
+ * ici tant que le fichier n'est pas régénéré à la main.
+ */
+
+export type ComponentStatus = 'core' | 'niche' | 'orphan' | 'duplicate' | 'internal';
+
+export interface DsComponentEntry {
+  /** Nom affiché, ex. "Button". */
+  name: string;
+  /** Dossier dans shared/ui. */
+  folder: string;
+  /** Catégorie Storybook (2e segment du title) ou catégorie déduite. */
+  category: string;
+  /** Titre Storybook exact (meta.title), null si aucune story. */
+  storybookTitle: string | null;
+  /** false si la story existe mais n'a pas le tag 'autodocs' (lien moins fiable). */
+  hasAutodocs: boolean;
+  /** Nombre exact de pages consommatrices, quand l'audit l'a compté précisément. */
+  usageCount: number | null;
+  /** Pages nommées, quand connu (sinon null = non détaillé dans l'audit). */
+  usagePages: string[] | null;
+  status: ComponentStatus;
+  note?: string;
+  /** Dossier du composant jumeau, pour les doublons. */
+  duplicateOf?: string;
+}
+
+export const DS_COMPONENTS: DsComponentEntry[] = [
+  // ── Core : forte adoption, story OK ─────────────────────────────────────
+  { name: 'Icon', folder: 'icon', category: 'Foundation', storybookTitle: 'Design System/Foundation/Icon', hasAutodocs: true, usageCount: 119, usagePages: null, status: 'core' },
+  { name: 'Input Text', folder: 'input-text', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Input Text', hasAutodocs: true, usageCount: 78, usagePages: null, status: 'core' },
+  { name: 'Button', folder: 'button', category: 'Action', storybookTitle: 'Design System/Action/Button', hasAutodocs: true, usageCount: 56, usagePages: null, status: 'core' },
+  { name: 'Tab', folder: 'tab', category: 'Action', storybookTitle: 'Design System/Action/Tab', hasAutodocs: true, usageCount: 39, usagePages: null, status: 'core' },
+  { name: 'Select', folder: 'select', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Select', hasAutodocs: true, usageCount: 36, usagePages: null, status: 'core' },
+  { name: 'Flyout Menu Item', folder: 'flyout-menu', category: 'Internals', storybookTitle: 'Design System/Internals/Flyout Menu Item', hasAutodocs: true, usageCount: 36, usagePages: null, status: 'core' },
+  { name: 'Button Icon', folder: 'button-icon', category: 'Action', storybookTitle: 'Design System/Action/Button Icon', hasAutodocs: true, usageCount: 32, usagePages: null, status: 'core' },
+  { name: 'Crumb', folder: 'crumb', category: 'Action', storybookTitle: 'Design System/Action/Crumb', hasAutodocs: true, usageCount: 29, usagePages: null, status: 'core' },
+  { name: 'Cell Header', folder: 'table', category: 'Data Display/Table', storybookTitle: 'Design System/Data Display/Table/Cell Header', hasAutodocs: true, usageCount: 29, usagePages: null, status: 'core' },
+  { name: 'Properties Panel', folder: 'properties-panel', category: 'Data Display', storybookTitle: 'Design System/Data Display/Properties Panel', hasAutodocs: true, usageCount: 23, usagePages: null, status: 'core' },
+  { name: 'Cell', folder: 'table', category: 'Data Display/Table', storybookTitle: 'Design System/Data Display/Table/Cell', hasAutodocs: true, usageCount: 22, usagePages: null, status: 'core' },
+  { name: 'Modal', folder: 'modal', category: 'Layout', storybookTitle: 'Design System/Layout/Modal', hasAutodocs: true, usageCount: 21, usagePages: null, status: 'core' },
+  { name: 'Badge', folder: 'badge', category: 'Feedback', storybookTitle: 'Design System/Feedback/Badge', hasAutodocs: true, usageCount: 15, usagePages: null, status: 'core' },
+  { name: 'Link', folder: 'link', category: 'Action', storybookTitle: 'Design System/Action/Link', hasAutodocs: true, usageCount: 14, usagePages: null, status: 'core' },
+  { name: 'Flyout Menu', folder: 'flyout-menu', category: 'Action', storybookTitle: 'Design System/Action/Flyout Menu', hasAutodocs: true, usageCount: 13, usagePages: null, status: 'core' },
+  { name: 'Card', folder: 'card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Card', hasAutodocs: true, usageCount: 12, usagePages: null, status: 'core' },
+  { name: 'Widget Card', folder: 'widget-card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Widget Card', hasAutodocs: true, usageCount: 11, usagePages: null, status: 'core' },
+  { name: 'Page Header', folder: 'page-header', category: 'Layout', storybookTitle: 'Design System/Layout/Page Header', hasAutodocs: true, usageCount: 9, usagePages: null, status: 'core' },
+  { name: 'Breadcrumbs', folder: 'breadcrumbs', category: 'Action', storybookTitle: 'Design System/Action/Breadcrumbs', hasAutodocs: true, usageCount: 9, usagePages: null, status: 'core' },
+  { name: 'Table Row', folder: 'table', category: 'Data Display/Table', storybookTitle: 'Design System/Data Display/Table/Table Row', hasAutodocs: true, usageCount: 8, usagePages: null, status: 'core' },
+  { name: 'Page Title', folder: 'page-title', category: 'Layout', storybookTitle: 'Design System/Layout/Page Title', hasAutodocs: true, usageCount: 8, usagePages: null, status: 'core' },
+  { name: 'Checkbox', folder: 'checkbox', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Checkbox', hasAutodocs: true, usageCount: 7, usagePages: null, status: 'core' },
+
+  // ── Usage ponctuel légitime (1-2 pages) ─────────────────────────────────
+  { name: 'Standalone Dropdown', folder: 'standalone-dropdown', category: 'Action', storybookTitle: 'Design System/Action/Standalone Dropdown', hasAutodocs: true, usageCount: 1, usagePages: ['topbox (démo)'], status: 'niche' },
+  { name: 'Side Nav', folder: 'side-nav', category: 'Layout', storybookTitle: 'Design System/Layout/Side Nav', hasAutodocs: true, usageCount: 1, usagePages: ['topbox (démo)'], status: 'niche' },
+  { name: 'Logo', folder: 'logo', category: 'Foundation', storybookTitle: 'Design System/Foundation/Logo', hasAutodocs: true, usageCount: 1, usagePages: ['topbox (démo)'], status: 'niche' },
+  { name: 'Header', folder: 'header', category: 'Layout', storybookTitle: 'Design System/Layout/Header', hasAutodocs: true, usageCount: 1, usagePages: ['topbox (démo)'], status: 'niche' },
+  { name: 'Segmented Control', folder: 'segmented-control', category: 'Action', storybookTitle: 'Design System/Action/Segmented Control', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
+  { name: 'Pie Chart', folder: 'pie-chart', category: 'Data Display', storybookTitle: null, hasAutodocs: false, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche', note: 'Pas de story Storybook.' },
+  { name: 'Newsfeed', folder: 'newsfeed', category: 'Data Display', storybookTitle: 'Design System/Data Display/Newsfeed', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
+  { name: 'Drawer', folder: 'drawer', category: 'Layout', storybookTitle: 'Design System/Layout/Drawer', hasAutodocs: false, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche', note: "Story sans tag 'autodocs' — lien Storybook moins fiable." },
+  { name: 'Input Search', folder: 'input-search', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Input Search', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
+  { name: 'Grid Selection', folder: 'grid-selection', category: 'Data Display', storybookTitle: null, hasAutodocs: false, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche', note: 'Pas de story Storybook.' },
+  { name: 'Chart', folder: 'chart', category: 'Data Display', storybookTitle: 'Design System/Data Display/Chart', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
+  { name: 'Grade', folder: 'grade', category: 'Data Display', storybookTitle: 'Design System/Data Display/Grade', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
+  { name: 'Button Split', folder: 'button-split', category: 'Action', storybookTitle: 'Design System/Action/Button Split', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
+  { name: 'Spotlight', folder: 'spotlight', category: 'UI', storybookTitle: 'UI/Spotlight', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche', note: "Titre Storybook hors taxonomie 'Design System/*' — incohérence de nommage." },
+  { name: 'Search Bar Multi', folder: 'search-bar-multi', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Search Bar Multi', hasAutodocs: true, usageCount: 1, usagePages: ['search'], status: 'niche' },
+  { name: 'More Criteria', folder: 'more-criteria', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/More Criteria', hasAutodocs: true, usageCount: 1, usagePages: ['search'], status: 'niche' },
+  { name: 'Result Card', folder: 'result-card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Result Card', hasAutodocs: true, usageCount: 1, usagePages: ['search'], status: 'niche' },
+  { name: 'Date Range', folder: 'date-range', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Date Range', hasAutodocs: true, usageCount: 1, usagePages: null, status: 'niche' },
+  { name: 'Search Bar', folder: 'search-bar', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Search Bar', hasAutodocs: true, usageCount: 1, usagePages: ['home'], status: 'niche', note: "Confirmé distinct de Search Bar Multi (vérifié à la main, pas un doublon)." },
+  { name: 'Filter Drawer', folder: 'filter-drawer', category: 'Layout', storybookTitle: null, hasAutodocs: false, usageCount: 2, usagePages: null, status: 'niche', note: 'Pas de story Storybook.' },
+  { name: 'Radio Card', folder: 'radio-card', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Radio Card', hasAutodocs: true, usageCount: 2, usagePages: null, status: 'niche' },
+  { name: 'Stepper', folder: 'stepper', category: 'Navigation', storybookTitle: 'Design System/Navigation/Stepper', hasAutodocs: true, usageCount: 2, usagePages: ['company-creation-wizard', 'company-edit-wizard'], status: 'niche', note: 'Bug token connu : `--semantic-color-static-text-main-reversed` référencé mais non défini dans _semantic.scss (fallback #fff masque le trou).' },
+
+  // ── Doublons internes ────────────────────────────────────────────────────
+  { name: 'Chip', folder: 'chip', category: 'Action', storybookTitle: 'Design System/Action/Chip', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'duplicate', duplicateOf: 'tag', note: "Même API/comportement que Tag (type static/filter/select, mêmes ARIA). Seul consommateur : tag-filter-chip (pas encore promu)." },
+  { name: 'Select Button', folder: 'select-button', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Select Button', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'duplicate', duplicateOf: 'tile', note: 'Quasi identique à Tile (label/icône/selected/disabled) + un sous-label. Aucun des deux utilisé dans une vraie page.' },
+  { name: 'Tile', folder: 'tile', category: 'Action', storybookTitle: 'Design System/Action/Tile', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'duplicate', duplicateOf: 'select-button' },
+  { name: 'Tag', folder: 'tag', category: 'Action', storybookTitle: 'Design System/Action/Tag', hasAutodocs: true, usageCount: null, usagePages: ['properties-panel (interne)', 'action-card (interne)'], status: 'internal', note: 'Le composant "gagnant" face à Chip — celui réellement adopté.' },
+
+  // ── Orphelins : construits, storyés, jamais adoptés ─────────────────────
+  { name: 'Action Card', folder: 'action-card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Action Card', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
+  { name: 'Timeline Event', folder: 'timeline', category: 'Data Display', storybookTitle: null, hasAutodocs: false, usageCount: 0, usagePages: null, status: 'orphan', note: 'Pas de story Storybook (seul le parent Timeline en a).' },
+  { name: 'Toggle', folder: 'toggle', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Toggle', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
+  { name: 'Popover', folder: 'popover', category: 'Feedback', storybookTitle: 'Design System/Feedback/Popover', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
+  { name: 'Flyout (panel de base)', folder: 'flyout', category: 'Layout', storybookTitle: 'Design System/Layout/Flyout', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan', note: 'Flyout Menu (qui l’utilise en interne) est bien adopté — seul le panel de base, utilisé directement, ne l’est pas.' },
+
+  // ── Composés internes (utilisés uniquement via un autre composant DS) ───
+  { name: 'Flyout Item', folder: 'flyout', category: 'Internals', storybookTitle: 'Design System/Internals/Flyout Item', hasAutodocs: true, usageCount: null, usagePages: null, status: 'internal' },
+  { name: 'Flyout Section', folder: 'flyout', category: 'Internals', storybookTitle: 'Design System/Internals/Flyout Section', hasAutodocs: true, usageCount: null, usagePages: null, status: 'internal' },
+  { name: 'Icon Tile', folder: 'icon-tile', category: 'Foundation', storybookTitle: 'Design System/Foundation/Icon Tile', hasAutodocs: true, usageCount: null, usagePages: ['result-card (interne)', 'action-card (interne)'], status: 'internal' },
+  { name: 'Modal Content', folder: 'modal', category: 'Internals', storybookTitle: 'Design System/Internals/Modal Content', hasAutodocs: true, usageCount: null, usagePages: null, status: 'internal' },
+  { name: 'Modal Header', folder: 'modal', category: 'Internals', storybookTitle: 'Design System/Internals/Modal Header', hasAutodocs: true, usageCount: null, usagePages: null, status: 'internal' },
+  { name: 'Modal Footer', folder: 'modal', category: 'Internals', storybookTitle: 'Design System/Internals/Modal Footer', hasAutodocs: true, usageCount: null, usagePages: null, status: 'internal' },
+  { name: 'Side Nav Item', folder: 'side-nav', category: 'Layout', storybookTitle: null, hasAutodocs: false, usageCount: null, usagePages: ['side-nav (interne)'], status: 'internal', note: 'Pas de story propre (seul le parent Side Nav en a).' },
+
+  // ── Reste du catalogue : jamais mentionné dans les audits (pas de souci signalé) ──
+  { name: 'Accordion', folder: 'accordion', category: 'Data Display', storybookTitle: 'Design System/Data Display/Accordion', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Button Range', folder: 'button-range', category: 'Action', storybookTitle: 'Design System/Action/Button Range', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Button Range Group', folder: 'button-range', category: 'Action', storybookTitle: 'Design System/Action/Button Range Group', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Checkbox Card', folder: 'checkbox-card', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Checkbox Card', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Collapsible Table', folder: 'collapsible-table', category: 'Data Display', storybookTitle: 'Design System/Data Display/Collapsible Table', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: "Sa story écrit à la main un tableau HTML de tokens CSS bruts pour documenter les «Design Tokens» — pas d'addon partagé derrière, risque de drift avec les vrais tokens." },
+  { name: 'Popin (Confirm Dialog)', folder: 'confirm-dialog', category: 'Feedback', storybookTitle: 'Design System/Feedback/Popin', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Divider', folder: 'divider', category: 'Foundation', storybookTitle: 'Design System/Foundation/Divider', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Flag', folder: 'flag', category: 'Foundation', storybookTitle: 'Design System/Foundation/Flag', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Functional Notice', folder: 'functional-notice', category: 'Feedback', storybookTitle: 'Design System/Feedback/Functional Notice', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Inline Edit', folder: 'inline-edit', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Inline Edit', hasAutodocs: false, usageCount: null, usagePages: null, status: 'niche', note: "Non détaillé dans l’audit. Story sans tag 'autodocs' — lien Storybook moins fiable." },
+  { name: 'Input Date', folder: 'input-date', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Input Date', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Input Email', folder: 'input-email', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Input Email', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'List Widget', folder: 'list-widget', category: 'Data Display', storybookTitle: 'Design System/Data Display/List Widget', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Pagination', folder: 'pagination', category: 'Action', storybookTitle: 'Design System/Action/Pagination', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Progress Bar', folder: 'progress-bar', category: 'Feedback', storybookTitle: 'Design System/Feedback/Progress Bar', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Radio', folder: 'radio', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Radio', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Cell Action', folder: 'table', category: 'Data Display/Table', storybookTitle: 'Design System/Data Display/Table/Cell Action', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Cell Selection', folder: 'table', category: 'Data Display/Table', storybookTitle: 'Design System/Data Display/Table/Cell Selection', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Textarea', folder: 'textarea', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Textarea', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Timeline', folder: 'timeline', category: 'Data Display', storybookTitle: 'Design System/Data Display/Timeline', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Toaster', folder: 'toaster', category: 'Feedback', storybookTitle: 'Design System/Feedback/Toaster', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: "Mismatch de nommage : le composant est `toaster-container.component.ts`, la story s'appelle `toaster.stories.ts`." },
+  { name: 'Tooltip', folder: 'tooltip', category: 'Feedback', storybookTitle: 'Design System/Feedback/Tooltip', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Topbox', folder: 'topbox', category: 'Layout', storybookTitle: 'Design System/Layout/Topbox', hasAutodocs: true, usageCount: 1, usagePages: ['topbox (démo)'], status: 'niche' },
+  { name: 'Visual Button', folder: 'visual-button', category: 'Action', storybookTitle: 'Design System/Action/Visual Button', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Non détaillé dans l’audit.' },
+  { name: 'Snackbar', folder: 'snackbar', category: 'Feedback', storybookTitle: null, hasAutodocs: false, usageCount: null, usagePages: null, status: 'niche', note: 'Pas de story Storybook.' },
+];
+
+export interface MutualizationTarget {
+  title: string;
+  description: string;
+  occurrences: string[];
+  effort: 'faible' | 'moyen' | 'élevé';
+}
+
+export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
+  {
+    title: 'Wizard shell',
+    description: "Structure complète dupliquée à l'identique : .wizard__cols/steps/panel/row/card/group/footer, même ds-stepper, même footer Back/Next, mêmes types de step (adresse, contacts, activités...). Jamais extrait en molécule ds-wizard.",
+    occurrences: [
+      'pages/search/company-creation-wizard/company-creation-wizard.component.html',
+      'pages/admin-data/company-edit-wizard/company-edit-wizard.component.html',
+    ],
+    effort: 'élevé',
+  },
+  {
+    title: 'Clickable option row',
+    description: "Icône + label + info secondaire, cliquable — recodé 3× indépendamment. 2 des 3 vivent déjà dans le DS sans se connaître.",
+    occurrences: [
+      'shared/ui/search-bar/search-bar.component.html (flyout item)',
+      'shared/ui/spotlight/spotlight.component.html (row)',
+      'pages/search/search.component.html (recent-search row)',
+    ],
+    effort: 'moyen',
+  },
+  {
+    title: 'Empty state',
+    description: 'Icône + message + CTA optionnel, même forme répétée sans atome partagé.',
+    occurrences: [
+      'pages/search/search.component.html (×4)',
+      'pages/tag-configuration/tag-configuration.component.html (×2)',
+    ],
+    effort: 'moyen',
+  },
+  {
+    title: 'Boutons natifs dans buyer-summary',
+    description: "~17 <button> natifs qui réinventent des atomes qui existent déjà (ds-tab, ds-tile, ds-radio-card, ds-checkbox-card, ds-button-icon, ds-segmented-control). Pas un nouveau composant à créer — juste un remplacement.",
+    occurrences: ['pages/buyer-summary/buyer-summary.component.html'],
+    effort: 'moyen',
+  },
+  {
+    title: 'Upload de fichier',
+    description: "<input type=\"file\"> natif — vrai trou, aucun atome file-upload n'existe dans le DS.",
+    occurrences: ['pages/tag-configuration/components/import-rules-modal.component.html'],
+    effort: 'moyen',
+  },
+  {
+    title: 'tag-filter-chip non promu',
+    description: 'Bien construit, compose déjà des atomes DS correctement — juste jamais déplacé dans shared/ui.',
+    occurrences: ['pages/tag-configuration/components/tag-filter-chip.component.ts'],
+    effort: 'faible',
+  },
+];
+
+export function storybookSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}

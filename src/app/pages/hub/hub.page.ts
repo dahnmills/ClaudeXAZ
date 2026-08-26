@@ -8,8 +8,8 @@ interface Zone {
   title: string;
   desc: string;
   cta: string;
-  accent: 'blue' | 'violet' | 'green' | 'ink' | 'amber';
-  icon: 'proto' | 'review' | 'isolated' | 'results' | 'notes';
+  accent: 'blue' | 'violet' | 'green' | 'ink' | 'amber' | 'red';
+  icon: 'proto' | 'review' | 'isolated' | 'results' | 'notes' | 'audit';
   adminOnly?: boolean;
 }
 
@@ -40,6 +40,11 @@ const ALL_ZONES: Zone[] = [
     path: '/release-notes', eyebrow: 'Changelog', title: 'Release notes', accent: 'amber', icon: 'notes',
     desc: 'History of changes per screen: features, fixes, design and content adjustments, filterable.',
     cta: 'View the notes',
+  },
+  {
+    path: '/design-system-audit', eyebrow: 'Design System', title: 'Component audit', accent: 'red', icon: 'audit',
+    desc: 'Adoption, Storybook coverage, duplicates and un-mutualized patterns across the whole shared/ui catalogue.',
+    cta: 'Open the audit',
   },
 ];
 

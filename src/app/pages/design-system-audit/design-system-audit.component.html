@@ -1,0 +1,123 @@
+<main class="dsa">
+  <a class="dsa__back" routerLink="/">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Hub
+  </a>
+
+  <header class="dsa__head">
+    <span class="dsa__eyebrow">Design System</span>
+    <h1 class="dsa__title">Component audit</h1>
+    <p class="dsa__lead">
+      Cartographie de tout le catalogue <code>shared/ui</code> : adoption réelle, couverture Storybook,
+      doublons et patterns jamais mutualisés. Snapshot figé des audits du 25-26/08/2026, pas un scan live.
+    </p>
+  </header>
+
+  <section class="dsa__stats" aria-label="Statistiques">
+    <div class="stat">
+      <span class="stat__value">{{ stats().total }}</span>
+      <span class="stat__label">Composants</span>
+    </div>
+    <div class="stat">
+      <span class="stat__value">{{ stats().storiedPct }}%</span>
+      <span class="stat__label">Storyés ({{ stats().storied }}/{{ stats().total }})</span>
+    </div>
+    <div class="stat">
+      <span class="stat__value">{{ stats().adoptedPct }}%</span>
+      <span class="stat__label">Adoptés dans une page</span>
+    </div>
+    <div class="stat stat--warn">
+      <span class="stat__value">{{ stats().orphans }}</span>
+      <span class="stat__label">Orphelins</span>
+    </div>
+    <div class="stat stat--warn">
+      <span class="stat__value">{{ stats().duplicates }}</span>
+      <span class="stat__label">Doublons</span>
+    </div>
+    <div class="stat stat--warn">
+      <span class="stat__value">{{ stats().noStory }}</span>
+      <span class="stat__label">Sans story</span>
+    </div>
+  </section>
+
+  <section class="dsa__table-section">
+    <div class="dsa__filters">
+      <div class="dsa__pills">
+        <button class="dsa__pill" [class.dsa__pill--active]="statusFilter() === 'all'" (click)="setStatusFilter('all')">Tous</button>
+        @for (s of statusOptions; track s) {
+          <button class="dsa__pill" [class.dsa__pill--active]="statusFilter() === s" (click)="setStatusFilter(s)">
+            {{ statusLabels[s] }}
+          </button>
+        }
+      </div>
+      <input
+        class="dsa__search"
+        type="search"
+        placeholder="Rechercher un composant…"
+        [value]="query()"
+        (input)="setQuery($any($event.target).value)"
+      />
+    </div>
+
+    <div class="dsa__table-wrap">
+      <table class="dsa__table">
+        <thead>
+          <tr>
+            <th>Composant</th>
+            <th>Catégorie</th>
+            <th>Usage</th>
+            <th>Statut</th>
+            <th>Storybook</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of filtered(); track c.name + c.folder) {
+            <tr>
+              <td class="dsa__cell-name">
+                {{ c.name }}
+                @if (c.note) {
+                  <span class="dsa__note" [title]="c.note">ⓘ</span>
+                }
+              </td>
+              <td class="dsa__cell-muted">{{ c.category }}</td>
+              <td class="dsa__cell-muted">{{ usageLabel(c) }}</td>
+              <td>
+                <span class="dsa__badge dsa__badge--{{ c.status }}">{{ statusLabels[c.status] }}</span>
+              </td>
+              <td>
+                @if (storybookHref(c)) {
+                  <a class="dsa__sb-link" [href]="storybookHref(c)" target="_blank" rel="noopener">Voir la story ↗</a>
+                } @else {
+                  <span class="dsa__cell-muted">— pas de story</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="dsa__empty">Aucun composant ne correspond à ce filtre.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="dsa__section">
+    <h2 class="dsa__section-title">Patterns à mutualiser</h2>
+    <p class="dsa__section-lead">Répétés dans les pages, pas encore un composant <code>ds-*</code> unique.</p>
+    <ul class="dsa__targets">
+      @for (t of mutualizationTargets; track t.title) {
+        <li class="target">
+          <div class="target__head">
+            <h3 class="target__title">{{ t.title }}</h3>
+            <span class="target__effort target__effort--{{ t.effort }}">{{ t.effort }}</span>
+          </div>
+          <p class="target__desc">{{ t.description }}</p>
+          <ul class="target__occurrences">
+            @for (o of t.occurrences; track o) {
+              <li>{{ o }}</li>
+            }
+          </ul>
+        </li>
+      }
+    </ul>
+  </section>
+</main>
