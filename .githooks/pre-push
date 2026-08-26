@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Blocks pushes that touch a Qirin product screen without touching the
 # release notes data. Meta/harness code (hub, prototype/isolated listings,
-# the release notes system itself, results dashboard, dev inspector, Echo
-# widget, shared/ui atoms) is out of scope for the changelog.
+# the release notes system itself, results dashboard, design system audit
+# dashboard, dev inspector, Echo widget, shared/ui atoms) is out of scope
+# for the changelog.
 # Deliberate bypass: git push --no-verify
 
 zero="0000000000000000000000000000000000000000"
@@ -19,7 +20,7 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   changed=$(git diff --name-only "$range" 2>/dev/null)
   [ -z "$changed" ] && continue
 
-  touches_app=$(printf '%s\n' "$changed" | grep -E '^src/app/pages/' | grep -vE '^src/app/pages/(hub|release-notes|results)/')
+  touches_app=$(printf '%s\n' "$changed" | grep -E '^src/app/pages/' | grep -vE '^src/app/pages/(hub|release-notes|results|design-system-audit)/')
   touches_release_notes=$(printf '%s\n' "$changed" | grep -F 'src/app/pages/release-notes/release-notes.data.ts')
 
   if [ -n "$touches_app" ] && [ -z "$touches_release_notes" ]; then
