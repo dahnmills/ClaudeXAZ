@@ -9,7 +9,7 @@ interface Zone {
   desc: string;
   cta: string;
   accent: 'blue' | 'violet' | 'green' | 'ink' | 'amber' | 'red';
-  icon: 'proto' | 'review' | 'isolated' | 'results' | 'notes' | 'audit';
+  icon: 'proto' | 'review' | 'isolated' | 'results' | 'notes' | 'audit' | 'components';
   adminOnly?: boolean;
 }
 
@@ -40,6 +40,11 @@ const ALL_ZONES: Zone[] = [
     path: '/release-notes', eyebrow: 'Changelog', title: 'Release notes', accent: 'amber', icon: 'notes',
     desc: 'History of changes per screen: features, fixes, design and content adjustments, filterable.',
     cta: 'View the notes',
+  },
+  {
+    path: '/design-system-components', eyebrow: 'Design System', title: 'Components', accent: 'red', icon: 'components',
+    desc: 'The whole shared/ui catalogue, with a direct link to each component\'s Storybook page.',
+    cta: 'Browse components',
   },
   {
     path: '/design-system-audit', eyebrow: 'Design System', title: 'Component audit', accent: 'red', icon: 'audit',

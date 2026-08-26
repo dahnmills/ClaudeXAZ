@@ -6,7 +6,7 @@ import {
   DS_COMPONENTS,
   DsComponentEntry,
   MUTUALIZATION_TARGETS,
-  storybookSlug,
+  storybookHref as resolveStorybookHref,
 } from './design-system-audit.data';
 import { ActionCardComponent } from '../../shared/ui/action-card/action-card.component';
 import { FlyoutComponent } from '../../shared/ui/flyout/flyout.component';
@@ -101,14 +101,6 @@ export class DesignSystemAuditComponent {
   }
 
   storybookHref(entry: DsComponentEntry): string | null {
-    if (!entry.storybookTitle) return null;
-    const slug = storybookSlug(entry.storybookTitle);
-    const page = entry.hasAutodocs ? `/docs/${slug}--docs` : `/story/${slug}--default`;
-    // Dev: `npm run storybook` serves on its own port (6006), separate from
-    // `ng serve` (4200) — there is no /storybook path locally. Prod: the
-    // GitHub Pages build nests the static Storybook output under /storybook
-    // inside this very app, so it must be reached relative to <base href>.
-    const base = isDevMode() ? 'http://localhost:6006/' : `${this.document.baseURI}storybook/`;
-    return `${base}?path=${page}`;
+    return resolveStorybookHref(entry, { baseURI: this.document.baseURI, devMode: isDevMode() });
   }
 }

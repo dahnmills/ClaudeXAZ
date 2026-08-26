@@ -199,3 +199,20 @@ export function storybookSlug(title: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
+/**
+ * Dev: `npm run storybook` serves on its own port (6006), separate from
+ * `ng serve` (4200) — there is no /storybook path locally. Prod: the
+ * GitHub Pages build nests the static Storybook output under /storybook
+ * inside this very app, so it must be reached relative to <base href>.
+ */
+export function storybookHref(
+  entry: DsComponentEntry,
+  opts: { baseURI: string; devMode: boolean },
+): string | null {
+  if (!entry.storybookTitle) return null;
+  const slug = storybookSlug(entry.storybookTitle);
+  const page = entry.hasAutodocs ? `/docs/${slug}--docs` : `/story/${slug}--default`;
+  const base = opts.devMode ? 'http://localhost:6006/' : `${opts.baseURI}storybook/`;
+  return `${base}?path=${page}`;
+}

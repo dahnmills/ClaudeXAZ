@@ -18,6 +18,7 @@ import { ResultsComponent } from './pages/results/results.component';
 import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
 import { ReleaseNoteDetailComponent } from './pages/release-notes/release-note-detail.component';
 import { DesignSystemAuditComponent } from './pages/design-system-audit/design-system-audit.component';
+import { DesignSystemComponentsComponent } from './pages/design-system-components/design-system-components.component';
 import { HubPage } from './pages/hub/hub.page';
 import { UserTestingShellComponent } from './user-testing/isolated/user-testing-shell.component';
 import { UserTestingHomePage } from './user-testing/isolated/user-testing-home.page';
@@ -70,8 +71,9 @@ export const appRoutes: Routes = [
   { path: 'release-notes', component: ReleaseNotesComponent },
   { path: 'release-notes/:id', component: ReleaseNoteDetailComponent },
 
-  // ── Audit du design system ───────────────────────────────────────────────
+  // ── Design system : audit + catalogue de composants ─────────────────────
   { path: 'design-system-audit', component: DesignSystemAuditComponent },
+  { path: 'design-system-components', component: DesignSystemComponentsComponent },
 
   // ── Espace testeur : mêmes pages, AVEC le compagnon de feedback ─────────
   {
