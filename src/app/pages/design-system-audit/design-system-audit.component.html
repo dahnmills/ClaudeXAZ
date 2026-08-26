@@ -205,18 +205,88 @@
         <p class="candidate__caveat">⚠ hub.page est délibérément hors-DS (couleurs par tuile, police Bricolage Grotesque, animation de lift au survol) — swapper perdrait ce theming à moins d'étendre l'atome.</p>
       </li>
 
-      <!-- ── Sans candidat honnête ── -->
-      @for (c of orphanCandidates; track c.orphanFolder) {
-        @if (!c.candidateFound) {
-          <li class="candidate">
-            <div class="candidate__head">
-              <h3 class="candidate__title">{{ c.orphanName }}</h3>
-              <span class="candidate__verdict">Pas de candidat</span>
+      <!-- ── Sans candidat honnête : le composant existe, mais rien à côté pour l'échanger ── -->
+      <li class="candidate">
+        <div class="candidate__head">
+          <h3 class="candidate__title">Toggle</h3>
+          <span class="candidate__verdict">Pas de candidat</span>
+        </div>
+        <div class="swap">
+          <div class="swap__side">
+            <span class="swap__label">Ce qu'on a</span>
+            <div class="swap__stage">
+              <ds-toggle label="Enabled" [selected]="true" />
             </div>
-            <p class="candidate__desc">{{ c.description }}</p>
-          </li>
-        }
-      }
+            <span class="swap__caption">ds-toggle — Design System/Data Entry/Toggle</span>
+          </div>
+          <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="swap__side">
+            <span class="swap__label">Remplacer par</span>
+            <div class="swap__stage swap__stage--empty">
+              <span class="swap__empty-text">Pas de candidat</span>
+            </div>
+            <span class="swap__caption">&nbsp;</span>
+          </div>
+        </div>
+        <p class="candidate__desc">Aucun switch on/off natif trouvé dans pages/**. Tous les contrôles booléens repérés utilisent déjà ds-checkbox correctement.</p>
+      </li>
+
+      <li class="candidate">
+        <div class="candidate__head">
+          <h3 class="candidate__title">Popover</h3>
+          <span class="candidate__verdict">Pas de candidat</span>
+        </div>
+        <div class="swap">
+          <div class="swap__side">
+            <span class="swap__label">Ce qu'on a</span>
+            <div class="swap__stage">
+              <ds-popover title="Filters" [dismissible]="true">
+                Refine results by status, date and owner.
+              </ds-popover>
+            </div>
+            <span class="swap__caption">ds-popover — Design System/Feedback/Popover</span>
+          </div>
+          <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="swap__side">
+            <span class="swap__label">Remplacer par</span>
+            <div class="swap__stage swap__stage--empty">
+              <span class="swap__empty-text">Pas de candidat</span>
+            </div>
+            <span class="swap__caption">&nbsp;</span>
+          </div>
+        </div>
+        <p class="candidate__desc">Aucun panel avec flèche + en-tête + bouton fermer trouvé dans pages/**. Le near-miss le plus proche (.nm-datefield__panel) n'a ni flèche ni en-tête — c'est un wrapper de positionnement pour ds-date-range, pas un popover.</p>
+      </li>
+
+      <li class="candidate">
+        <div class="candidate__head">
+          <h3 class="candidate__title">Timeline Event</h3>
+          <span class="candidate__verdict">Pas de candidat</span>
+        </div>
+        <div class="swap">
+          <div class="swap__side">
+            <span class="swap__label">Ce qu'on a</span>
+            <div class="swap__stage">
+              <ds-timeline style="width:100%;">
+                <ds-timeline-event title="Renewal proposed" status="info" [open]="true">
+                  A renewal proposal was sent to the buyer.
+                </ds-timeline-event>
+                <ds-timeline-event title="Closed" status="neutral" [isLast]="true" />
+              </ds-timeline>
+            </div>
+            <span class="swap__caption">ds-timeline-event — Design System/Internals/Timeline Event</span>
+          </div>
+          <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="swap__side">
+            <span class="swap__label">Remplacer par</span>
+            <div class="swap__stage swap__stage--empty">
+              <span class="swap__empty-text">Pas de candidat</span>
+            </div>
+            <span class="swap__caption">&nbsp;</span>
+          </div>
+        </div>
+        <p class="candidate__desc">Aucun rail chronologique (points + ligne + header collapsible) trouvé. history-row.component (tag-configuration) est une ligne de tableau à plat, pas une timeline — forcer le match serait artificiel.</p>
+      </li>
     </ul>
   </section>
 </main>

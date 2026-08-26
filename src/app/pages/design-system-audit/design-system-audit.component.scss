@@ -299,6 +299,13 @@
     background: #f6f5fa;
     border: 1px dashed #d7d3e8;
     border-radius: 10px;
+
+    &--empty { background: transparent; border-color: #e9e7f2; }
+  }
+  &__empty-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b5b1c4;
   }
   &__arrow {
     flex-shrink: 0;

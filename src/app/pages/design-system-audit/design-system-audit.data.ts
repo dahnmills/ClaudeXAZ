@@ -185,45 +185,13 @@ export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
   },
 ];
 
-export interface OrphanCandidate {
-  /** Dossier du composant orphelin (clé vers DsComponentEntry.folder). */
-  orphanFolder: string;
-  orphanName: string;
-  /** true si un site d'adoption plausible a été trouvé dans pages/**. */
-  candidateFound: boolean;
-  site?: string;
-  description?: string;
-  caveat?: string;
-}
-
 // Recherche du 2026-08-26 : pour chaque orphelin, y a-t-il un pattern natif
 // dans pages/** qui pourrait raisonnablement l'adopter ? Vérifié CSS par CSS
 // avant de suggérer quoi que ce soit — après le coup Select Button/Tile, une
-// ressemblance de forme ne suffit pas, il faut un vrai match visuel.
-// Flyout et Action Card ont un vrai candidat trouvé et sont rendus comme un
-// comparatif visuel gauche/droite directement dans le template du dashboard
-// (design-system-audit.component.html) plutôt que décrits ici en texte —
-// évite deux sources de vérité pour le même contenu.
-export const ORPHAN_CANDIDATES: OrphanCandidate[] = [
-  {
-    orphanFolder: 'toggle',
-    orphanName: 'Toggle',
-    candidateFound: false,
-    description: "Aucun switch on/off natif trouvé dans pages/**. Tous les contrôles booléens repérés utilisent déjà ds-checkbox correctement.",
-  },
-  {
-    orphanFolder: 'popover',
-    orphanName: 'Popover',
-    candidateFound: false,
-    description: "Aucun panel avec flèche + en-tête + bouton fermer trouvé dans pages/**. Le near-miss le plus proche (.nm-datefield__panel dans notification-module) n'a ni flèche ni en-tête — c'est un wrapper de positionnement pour ds-date-range, pas un popover.",
-  },
-  {
-    orphanFolder: 'timeline',
-    orphanName: 'Timeline Event',
-    candidateFound: false,
-    description: "Aucun rail chronologique (points + ligne + header collapsible) trouvé. history-row.component (tag-configuration) est une ligne de tableau à plat, pas une timeline — forcer le match serait artificiel.",
-  },
-];
+// ressemblance de forme ne suffit pas, il faut un vrai match visuel. Rendu
+// comme comparatif visuel gauche/droite directement dans le template du
+// dashboard (design-system-audit.component.html), pas ici en texte — évite
+// deux sources de vérité pour le même contenu.
 
 export function storybookSlug(title: string): string {
   return title

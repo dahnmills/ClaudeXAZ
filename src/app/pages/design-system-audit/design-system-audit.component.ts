@@ -6,13 +6,16 @@ import {
   DS_COMPONENTS,
   DsComponentEntry,
   MUTUALIZATION_TARGETS,
-  ORPHAN_CANDIDATES,
   storybookSlug,
 } from './design-system-audit.data';
 import { ActionCardComponent } from '../../shared/ui/action-card/action-card.component';
 import { FlyoutComponent } from '../../shared/ui/flyout/flyout.component';
 import { ButtonIconComponent } from '../../shared/ui/button-icon/button-icon.component';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
+import { ToggleComponent } from '../../shared/ui/toggle/toggle.component';
+import { PopoverComponent } from '../../shared/ui/popover/popover.component';
+import { TimelineComponent } from '../../shared/ui/timeline/timeline.component';
+import { TimelineEventComponent } from '../../shared/ui/timeline/timeline-event.component';
 
 type StatusFilter = 'all' | ComponentStatus;
 
@@ -27,7 +30,17 @@ const STATUS_LABELS: Record<ComponentStatus, string> = {
 @Component({
   selector: 'app-design-system-audit',
   standalone: true,
-  imports: [RouterLink, ActionCardComponent, FlyoutComponent, ButtonIconComponent, IconComponent],
+  imports: [
+    RouterLink,
+    ActionCardComponent,
+    FlyoutComponent,
+    ButtonIconComponent,
+    IconComponent,
+    ToggleComponent,
+    PopoverComponent,
+    TimelineComponent,
+    TimelineEventComponent,
+  ],
   templateUrl: './design-system-audit.component.html',
   styleUrl: './design-system-audit.component.scss',
 })
@@ -37,7 +50,6 @@ export class DesignSystemAuditComponent {
   readonly statusLabels = STATUS_LABELS;
   readonly statusOptions: ComponentStatus[] = ['core', 'niche', 'orphan', 'duplicate', 'internal'];
   readonly mutualizationTargets = MUTUALIZATION_TARGETS;
-  readonly orphanCandidates = ORPHAN_CANDIDATES;
 
   readonly statusFilter = signal<StatusFilter>('all');
   readonly query = signal('');
