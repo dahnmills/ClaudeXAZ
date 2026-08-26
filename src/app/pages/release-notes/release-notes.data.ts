@@ -23,6 +23,19 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog — it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'tag-configuration-promote-filter-chip',
+    date: '2026-08-26',
+    category: 'fix',
+    screens: ['tag-configuration'],
+    title: 'TAG Configuration: internal refactor, no visible change',
+    description:
+      'The multi-select filter field used in the rule modal (Sensitivity, NACE, Legal form, etc.) was promoted from a page-local component into the shared design system, and a missing color token used by the stepper was defined.',
+    changes: [
+      'Renamed the multi-select filter field component from `tag-filter-chip` to `ds-tag-filter-chip` and moved it into shared/ui — same markup, same styling, zero visible change',
+      'Defined the previously-missing `--semantic-color-static-text-main-reversed` token (was silently falling back to a hardcoded #fff in the stepper) — same resolved color, just no longer a silent gap',
+    ],
+  },
+  {
     id: 'maintenance-screen',
     date: '2026-08-25',
     category: 'feature',
