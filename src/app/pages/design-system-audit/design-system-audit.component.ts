@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, isDevMode, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   ComponentStatus,
@@ -85,8 +85,12 @@ export class DesignSystemAuditComponent {
   storybookHref(entry: DsComponentEntry): string | null {
     if (!entry.storybookTitle) return null;
     const slug = storybookSlug(entry.storybookTitle);
-    const base = this.document.baseURI;
-    const page = entry.hasAutodocs ? `/docs/${slug}--docs` : `/story/${slug}`;
-    return `${base}storybook/?path=${page}`;
+    const page = entry.hasAutodocs ? `/docs/${slug}--docs` : `/story/${slug}--default`;
+    // Dev: `npm run storybook` serves on its own port (6006), separate from
+    // `ng serve` (4200) — there is no /storybook path locally. Prod: the
+    // GitHub Pages build nests the static Storybook output under /storybook
+    // inside this very app, so it must be reached relative to <base href>.
+    const base = isDevMode() ? 'http://localhost:6006/' : `${this.document.baseURI}storybook/`;
+    return `${base}?path=${page}`;
   }
 }
