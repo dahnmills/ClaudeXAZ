@@ -15,7 +15,7 @@
       <span class="rm-group__title">Base criteria</span>
       <div class="rm-card">
         <div class="rm-row rm-row--3">
-          <tag-filter-chip variant="field" label="Sensitivity" [options]="SENSITIVITY_OPTIONS" [selected]="sensitivity()" (selectedChange)="sensitivity.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Sensitivity" [options]="SENSITIVITY_OPTIONS" [selected]="sensitivity()" (selectedChange)="sensitivity.set($event)" />
           <fieldset class="rm-field rm-fieldset">
             <legend class="rm-label">Exposure</legend>
             <div class="rm-exposure">
@@ -24,7 +24,7 @@
               <span class="rm-exposure__currency">{{ currency() }}</span>
             </div>
           </fieldset>
-          <tag-filter-chip variant="field" label="New autograde" [options]="GRADE_OPTIONS" [selected]="newAutoGrade()" (selectedChange)="newAutoGrade.set($event)" />
+          <ds-tag-filter-chip variant="field" label="New autograde" [options]="GRADE_OPTIONS" [selected]="newAutoGrade()" (selectedChange)="newAutoGrade.set($event)" />
         </div>
       </div>
     </div>
@@ -35,8 +35,8 @@
         <!-- One concept, 5 facets — kept on their own row instead of split
              across an unrelated 3-column grid. -->
         <div class="rm-row rm-row--cvg">
-          <tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="cvgValue()" (selectedChange)="cvgValue.set($event)" />
-          <tag-filter-chip variant="field" label="Type" [options]="GRADE_TYPE_OPTIONS" [selected]="cvgType()" (selectedChange)="cvgType.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="cvgValue()" (selectedChange)="cvgValue.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Type" [options]="GRADE_TYPE_OPTIONS" [selected]="cvgType()" (selectedChange)="cvgType.set($event)" />
           <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="cvgFreshness()" (selectionChange)="cvgFreshness.set($event)" />
           <fieldset class="rm-field rm-fieldset">
             <legend class="rm-label">Transferred</legend>
@@ -51,7 +51,7 @@
       <span class="rm-group__title">Last checked autograde</span>
       <div class="rm-card">
         <div class="rm-row rm-row--3">
-          <tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="lastAgValue()" (selectedChange)="lastAgValue.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="lastAgValue()" (selectedChange)="lastAgValue.set($event)" />
           <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="lastAgFreshness()" (selectionChange)="lastAgFreshness.set($event)" />
           <ds-select label="New autograde vs last checked autograde" [options]="COMPARISON_OPTIONS" [value]="newVsLastAg()" (selectionChange)="newVsLastAg.set($event)" />
         </div>
@@ -62,9 +62,9 @@
       <span class="rm-group__title">Company profile</span>
       <div class="rm-card">
         <div class="rm-row rm-row--3">
-          <tag-filter-chip variant="field" label="NACE" [options]="NACE_OPTIONS" [selected]="nace()" (selectedChange)="nace.set($event)" />
-          <tag-filter-chip variant="field" label="Legal form" [options]="LEGAL_FORM_OPTIONS" [selected]="legalForm()" (selectedChange)="legalForm.set($event)" />
-          <tag-filter-chip variant="field" label="Company role" [options]="COMPANY_ROLE_OPTIONS" [selected]="companyRole()" (selectedChange)="companyRole.set($event)" />
+          <ds-tag-filter-chip variant="field" label="NACE" [options]="NACE_OPTIONS" [selected]="nace()" (selectedChange)="nace.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Legal form" [options]="LEGAL_FORM_OPTIONS" [selected]="legalForm()" (selectedChange)="legalForm.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Company role" [options]="COMPANY_ROLE_OPTIONS" [selected]="companyRole()" (selectedChange)="companyRole.set($event)" />
         </div>
       </div>
     </div>

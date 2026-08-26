@@ -69,13 +69,13 @@
 // 3. not current + checked (completed) : fond bleu plein + check blanc
 .ds-stepper__step--completed .ds-stepper__marker {
   background: var(--semantic-color-interactive-background-strong-default);
-  color: var(--semantic-color-static-text-main-reversed, #fff);
+  color: var(--semantic-color-static-text-main-reversed);
 }
 
 // 4. current + checked : fond bleu + check + double ring (blanc puis bleu) = "tu es ici"
 .ds-stepper__step--current-completed .ds-stepper__marker {
   background: var(--semantic-color-interactive-background-strong-default);
-  color: var(--semantic-color-static-text-main-reversed, #fff);
+  color: var(--semantic-color-static-text-main-reversed);
   box-shadow:
     0 0 0 2px var(--semantic-color-static-background-main-primary),
     0 0 0 4px var(--semantic-color-interactive-background-strong-default);

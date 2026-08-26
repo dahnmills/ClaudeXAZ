@@ -1,24 +1,24 @@
 @if (variant() === 'field') {
-  <label class="tag-filter-chip__field-label" [for]="fieldId">{{ label() }}</label>
-  <div class="tag-filter-chip__field-container">
+  <label class="ds-tag-filter-chip__field-label" [for]="fieldId">{{ label() }}</label>
+  <div class="ds-tag-filter-chip__field-container">
     <button
       type="button"
       [id]="fieldId"
-      class="tag-filter-chip__field"
+      class="ds-tag-filter-chip__field"
       [attr.aria-haspopup]="'listbox'"
       [attr.aria-expanded]="open()"
       (click)="toggleOpen()"
     >
-      <span class="tag-filter-chip__field-value" [class.tag-filter-chip__field-value--placeholder]="!fieldValue()">
+      <span class="ds-tag-filter-chip__field-value" [class.ds-tag-filter-chip__field-value--placeholder]="!fieldValue()">
         {{ fieldValue() || placeholder() }}
       </span>
     </button>
-    <ds-icon class="tag-filter-chip__field-chevron" name="chevron-down" [size]="16" />
+    <ds-icon class="ds-tag-filter-chip__field-chevron" name="chevron-down" [size]="16" />
 
     @if (open()) {
-      <div class="tag-filter-chip__flyout tag-filter-chip__flyout--field">
+      <div class="ds-tag-filter-chip__flyout ds-tag-filter-chip__flyout--field">
         <ds-flyout-menu>
-          <div class="tag-filter-chip__options">
+          <div class="ds-tag-filter-chip__options">
             @for (opt of options(); track opt.value) {
               <ds-checkbox
                 [label]="opt.label"
@@ -26,7 +26,7 @@
                 (checkedChange)="toggleValue(opt.value)" />
             }
           </div>
-          <div class="tag-filter-chip__footer">
+          <div class="ds-tag-filter-chip__footer">
             <ds-button type="plain" (clicked)="clear()">Clear</ds-button>
           </div>
         </ds-flyout-menu>
@@ -41,9 +41,9 @@
     (activated)="toggleOpen()" />
 
   @if (open()) {
-    <div class="tag-filter-chip__flyout">
+    <div class="ds-tag-filter-chip__flyout">
       <ds-flyout-menu>
-        <div class="tag-filter-chip__options">
+        <div class="ds-tag-filter-chip__options">
           @for (opt of options(); track opt.value) {
             <ds-checkbox
               [label]="opt.label"
@@ -51,7 +51,7 @@
               (checkedChange)="toggleValue(opt.value)" />
           }
         </div>
-        <div class="tag-filter-chip__footer">
+        <div class="ds-tag-filter-chip__footer">
           <ds-button type="plain" (clicked)="clear()">Clear</ds-button>
         </div>
       </ds-flyout-menu>

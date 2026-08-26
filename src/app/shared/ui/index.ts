@@ -66,6 +66,7 @@ export * from './toaster/toaster-container.component';
 export * from './button-split/button-split.component';
 export * from './visual-button/visual-button.component';
 export * from './chip/chip.component';
+export * from './tag-filter-chip/tag-filter-chip.component';
 export * from './chart/chart.component';
 export * from './widget-card/widget-card.component';
 export * from './list-widget/list-widget.component';

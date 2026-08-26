@@ -1,11 +1,11 @@
 import { Component, ElementRef, HostListener, computed, inject, input, model, signal } from '@angular/core';
-import { ChipComponent } from '../../../shared/ui/chip/chip.component';
-import { CheckboxComponent } from '../../../shared/ui/checkbox/checkbox.component';
-import { ButtonComponent } from '../../../shared/ui/button/button.component';
-import { FlyoutMenuComponent } from '../../../shared/ui/flyout-menu/flyout-menu.component';
-import { IconComponent } from '../../../shared/ui/icon/icon.component';
+import { ChipComponent } from '../chip/chip.component';
+import { CheckboxComponent } from '../checkbox/checkbox.component';
+import { ButtonComponent } from '../button/button.component';
+import { FlyoutMenuComponent } from '../flyout-menu/flyout-menu.component';
+import { IconComponent } from '../icon/icon.component';
 
-export interface FilterOption { value: string; label: string; }
+export interface TagFilterOption { value: string; label: string; }
 
 /**
  * Filter chip — opens a flyout of checkboxes for multi-select.
@@ -15,7 +15,7 @@ export interface FilterOption { value: string; label: string; }
  * so it sits naturally in a grid of single-select dropdowns).
  */
 @Component({
-  selector: 'tag-filter-chip',
+  selector: 'ds-tag-filter-chip',
   standalone: true,
   imports: [ChipComponent, CheckboxComponent, ButtonComponent, FlyoutMenuComponent, IconComponent],
   templateUrl: './tag-filter-chip.component.html',
@@ -23,7 +23,7 @@ export interface FilterOption { value: string; label: string; }
 })
 export class TagFilterChipComponent {
   label       = input.required<string>();
-  options     = input.required<FilterOption[]>();
+  options     = input.required<TagFilterOption[]>();
   selected    = model<Set<string>>(new Set());
   variant     = input<'chip' | 'field'>('chip');
   placeholder = input<string>('Any');

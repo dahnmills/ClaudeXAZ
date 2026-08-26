@@ -6,7 +6,7 @@ import { SegmentedControlComponent } from '../../../shared/ui/segmented-control/
 import { RadioCardComponent, RadioCardTone } from '../../../shared/ui/radio-card/radio-card.component';
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
-import { TagFilterChipComponent } from './tag-filter-chip.component';
+import { TagFilterChipComponent } from '../../../shared/ui/tag-filter-chip/tag-filter-chip.component';
 import {
   TagRule, RuleCriteria, EMPTY_CRITERIA, Decision, Grade, Sensitivity, GradeType, Freshness, Comparison,
 } from '../tag-configuration.models';
