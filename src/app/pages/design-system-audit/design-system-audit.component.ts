@@ -6,6 +6,7 @@ import {
   DS_COMPONENTS,
   DsComponentEntry,
   MUTUALIZATION_TARGETS,
+  ORPHAN_CANDIDATES,
   storybookSlug,
 } from './design-system-audit.data';
 
@@ -32,6 +33,7 @@ export class DesignSystemAuditComponent {
   readonly statusLabels = STATUS_LABELS;
   readonly statusOptions: ComponentStatus[] = ['core', 'niche', 'orphan', 'duplicate', 'internal'];
   readonly mutualizationTargets = MUTUALIZATION_TARGETS;
+  readonly orphanCandidates = ORPHAN_CANDIDATES;
 
   readonly statusFilter = signal<StatusFilter>('all');
   readonly query = signal('');

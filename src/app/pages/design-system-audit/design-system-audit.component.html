@@ -124,4 +124,34 @@
       }
     </ul>
   </section>
+
+  <section class="dsa__section">
+    <h2 class="dsa__section-title">Orphelins — candidats de remplacement</h2>
+    <p class="dsa__section-lead">
+      Pour chaque composant construit mais jamais adopté, y a-t-il un pattern natif dans les pages qui pourrait
+      l'adopter ? Vérifié CSS par CSS, pas juste sur la forme — une ressemblance de surface ne suffit pas
+      (cf. Select Button / Tile).
+    </p>
+    <ul class="dsa__candidates">
+      @for (c of orphanCandidates; track c.orphanFolder) {
+        <li class="candidate" [class.candidate--found]="c.candidateFound">
+          <div class="candidate__head">
+            <h3 class="candidate__title">{{ c.orphanName }}</h3>
+            <span class="candidate__verdict">
+              {{ c.candidateFound ? '→ remplacer par celui-là' : 'Pas de candidat' }}
+            </span>
+          </div>
+          @if (c.candidateFound) {
+            <p class="candidate__site">{{ c.site }}</p>
+            <p class="candidate__desc">{{ c.description }}</p>
+            @if (c.caveat) {
+              <p class="candidate__caveat">⚠ {{ c.caveat }}</p>
+            }
+          } @else {
+            <p class="candidate__desc">{{ c.description }}</p>
+          }
+        </li>
+      }
+    </ul>
+  </section>
 </main>

@@ -72,6 +72,7 @@ export const DS_COMPONENTS: DsComponentEntry[] = [
   { name: 'Result Card', folder: 'result-card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Result Card', hasAutodocs: true, usageCount: 1, usagePages: ['search'], status: 'niche' },
   { name: 'Date Range', folder: 'date-range', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Date Range', hasAutodocs: true, usageCount: 1, usagePages: null, status: 'niche' },
   { name: 'Search Bar', folder: 'search-bar', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Search Bar', hasAutodocs: true, usageCount: 1, usagePages: ['home'], status: 'niche', note: "Confirmé distinct de Search Bar Multi (vérifié à la main, pas un doublon)." },
+  { name: 'Action Card', folder: 'action-card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Action Card', hasAutodocs: true, usageCount: 1, usagePages: ['admin-data'], status: 'niche', note: "Corrigé le 2026-08-26 — l'audit initial le listait orphelin (0 usage), mais il est bien utilisé (variant selectable) dans admin-data.component.html:118, sélecteur d'activité." },
   { name: 'Filter Drawer', folder: 'filter-drawer', category: 'Layout', storybookTitle: 'Design System/Layout/Filter Drawer', hasAutodocs: true, usageCount: 2, usagePages: null, status: 'niche' },
   { name: 'Radio Card', folder: 'radio-card', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Radio Card', hasAutodocs: true, usageCount: 2, usagePages: null, status: 'niche' },
   { name: 'Stepper', folder: 'stepper', category: 'Navigation', storybookTitle: 'Design System/Navigation/Stepper', hasAutodocs: true, usageCount: 2, usagePages: ['company-creation-wizard', 'company-edit-wizard'], status: 'niche' },
@@ -86,7 +87,6 @@ export const DS_COMPONENTS: DsComponentEntry[] = [
   { name: 'Tile', folder: 'tile', category: 'Action', storybookTitle: 'Design System/Action/Tile', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan', note: 'Voir Select Button — requalifié, pas un doublon.' },
 
   // ── Orphelins : construits, storyés, jamais adoptés ─────────────────────
-  { name: 'Action Card', folder: 'action-card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Action Card', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
   { name: 'Timeline Event', folder: 'timeline', category: 'Internals', storybookTitle: 'Design System/Internals/Timeline Event', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
   { name: 'Toggle', folder: 'toggle', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Toggle', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
   { name: 'Popover', folder: 'popover', category: 'Feedback', storybookTitle: 'Design System/Feedback/Popover', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
@@ -182,6 +182,58 @@ export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
     description: "<input type=\"file\"> natif — vrai trou, aucun atome file-upload n'existe dans le DS.",
     occurrences: ['pages/tag-configuration/components/import-rules-modal.component.html'],
     effort: 'moyen',
+  },
+];
+
+export interface OrphanCandidate {
+  /** Dossier du composant orphelin (clé vers DsComponentEntry.folder). */
+  orphanFolder: string;
+  orphanName: string;
+  /** true si un site d'adoption plausible a été trouvé dans pages/**. */
+  candidateFound: boolean;
+  site?: string;
+  description?: string;
+  caveat?: string;
+}
+
+// Recherche du 2026-08-26 : pour chaque orphelin, y a-t-il un pattern natif
+// dans pages/** qui pourrait raisonnablement l'adopter ? Vérifié CSS par CSS
+// avant de suggérer quoi que ce soit — après le coup Select Button/Tile, une
+// ressemblance de forme ne suffit pas, il faut un vrai match visuel.
+export const ORPHAN_CANDIDATES: OrphanCandidate[] = [
+  {
+    orphanFolder: 'flyout',
+    orphanName: 'Flyout (panel de base)',
+    candidateFound: true,
+    site: 'pages/buyer-summary/buyer-summary.component.html:96-126 (.bs-toolbar) et :603-620 (.bs-cv-toolbar)',
+    description: "Les deux toolbars flottantes de buyer-summary réinventent à la main exactement le chrome de ds-flyout — même token --semantic-shadow-flyout, même border-radius. Le match le plus littéral des 5.",
+    caveat: "ds-flyout est role=\"dialog\" avec min-width 290px, pensé pour un menu déroulant — ces toolbars sont compactes, déclenchées au survol/sélection, pas par un cycle ouverture/fermeture. Adapter l'atome (ou accepter le mismatch de largeur/sémantique) avant de swapper.",
+  },
+  {
+    orphanFolder: 'action-card',
+    orphanName: 'Action Card',
+    candidateFound: true,
+    site: 'pages/hub/hub.page.html:12-34 (.zone)',
+    description: "Les tuiles du hub (icône + eyebrow/titre + description + CTA fléché) ont quasiment la même forme que le variant standard de ds-action-card.",
+    caveat: "hub.page est délibérément hors-DS (couleurs hex en dur, palette --accent par tuile, police Bricolage Grotesque, animation de survol propre). Swap = perdre ce theming à moins d'étendre l'atome. Déjà correctement utilisé ailleurs (admin-data, variant selectable) — ce n'est plus un vrai orphelin.",
+  },
+  {
+    orphanFolder: 'toggle',
+    orphanName: 'Toggle',
+    candidateFound: false,
+    description: "Aucun switch on/off natif trouvé dans pages/**. Tous les contrôles booléens repérés utilisent déjà ds-checkbox correctement.",
+  },
+  {
+    orphanFolder: 'popover',
+    orphanName: 'Popover',
+    candidateFound: false,
+    description: "Aucun panel avec flèche + en-tête + bouton fermer trouvé dans pages/**. Le near-miss le plus proche (.nm-datefield__panel dans notification-module) n'a ni flèche ni en-tête — c'est un wrapper de positionnement pour ds-date-range, pas un popover.",
+  },
+  {
+    orphanFolder: 'timeline',
+    orphanName: 'Timeline Event',
+    candidateFound: false,
+    description: "Aucun rail chronologique (points + ligne + header collapsible) trouvé. history-row.component (tag-configuration) est une ligne de tableau à plat, pas une timeline — forcer le match serait artificiel.",
   },
 ];
 

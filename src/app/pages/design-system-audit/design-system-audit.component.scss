@@ -223,6 +223,50 @@
   &--warn .stat__value { color: #d97706; }
 }
 
+.dsa__candidates {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.candidate {
+  padding: 16px 20px;
+  border: 1px solid #e9e7f2;
+  border-left: 4px solid #d97706;
+  border-radius: 14px;
+  background: #ffffff;
+
+  &--found { border-left-color: #0f9e6e; }
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  &__title { margin: 0; font-size: 15px; font-weight: 700; color: #17151f; }
+  &__verdict {
+    font-size: 12px;
+    font-weight: 700;
+    color: #8b8798;
+    white-space: nowrap;
+  }
+  &--found &__verdict { color: #0f9e6e; }
+
+  &__site {
+    margin: 0 0 6px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11.5px;
+    color: #56526b;
+  }
+  &__desc { margin: 0 0 6px; color: #56526b; font-size: 13px; line-height: 1.5; }
+  &__caveat { margin: 0; color: #d97706; font-size: 12.5px; line-height: 1.5; }
+}
+
 .target {
   padding: 18px 20px;
   border: 1px solid #e9e7f2;
