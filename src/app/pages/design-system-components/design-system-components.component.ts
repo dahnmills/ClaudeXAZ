@@ -8,11 +8,12 @@ import {
   storybookHref as resolveStorybookHref,
   storybookIframeSrc,
 } from '../design-system-audit/design-system-audit.data';
+import { LazyVisibleDirective } from './lazy-visible.directive';
 
 @Component({
   selector: 'app-design-system-components',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, LazyVisibleDirective],
   templateUrl: './design-system-components.component.html',
   styleUrl: './design-system-components.component.scss',
 })
@@ -21,6 +22,20 @@ export class DesignSystemComponentsComponent {
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly query = signal('');
+
+  // Only the previews the user has actually scrolled near get mounted —
+  // all ~80 loading at once (each a full Storybook preview bundle) is
+  // what made the local Storybook dev server hang/crash.
+  private readonly revealed = signal<ReadonlySet<DsComponentEntry>>(new Set());
+
+  reveal(entry: DsComponentEntry): void {
+    if (this.revealed().has(entry)) return;
+    this.revealed.update((set) => new Set(set).add(entry));
+  }
+
+  isRevealed(entry: DsComponentEntry): boolean {
+    return this.revealed().has(entry);
+  }
 
   private readonly allComponents = [...DS_COMPONENTS].sort((a, b) => a.name.localeCompare(b.name));
 

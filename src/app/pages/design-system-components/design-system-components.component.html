@@ -27,11 +27,13 @@
   <div class="dsc__grid">
     @for (c of filtered(); track c.name + c.folder) {
       <div class="dsc-card">
-        <div class="dsc-card__preview">
-          @if (previewSrc(c)) {
+        <div class="dsc-card__preview" (dscLazyVisible)="reveal(c)">
+          @if (!previewSrc(c)) {
+            <span class="dsc-card__no-preview">No preview</span>
+          } @else if (isRevealed(c)) {
             <iframe [src]="previewSrc(c)" loading="lazy" title="{{ c.name }} preview" tabindex="-1"></iframe>
           } @else {
-            <span class="dsc-card__no-preview">No preview</span>
+            <span class="dsc-card__no-preview">Loading…</span>
           }
         </div>
         <span class="dsc-card__category">{{ c.category }}</span>
