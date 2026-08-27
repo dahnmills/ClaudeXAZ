@@ -8,11 +8,13 @@
     <span class="dsc__eyebrow">Design System</span>
     <h1 class="dsc__title">Components</h1>
     <p class="dsc__lead">
-      The whole <code>shared/ui</code> catalogue, with a live preview and a direct link to each
-      Storybook story. For real adoption and duplicates, see
+      The whole <code>shared/ui</code> catalogue, with an on-demand preview and a direct link to
+      each Storybook story. For real adoption and duplicates, see
       <a routerLink="/design-system-audit">Component audit</a>.
       Locally, previews and links need <code>npm run storybook</code> running alongside
-      <code>ng serve</code> (port 6006).
+      <code>ng serve</code> (port 6006). Previews load one at a time, on click — each one boots
+      a full Storybook instance, so loading many at once makes both this page and Storybook
+      itself crawl.
     </p>
   </header>
 
@@ -27,13 +29,13 @@
   <div class="dsc__grid">
     @for (c of filtered(); track c.name + c.folder) {
       <div class="dsc-card">
-        <div class="dsc-card__preview" (dscLazyVisible)="reveal(c)">
+        <div class="dsc-card__preview">
           @if (!previewSrc(c)) {
             <span class="dsc-card__no-preview">No preview</span>
           } @else if (isRevealed(c)) {
-            <iframe [src]="previewSrc(c)" loading="lazy" title="{{ c.name }} preview" tabindex="-1"></iframe>
+            <iframe [src]="previewSrc(c)" title="{{ c.name }} preview" tabindex="-1"></iframe>
           } @else {
-            <span class="dsc-card__no-preview">Loading…</span>
+            <button type="button" class="dsc-card__preview-btn" (click)="reveal(c)">▶ Preview</button>
           }
         </div>
         <span class="dsc-card__category">{{ c.category }}</span>
