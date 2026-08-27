@@ -24,6 +24,24 @@ export class DesignSystemComponentsComponent {
 
   private readonly allComponents = [...DS_COMPONENTS].sort((a, b) => a.name.localeCompare(b.name));
 
+  // Computed once, not per change-detection cycle: bypassSecurityTrustResourceUrl
+  // returns a fresh wrapper object every call, and Angular diffs [src] by
+  // object identity — calling it straight from the template made the iframe
+  // src "change" on every tick, so it kept reloading and never painted
+  // (visible as a permanent grey/blank box in every card).
+  private readonly hrefByEntry = new Map<DsComponentEntry, string | null>(
+    this.allComponents.map((c) => [
+      c,
+      resolveStorybookHref(c, { baseURI: this.document.baseURI, devMode: isDevMode() }),
+    ]),
+  );
+  private readonly previewByEntry = new Map<DsComponentEntry, SafeResourceUrl | null>(
+    this.allComponents.map((c) => {
+      const src = storybookIframeSrc(c, { baseURI: this.document.baseURI, devMode: isDevMode() });
+      return [c, src ? this.sanitizer.bypassSecurityTrustResourceUrl(src) : null];
+    }),
+  );
+
   readonly filtered = computed(() => {
     const q = this.query().trim().toLowerCase();
     if (!q) return this.allComponents;
@@ -37,11 +55,10 @@ export class DesignSystemComponentsComponent {
   }
 
   storybookHref(entry: DsComponentEntry): string | null {
-    return resolveStorybookHref(entry, { baseURI: this.document.baseURI, devMode: isDevMode() });
+    return this.hrefByEntry.get(entry) ?? null;
   }
 
   previewSrc(entry: DsComponentEntry): SafeResourceUrl | null {
-    const src = storybookIframeSrc(entry, { baseURI: this.document.baseURI, devMode: isDevMode() });
-    return src ? this.sanitizer.bypassSecurityTrustResourceUrl(src) : null;
+    return this.previewByEntry.get(entry) ?? null;
   }
 }
