@@ -81,6 +81,29 @@
           }
         }
       }
+    },
+    "design-system-lib": {
+      "projectType": "library",
+      "root": "src/app/shared/ui",
+      "sourceRoot": "src/app/shared/ui",
+      "prefix": "ds",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "src/app/shared/ui/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "src/app/shared/ui/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "src/app/shared/ui/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
     }
   },
   "cli": {

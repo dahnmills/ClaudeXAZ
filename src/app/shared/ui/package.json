@@ -1,0 +1,20 @@
+{
+  "name": "@dahnmills/design-system",
+  "version": "0.1.0",
+  "description": "Qirin design system — shared/ui components and design tokens.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dahnmills/ClaudeXAZ.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@angular/common": "^19.2.0",
+    "@angular/core": "^19.2.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

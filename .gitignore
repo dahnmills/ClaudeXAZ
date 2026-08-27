@@ -1,6 +1,7 @@
 node_modules/
 .angular/
 dist/
+out-tsc/
 
 # Storybook and build caches
 .cache/
