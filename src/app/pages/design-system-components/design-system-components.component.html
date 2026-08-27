@@ -14,17 +14,27 @@
     </p>
   </header>
 
-  <input
-    class="dsc__search"
-    type="search"
-    placeholder="Search a component…"
-    [value]="query()"
-    (input)="setQuery($any($event.target).value)"
-  />
+  <div class="dsc__toolbar">
+    <input
+      class="dsc__search"
+      type="search"
+      placeholder="Search a component…"
+      [value]="query()"
+      (input)="setQuery($any($event.target).value)"
+    />
+    <div class="dsc__view-toggle" role="group" aria-label="Layout">
+      <button type="button" class="dsc__view-btn" [class.dsc__view-btn--active]="viewMode() === 'grid'" (click)="setViewMode('grid')" aria-label="Grid view">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>
+      </button>
+      <button type="button" class="dsc__view-btn" [class.dsc__view-btn--active]="viewMode() === 'list'" (click)="setViewMode('list')" aria-label="List view">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><rect x="3" y="4" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="10" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="16" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>
+      </button>
+    </div>
+  </div>
 
-  <div class="dsc__grid">
+  <div class="dsc__grid" [class.dsc__grid--list]="viewMode() === 'list'">
     @for (c of filtered(); track c.name + c.folder) {
-      <div class="dsc-card">
+      <div class="dsc-card" [class.dsc-card--list]="viewMode() === 'list'">
         <div class="dsc-card__preview">
           <div class="dsc-card__preview-inner">
           @switch (c.name) {
@@ -263,9 +273,11 @@
           }
           </div>
         </div>
-        <span class="dsc-card__category">{{ c.category }}</span>
-        <h2 class="dsc-card__name">{{ c.name }}</h2>
-        <span class="dsc-card__folder">shared/ui/{{ c.folder }}</span>
+        <div class="dsc-card__info">
+          <span class="dsc-card__category">{{ c.category }}</span>
+          <h2 class="dsc-card__name">{{ c.name }}</h2>
+          <span class="dsc-card__folder">shared/ui/{{ c.folder }}</span>
+        </div>
       </div>
     } @empty {
       <p class="dsc__empty">No component matches this search.</p>

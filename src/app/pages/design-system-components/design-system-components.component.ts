@@ -291,6 +291,11 @@ export class DesignSystemComponentsComponent {
   private readonly toaster = inject(ToasterService);
 
   readonly query = signal('');
+  readonly viewMode = signal<'grid' | 'list'>('grid');
+
+  setViewMode(mode: 'grid' | 'list'): void {
+    this.viewMode.set(mode);
+  }
 
   private readonly allComponents = [...DS_COMPONENTS].sort((a, b) => a.name.localeCompare(b.name));
 

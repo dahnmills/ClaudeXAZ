@@ -63,11 +63,17 @@
     a:hover { text-decoration: underline; }
   }
 
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0 20px;
+  }
+
   &__search {
     display: block;
     width: 100%;
     max-width: 320px;
-    margin: 28px 0 20px;
     padding: 8px 14px;
     border-radius: 100px;
     border: 1px solid #e9e7f2;
@@ -79,6 +85,32 @@
     &:focus-visible { outline: 2px solid #2b6bff; outline-offset: 2px; }
   }
 
+  &__view-toggle {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 100px;
+    border: 1px solid #e9e7f2;
+    background: #ffffff;
+    flex-shrink: 0;
+  }
+  &__view-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 26px;
+    border: none;
+    border-radius: 100px;
+    background: none;
+    color: #b5b1c4;
+    cursor: pointer;
+
+    &:hover { color: #56526b; }
+    &:focus-visible { outline: 2px solid #2b6bff; outline-offset: 2px; }
+    &--active { background: #17151f; color: #ffffff; }
+  }
+
   &__grid {
     display: grid;
     // Fixed card width (not 1fr) — every preview needs a known, identical
@@ -86,6 +118,10 @@
     // the uniform CSS scale factor below wrong on wider viewports.
     grid-template-columns: repeat(auto-fill, 240px);
     gap: 12px;
+
+    &--list {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__empty { color: #8b8798; font-size: 14px; }
@@ -126,14 +162,17 @@
   }
   // Fixed "design canvas" every component renders into at its real size,
   // then shrunk with ONE uniform scale — never stretched, so nothing gets
-  // distorted. Ratio matches the preview box exactly (240/420 = 140/245)
-  // so a component that fills the canvas fills the thumbnail too; a small
-  // atom (e.g. an icon) just renders small inside it, which is fine.
+  // distorted. Ratio matches the grid preview box exactly (240/420 =
+  // 140/245) so a component that fills the canvas fills the thumbnail
+  // too; a small atom (e.g. an icon) just renders small, which is fine.
+  // --preview-scale is overridden by the list layout below (smaller
+  // thumbnail, same 420:245 canvas, so the ratio — and the "no distortion"
+  // guarantee — stays identical).
   &__preview-inner {
     flex-shrink: 0;
     width: 420px;
     height: 245px;
-    transform: scale(0.5714286);
+    transform: scale(var(--preview-scale, 0.5714286));
     transform-origin: center center;
     display: flex;
     align-items: center;
@@ -142,6 +181,41 @@
   &__no-preview {
     font-size: 12px;
     color: #d7d3e8;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0; // lets __folder ellipsis instead of forcing the row wider
+  }
+
+  // ── List layout: row instead of card, small left-hand thumbnail ────────
+  &--list {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 16px;
+
+    .dsc-card__preview {
+      flex-shrink: 0;
+      width: calc(60px * 420 / 245);
+      height: 60px;
+      margin: 0;
+      border-radius: 10px;
+      border-bottom: none;
+      border: 1px solid #efeef5;
+      --preview-scale: 0.244898; // 60/245 — same 420:245 canvas, smaller thumbnail
+    }
+    .dsc-card__info { flex-direction: row; align-items: baseline; gap: 10px; }
+    .dsc-card__category { flex-shrink: 0; width: 90px; }
+    .dsc-card__name { flex-shrink: 0; }
+    .dsc-card__folder {
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   &__category {
