@@ -8,43 +8,43 @@
     <span class="dsa__eyebrow">Design System</span>
     <h1 class="dsa__title">Component audit</h1>
     <p class="dsa__lead">
-      Cartographie de tout le catalogue <code>shared/ui</code> : adoption réelle, couverture Storybook,
-      doublons et patterns jamais mutualisés. Snapshot figé des audits du 25-26/08/2026, pas un scan live.
-      En local, les liens Storybook nécessitent <code>npm run storybook</code> lancé en parallèle (port 6006).
+      A map of the whole <code>shared/ui</code> catalogue: real adoption, Storybook coverage,
+      duplicates and un-mutualized patterns. A frozen snapshot from the 2026-08-25/26 audits, not a live scan.
+      Locally, Storybook links need <code>npm run storybook</code> running alongside <code>ng serve</code> (port 6006).
     </p>
   </header>
 
-  <section class="dsa__stats" aria-label="Statistiques">
+  <section class="dsa__stats" aria-label="Statistics">
     <div class="stat">
       <span class="stat__value">{{ stats().total }}</span>
-      <span class="stat__label">Composants</span>
+      <span class="stat__label">Components</span>
     </div>
     <div class="stat">
       <span class="stat__value">{{ stats().storiedPct }}%</span>
-      <span class="stat__label">Storyés ({{ stats().storied }}/{{ stats().total }})</span>
+      <span class="stat__label">Storied ({{ stats().storied }}/{{ stats().total }})</span>
     </div>
     <div class="stat">
       <span class="stat__value">{{ stats().adoptedPct }}%</span>
-      <span class="stat__label">Adoptés dans une page</span>
+      <span class="stat__label">Adopted in a page</span>
     </div>
     <div class="stat stat--warn">
       <span class="stat__value">{{ stats().orphans }}</span>
-      <span class="stat__label">Orphelins</span>
+      <span class="stat__label">Orphans</span>
     </div>
     <div class="stat stat--warn">
       <span class="stat__value">{{ stats().duplicates }}</span>
-      <span class="stat__label">Doublons</span>
+      <span class="stat__label">Duplicates</span>
     </div>
     <div class="stat stat--warn">
       <span class="stat__value">{{ stats().noStory }}</span>
-      <span class="stat__label">Sans story</span>
+      <span class="stat__label">No story</span>
     </div>
   </section>
 
   <section class="dsa__table-section">
     <div class="dsa__filters">
       <div class="dsa__pills">
-        <button class="dsa__pill" [class.dsa__pill--active]="statusFilter() === 'all'" (click)="setStatusFilter('all')">Tous</button>
+        <button class="dsa__pill" [class.dsa__pill--active]="statusFilter() === 'all'" (click)="setStatusFilter('all')">All</button>
         @for (s of statusOptions; track s) {
           <button class="dsa__pill" [class.dsa__pill--active]="statusFilter() === s" (click)="setStatusFilter(s)">
             {{ statusLabels[s] }}
@@ -54,7 +54,7 @@
       <input
         class="dsa__search"
         type="search"
-        placeholder="Rechercher un composant…"
+        placeholder="Search a component…"
         [value]="query()"
         (input)="setQuery($any($event.target).value)"
       />
@@ -64,10 +64,10 @@
       <table class="dsa__table">
         <thead>
           <tr>
-            <th>Composant</th>
-            <th>Catégorie</th>
+            <th>Component</th>
+            <th>Category</th>
             <th>Usage</th>
-            <th>Statut</th>
+            <th>Status</th>
             <th>Storybook</th>
           </tr>
         </thead>
@@ -87,14 +87,14 @@
               </td>
               <td>
                 @if (storybookHref(c)) {
-                  <a class="dsa__sb-link" [href]="storybookHref(c)" target="_blank" rel="noopener">Voir la story ↗</a>
+                  <a class="dsa__sb-link" [href]="storybookHref(c)" target="_blank" rel="noopener">View story ↗</a>
                 } @else {
-                  <span class="dsa__cell-muted">— pas de story</span>
+                  <span class="dsa__cell-muted">— no story</span>
                 }
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="5" class="dsa__empty">Aucun composant ne correspond à ce filtre.</td></tr>
+            <tr><td colspan="5" class="dsa__empty">No component matches this filter.</td></tr>
           }
         </tbody>
       </table>
@@ -102,8 +102,8 @@
   </section>
 
   <section class="dsa__section">
-    <h2 class="dsa__section-title">Patterns à mutualiser</h2>
-    <p class="dsa__section-lead">Répétés dans les pages, pas encore un composant <code>ds-*</code> unique.</p>
+    <h2 class="dsa__section-title">Patterns to mutualize</h2>
+    <p class="dsa__section-lead">Repeated across pages, not yet a single <code>ds-*</code> component.</p>
     <ul class="dsa__targets">
       @for (t of mutualizationTargets; track t.title) {
         <li class="target">
@@ -111,7 +111,7 @@
             <h3 class="target__title">{{ t.title }}</h3>
             <span class="target__effort target__effort--{{ t.effort }}">{{ t.effort }}</span>
             @if (t.onHold) {
-              <span class="target__hold" [title]="t.onHold">En pause</span>
+              <span class="target__hold" [title]="t.onHold">On hold</span>
             }
           </div>
           <p class="target__desc">{{ t.description }}</p>
@@ -126,22 +126,22 @@
   </section>
 
   <section class="dsa__section">
-    <h2 class="dsa__section-title">Orphelins — candidats de remplacement</h2>
+    <h2 class="dsa__section-title">Orphans — replacement candidates</h2>
     <p class="dsa__section-lead">
-      Pour chaque composant construit mais jamais adopté, y a-t-il un pattern natif dans les pages qui pourrait
-      l'adopter ? Vérifié CSS par CSS, pas juste sur la forme — une ressemblance de surface ne suffit pas
-      (cf. Select Button / Tile).
+      For each component that's built but never adopted, is there a native pattern in the pages that could
+      adopt it? Checked CSS by CSS, not just by shape — a surface resemblance isn't enough
+      (see Select Button / Tile).
     </p>
     <ul class="dsa__candidates">
-      <!-- ── Flyout : buyer-summary's hand-built toolbar chrome → ds-flyout ── -->
+      <!-- ── Flyout: buyer-summary's hand-built toolbar chrome → ds-flyout ── -->
       <li class="candidate candidate--found">
         <div class="candidate__head">
-          <h3 class="candidate__title">Flyout (panel de base)</h3>
-          <span class="candidate__verdict">→ remplacer par celui-là</span>
+          <h3 class="candidate__title">Flyout (base panel)</h3>
+          <span class="candidate__verdict">→ replace with this one</span>
         </div>
         <div class="swap">
           <div class="swap__side">
-            <span class="swap__label">Ce qu'on a</span>
+            <span class="swap__label">What we have</span>
             <div class="swap__stage">
               <div class="preview-toolbar">
                 <ds-button-icon type="plain" tone="default" ariaLabel="Duplicate"><ds-icon name="copy" [size]="16" /></ds-button-icon>
@@ -149,11 +149,11 @@
                 <ds-button-icon type="plain" tone="default" ariaLabel="Remove"><ds-icon name="trash" [size]="16" /></ds-button-icon>
               </div>
             </div>
-            <span class="swap__caption">buyer-summary.component.html:96-126 — .bs-toolbar (div natif)</span>
+            <span class="swap__caption">buyer-summary.component.html:96-126 — .bs-toolbar (native div)</span>
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
-            <span class="swap__label">Remplacer par</span>
+            <span class="swap__label">Replace with</span>
             <div class="swap__stage">
               <ds-flyout class="preview-flyout">
                 <ds-button-icon type="plain" tone="default" ariaLabel="Duplicate"><ds-icon name="copy" [size]="16" /></ds-button-icon>
@@ -164,18 +164,18 @@
             <span class="swap__caption">ds-flyout — Design System/Layout/Flyout</span>
           </div>
         </div>
-        <p class="candidate__caveat">⚠ ds-flyout est un role="dialog" avec min-width 290px (visible ci-dessus, plus large que le toolbar compact) — pensé pour un menu déroulant, pas une toolbar au survol. À adapter avant de swapper pour de vrai.</p>
+        <p class="candidate__caveat">⚠ ds-flyout is a role="dialog" with a 290px min-width (visible above, wider than the compact toolbar) — built for a dropdown menu, not a hover toolbar. Needs adapting before a real swap.</p>
       </li>
 
-      <!-- ── Action Card : hub's .zone tile → ds-action-card ── -->
+      <!-- ── Action Card: hub's .zone tile → ds-action-card ── -->
       <li class="candidate candidate--found">
         <div class="candidate__head">
           <h3 class="candidate__title">Action Card</h3>
-          <span class="candidate__verdict">→ remplacer par celui-là</span>
+          <span class="candidate__verdict">→ replace with this one</span>
         </div>
         <div class="swap">
           <div class="swap__side">
-            <span class="swap__label">Ce qu'on a</span>
+            <span class="swap__label">What we have</span>
             <div class="swap__stage">
               <a class="preview-zone">
                 <span class="preview-zone__icon" aria-hidden="true">
@@ -187,11 +187,11 @@
                 <span class="preview-zone__cta">Open the screens →</span>
               </a>
             </div>
-            <span class="swap__caption">hub.page.html:12-34 — .zone (a natif)</span>
+            <span class="swap__caption">hub.page.html:12-34 — .zone (native a)</span>
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
-            <span class="swap__label">Remplacer par</span>
+            <span class="swap__label">Replace with</span>
             <div class="swap__stage">
               <div class="preview-action-card">
                 <ds-action-card title="Prototype" description="Browse freely through all screens, with the handoff inspector." linkLabel="Open the screens">
@@ -202,18 +202,18 @@
             <span class="swap__caption">ds-action-card — Design System/Data Display/Action Card</span>
           </div>
         </div>
-        <p class="candidate__caveat">⚠ hub.page est délibérément hors-DS (couleurs par tuile, police Bricolage Grotesque, animation de lift au survol) — swapper perdrait ce theming à moins d'étendre l'atome.</p>
+        <p class="candidate__caveat">⚠ hub.page is deliberately off-DS (per-tile colors, Bricolage Grotesque font, hover-lift animation) — swapping would lose that theming unless the atom is extended.</p>
       </li>
 
-      <!-- ── Sans candidat honnête : le composant existe, mais rien à côté pour l'échanger ── -->
+      <!-- ── No honest candidate: the component exists, but nothing to swap it for ── -->
       <li class="candidate">
         <div class="candidate__head">
           <h3 class="candidate__title">Toggle</h3>
-          <span class="candidate__verdict">Pas de candidat</span>
+          <span class="candidate__verdict">No candidate</span>
         </div>
         <div class="swap">
           <div class="swap__side">
-            <span class="swap__label">Ce qu'on a</span>
+            <span class="swap__label">What we have</span>
             <div class="swap__stage">
               <ds-toggle label="Enabled" [selected]="true" />
             </div>
@@ -221,24 +221,24 @@
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
-            <span class="swap__label">Remplacer par</span>
+            <span class="swap__label">Replace with</span>
             <div class="swap__stage swap__stage--empty">
-              <span class="swap__empty-text">Pas de candidat</span>
+              <span class="swap__empty-text">No candidate</span>
             </div>
             <span class="swap__caption">&nbsp;</span>
           </div>
         </div>
-        <p class="candidate__desc">Aucun switch on/off natif trouvé dans pages/**. Tous les contrôles booléens repérés utilisent déjà ds-checkbox correctement.</p>
+        <p class="candidate__desc">No native on/off switch found in pages/**. Every boolean control found already correctly uses ds-checkbox.</p>
       </li>
 
       <li class="candidate">
         <div class="candidate__head">
           <h3 class="candidate__title">Popover</h3>
-          <span class="candidate__verdict">Pas de candidat</span>
+          <span class="candidate__verdict">No candidate</span>
         </div>
         <div class="swap">
           <div class="swap__side">
-            <span class="swap__label">Ce qu'on a</span>
+            <span class="swap__label">What we have</span>
             <div class="swap__stage">
               <ds-popover title="Filters" [dismissible]="true">
                 Refine results by status, date and owner.
@@ -248,24 +248,24 @@
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
-            <span class="swap__label">Remplacer par</span>
+            <span class="swap__label">Replace with</span>
             <div class="swap__stage swap__stage--empty">
-              <span class="swap__empty-text">Pas de candidat</span>
+              <span class="swap__empty-text">No candidate</span>
             </div>
             <span class="swap__caption">&nbsp;</span>
           </div>
         </div>
-        <p class="candidate__desc">Aucun panel avec flèche + en-tête + bouton fermer trouvé dans pages/**. Le near-miss le plus proche (.nm-datefield__panel) n'a ni flèche ni en-tête — c'est un wrapper de positionnement pour ds-date-range, pas un popover.</p>
+        <p class="candidate__desc">No panel with an arrow + header + close button found in pages/**. The closest near-miss (.nm-datefield__panel) has neither an arrow nor a header — it's a positioning wrapper for ds-date-range, not a popover.</p>
       </li>
 
       <li class="candidate">
         <div class="candidate__head">
           <h3 class="candidate__title">Timeline Event</h3>
-          <span class="candidate__verdict">Pas de candidat</span>
+          <span class="candidate__verdict">No candidate</span>
         </div>
         <div class="swap">
           <div class="swap__side">
-            <span class="swap__label">Ce qu'on a</span>
+            <span class="swap__label">What we have</span>
             <div class="swap__stage">
               <ds-timeline style="width:100%;">
                 <ds-timeline-event title="Renewal proposed" status="info" [open]="true">
@@ -278,14 +278,14 @@
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
-            <span class="swap__label">Remplacer par</span>
+            <span class="swap__label">Replace with</span>
             <div class="swap__stage swap__stage--empty">
-              <span class="swap__empty-text">Pas de candidat</span>
+              <span class="swap__empty-text">No candidate</span>
             </div>
             <span class="swap__caption">&nbsp;</span>
           </div>
         </div>
-        <p class="candidate__desc">Aucun rail chronologique (points + ligne + header collapsible) trouvé. history-row.component (tag-configuration) est une ligne de tableau à plat, pas une timeline — forcer le match serait artificiel.</p>
+        <p class="candidate__desc">No chronological rail (dots + line + collapsible header) found. history-row.component (tag-configuration) is a flat table row, not a timeline — forcing the match would be artificial.</p>
       </li>
     </ul>
   </section>

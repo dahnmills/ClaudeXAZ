@@ -21,10 +21,10 @@ type StatusFilter = 'all' | ComponentStatus;
 
 const STATUS_LABELS: Record<ComponentStatus, string> = {
   core: 'Core',
-  niche: 'Usage ponctuel',
-  orphan: 'Orphelin',
-  duplicate: 'Doublon',
-  internal: 'Interne',
+  niche: 'Niche usage',
+  orphan: 'Orphan',
+  duplicate: 'Duplicate',
+  internal: 'Internal',
 };
 
 @Component({
@@ -97,7 +97,7 @@ export class DesignSystemAuditComponent {
   usageLabel(entry: DsComponentEntry): string {
     if (entry.usagePages?.length) return entry.usagePages.join(', ');
     if (entry.usageCount !== null) return `${entry.usageCount} usage${entry.usageCount === 1 ? '' : 's'}`;
-    return 'Non détaillé';
+    return 'Not detailed';
   }
 
   storybookHref(entry: DsComponentEntry): string | null {

@@ -8,16 +8,18 @@
     <span class="dsc__eyebrow">Design System</span>
     <h1 class="dsc__title">Components</h1>
     <p class="dsc__lead">
-      Tout le catalogue <code>shared/ui</code>, avec un accès direct à chaque story Storybook.
-      Pour l'adoption réelle et les doublons, voir
+      The whole <code>shared/ui</code> catalogue, with a live preview and a direct link to each
+      Storybook story. For real adoption and duplicates, see
       <a routerLink="/design-system-audit">Component audit</a>.
+      Locally, previews and links need <code>npm run storybook</code> running alongside
+      <code>ng serve</code> (port 6006).
     </p>
   </header>
 
   <input
     class="dsc__search"
     type="search"
-    placeholder="Rechercher un composant…"
+    placeholder="Search a component…"
     [value]="query()"
     (input)="setQuery($any($event.target).value)"
   />
@@ -29,20 +31,20 @@
           @if (previewSrc(c)) {
             <iframe [src]="previewSrc(c)" loading="lazy" title="{{ c.name }} preview" tabindex="-1"></iframe>
           } @else {
-            <span class="dsc-card__no-preview">Pas d'aperçu</span>
+            <span class="dsc-card__no-preview">No preview</span>
           }
         </div>
         <span class="dsc-card__category">{{ c.category }}</span>
         <h2 class="dsc-card__name">{{ c.name }}</h2>
         <span class="dsc-card__folder">shared/ui/{{ c.folder }}</span>
         @if (storybookHref(c)) {
-          <a class="dsc-card__link" [href]="storybookHref(c)" target="_blank" rel="noopener">Voir la story ↗</a>
+          <a class="dsc-card__link" [href]="storybookHref(c)" target="_blank" rel="noopener">View story ↗</a>
         } @else {
-          <span class="dsc-card__no-story">Pas de story</span>
+          <span class="dsc-card__no-story">No story</span>
         }
       </div>
     } @empty {
-      <p class="dsc__empty">Aucun composant ne correspond à cette recherche.</p>
+      <p class="dsc__empty">No component matches this search.</p>
     }
   </div>
 </main>
