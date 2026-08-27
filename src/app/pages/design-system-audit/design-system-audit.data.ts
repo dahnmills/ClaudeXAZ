@@ -316,7 +316,18 @@ const STORYBOOK_FIRST_STORY_ID: Record<string, string> = {
   'UI/Spotlight': 'ui-spotlight--empty',
 };
 
-/** Live embed of the component's first story — the visual, not a description. */
+/**
+ * Live embed of the component's first story — the visual, not a description.
+ *
+ * Deliberately NOT `iframe.html?id=...` (Storybook's bare preview frame):
+ * that frame expects a postMessage handshake from the manager UI to know
+ * which story to render, and never gets one when loaded standalone in our
+ * own iframe — it just sits on its loading spinner forever, no error, no
+ * console output. The supported way to embed a single story full-screen is
+ * the same URL the "View story" link already uses, with `viewMode=story`
+ * added — that's Storybook's own "full screen story" mode (hides the
+ * sidebar/toolbar), and it boots the real app instead of the bare frame.
+ */
 export function storybookIframeSrc(
   entry: DsComponentEntry,
   opts: { baseURI: string; devMode: boolean },
@@ -325,5 +336,5 @@ export function storybookIframeSrc(
   const storyId = STORYBOOK_FIRST_STORY_ID[entry.storybookTitle];
   if (!storyId) return null;
   const base = opts.devMode ? 'http://localhost:6006/' : `${opts.baseURI}storybook/`;
-  return `${base}iframe.html?id=${storyId}&viewMode=story`;
+  return `${base}?path=/story/${storyId}&viewMode=story`;
 }
