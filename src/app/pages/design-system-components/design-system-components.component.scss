@@ -81,7 +81,10 @@
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    // Fixed card width (not 1fr) — every preview needs a known, identical
+    // box to scale its content into. A flexible column width would make
+    // the uniform CSS scale factor below wrong on wider viewports.
+    grid-template-columns: repeat(auto-fill, 240px);
     gap: 12px;
   }
 
@@ -101,7 +104,7 @@
   &:hover { border-color: #d7d3e8; }
 
   &__preview {
-    height: 130px;
+    height: 140px;
     margin: -16px -18px 10px;
     overflow: hidden;
     background: #fbfaff;
@@ -110,31 +113,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
-    iframe {
-      width: 100%;
-      height: 320px;
-      border: 0;
-      pointer-events: none; // it's a thumbnail, not an interactive embed
-    }
+    position: relative;
+    // Purely illustrative — nothing inside should be clickable/hoverable.
+    pointer-events: none;
+    // Several components (Modal, Drawer, Popin, Filter Drawer, Spotlight)
+    // are `position: fixed` in their own stylesheet — real overlays, not
+    // thumbnails. `contain: paint` gives this box its own containing block,
+    // so a "fixed" descendant positions itself relative to THIS box instead
+    // of the viewport, and gets clipped by its overflow instead of covering
+    // the whole page.
+    contain: paint;
+  }
+  // Fixed "design canvas" every component renders into at its real size,
+  // then shrunk with ONE uniform scale — never stretched, so nothing gets
+  // distorted. Ratio matches the preview box exactly (240/420 = 140/245)
+  // so a component that fills the canvas fills the thumbnail too; a small
+  // atom (e.g. an icon) just renders small inside it, which is fine.
+  &__preview-inner {
+    flex-shrink: 0;
+    width: 420px;
+    height: 245px;
+    transform: scale(0.5714286);
+    transform-origin: center center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   &__no-preview {
     font-size: 12px;
     color: #d7d3e8;
-  }
-  &__preview-btn {
-    padding: 6px 14px;
-    border-radius: 100px;
-    border: 1px solid #e9e7f2;
-    background: #ffffff;
-    color: #56526b;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:hover { border-color: #d7d3e8; color: #1a4fe0; }
-    &:focus-visible { outline: 2px solid #2b6bff; outline-offset: 2px; }
   }
 
   &__category {
@@ -155,16 +162,5 @@
     font-size: 11px;
     color: #b5b1c4;
     margin-bottom: 8px;
-  }
-  &__link {
-    color: #1a4fe0;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    &:hover { text-decoration: underline; }
-  }
-  &__no-story {
-    font-size: 13px;
-    color: #b5b1c4;
   }
 }

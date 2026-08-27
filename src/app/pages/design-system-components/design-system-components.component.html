@@ -8,13 +8,9 @@
     <span class="dsc__eyebrow">Design System</span>
     <h1 class="dsc__title">Components</h1>
     <p class="dsc__lead">
-      The whole <code>shared/ui</code> catalogue, with an on-demand preview and a direct link to
-      each Storybook story. For real adoption and duplicates, see
+      The whole <code>shared/ui</code> catalogue, each one rendered live — the real component, not a
+      screenshot or an embedded Storybook. For real adoption and duplicates, see
       <a routerLink="/design-system-audit">Component audit</a>.
-      Locally, previews and links need <code>npm run storybook</code> running alongside
-      <code>ng serve</code> (port 6006). Previews load one at a time, on click — each one boots
-      a full Storybook instance, so loading many at once makes both this page and Storybook
-      itself crawl.
     </p>
   </header>
 
@@ -30,25 +26,252 @@
     @for (c of filtered(); track c.name + c.folder) {
       <div class="dsc-card">
         <div class="dsc-card__preview">
-          @if (!previewSrc(c)) {
-            <span class="dsc-card__no-preview">No preview</span>
-          } @else if (isRevealed(c)) {
-            <iframe [src]="previewSrc(c)" title="{{ c.name }} preview" tabindex="-1"></iframe>
-          } @else {
-            <button type="button" class="dsc-card__preview-btn" (click)="reveal(c)">▶ Preview</button>
+          <div class="dsc-card__preview-inner">
+          @switch (c.name) {
+            @case ('Icon') { <ds-icon name="search" [size]="24" /> }
+            @case ('Input Text') { <div style="width:200px;"><ds-input-text label="Name" placeholder="Jean Dupont" /></div> }
+            @case ('Button') { <ds-button type="primary">Validate</ds-button> }
+            @case ('Tab') {
+              <div style="display:flex;gap:16px;border-bottom:1px solid #d9d9d9;padding:0 8px;">
+                <ds-tab [selected]="true">Dashboard</ds-tab>
+                <ds-tab>Contracts</ds-tab>
+              </div>
+            }
+            @case ('Select') { <div style="width:180px;"><ds-select label="Type" placeholder="Choose…" [options]="[{value:'siren',label:'SIREN'},{value:'siret',label:'SIRET'}]" value="siren" /></div> }
+            @case ('Flyout Menu Item') {
+              <div style="padding:16px;background:#f4f4f4;">
+                <ds-flyout-menu><ds-flyout-menu-item label="Duplicate" icon="duplicate" /></ds-flyout-menu>
+              </div>
+            }
+            @case ('Button Icon') { <ds-button-icon type="primary" ariaLabel="Close"><ds-icon name="close" [size]="16" /></ds-button-icon> }
+            @case ('Crumb') { <ds-crumb label="Crumb" href="#" /> }
+            @case ('Cell Header') { <div style="width:180px;"><ds-cell-header type="default" title="Header" [sortable]="true" /></div> }
+            @case ('Properties Panel') { <div style="width:100%;padding:0 8px;"><ds-properties-panel [sections]="propertySections" [columns]="1" variant="card" /></div> }
+            @case ('Cell') { <div style="width:160px;"><ds-cell>036601</ds-cell></div> }
+            @case ('Modal') {
+              <ds-modal [open]="true" size="medium" title="Title" [closeOnEscape]="false" contentHeight="60px">
+                <p style="font-size:13px;">Review the terms below before confirming.</p>
+                <div slot="actions"><ds-button type="primary">Confirm</ds-button></div>
+              </ds-modal>
+            }
+            @case ('Badge') { <ds-badge label="In progress" status="info" variant="light" size="s" /> }
+            @case ('Link') { <ds-link href="#">View contract</ds-link> }
+            @case ('Flyout Menu') {
+              <div style="padding:16px;background:#f4f4f4;">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="Duplicate" icon="duplicate" />
+                  <ds-flyout-menu-item label="Archive" icon="archive" />
+                </ds-flyout-menu>
+              </div>
+            }
+            @case ('Card') { <ds-card style="max-width:200px;"><div style="font-size:13px;font-weight:600;">Card title</div></ds-card> }
+            @case ('Widget Card') {
+              <div style="width:220px;">
+                <ds-widget-card title="Risk figures (USD)">
+                  <ds-properties-panel [sections]="widgetSections" [columns]="1" variant="flat" layout="stacked" />
+                </ds-widget-card>
+              </div>
+            }
+            @case ('Page Header') {
+              <div style="width:100%;">
+                <ds-page-header [topbox]="false" [breadcrumb]="false" [tabs]="false">
+                  <ds-page-title slot="title" title="Current page" />
+                </ds-page-header>
+              </div>
+            }
+            @case ('Breadcrumbs') {
+              <ds-breadcrumbs>
+                <ds-crumb label="Home" href="#" />
+                <ds-crumb label="Buyers" [currentPage]="true" />
+              </ds-breadcrumbs>
+            }
+            @case ('Table Row') {
+              <div style="width:100%;padding:0 8px;">
+                <ds-table-row>
+                  <ds-cell-selection control="check" [checked]="false" />
+                  <ds-cell style="flex:1;">The Interactive College</ds-cell>
+                  <ds-cell style="flex:1;"><ds-badge label="Computing" status="info" variant="strong" size="s" /></ds-cell>
+                  <ds-cell-action ariaLabel="Row actions">
+                    <ds-flyout-menu slot="menu"><ds-flyout-menu-item label="Edit" icon="edit" /></ds-flyout-menu>
+                  </ds-cell-action>
+                </ds-table-row>
+              </div>
+            }
+            @case ('Page Title') { <ds-page-title title="Current page" /> }
+            @case ('Checkbox') { <ds-checkbox label="Label" [checked]="true" /> }
+            @case ('Standalone Dropdown') { <ds-standalone-dropdown icon="hash" label="Company ID" /> }
+            @case ('Side Nav') {
+              <ds-side-nav style="height:110px;">
+                <ds-side-nav-item [selected]="true">Dashboard</ds-side-nav-item>
+                <ds-side-nav-item>Contracts</ds-side-nav-item>
+              </ds-side-nav>
+            }
+            @case ('Logo') { <ds-logo appName="Qirin" /> }
+            @case ('Header') {
+              <ds-header>
+                <ds-logo slot="logo" [reversed]="true" appName="Qirin" />
+                <ng-container slot="tabs"><ds-tab tone="reversed" [selected]="true">Home</ds-tab></ng-container>
+              </ds-header>
+            }
+            @case ('Segmented Control') { <ds-segmented-control [options]="segmentedOptions" selected="active" /> }
+            @case ('Pie Chart') { <ds-pie-chart [segments]="pieSegments" [size]="88" [thickness]="12" /> }
+            @case ('Newsfeed') {
+              <div style="width:220px;height:130px;">
+                <ds-newsfeed title="Newsfeed" [tags]="newsfeedTags" headline="JP Morgan Investment Trusts" date="11 nov 2024" excerpt="Yesterday, someone bought an electric car…" />
+              </div>
+            }
+            @case ('Drawer') {
+              <ds-drawer [open]="true" title="Filters">
+                <div style="padding:12px 16px;font-size:13px;">Drawer content</div>
+                <div slot="footer" style="display:flex;justify-content:flex-end;gap:8px;padding:10px 16px;">
+                  <ds-button type="secondary">Cancel</ds-button>
+                  <ds-button type="primary">Apply</ds-button>
+                </div>
+              </ds-drawer>
+            }
+            @case ('Input Search') { <div style="width:200px;"><ds-input-search placeholder="Search…" /></div> }
+            @case ('Grid Selection') { <div style="width:130px;"><ds-grid-selection [layout]="gridLayout" [selected]="true" /></div> }
+            @case ('Chart') { <div style="width:220px;"><ds-chart [data]="chartData" [xLabels]="chartMonths" [height]="80" tone="brand" /></div> }
+            @case ('Grade') { <ds-grade type="manual" [grade]="5" [score]="5" /> }
+            @case ('Button Split') {
+              <ds-button-split type="primary">
+                Save
+                <ds-flyout-menu slot="menu"><ds-flyout-menu-item label="Save as draft" icon="save" /></ds-flyout-menu>
+              </ds-button-split>
+            }
+            @case ('Spotlight') {
+              <div style="width:240px;height:130px;overflow:hidden;position:relative;">
+                <ds-spotlight [open]="true" query="ama" [items]="spotlightItems" [recents]="spotlightItems" />
+              </div>
+            }
+            @case ('Search Bar Multi') { <ds-search-bar-multi type="company-id" [criteriaCount]="0" /> }
+            @case ('More Criteria') { <div style="width:240px;"><ds-more-criteria /></div> }
+            @case ('Result Card') { <div style="width:240px;"><ds-result-card [data]="resultCardData" [open]="false" /></div> }
+            @case ('Date Range') { <ds-date-range type="single" selection="range" /> }
+            @case ('Search Bar') { <div style="width:240px;"><ds-search-bar placeholder="Search for a buyer" buttonLabel="Search" [recentSearches]="[]" /></div> }
+            @case ('Action Card') {
+              <div style="width:200px;">
+                <ds-action-card title="Find a buyer" description="Search and identify a buyer from your portfolio." linkLabel="Get started">
+                  <ds-icon slot="icon" name="user" [size]="24" />
+                </ds-action-card>
+              </div>
+            }
+            @case ('Filter Drawer') { <ds-filter-drawer [open]="true" title="Filters" [filters]="filterDefs" /> }
+            @case ('Radio Card') { <div style="width:200px;"><ds-radio-card label="None" sublabel="Ultra fab, Inc." badge="Draft" [selected]="true" /></div> }
+            @case ('Stepper') { <div style="width:180px;"><ds-stepper [steps]="stepperSteps" [current]="2" /></div> }
+            @case ('Tag Filter Chip') { <ds-tag-filter-chip label="Sensitivity" [options]="tagFilterOptions" variant="chip" /> }
+            @case ('Chip') { <ds-chip label="France" type="static" /> }
+            @case ('Tag') { <ds-tag type="select" label="Active" [selected]="true" /> }
+            @case ('Select Button') { <ds-select-button label="Label" sublabel="Sublabel" icon="file" [selected]="true" /> }
+            @case ('Tile') { <ds-tile label="Label" icon="user" [selected]="true" /> }
+            @case ('Timeline Event') {
+              <ds-timeline style="width:100%;">
+                <ds-timeline-event title="Renewal proposed" status="info" [open]="true" [isLast]="true">
+                  A renewal proposal was sent to the buyer.
+                </ds-timeline-event>
+              </ds-timeline>
+            }
+            @case ('Toggle') { <ds-toggle label="Enabled" [selected]="true" /> }
+            @case ('Popover') {
+              <div style="padding:20px;">
+                <ds-popover title="Filters" [dismissible]="true">Refine results by status and date.</ds-popover>
+              </div>
+            }
+            @case ('Flyout (base panel)') {
+              <div style="padding:16px;background:#f4f4f4;">
+                <ds-flyout style="width:220px;">
+                  <ds-flyout-section label="You are viewing" [highlighted]="true">
+                    <ds-flyout-item title="Liability Insurance Program" reference="P11000469" [emphasized]="true" />
+                  </ds-flyout-section>
+                </ds-flyout>
+              </div>
+            }
+            @case ('Flyout Item') { <div style="width:220px;"><ds-flyout-item title="Liability Insurance Program" reference="P11000469" /></div> }
+            @case ('Flyout Section') {
+              <div style="width:220px;background:white;">
+                <ds-flyout-section label="Parents" icon="arrow-up">
+                  <ds-flyout-item title="Liability Insurance Program" reference="P11000469" />
+                </ds-flyout-section>
+              </div>
+            }
+            @case ('Icon Tile') { <ds-icon-tile size="m" tone="brand"><ds-icon name="grid" [size]="20" /></ds-icon-tile> }
+            @case ('Modal Content') { <div style="width:100%;"><ds-modal-content height="90px"><p style="font-size:13px;">Modal content goes here.</p></ds-modal-content></div> }
+            @case ('Modal Header') { <div style="width:100%;"><ds-modal-header title="Title" /></div> }
+            @case ('Modal Footer') {
+              <div style="width:100%;">
+                <ds-modal-footer [showBack]="false">
+                  <div slot="actions"><ds-button type="primary">Confirm</ds-button></div>
+                </ds-modal-footer>
+              </div>
+            }
+            @case ('Side Nav Item') {
+              <ds-side-nav style="height:70px;width:180px;">
+                <ds-side-nav-item [selected]="true">Contracts</ds-side-nav-item>
+              </ds-side-nav>
+            }
+            @case ('Accordion') { <div style="width:220px;"><ds-accordion title="Label" tone="default" [open]="true">Body content of the accordion.</ds-accordion></div> }
+            @case ('Button Range') { <ds-button-range label="1" status="selected" /> }
+            @case ('Button Range Group') { <ds-button-range-group [options]="buttonRangeOptions" [value]="['2','5']" mode="range" ariaLabel="Grade" /> }
+            @case ('Checkbox Card') { <div style="width:200px;"><ds-checkbox-card label="None" sublabel="Ultra fab, Inc." badge="Draft" [checked]="true" /></div> }
+            @case ('Collapsible Table') { <div style="width:220px;"><ds-collapsible-table category="Category" icon="edit" [open]="true">Body content.</ds-collapsible-table></div> }
+            @case ('Popin (Confirm Dialog)') {
+              <ds-confirm-dialog [open]="true" title="Delete this item ?" tone="danger" confirmLabel="Delete" cancelLabel="Cancel">
+                This action cannot be undone.
+              </ds-confirm-dialog>
+            }
+            @case ('Divider') { <div style="width:160px;"><ds-divider orientation="horizontal" tone="subtle" /></div> }
+            @case ('Flag') { <ds-flag code="fr" /> }
+            @case ('Functional Notice') { <div style="width:240px;"><ds-functional-notice status="info" emphasis="high" title="Title" message="Lorem ipsum dolor sit amet." /></div> }
+            @case ('Inline Edit') { <ds-inline-edit value="My Filters #1" placeholder="Filter name" /> }
+            @case ('Input Date') { <div style="width:160px;"><ds-input-date label="Date" placeholder="dd/mm/yyyy" /></div> }
+            @case ('Input Email') { <div style="width:180px;"><ds-input-email label="Email" placeholder="name@example.com" /></div> }
+            @case ('List Widget') { <div style="width:220px;height:130px;"><ds-list-widget title="Job to do" actionIcon="export-share" [items]="listWidgetItems" /></div> }
+            @case ('Pagination') { <ds-pagination [page]="3" [total]="5" [siblings]="1" [showFirstLast]="true" /> }
+            @case ('Progress Bar') { <div style="width:160px;"><ds-progress-bar [value]="0.6" size="s" tone="brand" /></div> }
+            @case ('Radio') { <ds-radio label="Label" [selected]="true" /> }
+            @case ('Cell Action') {
+              <div style="padding:16px;">
+                <ds-cell-action ariaLabel="Row actions">
+                  <ds-flyout-menu slot="menu"><ds-flyout-menu-item label="Edit" icon="edit" /></ds-flyout-menu>
+                </ds-cell-action>
+              </div>
+            }
+            @case ('Cell Selection') { <ds-cell-selection size="m" control="check" [checked]="true" /> }
+            @case ('Textarea') { <div style="width:200px;"><ds-textarea label="Description" placeholder="Enter a description…" [rows]="3" /></div> }
+            @case ('Timeline') {
+              <ds-timeline style="width:100%;">
+                <ds-timeline-event title="Renewal proposed" status="info" [open]="true">A proposal was sent.</ds-timeline-event>
+                <ds-timeline-event title="Closed" status="neutral" [isLast]="true" />
+              </ds-timeline>
+            }
+            @case ('Toaster') {
+              <ds-button type="secondary" (clicked)="showDemoToast()">Show toast</ds-button>
+            }
+            @case ('Tooltip') { <div style="padding:32px;display:inline-block;position:relative;"><ds-tooltip text="Hello tooltip" position="top-center" /></div> }
+            @case ('Topbox') {
+              <div style="width:100%;">
+                <ds-topbox dataType="buyer" icon="buyers" label="EASYJET" id="BU-77721" grade="M2" gradeColor="grade-2" />
+              </div>
+            }
+            @case ('Visual Button') {
+              <ds-visual-button title="Buyer profile" description="Create a new buyer entity from scratch.">
+                <ds-icon slot="icon" name="user" [size]="24" />
+              </ds-visual-button>
+            }
+            @case ('Snackbar') { <ds-snackbar text="Changes saved." tone="neutral" /> }
+            @default { <span class="dsc-card__no-preview">No preview</span> }
           }
+          </div>
         </div>
         <span class="dsc-card__category">{{ c.category }}</span>
         <h2 class="dsc-card__name">{{ c.name }}</h2>
         <span class="dsc-card__folder">shared/ui/{{ c.folder }}</span>
-        @if (storybookHref(c)) {
-          <a class="dsc-card__link" [href]="storybookHref(c)" target="_blank" rel="noopener">View story ↗</a>
-        } @else {
-          <span class="dsc-card__no-story">No story</span>
-        }
       </div>
     } @empty {
       <p class="dsc__empty">No component matches this search.</p>
     }
   </div>
+
+  <!-- Single shared toaster host — the Toaster card's button pushes a real toast here. -->
+  <ds-toaster-container />
 </main>
