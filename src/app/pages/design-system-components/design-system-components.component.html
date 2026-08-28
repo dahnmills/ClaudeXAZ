@@ -281,13 +281,17 @@
         </div>
         <div class="dsc-card__actions">
           @if (storybookHref(c)) {
-            <a class="dsc-card__action-link" [href]="storybookHref(c)" target="_blank" rel="noopener">View story ↗</a>
+            <a class="dsc-card__icon-link" [href]="storybookHref(c)" target="_blank" rel="noopener" attr.aria-label="View {{ c.name }} story in Storybook">
+              <ds-icon name="launch" [size]="15" />
+            </a>
           } @else {
-            <span class="dsc-card__action-muted">No story</span>
+            <span class="dsc-card__icon-link dsc-card__icon-link--muted" aria-hidden="true">
+              <ds-icon name="launch" [size]="15" />
+            </span>
           }
           <span class="dsc-card__npm-wrap" tabindex="0" dsTooltip="Package publishing is coming soon" dsTooltipPosition="top-center">
-            <button type="button" class="dsc-card__action-link dsc-card__action-link--disabled" disabled>
-              Download package
+            <button type="button" class="dsc-card__icon-link dsc-card__icon-link--muted" disabled attr.aria-label="Download {{ c.name }} as an npm package">
+              <ds-icon name="download" [size]="15" />
             </button>
           </span>
         </div>

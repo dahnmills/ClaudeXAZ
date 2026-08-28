@@ -193,7 +193,8 @@
   &__actions {
     display: flex;
     align-items: center;
-    gap: 14px;
+    justify-content: flex-end;
+    gap: 6px;
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid #f2f1f7;
@@ -255,33 +256,30 @@
     color: #b5b1c4;
   }
 
-  &__action-link {
+  // Same pill shape/size as .dsc__view-btn (the grid/list toggle) — one
+  // icon-button vocabulary across the page instead of inventing a second.
+  &__icon-link {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 26px;
     border: none;
+    border-radius: 100px;
     background: none;
-    padding: 0;
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: #1a4fe0;
-    text-decoration: none;
+    color: #8b8798;
     cursor: pointer;
+    text-decoration: none;
 
-    &:hover { text-decoration: underline; }
+    &:hover { background: #f2f1f7; color: #1a4fe0; }
     &:focus-visible { outline: 2px solid #2b6bff; outline-offset: 2px; }
 
-    &--disabled {
-      color: #b5b1c4;
+    &--muted {
+      color: #d7d3e8;
       cursor: not-allowed;
-      pointer-events: none; // the tooltip lives on .dsc-card__npm-wrap instead
 
-      &:hover { text-decoration: none; }
+      &:hover { background: none; color: #d7d3e8; }
     }
-  }
-  &__action-muted {
-    font-size: 12.5px;
-    color: #d7d3e8;
   }
   &__npm-wrap {
     display: inline-flex;
