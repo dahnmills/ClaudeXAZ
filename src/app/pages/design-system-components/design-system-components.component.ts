@@ -1,6 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, computed, inject, isDevMode, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DS_COMPONENTS } from '../design-system-audit/design-system-audit.data';
+import {
+  DS_COMPONENTS,
+  DsComponentEntry,
+  storybookHref as resolveStorybookHref,
+} from '../design-system-audit/design-system-audit.data';
 import type { LayoutConfig } from '../../shared/ui/grid-selection/grid-selection.component';
 import type { PieChartSegment } from '../../shared/ui/pie-chart/pie-chart.component';
 import type { PropertySection } from '../../shared/ui/properties-panel/properties-panel.component';
@@ -92,6 +97,7 @@ import {
   ToasterService,
   ToggleComponent,
   TooltipComponent,
+  TooltipDirective,
   TopboxComponent,
   VisualButtonComponent,
   WidgetCardComponent,
@@ -280,6 +286,7 @@ const SPOTLIGHT_ITEMS: SpotlightItem[] = [
     ToasterContainerComponent,
     ToggleComponent,
     TooltipComponent,
+    TooltipDirective,
     TopboxComponent,
     VisualButtonComponent,
     WidgetCardComponent,
@@ -289,6 +296,7 @@ const SPOTLIGHT_ITEMS: SpotlightItem[] = [
 })
 export class DesignSystemComponentsComponent {
   private readonly toaster = inject(ToasterService);
+  private readonly document = inject(DOCUMENT);
 
   readonly query = signal('');
   readonly viewMode = signal<'grid' | 'list'>('grid');
@@ -309,6 +317,10 @@ export class DesignSystemComponentsComponent {
 
   setQuery(value: string): void {
     this.query.set(value);
+  }
+
+  storybookHref(entry: DsComponentEntry): string | null {
+    return resolveStorybookHref(entry, { baseURI: this.document.baseURI, devMode: isDevMode() });
   }
 
   showDemoToast(): void {

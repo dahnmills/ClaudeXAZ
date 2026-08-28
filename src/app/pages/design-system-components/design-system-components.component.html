@@ -10,7 +10,8 @@
     <p class="dsc__lead">
       The whole <code>shared/ui</code> catalogue, each one rendered live — the real component, not a
       screenshot or an embedded Storybook. For real adoption and duplicates, see
-      <a routerLink="/design-system-audit">Component audit</a>.
+      <a routerLink="/design-system-audit">Component audit</a>. Storybook links need
+      <code>npm run storybook</code> running locally (port 6006).
     </p>
   </header>
 
@@ -277,6 +278,18 @@
           <span class="dsc-card__category">{{ c.category }}</span>
           <h2 class="dsc-card__name">{{ c.name }}</h2>
           <span class="dsc-card__folder">shared/ui/{{ c.folder }}</span>
+        </div>
+        <div class="dsc-card__actions">
+          @if (storybookHref(c)) {
+            <a class="dsc-card__action-link" [href]="storybookHref(c)" target="_blank" rel="noopener">View story ↗</a>
+          } @else {
+            <span class="dsc-card__action-muted">No story</span>
+          }
+          <span class="dsc-card__npm-wrap" tabindex="0" dsTooltip="Package publishing is coming soon" dsTooltipPosition="top-center">
+            <button type="button" class="dsc-card__action-link dsc-card__action-link--disabled" disabled>
+              Download package
+            </button>
+          </span>
         </div>
       </div>
     } @empty {
