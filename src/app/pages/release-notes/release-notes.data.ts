@@ -23,6 +23,21 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog — it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'loading-screen',
+    date: '2026-08-31',
+    category: 'feature',
+    screens: ['loading'],
+    title: 'Add an initial app loading screen',
+    description:
+      'A full-screen loading state for the app\'s first load: the Qirin mark connects to a device with a chase-dot animation, settling on "Connecting" once ready, with rotating usage tips underneath.',
+    changes: [
+      'Added the loading screen: mark and computer icon animate together once, then settle centered with the "Connecting" status',
+      'Added rotating usage tips (search, buyer dossiers, filters, TAG rule reordering, notifications, release notes), paused under prefers-reduced-motion',
+      'Added `markOnly` to `ds-logo` and `indeterminate` to `ds-progress-bar`, and a `monitor` icon to the shared icon registry',
+      'Added to the screen catalogue and the isolated-universe listing so it can be tested standalone',
+    ],
+  },
+  {
     id: 'tag-configuration-promote-filter-chip',
     date: '2026-08-26',
     category: 'fix',
