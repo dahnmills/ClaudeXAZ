@@ -26,6 +26,7 @@ export const SCREENS: Screen[] = [
   { path: 'notification-module', label: 'Notification Module', hint: 'Notification center', version: { ...V1 } },
   { path: 'buyer-summary/137381425', label: 'Buyer Summary', hint: 'Buyer profile', version: { ...V1 } },
   { path: 'maintenance', label: 'Maintenance', hint: 'Product downtime state', version: { ...V1 } },
+  { path: 'loading', label: 'Loading', hint: 'Initial app loading state', version: { ...V1 } },
 ];
 
 export function versionLabel(v: ScreenVersion): string {

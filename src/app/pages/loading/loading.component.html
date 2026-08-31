@@ -1,0 +1,25 @@
+<main class="load" role="main" aria-busy="true">
+  <div class="load__unit">
+    <div class="load__stage" [attr.data-phase]="phase()">
+      <div class="load__stage-mark">
+        <ds-logo [markOnly]="true" />
+      </div>
+
+      <div class="load__stage-dots" aria-hidden="true">
+        @for (i of dotIndices; track i) {
+          <span [style.animation-delay.ms]="i * 160"></span>
+        }
+      </div>
+
+      <div class="load__stage-icon">
+        <ds-icon name="monitor" [size]="32" />
+      </div>
+    </div>
+
+    <p class="load__status" aria-live="polite">{{ statusText() }}</p>
+  </div>
+
+  @for (tip of [tips[tipIndex()]]; track tick()) {
+    <p class="load__tip-text">{{ tip.text }}</p>
+  }
+</main>

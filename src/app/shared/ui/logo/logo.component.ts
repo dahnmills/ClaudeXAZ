@@ -13,9 +13,11 @@ import { Component, input, computed } from '@angular/core';
 export class LogoComponent {
   appName = input<string>('Qirin');
   reversed = input<boolean>(false);
+  markOnly = input<boolean>(false);
 
   hostClasses = computed(() => [
     'ds-logo',
     this.reversed() ? 'ds-logo--reversed' : '',
+    this.markOnly() ? 'ds-logo--mark-only' : '',
   ].filter(Boolean).join(' '));
 }

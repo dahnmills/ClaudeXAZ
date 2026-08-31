@@ -18,6 +18,26 @@
   transition: width 0.2s ease;
 }
 
+:host.ds-progress-bar--indeterminate {
+  .ds-progress-bar__fill {
+    width:      40%;
+    transition: none;
+    animation:  ds-progress-bar-slide 1.4s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-progress-bar__fill {
+      width:     100%;
+      animation: none;
+    }
+  }
+}
+
+@keyframes ds-progress-bar-slide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
 :host.ds-progress-bar--tone-brand .ds-progress-bar__fill {
   background: var(--semantic-color-interactive-background-medium-active);
 }

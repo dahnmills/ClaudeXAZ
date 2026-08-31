@@ -13,6 +13,7 @@ import { GradeStoryComponent } from './pages/grade-story/grade-story.component';
 import { SpotlightPage } from './pages/spotlight/spotlight.page';
 import { NotificationModuleComponent } from './pages/notification-module/notification-module.component';
 import { MaintenanceComponent } from './pages/maintenance/maintenance.component';
+import { LoadingComponent } from './pages/loading/loading.component';
 import { ReviewShellComponent } from './shared/feedback/review-shell.component';
 import { ResultsComponent } from './pages/results/results.component';
 import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
@@ -43,6 +44,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'spotlight', component: SpotlightPage },
   { path: 'notification-module', component: NotificationModuleComponent },
   { path: 'maintenance', component: MaintenanceComponent },
+  { path: 'loading', component: LoadingComponent },
 ];
 
 export const appRoutes: Routes = [

@@ -1,0 +1,151 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--semantic-color-static-background-main-primary);
+}
+
+.load {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--semantic-measurement-spacing-2xl);
+  padding: var(--semantic-measurement-spacing-l);
+}
+
+.load__unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-xs);
+}
+
+// ── Stage : logo mark ↔ points ↔ écran, positions animées par phase ────────
+.load__stage {
+  position: relative;
+  width: 200px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.load__stage-mark,
+.load__stage-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: var(--semantic-color-static-text-main-tertiary);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+
+.load__stage-mark {
+  transform: translate(-50%, -50%) translateX(0);
+  opacity: 1;
+}
+
+.load__stage-icon {
+  transform: translate(-50%, -50%) translateX(0);
+  opacity: 0;
+}
+
+.load__stage-dots {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100px;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  span {
+    width: 5px;
+    height: 5px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--semantic-color-static-border-subtle-tertiary);
+    animation: load-dot-chase 1.12s ease-in-out infinite;
+  }
+}
+
+.load__stage[data-phase='solo'] {
+  .load__stage-icon { opacity: 0; }
+}
+
+.load__stage[data-phase='pairing'],
+.load__stage[data-phase='connecting'] {
+  .load__stage-mark { transform: translate(-50%, -50%) translateX(-70px); }
+  .load__stage-icon { transform: translate(-50%, -50%) translateX(70px); opacity: 1; }
+}
+
+.load__stage[data-phase='connecting'] {
+  .load__stage-dots { opacity: 1; }
+}
+
+.load__stage[data-phase='converge'] {
+  .load__stage-mark { transform: translate(-50%, -50%) translateX(-70px); opacity: 0; }
+  .load__stage-icon { transform: translate(-50%, -50%) translateX(0); opacity: 1; }
+  .load__stage-dots { opacity: 0; }
+}
+
+.load__status {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-s);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  letter-spacing: 0.4px;
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+.load__tip-text {
+  margin: 0;
+  max-width: 52ch;
+  text-align: center;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color: var(--semantic-color-static-text-main-primary);
+  text-wrap: pretty;
+  animation: load-tip-fade 0.4s ease both;
+}
+
+// Un seul point bleu à la fois : chaque point passe brièvement de gris à
+// bleu, décalé de 1/7e de cycle par rapport au précédent (voir [style.animation-delay]).
+@keyframes load-dot-chase {
+  0%, 86%, 100% {
+    background: var(--semantic-color-static-border-subtle-tertiary);
+    transform: scale(1);
+  }
+  14% {
+    background: var(--semantic-color-interactive-background-medium-active);
+    transform: scale(1.3);
+  }
+}
+
+@keyframes load-tip-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .load__stage-mark,
+  .load__stage-icon,
+  .load__stage-dots {
+    transition: none;
+  }
+
+  .load__stage-dots span {
+    animation: none;
+  }
+
+  .load__tip-text {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .load__tip-text { font-size: var(--semantic-font-text-style-size-m); }
+}
