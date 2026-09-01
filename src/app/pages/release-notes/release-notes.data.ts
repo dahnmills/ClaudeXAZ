@@ -23,6 +23,23 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog — it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'spotlight-filter-bubbles',
+    date: '2026-09-01',
+    category: 'feature',
+    screens: ['spotlight'],
+    title: 'Spotlight: filter bubbles and a liquid-glass morph',
+    description:
+      'The quick-search palette gains two filter bubbles alongside the bar (country, and which field is searched — name or ID), in the manner of macOS Spotlight. Opening one makes the bar swallow the bubbles and grow into its panel; closing it makes the material split back into bubbles.',
+    changes: [
+      'Added two filter bubbles next to the search bar: country (flag) and searched field (Aa / ID). Filtering by country narrows the results; switching to ID searches the identifier instead of the name',
+      'Opening a bubble morphs rather than fades: the bar absorbs the bubbles, widens, and its panel reveals the option list by growing downward. The magnifier is replaced by the category icon, which becomes a back chevron on hover',
+      'Closing a bubble plays a liquid fission: the bar\'s right edge stays stretched, a mass inflates out of it and detaches through a thinning neck, then splits into the bubbles — no fade anywhere in the sequence, and the icons only appear once the bubbles are stable',
+      'While a country panel is open the bar filters that list instead of the corpus, and the business query typed beforehand is restored on close',
+      'Reworked the palette\'s glass material (translucency, specular edge, layered drop shadow) so the bar, the bubbles and the morphing material read as one surface',
+      'The whole choreography collapses to instant state changes under prefers-reduced-motion',
+    ],
+  },
+  {
     id: 'loading-screen',
     date: '2026-08-31',
     category: 'feature',

@@ -1,48 +1,198 @@
 @if (open()) {
   <div class="ds-spotlight__backdrop" (click)="onBackdrop()"></div>
 
+  <!-- Filtre "goo" (metaballs) : les formes qui se rapprochent fusionnent,
+       celles qui s'écartent se pincent puis se détachent — flou + seuillage
+       de contraste, la technique classique du liquide/verre organique. -->
+  <svg class="ds-spotlight__goo-defs" aria-hidden="true">
+    <defs>
+      <!-- stdDeviation pilote la DISTANCE de pontage : au-delà, deux formes
+           voisines restent fondues. À 14 un écart de 8px (le gap au repos entre
+           deux bulles) restait ponté — les gouttes n'auraient jamais fini
+           SÉPARÉES. À 10, la rupture tombe vers ~12px : le col se pince
+           pendant l'écartement puis casse avant la position d'arrivée.
+           Le seuil du feColorMatrix (a × 24 − 10 → coupe à α ≈ 0.42) doit rester
+           cohérent avec l'alpha de --sp-glass-goo-bg. -->
+      <filter id="ds-spotlight-goo" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+        <feColorMatrix in="blur" mode="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -10" result="goo" />
+
+        <!-- À partir d'ici on ne repeint JAMAIS `SourceGraphic`. Un
+             `feComposite operator="atop"` remettait chaque forme source (avec son
+             propre bord net, son ombre portée et son backdrop-filter) PAR-DESSUS
+             la silhouette fusionnée : les contours individuels se croisaient, les
+             cols et les creux étaient recouverts — le liquide ne se lisait pas.
+             La matière est donc reconstruite ici, à partir de la seule silhouette
+             fusionnée. -->
+
+        <!-- Liseré : contour de la silhouette FUSIONNÉE (érosion puis
+             différence), donc un seul trait continu qui suit les cols. -->
+        <feMorphology in="goo" operator="erode" radius="1" result="goo-core" />
+        <feComposite in="goo" in2="goo-core" operator="out" result="goo-rim" />
+        <feFlood class="ds-spotlight__goo-rim-color" result="goo-flood" />
+        <feComposite in="goo-flood" in2="goo-rim" operator="in" result="goo-edge" />
+
+        <!-- Le seuillage pousse l'intérieur à l'opaque : on le ramène à l'alpha
+             du verre. `slope` doit rester égal à l'alpha de --sp-glass-goo-bg
+             (0.80) — sinon la couche liquide ne se lit plus comme le même
+             matériau que la barre et les bulles réelles. -->
+        <feComponentTransfer in="goo" result="goo-glass">
+          <feFuncA type="linear" slope="0.8" />
+        </feComponentTransfer>
+
+        <feMerge>
+          <feMergeNode in="goo-glass" />
+          <feMergeNode in="goo-edge" />
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Ancre commune : la barre et les bulles sont deux surfaces distinctes,
+       posées côte à côte (façon Spotlight macOS), pas fondues dans un même
+       pilule. -->
   <div
-    class="ds-spotlight__panel"
-    [class.ds-spotlight__panel--with-results]="hasResults() || emptyState()"
-    role="dialog"
-    aria-label="Quick search"
+    class="ds-spotlight__stage"
+    [class.ds-spotlight__stage--expanded]="!!openPanel()"
+    [class.ds-spotlight__stage--fission]="fission()"
   >
-    <!-- Barre de recherche -->
-    <div class="ds-spotlight__search">
-      <ds-icon name="search" [size]="24" class="ds-spotlight__search-icon" />
-      <!-- Champ + complétion fantôme superposée (façon Spotlight macOS) -->
-      <div class="ds-spotlight__field">
-        @if (completion(); as c) {
-          <div class="ds-spotlight__ghost" aria-hidden="true">
-            <span class="ds-spotlight__ghost-typed">{{ c.typed }}</span><span class="ds-spotlight__ghost-suffix">{{ c.ghost }}</span>
-          </div>
-        }
-        <input
-          #search
-          type="text"
-          class="ds-spotlight__input"
-          [placeholder]="placeholder()"
-          [value]="query()"
-          (input)="onInput($event)"
-          autocomplete="off"
-          spellcheck="false"
-        />
-      </div>
-      @if (query()) {
-        <ds-button-icon
-          class="ds-spotlight__clear"
-          type="plain"
-          size="s"
-          ariaLabel="Clear search"
-          (clicked)="clear()"
-        >
-          <ds-icon name="close" [size]="16" />
-        </ds-button-icon>
-      }
+    <!-- Couche liquide décorative : c'est ELLE qu'on voit pendant tout le morph
+         (les vraies formes sont réduites à zéro à ce moment-là). À l'aller elle
+         fusionne les lobes dans la barre ; au retour elle joue la fission —
+         l'extrémité s'étire, une masse mère se gonfle et se détache, s'allonge
+         en lobes reliés, les cols se pincent puis cassent. Les cols et les
+         creux ne sont pas dessinés : le filtre metaball les produit à partir de
+         l'écart entre les lobes. Un lobe par bulle, dans le MÊME ORDRE
+         (--0 → --1) : chaque lobe atterrit sur la bulle de même rang. Pure
+         décoration (aria-hidden). -->
+    <div class="ds-spotlight__goo" [class.ds-spotlight__goo--pulse]="morphing()" aria-hidden="true">
+      <div class="ds-spotlight__goo-bar"></div>
+      <div class="ds-spotlight__goo-blob ds-spotlight__goo-blob--0"></div>
+      <div class="ds-spotlight__goo-blob ds-spotlight__goo-blob--1"></div>
     </div>
 
-    <!-- Dropdown résultats -->
-    @if (hasResults()) {
+    <div
+      class="ds-spotlight__panel"
+      [class.ds-spotlight__panel--with-results]="hasResults() || emptyState() || !!openPanel()"
+      [class.ds-spotlight__panel--squish]="squish()"
+      role="dialog"
+      aria-label="Quick search"
+    >
+      <!-- Barre de recherche -->
+      <div class="ds-spotlight__search">
+        <!-- Loupe par défaut ; icône de la catégorie + chevron-retour (au survol)
+             une fois qu'un panneau de filtre est ouvert. -->
+        @if (openPanel()) {
+          <button type="button" class="ds-spotlight__search-icon ds-spotlight__search-icon--back" aria-label="Back" (click)="closePanel()">
+            <ds-icon [name]="barIcon()" [size]="24" class="ds-spotlight__search-icon-glyph" />
+            <ds-icon name="chevron-left" [size]="24" class="ds-spotlight__search-icon-chevron" />
+          </button>
+        } @else {
+          <ds-icon name="search" [size]="24" class="ds-spotlight__search-icon" />
+        }
+        <!-- Champ + complétion fantôme superposée (façon Spotlight macOS) -->
+        <div class="ds-spotlight__field">
+          @if (completion(); as c) {
+            <div class="ds-spotlight__ghost" aria-hidden="true">
+              <span class="ds-spotlight__ghost-typed">{{ c.typed }}</span><span class="ds-spotlight__ghost-suffix">{{ c.ghost }}</span>
+            </div>
+          }
+          <input
+            #search
+            type="text"
+            class="ds-spotlight__input"
+            [placeholder]="barPlaceholder()"
+            [value]="query()"
+            (input)="onInput($event)"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+        @if (query()) {
+          <ds-button-icon
+            class="ds-spotlight__clear"
+            type="plain"
+            size="s"
+            ariaLabel="Clear search"
+            (clicked)="clear()"
+          >
+            <ds-icon name="close" [size]="16" />
+          </ds-button-icon>
+        }
+      </div>
+
+      <!-- Zone extensible. Sa HAUTEUR morphe (grid-template-rows 0fr → 1fr sur
+           le panneau) et son `overflow: hidden` rogne ce qu'elle contient : le
+           contenu est donc révélé par le bord qui descend, jamais par un fondu.
+           Sans ce wrapper la hauteur du panneau reste en `auto`, non animable —
+           c'était la raison d'être du fondu qu'on vient de supprimer. -->
+      <div class="ds-spotlight__body">
+      @if (openPanel() === 'country' || closingPanel() === 'country') {
+      <!-- Panneau bulle pays : morph depuis la bulle drapeau -->
+      <div
+        class="ds-spotlight__filter-panel ds-spotlight__filter-panel--country"
+        [class.ds-spotlight__filter-panel--out]="openPanel() !== 'country'"
+      >
+        <!-- Aucun champ de recherche ici : c'est la barre principale au-dessus
+             qui filtre cette liste (son placeholder bascule sur "Filter
+             countries"). Un second champ doublonnait celui juste au-dessus. -->
+        <div class="ds-spotlight__filter-list">
+          <button
+            type="button"
+            class="ds-spotlight__filter-option"
+            [class.ds-spotlight__filter-option--active]="selectedCountry() === null"
+            (click)="pickCountry(null)"
+          >
+            <ds-icon name="globe" [size]="16" />
+            <span>All countries</span>
+          </button>
+          @for (c of filteredCountries(); track c.code) {
+            <button
+              type="button"
+              class="ds-spotlight__filter-option"
+              [class.ds-spotlight__filter-option--active]="selectedCountry() === c.code"
+              (click)="pickCountry(c.code)"
+            >
+              <ds-flag [code]="c.code" />
+              <span>{{ c.name }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    @else if (openPanel() === 'mode' || closingPanel() === 'mode') {
+      <!-- Panneau bulle mode : morph depuis la bulle Aa/ID -->
+      <div
+        class="ds-spotlight__filter-panel ds-spotlight__filter-panel--mode"
+        [class.ds-spotlight__filter-panel--out]="openPanel() !== 'mode'"
+      >
+        <div class="ds-spotlight__filter-list">
+          <button
+            type="button"
+            class="ds-spotlight__filter-option"
+            [class.ds-spotlight__filter-option--active]="selectedMode() === 'name'"
+            (click)="pickMode('name')"
+          >
+            <span class="ds-spotlight__filter-option-glyph">Aa</span>
+            <span>Name</span>
+          </button>
+          <button
+            type="button"
+            class="ds-spotlight__filter-option"
+            [class.ds-spotlight__filter-option--active]="selectedMode() === 'id'"
+            (click)="pickMode('id')"
+          >
+            <ds-icon name="hash" [size]="16" />
+            <span>ID</span>
+          </button>
+        </div>
+      </div>
+    }
+
+    @else if (hasResults()) {
+      <!-- Dropdown résultats -->
       <div class="ds-spotlight__dropdown">
         @for (section of sections(); track section.key) {
           @for (ranked of section.items; track ranked.item.id) {
@@ -83,5 +233,41 @@
         <span>No result for “{{ query() }}”</span>
       </div>
     }
+      </div>
+    </div>
+
+    <!-- Bulles de filtre : pays et champ recherché (ID / Name). Surface séparée
+         de la barre, façon Spotlight macOS — toujours visibles. Leur ORDRE doit
+         suivre celui des lobes de la couche liquide (--0 → --1) : chaque lobe
+         atterrit sur la bulle de même rang, et --sp-bubbles-w compte le même
+         nombre de bulles. Ajouter ou retirer une bulle ici = mettre les deux à
+         jour. -->
+    <div
+      class="ds-spotlight__bubbles"
+      [class.ds-spotlight__bubbles--squish]="squish()"
+    >
+      <button
+        type="button"
+        class="ds-spotlight__bubble"
+        [class.ds-spotlight__bubble--active]="openPanel() === 'country'"
+        [attr.aria-label]="selectedCountryName() ? 'Country: ' + selectedCountryName() : 'Filter by country'"
+        (click)="togglePanel('country')"
+      >
+        @if (selectedCountry()) {
+          <ds-flag [code]="selectedCountry()!" />
+        } @else {
+          <ds-icon name="globe" [size]="18" />
+        }
+      </button>
+      <button
+        type="button"
+        class="ds-spotlight__bubble"
+        [class.ds-spotlight__bubble--active]="openPanel() === 'mode'"
+        [attr.aria-label]="selectedMode() === 'id' ? 'Searching by ID' : 'Searching by name'"
+        (click)="togglePanel('mode')"
+      >
+        <span class="ds-spotlight__bubble-label">{{ selectedMode() === 'id' ? 'ID' : 'Aa' }}</span>
+      </button>
+    </div>
   </div>
 }

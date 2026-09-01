@@ -8,51 +8,578 @@
   --sp-ease-spring: cubic-bezier(0.34, 1.4, 0.5, 1);
   --sp-ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --sp-dur-panel: 300ms;
-  --sp-dur-backdrop: 180ms;
   --sp-dur-row: 240ms;
+
+  // Morph bulles ↔ barre : courbe "liquide" dédiée, sans rebond (le ressort
+  // sied à un pop d'entrée, pas à un changement de largeur — un léger
+  // dépassement s'y lit comme un raté, pas comme de la fluidité). S-curve
+  // symétrique (PAS un expo-out) : un ease-out agressif concentre toute la
+  // déformation dans les 60 premières ms, illisible. Durée courte au global :
+  // le morph doit rester vif, pas s'étaler en pauses visibles.
+  --sp-ease-liquid: cubic-bezier(0.65, 0, 0.35, 1);
+  // Le bord droit du PANNEAU réel doit avoir fini de reculer avant que le col
+  // liquide ne se pince : la couche liquide est DERRIÈRE le panneau, donc tout
+  // ce qui se joue en deçà de sa largeur courante est masqué. Le col se pince
+  // vers 33 % de la fission (~150ms) → le panneau doit être arrivé avant. 300ms
+  // le faisait encore reculer pendant tout le pincement, qui se déroulait
+  // caché. Doit rester synchronisé avec MORPH_MS.
+  --sp-dur-morph: 220ms;
+
+  // ── Fission liquide (rétraction : la barre rend sa largeur, les bulles naissent)
+  // Sens ALLER (ouverture d'un filtre) : fusion simple, --sp-dur-morph — les
+  // bulles sont avalées par la barre, rien à raconter. Sens RETOUR : 8 étapes
+  // ordonnées (étirement de l'extrémité → gonflement de la masse mère → col qui
+  // s'amincit → rupture → étirement horizontal → bosses dans une seule forme →
+  // cols qui se pincent → rupture + rebond élastique). Une transition CSS ne sait
+  // pas ordonner 8 étapes : c'est une timeline @keyframes, d'où la durée plus
+  // longue. 460ms = ~58ms par étape ; toute la chorégraphie est exprimée en % de
+  // cette durée, donc la raccourcir la resserre sans rien déformer. Plancher
+  // pratique : sous ~400ms la fenêtre de pincement des cols (14 % de la timeline)
+  // tombe à moins de 4 frames et la rupture ne se lit plus.
+  --sp-dur-fission: 460ms;
+  // Reprise de la main par les vraies bulles : un ÉCHANGE, pas une croissance.
+  // Version précédente : la bulle grandissait de 0 à 1 pendant les 112 derniers
+  // ms de la fission — mais elle est cernée d'une bordure et le lobe liquide
+  // l'est aussi, donc on voyait deux contours concentriques de tailles
+  // différentes (un halo) pendant toute la montée. Ici la bulle prend sa taille
+  // d'un coup à l'instant EXACT où la couche liquide disparaît, et le lobe
+  // termine sa timeline à ~55px pour 56px de bulle : deux cercles confondus,
+  // l'échange ne se voit pas. Tout le mouvement reste porté par le liquide.
+  --sp-dur-bubble-pop: 0ms;
+  --sp-delay-bubble-pop: var(--sp-dur-fission);
+  // « puis SEULEMENT à ce moment-là les icônes » : pas avant l'échange (la bulle
+  // n'existe pas encore, son contenu flotterait). Calé sur la durée de fission, et
+  // court : c'est le temps pendant lequel les bulles sont VIDES, on le réduit au
+  // minimum pour qu'elles restent garnies.
+  --sp-delay-bubble-icon: var(--sp-dur-fission);
+  --sp-dur-bubble-icon: 110ms;
+
+  // Largeur de base de la barre, largeur des bulles (2 × 56px + 1 gap interne)
+  // et gap entre barre/bulles : seule source de vérité pour le morph — le
+  // panneau prend une largeur EXPLICITE (pas flex-basis, insensible au
+  // contenu : taper dans le champ ou faire apparaître le bouton "clear" ne
+  // doit jamais changer la largeur) qui grandit exactement de ce que les
+  // bulles libèrent en se rétractant.
+  --sp-panel-w: 512px;
+  // Côté d'une bulle = hauteur de la barre : les deux surfaces s'alignent.
+  --sp-bubble-size: 56px;
+  // Pas entre deux bulles au repos (56 + 8 = 64) : sert aussi à placer les
+  // lobes de la couche liquide, qui doivent atterrir EXACTEMENT sur les bulles.
+  --sp-bubble-pitch: calc(var(--sp-bubble-size) + var(--semantic-measurement-spacing-s));
+  // DOIT compter le nombre de bulles réellement rendues dans le template (2 :
+  // pays, champ recherché) — c'est de là que la barre tire sa course, et un
+  // décompte faux déplacerait les lobes hors de leurs bulles d'arrivée.
+  --sp-bubbles-w: calc(2 * var(--sp-bubble-size) + var(--semantic-measurement-spacing-s));
+  --sp-stage-gap: var(--semantic-measurement-spacing-m);
+  // Largeur de la barre quand elle a tout avalé, et la course correspondante.
+  --sp-bar-w-exp: calc(var(--sp-panel-w) + var(--sp-bubbles-w) + var(--sp-stage-gap));
+  --sp-bar-travel: calc(var(--sp-bubbles-w) + var(--sp-stage-gap));
+  // Position de la MASSE MÈRE : collée à l'extrémité droite de la barre étendue
+  // (elle en naît, donc elle doit la chevaucher au départ). Tous les lobes y sont
+  // empilés au début de la fission → le filtre les fond en une seule
+  // grosse bulle, puis ils s'écartent vers leur bulle d'arrivée.
+  --sp-mother-x: calc(
+    var(--sp-bar-w-exp) - var(--sp-bubble-size) - var(--semantic-measurement-spacing-m)
+  );
+  // Rayon d'un lobe PENDANT le liquide : rond, et ce n'est pas un choix
+  // graphique. Le filtre metaball seuille un flou : sur une silhouette à coins la
+  // jonction se lit comme deux boîtes qui se recouvrent, pas comme un col de
+  // matière qui se pince.
+  --sp-lobe-radius-liquid: 50%;
+  // Rayon au REPOS : celui des bulles réelles. Le lobe reprend donc leur
+  // silhouette une fois les cols rompus (dernier palier de la timeline), quand il
+  // n'y a plus aucun col à dessiner — l'échange lobe → bulle reste invisible même
+  // avec des bulles en carré arrondi.
+  --sp-lobe-radius: var(--sp-bubble-radius);
+  // État de repos d'un lobe. Doit valoir EXACTEMENT le palier 100 % de la
+  // timeline, sinon le transform saute à la fin de l'animation (pas de
+  // fill-mode) pile au moment de l'échange lobe → bulle.
+  // Échelle juste sous 1 (55px pour une bulle de 56) : assez proche pour que
+  // l'échange soit invisible, assez petit pour que les gouttes restent
+  // SÉPARÉES au regard du filtre. Le léger débord vers l'extérieur (−0.02 du
+  // décalage) ajoute ~1px de jeu dans le même but : au repos l'écart bord à bord
+  // vaut ~10px, au-delà de la distance de pontage.
+  --sp-lobe-rest-scale: 0.98;
+  --sp-lobe-rest-off: -0.02;
+  // Carré arrondi, même rayon que la barre de recherche. Les lobes de la couche
+  // liquide travaillent en rond (contrainte du metaball, cf.
+  // --sp-lobe-radius-liquid) et reprennent CE rayon sur le dernier palier de la
+  // fission : la silhouette ne « pope » donc pas à l'échange.
+  --sp-bubble-radius: var(--semantic-border-radius-l);
+
+  // ── Matériau "verre" (Liquid Glass) ──────────────────────────────────────
+  // Contrainte propre à Qirin : le fond de page est BLANC (cartes blanches sur
+  // gris très clair). Un verre blanc translucide posé sur du blanc ne peut pas
+  // ressembler au Spotlight macOS posé sur un fond d'écran photo — il n'y a
+  // presque rien à laisser voir. Trois leviers, dans l'ordre d'impact :
+  //   1. flou MODÉRÉ (un flou large écrase le peu de contraste en aplat) ;
+  //   2. arêtes spéculaires (c'est l'arête qui fait lire "dalle de verre") ;
+  //   3. teinte basse + surfaces internes translucides (voir plus bas).
+  // `color-mix` garde tout ancré aux tokens — aucune valeur brute.
+  // Dalle NEUTRE (aucune couleur propre) : sur macOS le verre n'a pas de teinte,
+  // il emprunte celle du fond d'écran. Une page Qirin est blanche → il n'y a
+  // presque rien à emprunter, donc la dalle porte sa propre matière : blanche en
+  // haut, puis un gris très pâle vers le bas pour que la tranche basse existe.
+  // Dosage : assez opaque pour que le contenu de la palette primer sur le fond
+  // (sinon le texte de la page derrière entre en concurrence avec le sien), mais
+  // jamais jusqu'à l'aplat — on doit continuer à deviner les formes du fond au
+  // travers. Neutre strict : aucune teinte bleue, testée et rejetée.
+  // Le côté "lumineux" vient du `brightness`/`saturate` appliqué au fond (voir
+  // --sp-glass-blur) et de l'arête spéculaire haute, pas de la teinte.
+  // Rampe BLANCHE : les paliers gris (grey-100 / grey-200) des essais précédents
+  // ternissaient la dalle. Ici tout est du blanc dilué, sauf le dernier stop
+  // (grey-050, quasi blanc) qui suffit à faire descendre la lumière vers le bas.
+  --sp-glass-bg: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--semantic-color-static-background-main-primary) 84%, transparent) 0%,
+    color-mix(in srgb, var(--semantic-color-static-background-main-primary) 76%, transparent) 55%,
+    color-mix(in srgb, var(--semantic-color-static-background-main-secondary) 74%, transparent) 100%
+  );
+  // La couche liquide (goo) reprend la même rampe verre que la dalle ci-dessus,
+  // mais à alpha CONSTANT (80 %) : son filtre SVG seuille l'alpha (feColorMatrix
+  // `a * 24 - 10`), donc tout alpha < ~0.42 se clippe à 0. Un dégradé d'opacité
+  // comme celui de --sp-glass-bg verrait donc son bas rogné par le seuil et la
+  // silhouette se déformerait. Seule la TEINTE descend (blanc → grey-050), ce qui
+  // suffit à donner au liquide la même lumière haut/bas que la barre et les
+  // bulles réelles — sans quoi la matière qui se reforme se lit comme un aplat
+  // plat à côté d'elles. Alpha à ne pas baisser sans ajuster le seuil dans
+  // spotlight.component.html.
+  --sp-glass-goo-bg: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--semantic-color-static-background-main-primary) 80%, transparent) 0%,
+    color-mix(in srgb, var(--semantic-color-static-background-main-secondary) 80%, transparent) 100%
+  );
+
+  // Flou MODÉRÉ. Deux contraintes opposées : trop large sur un fond clair, il
+  // écrase le peu de contraste en aplat et ramène du blanc (le verre disparaît) ;
+  // trop court, le TEXTE de la page derrière reste lisible et entre en
+  // concurrence avec celui de la palette. ~5px casse les lettres du fond en
+  // taches tout en laissant les grandes formes (courbe du graphe, cartes)
+  // reconnaissables au travers.
+  // Pas de `contrast()` : sur un fond clair il pousse les clairs vers le blanc
+  // — il travaillait contre l'effet. `brightness` porte le côté "lumineux".
+  --sp-glass-blur: blur(5px) saturate(200%) brightness(104%);
+  // Petites surfaces (bulles, masses de la couche liquide) : au-delà d'un certain
+  // rapport flou/taille, `backdrop-filter` ne se compose plus du tout (testé —
+  // Chromium rend la surface opaque à blur(20px) sur 56px de côté).
+  --sp-glass-blur-small: blur(3px) saturate(200%) brightness(104%);
+
+  // Arêtes spéculaires : liseré clair en haut (la lumière qui accroche la
+  // tranche), ombre interne douce en bas. Sans elles, une surface translucide
+  // sur fond clair se lit comme un aplat — c'est l'arête qui donne l'épaisseur.
+  --sp-glass-edge:
+    inset 0 1px 0 color-mix(in srgb, var(--semantic-color-static-background-main-primary) 92%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--semantic-color-static-text-main-primary) 7%, transparent);
+  // Arête franche, comme le liseré net qui cerne la palette macOS. Un blanc
+  // translucide (premier essai) est invisible sur une page blanche : le liseré
+  // doit être PLUS SOMBRE que le fond pour exister. `border-subtle-tertiary`
+  // (grey-200) était encore trop proche du blanc → on prend le cran
+  // `border-main-tertiary` (grey-500) fortement dilué : le rendu final tombe
+  // vers ~#B8B8B8, franchement visible, mais l'alpha garde le liseré
+  // translucide pour ne pas refermer la dalle en boîte opaque.
+  --sp-glass-border: color-mix(in srgb, var(--semantic-color-static-border-main-tertiary) 65%, transparent);
+
+  // Ombre portée façon Apple. Les tokens `shadow-*` du DS sont tous des ombres
+  // de CONTACT (max 8/24px) : posées sous une palette flottante, elles la
+  // collent à la page. macOS empile trois couches — un contact serré, une
+  // diffusion moyenne, et une très large nappe basse qui détache réellement la
+  // dalle du fond. C'est cette nappe qui fait la profondeur, et c'est elle qui
+  // manque aux tokens. Rayons pris sur l'échelle de spacing, couleur sur le
+  // token de texte (grey-900) diluée — rien en brut.
+  --sp-shadow:
+    0 var(--foundation-spacing-1) var(--foundation-spacing-2)
+      color-mix(in srgb, var(--semantic-color-static-text-main-primary) 10%, transparent),
+    0 var(--foundation-spacing-8) var(--foundation-spacing-24)
+      color-mix(in srgb, var(--semantic-color-static-text-main-primary) 10%, transparent),
+    0 var(--foundation-spacing-24) var(--foundation-spacing-64)
+      color-mix(in srgb, var(--semantic-color-static-text-main-primary) 20%, transparent);
+  // Même empilement, resserré, pour les petites surfaces (bulles) : une nappe de
+  // 64px sous un rond de 56px baverait bien au-delà de la forme.
+  --sp-shadow-small:
+    0 var(--foundation-spacing-1) var(--foundation-spacing-2)
+      color-mix(in srgb, var(--semantic-color-static-text-main-primary) 10%, transparent),
+    0 var(--foundation-spacing-4) var(--foundation-spacing-16)
+      color-mix(in srgb, var(--semantic-color-static-text-main-primary) 12%, transparent),
+    0 var(--foundation-spacing-16) var(--foundation-spacing-40)
+      color-mix(in srgb, var(--semantic-color-static-text-main-primary) 16%, transparent);
+
+  // Même ombre, en `drop-shadow` : la couche liquide n'a pas de boîte à ombrer
+  // (sa forme est produite par le filtre SVG), donc `box-shadow` n'a pas de
+  // prise dessus. Deux nappes suffisent : la troisième, très large, ne serait de
+  // toute façon pas discernable pendant les 560ms de la fission.
+  --sp-goo-shadow:
+    drop-shadow(0 var(--foundation-spacing-1) var(--foundation-spacing-2)
+      color-mix(in srgb, var(--semantic-color-static-text-main-primary) 10%, transparent))
+    drop-shadow(0 var(--foundation-spacing-4) var(--foundation-spacing-16)
+      color-mix(in srgb, var(--semantic-color-static-text-main-primary) 14%, transparent));
+
+  // Surfaces internes (champ de filtre, ligne survolée/active) : elles doivent
+  // rester translucides, sinon chacune perce un trou opaque dans le verre.
+  // Neutre pour le mobilier (champ de filtre, survol) afin de ne pas colorer la
+  // dalle ; accent conservé pour la SÉLECTION seule, qui doit rester lisible
+  // comme telle (même rôle que la surbrillance de Spotlight macOS).
+  --sp-glass-inner: color-mix(in srgb, var(--semantic-color-static-background-main-tertiary) 78%, transparent);
+  // `interactive-background-light-DEFAULT` (blue-a-025, quasi blanc) posé sur une
+  // dalle déjà claire ne se voyait pas : la surbrillance de sélection disparaît.
+  // On monte d'un cran dans la rampe (`-hover`, blue-a-050) pour qu'elle existe
+  // sans devenir un aplat plein.
+  --sp-glass-inner-accent: color-mix(in srgb, var(--semantic-color-interactive-background-light-hover) 88%, transparent);
+  // Séparateur interne : même famille que l'arête, un cran plus discret — la
+  // palette macOS montre un vrai filet sous la ligne de saisie, pas un dégradé.
+  --sp-glass-divider: color-mix(in srgb, var(--semantic-color-static-border-main-tertiary) 28%, transparent);
 }
 
 // ── Backdrop ────────────────────────────────────────────────────────────────
+// Invisible : le vrai Spotlight macOS n'assombrit jamais la page derrière lui
+// — c'est justement CE contenu (coloré, net) que le verre du panneau doit
+// flouter. Un scrim sombre ici reviendrait à flouter du gris plat, jamais la
+// page. Cet élément reste seulement pour capter le clic extérieur (fermeture).
 .ds-spotlight__backdrop {
   position: fixed;
   inset: 0;
-  background: var(--semantic-color-overlay-backdrop);
+  background: transparent;
   z-index: 1000;
-  animation: sp-backdrop-in var(--sp-dur-backdrop) var(--sp-ease-out) both;
 }
 
-@keyframes sp-backdrop-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-// ── Panneau ─────────────────────────────────────────────────────────────────
-// Une seule surface (barre + résultats), ancrée par le HAUT : `translateX`
-// seul → le haut reste fixe quelle que soit la hauteur du dropdown. La barre
-// ne bouge donc jamais quand les résultats apparaissent.
-.ds-spotlight__panel {
+// ── Ancre commune ─────────────────────────────────────────────────────────
+// La barre et les bulles sont deux surfaces distinctes posées côte à côte
+// (façon Spotlight macOS) : le stage centre l'ensemble, chacune garde son
+// propre fond/ombre/rayon. `align-items: flex-start` : les bulles restent au
+// niveau de la barre de recherche même quand le dropdown grandit dessous.
+.ds-spotlight__stage {
   position: fixed;
   top: 26vh;
   left: 50%;
   transform: translateX(-50%);
-  width: 600px;
-  max-width: calc(100vw - var(--semantic-measurement-spacing-xl));
   z-index: 1001;
-  background: var(--semantic-color-static-background-main-primary);
-  border: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
-  // Coins plus ronds (proche du chrome macOS) + ombre modale plus présente.
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-stage-gap);
+  max-width: calc(100vw - var(--semantic-measurement-spacing-xl));
+  transition: gap var(--sp-dur-morph) var(--sp-ease-liquid);
+
+  // Un filtre est ouvert : la barre "avale" la largeur des bulles — elles se
+  // rétractent (voir .ds-spotlight__bubbles) pendant que le panneau grandit
+  // d'exactement ce qu'elles libèrent. Un seul morph fluide, pas deux formes.
+  &--expanded {
+    gap: 0;
+
+    .ds-spotlight__panel {
+      width: var(--sp-bar-w-exp);
+    }
+  }
+}
+
+// Filtre SVG hors-écran : ne peint rien, sert juste de <defs> à référencer.
+.ds-spotlight__goo-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+// ── Couche liquide (metaballs) ──────────────────────────────────────────────
+// Un pilule + deux ronds, DERRIÈRE la barre et les bulles réelles (z-index),
+// dans le MÊME matériau verre translucide : au repos elle est invisible
+// (opacity 0), et pendant le morph elle comble l'espace ENTRE les deux
+// vraies formes — c'est ce qui donne le col qui se pince/rompt. Le contenu
+// réel (icônes, texte) reste au-dessus tout du long, jamais masqué : seule
+// la matière derrière eux se reforme. Copie les MÊMES variables de largeur/
+// position que la barre et les bulles réelles — une seule source de vérité.
+// Couleur du liseré reconstruit par le filtre (feFlood). Réglée ici et non en
+// attribut inline : `flood-color` est une propriété CSS, donc elle accepte les
+// tokens. Même valeur que la bordure de la barre réelle — la silhouette liquide
+// doit être cernée exactement comme elle.
+.ds-spotlight__goo-rim-color {
+  flood-color: var(--sp-glass-border);
+}
+
+.ds-spotlight__goo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  // Ombre portée appliquée APRÈS le metaball, donc à la silhouette fusionnée :
+  // une seule ombre pour tout le liquide. Portée par chaque forme source, elle
+  // aurait dessiné un halo sombre par forme, visible à travers les cols.
+  filter: url(#ds-spotlight-goo) var(--sp-goo-shadow);
+  pointer-events: none;
+  // Apparition ET disparition instantanées, jamais en fondu. Aux deux instants
+  // de bascule la couche liquide est confondue avec les vraies surfaces (au
+  // départ elle est cachée derrière le panneau, à l'arrivée ses lobes valent les
+  // bulles au pixel près), donc l'échange ne se voit pas. Un fondu de 140ms
+  // superposait au contraire les deux ombres portées le temps de la sortie.
+  opacity: 0;
+
+  &--pulse {
+    opacity: 1;
+  }
+}
+
+.ds-spotlight__goo-bar,
+.ds-spotlight__goo-blob {
+  position: absolute;
+  top: 0;
+  height: var(--sp-bubble-size);
+  // Aplat NU : ces formes ne sont plus rendues telles quelles, elles servent
+  // d'entrée au filtre qui en déduit une silhouette unique. Pas de box-shadow,
+  // pas d'arête, pas de backdrop-filter ici : tout bord propre à une forme
+  // survivrait au seuillage et trahirait les formes individuelles (c'est ce qui
+  // empêchait les cols de se voir). La matière est reconstruite sur la
+  // silhouette — liseré dans le filtre, ombre sur .ds-spotlight__goo.
+  background: var(--sp-glass-goo-bg);
+}
+
+.ds-spotlight__goo-bar {
+  left: 0;
+  width: var(--sp-panel-w);
   border-radius: var(--semantic-border-radius-l);
-  box-shadow: var(--semantic-shadow-modal);
+  // Le bord droit part en premier (léger temps de latence, ~25ms) et
+  // continue de bouger jusqu'à la fin — c'est lui qui porte toute la durée.
+  transition: width calc(var(--sp-dur-morph) - 25ms) var(--sp-ease-liquid) 25ms;
+}
+
+.ds-spotlight__goo-blob {
+  width: var(--sp-bubble-size);
+  border-radius: var(--sp-lobe-radius);
+  // Position d'ARRIVÉE : exactement celle de la bulle réelle de même rang.
+  left: calc(
+    var(--sp-panel-w) + var(--sp-stage-gap) + var(--sp-lobe-i) * var(--sp-bubble-pitch)
+  );
+  // Décalage à parcourir depuis la masse mère (toutes les positions de lobe y
+  // sont confondues) jusqu'à cette arrivée. C'est la SEULE valeur qui change
+  // d'un lobe à l'autre : la timeline de fission est donc unique, partagée par
+  // tous, et exprimée en fraction de ce décalage. Le signe est libre — un lobe
+  // dont la bulle d'arrivée est à DROITE de la masse mère part simplement dans
+  // l'autre sens, la timeline n'a pas à le savoir.
+  --sp-lobe-off: calc(var(--sp-mother-x) - (
+    var(--sp-panel-w) + var(--sp-stage-gap) + var(--sp-lobe-i) * var(--sp-bubble-pitch)
+  ));
+  transform:
+    translateX(calc(var(--sp-lobe-off) * var(--sp-lobe-rest-off)))
+    scale(var(--sp-lobe-rest-scale));
+  // Sens ALLER seulement (fusion dans la barre) : simple transition. Le rayon
+  // part devant (90ms) : le lobe doit être redevenu ROND avant de s'approcher de
+  // ses voisins et de la barre, sinon le filtre a des coins à fondre et la
+  // jonction se lit comme deux boîtes qui se recouvrent.
+  transition:
+    transform 190ms var(--sp-ease-liquid) 65ms,
+    border-radius 90ms var(--sp-ease-liquid);
+}
+
+// Un rang par lobe, à garder aligné sur le nombre de .ds-spotlight__goo-blob du
+// template (et sur --sp-bubbles-w). Une classe générée en trop est inoffensive,
+// un lobe sans classe se retrouverait empilé sur le rang 0.
+@for $i from 0 through 1 {
+  .ds-spotlight__goo-blob--#{$i} { --sp-lobe-i: #{$i}; }
+}
+
+.ds-spotlight__stage--expanded {
+  .ds-spotlight__goo-bar {
+    width: var(--sp-bar-w-exp);
+  }
+
+  // Les masses glissent VERS la barre et s'y engouffrent (quasi-zéro,
+  // pas littéralement 0 — une échelle nulle ferait disparaître la masse avant
+  // que le filtre ait pu la fusionner, cassant l'effet de fragmentation).
+  .ds-spotlight__goo-blob {
+    transform: translateX(var(--sp-lobe-off)) scale(0.12);
+    border-radius: var(--sp-lobe-radius-liquid);
+  }
+}
+
+// ── Fission liquide (sens RETOUR : la barre rend sa largeur) ─────────────────
+// Classe posée le temps de la timeline, uniquement quand on QUITTE un filtre.
+// Les @keyframes prennent la main sur les transitions ci-dessus (précédence CSS
+// animation > transition) et racontent les huit étapes dans l'ordre. Aucun
+// fill-mode : à la fin, l'état CSS au repos vaut déjà le 100 % des keyframes,
+// donc rien ne saute.
+.ds-spotlight__stage--fission {
+  .ds-spotlight__goo-bar {
+    animation: sp-goo-bar-retract var(--sp-dur-fission) linear;
+  }
+
+  .ds-spotlight__goo-blob {
+    animation: sp-lobe-fission var(--sp-dur-fission) linear;
+  }
+}
+
+// Rétraction de la barre liquide. `linear` : la courbe est DANS les keyframes
+// (paliers non uniformes), un easing par-dessus la déformerait deux fois.
+// Elle retarde volontairement sur le panneau réel (300ms) : le surplus de
+// matière qui dépasse à droite EST l'extrémité étirée. La couche étant derrière
+// le panneau, quand elle passe sous sa largeur elle se cache — donc seul le
+// dépassement se voit, jamais un cran en creux.
+// Les paliers de la ZONE DU COL sont calés sur l'écart BORD DE BARRE ↔ BORD
+// GAUCHE DE LA MASSE (la masse mère est immobile en x, c'est l'extrémité qui se
+// retire). Ils sont donc exprimés en absolu depuis --sp-mother-x, pas en
+// fraction de la course : la course dépend du NOMBRE de bulles, l'écart qui
+// dessine le col n'en dépend pas. Exprimés en fraction, ces quatre paliers se
+// décalaient dès qu'on ajoutait ou retirait une bulle et le col se pinçait au
+// mauvais endroit (ou hors champ). Quatre paliers consécutifs tiennent l'écart
+// entre ~22px de recouvrement et ~18px de vide, soit ~60ms passés dans la zone
+// où le filtre dessine un col. Sans ça la barre traversait cette zone en une
+// frame et le col ne se pinçait pas, il disparaissait.
+@keyframes sp-goo-bar-retract {
+  0%   { width: var(--sp-bar-w-exp); }
+  // « l'extrémité reste momentanément étirée » : ces deux paliers doivent tenir
+  // la barre liquide au-dessus de la largeur du PANNEAU au même instant, sinon
+  // le dépassement passe derrière lui et l'étirement ne se voit pas du tout. Le
+  // panneau part sur un ease-in (--sp-ease-liquid), donc la barre ne peut presque
+  // pas bouger sur ce début.
+  8%   { width: calc(var(--sp-panel-w) + var(--sp-bar-travel) * 0.99); } // résiste, s'étire
+  16%  { width: calc(var(--sp-panel-w) + var(--sp-bar-travel) * 0.94); }
+  /* recouvrement franc : la masse est encore de la matière de la barre */
+  25%  { width: calc(var(--sp-mother-x) + var(--semantic-measurement-spacing-m)); }
+  /* le col se forme (taille apparaît) */
+  29%  { width: calc(var(--sp-mother-x) + var(--semantic-measurement-spacing-xs)); }
+  /* au plus fin : encore ponté, juste sous la distance de pontage (~12px) */
+  33%  { width: calc(var(--sp-mother-x) - var(--semantic-measurement-spacing-s)); }
+  /* RUPTURE : l'écart passe au-delà de la distance de pontage */
+  38%  { width: calc(var(--sp-mother-x) - var(--semantic-measurement-spacing-l)); }
+  // Le filament claque en arrière. Il doit repasser SOUS la largeur du panneau
+  // réel (atteinte à --sp-dur-morph, soit ~48 % de la timeline) : au-delà, ce qui
+  // dépasse encore n'est plus un filament rattaché à quoi que ce soit, c'est un
+  // moignon orphelin planté sur le bord droit du panneau — ce que faisaient les
+  // paliers précédents, qui traînaient encore 30 à 50px dehors bien après la
+  // rupture. Il doit aussi rester à plus de 12px de la masse, qui dérive vers lui
+  // pendant ce temps : sinon le col se RE-ponte après avoir cassé.
+  45%  { width: calc(var(--sp-panel-w) + var(--sp-bar-travel) * 0.10); }
+  50%  { width: calc(var(--sp-panel-w) + var(--sp-bar-travel) * 0.03); }
+  57%  { width: var(--sp-panel-w); }
+  100% { width: var(--sp-panel-w); }
+}
+
+// Timeline des lobes. `--sp-lobe-off` = 1 → tous confondus sur la masse mère ;
+// 0 → chacun sur sa bulle. Le pas entre lobes vaut donc pitch × (1 − fraction) :
+// les cols, les creux qui se creusent par le haut ET par le bas, puis les
+// ruptures, sont produits par le filtre metaball au fur et à mesure que ce pas
+// grandit — rien de tout ça n'est dessiné à la main.
+// Palier final juste sous 1 : le flou du filtre rebride des formes trop
+// proches, un lobe légèrement plus petit garantit le jeu nécessaire pour qu'ils
+// se lisent SÉPARÉS. Les vraies bulles (scale 1, au-dessus, même matériau)
+// recouvrent l'écart.
+@keyframes sp-lobe-fission {
+  /* la matière est encore dans la barre */
+  0%   {
+    transform: translateX(var(--sp-lobe-off)) scale(0.30);
+    border-radius: var(--sp-lobe-radius-liquid);
+  }
+  /* la grosse bulle se gonfle depuis l'extrémité, col épais. Plafond à 1.22 et
+     non 1.30 : au-delà la masse dépasse de plus de 8px en haut ET en bas d'une
+     barre de 56 — elle ne se lit plus comme de la matière sortie de la barre,
+     mais comme un ballon posé devant. */
+  16%  { transform: translateX(var(--sp-lobe-off)) scale(1.22); }
+  /* le col s'amincit ; la masse reste attachée */
+  34%  { transform: translateX(calc(var(--sp-lobe-off) * 0.95)) scale(1.20); }
+  // Cadence de l'écartement : c'est le rapport PAS / DIAMÈTRE qui décide de ce
+  // qu'on voit, pas le pas seul. En dessous de ~0.65 le flou du filtre lisse tout
+  // et la forme se lit comme une capsule sans relief ; entre 0.69 et 0.95 les
+  // bosses puis les cols existent ; au-delà de 1.0 c'est rompu. Les paliers
+  // ci-dessous tiennent donc la forme dans cette bande de 45 % à 86 % (~230ms) au
+  // lieu de la traverser d'un coup — première version : 95ms de pilule lisse
+  // avant que le moindre creux apparaisse.
+  /* rupture : la masse est libre, elle commence à s'étirer (pas/dia 0.44) */
+  45%  { transform: translateX(calc(var(--sp-lobe-off) * 0.55)) scale(1.18); }
+  /* le contour commence à onduler (0.57) */
+  50%  { transform: translateX(calc(var(--sp-lobe-off) * 0.42)) scale(1.16); }
+  /* volumes arrondis nets dans une seule forme continue (0.69) */
+  57%  { transform: translateX(calc(var(--sp-lobe-off) * 0.33)) scale(1.12); }
+  /* les creux se creusent, par le haut ET par le bas (0.76) */
+  64%  { transform: translateX(calc(var(--sp-lobe-off) * 0.26)) scale(1.10); }
+  /* les liaisons ne sont plus que des cols fins (0.86) */
+  71%  { transform: translateX(calc(var(--sp-lobe-off) * 0.19)) scale(1.08); }
+  /* cols au point de rupture (0.95) */
+  77%  { transform: translateX(calc(var(--sp-lobe-off) * 0.12)) scale(1.05); }
+  /* les cols cassent : gouttes indépendantes. Le rayon tient le rond
+     jusqu'ICI — au-delà il n'y a plus aucun col à dessiner, donc plus besoin de
+     la contrainte du metaball, et les gouttes peuvent prendre la silhouette
+     exacte des bulles réelles. */
+  86%  {
+    transform: translateX(calc(var(--sp-lobe-off) * 0.02)) scale(0.90);
+    border-radius: var(--sp-lobe-radius-liquid);
+  }
+  /* réaction élastique : léger écartement au-delà, vers l'extérieur */
+  93%  { transform: translateX(calc(var(--sp-lobe-off) * -0.05)) scale(0.95); }
+  /* doit valoir l'état de repos CSS à l'identique (pas de fill-mode) */
+  100% {
+    transform:
+      translateX(calc(var(--sp-lobe-off) * var(--sp-lobe-rest-off)))
+      scale(var(--sp-lobe-rest-scale));
+    border-radius: var(--sp-lobe-radius);
+  }
+}
+
+// ── Panneau ─────────────────────────────────────────────────────────────────
+// Une seule surface (barre + résultats), ancrée par le HAUT : la hauteur du
+// dropdown ne bouge jamais la barre au-dessus. Largeur EXPLICITE (`width`,
+// pas flex-basis) : fixe quel que soit le contenu de la barre (saisie,
+// apparition du bouton "clear"…), ne change que sur `--stage--expanded`.
+.ds-spotlight__panel {
+  position: relative; // au-dessus de .ds-spotlight__goo (z-index)
+  z-index: 1;
+  flex: none;
+  // Grille en deux lignes : la barre (hauteur propre) + la zone extensible. La
+  // 2e ligne interpole `0fr → 1fr`, ce qui rend la HAUTEUR du panneau animable
+  // alors qu'elle est dictée par le contenu. Sans ça `height: auto` ne transitionne
+  // pas, et c'est précisément pour contourner ce blocage que le contenu
+  // apparaissait AVANT en fondu/scale. Ici il n'apparaît pas : il est découvert
+  // par le bord bas qui descend.
+  display: grid;
+  grid-template-rows: auto 0fr;
+  width: var(--sp-panel-w);
+  min-width: 0;
+  max-width: 100%;
+  // Matériau verre : translucide + flou de ce qu'il y a derrière, comme le
+  // vrai Spotlight macOS — pas un aplat opaque.
+  background: var(--sp-glass-bg);
+  backdrop-filter: var(--sp-glass-blur);
+  -webkit-backdrop-filter: var(--sp-glass-blur);
+  border: var(--semantic-border-size-s) solid var(--sp-glass-border);
+  // Coins plus ronds (proche du chrome macOS) + ombre portée à trois couches
+  // (--sp-shadow), doublée des arêtes spéculaires qui donnent l'épaisseur.
+  border-radius: var(--semantic-border-radius-l);
+  box-shadow: var(--sp-shadow), var(--sp-glass-edge);
   overflow: hidden; // les coins arrondis rognent la barre et le dropdown
   // Entrée : fondu + léger recul en profondeur + descente, avec ressort.
+  // PAS de `both`/`forwards` : ce fill-mode pinnerait `opacity`/`transform` sur
+  // la valeur finale de CETTE animation en permanence, et bloquerait ensuite
+  // toute tentative de les piloter via transition (squish, morph…).
   transform-origin: top center;
-  animation: sp-panel-in var(--sp-dur-panel) var(--sp-ease-spring) both;
-  will-change: transform, opacity;
+  animation: sp-panel-in var(--sp-dur-panel) var(--sp-ease-spring);
+  transition:
+    width var(--sp-dur-morph) var(--sp-ease-liquid),
+    grid-template-rows var(--sp-dur-morph) var(--sp-ease-liquid),
+    transform 220ms var(--sp-ease-liquid),
+    filter 220ms var(--sp-ease-liquid);
+  will-change: transform, opacity, width, grid-template-rows, filter;
+
+  // Pulse liquide à chaque changement de bulle : léger squish + flou, comme
+  // une matière souple qu'on presse — c'est CE qui fait "morph" plutôt que
+  // "resize". Se déclenche à l'ouverture ET au retour (voir `squish()`).
+  // Le contenu (icônes, texte) n'est PAS touché : il reste visible tout du
+  // long, seule la matière (fond/forme) se déforme derrière lui.
+  &--squish {
+    transform: scaleY(0.972);
+    filter: blur(2.5px);
+  }
+
+  // Ouverture de la zone extensible : la 2e ligne prend sa hauteur de contenu.
+  &--with-results {
+    grid-template-rows: auto 1fr;
+  }
+}
+
+// `min-height: 0` obligatoire : un item de grille a `min-height: auto` par
+// défaut, ce qui l'empêche de descendre sous sa hauteur de contenu — la ligne
+// resterait alors bloquée ouverte et la hauteur ne morpherait pas du tout.
+.ds-spotlight__body {
+  min-height: 0;
+  overflow: hidden;
 }
 
 @keyframes sp-panel-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(0.96); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0)      scale(1); }
+  from { opacity: 0; transform: translateY(-10px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)      scale(1); }
 }
 
 // ── Barre de recherche ────────────────────────────────────────────────────────
@@ -72,11 +599,50 @@
   transition: border-color var(--sp-dur-row) var(--sp-ease-out);
 }
 .ds-spotlight__panel--with-results .ds-spotlight__search {
-  border-bottom-color: var(--semantic-color-static-border-subtle-tertiary);
+  border-bottom-color: var(--sp-glass-divider);
 }
 
 .ds-spotlight__search-icon {
+  flex-shrink: 0;
+  opacity: 1;
   color: var(--semantic-color-static-icon-main-tertiary);
+  transition: opacity 120ms var(--sp-ease-out);
+}
+
+// Un filtre est ouvert : la loupe devient un bouton (icône de catégorie),
+// qui se change en chevron-retour au survol pour revenir à l'état neutre.
+.ds-spotlight__search-icon--back {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--semantic-color-static-icon-main-tertiary);
+
+  &:hover {
+    color: var(--semantic-color-static-icon-main-secondary);
+  }
+}
+
+.ds-spotlight__search-icon-glyph,
+.ds-spotlight__search-icon-chevron {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 150ms var(--sp-ease-out);
+}
+
+.ds-spotlight__search-icon-chevron {
+  opacity: 0;
+}
+
+.ds-spotlight__search-icon--back:hover {
+  .ds-spotlight__search-icon-glyph { opacity: 0; }
+  .ds-spotlight__search-icon-chevron { opacity: 1; }
 }
 
 // Champ : contient l'input réel + la complétion fantôme, superposés et
@@ -87,6 +653,8 @@
   min-width: 0;
   display: flex;
   align-items: center;
+  opacity: 1;
+  transition: opacity 120ms var(--sp-ease-out);
 }
 
 // Métriques partagées input / fantôme → alignement au pixel.
@@ -143,22 +711,220 @@
 .ds-spotlight__clear {
   flex-shrink: 0;
   animation: sp-fade-in 160ms var(--sp-ease-out) both;
+  transition: opacity 120ms var(--sp-ease-out);
+}
+
+// ── Bulles de filtre (pays + champ recherché) ───────────────────────────────
+// Surface à part, posée à côté de la barre — même traitement graphique que
+// le panneau (fond, bordure, ombre) : deux formes distinctes mais du même
+// matériau, pas une pastille accent qui détonne. Hauteur = celle de la barre
+// (56px), largeur pilotée par --sp-bubbles-w (seule source de vérité, voir
+// .ds-spotlight__stage) pour que la rétraction morphe exactement dans la
+// largeur que le panneau récupère.
+.ds-spotlight__bubbles {
+  position: relative; // au-dessus de .ds-spotlight__goo (z-index)
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+  width: var(--sp-bubbles-w);
+  height: var(--sp-bubble-size);
+  flex-shrink: 0;
+  // PAS d'overflow:hidden ici : ça rognerait net le box-shadow des bulles
+  // (leur conteneur fait exactement leur taille). La rétraction est portée par
+  // la LARGEUR des bulles elles-mêmes (voir --expanded plus bas), pas par un
+  // fondu : une bulle de 0px de large n'a plus ni contenu ni ombre à afficher.
+  transform-origin: left center; // se rétracte VERS la barre, comme absorbé par elle
+  // PAS de `both` : ce fill-mode pinnerait les propriétés de l'animation
+  // d'entrée sur leur valeur finale et bloquerait ensuite toute transition.
+  animation: sp-panel-in var(--sp-dur-panel) var(--sp-ease-spring);
+  transition:
+    width var(--sp-dur-morph) var(--sp-ease-liquid),
+    gap var(--sp-dur-morph) var(--sp-ease-liquid),
+    transform 220ms var(--sp-ease-liquid),
+    filter 220ms var(--sp-ease-liquid);
+
+  &--squish {
+    transform: scaleX(0.82);
+    filter: blur(2.5px);
+  }
+}
+
+// Rétraction 100 % géométrique. Le CONTENEUR perd sa largeur et son gap (300ms,
+// en phase avec le panneau) : c'est ce qui déplace les bulles jusqu'à leur
+// position d'arrivée. Leur PRÉSENCE, elle, est portée par `scale` — pas par
+// `width` (une bulle ronde de 20px de large est une pilule, silhouette
+// différente du lobe qu'elle recouvre) et surtout pas par l'opacité.
+// `scale` plutôt que `transform` : `transform` est déjà pris par le retour au
+// clic (`:active`), et une propriété ne peut porter qu'une seule transition.
+.ds-spotlight__stage--expanded .ds-spotlight__bubbles {
+  width: 0;
+  gap: 0;
+  pointer-events: none;
+
+  .ds-spotlight__bubble {
+    // Échange instantané, symétrique de celui du retour : la bulle cède la place
+    // au lobe liquide qui l'occupe déjà (même centre, même matériau, ~1px de
+    // diamètre d'écart), et c'est le lobe qui joue toute la fusion dans la barre.
+    // Une rétraction progressive de 140ms montrait la bulle rétrécir DANS le
+    // lobe encore à taille pleine — deux contours concentriques, le doublon
+    // qu'on cherche justement à éviter.
+    scale: 0;
+    transition: scale 0s linear;
+
+    > * {
+      opacity: 0;
+      transition: opacity 90ms var(--sp-ease-out);
+    }
+  }
+}
+
+.ds-spotlight__bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sp-bubble-size);
+  height: var(--sp-bubble-size);
+  flex-shrink: 0;
+  background: var(--sp-glass-bg);
+  backdrop-filter: var(--sp-glass-blur-small);
+  -webkit-backdrop-filter: var(--sp-glass-blur-small);
+  overflow: hidden;
+  border: var(--semantic-border-size-s) solid var(--sp-glass-border);
+  border-radius: var(--sp-bubble-radius);
+  color: var(--semantic-color-static-icon-main-secondary);
+  box-shadow: var(--sp-shadow-small), var(--sp-glass-edge);
+  cursor: pointer;
+  scale: 1;
+  transition:
+    // Échange instantané à la fin de la fission (durée 0) : la bulle prend sa
+    // taille pile quand la couche liquide s'efface, sur un lobe de même
+    // matériau, même silhouette, même centre et quasi même diamètre. Aucune
+    // animation ici — tout le mouvement est porté par le liquide ; une montée
+    // progressive ferait apparaître deux contours concentriques (voir
+    // --sp-dur-bubble-pop). La réaction élastique est jouée par le lobe.
+    scale var(--sp-dur-bubble-pop) linear var(--sp-delay-bubble-pop),
+    background-color 130ms var(--sp-ease-out),
+    border-color 130ms var(--sp-ease-out),
+    box-shadow 130ms var(--sp-ease-out),
+    color 130ms var(--sp-ease-out),
+    transform 130ms var(--sp-ease-out);
+
+  // « puis seulement à ce moment-là leurs icônes deviennent pleinement
+  // visibles » : le SEUL fondu autorisé de toute la séquence, et il démarre
+  // après la fin de la fission — donc une fois les bulles stabilisées.
+  > * {
+    flex: none;
+    opacity: 1;
+    transition: opacity var(--sp-dur-bubble-icon) var(--sp-ease-out) var(--sp-delay-bubble-icon);
+  }
+
+  &:hover {
+    background: var(--sp-glass-inner);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  // Bulle dont le panneau est ouvert : même teinte que la ligne active du
+  // dropdown, pas un bleu franc — juste "en cours de sélection". Translucide
+  // comme le reste : un aplat opaque ici trahit tout de suite le faux verre.
+  &--active {
+    background: var(--sp-glass-inner-accent);
+    color: var(--semantic-color-interactive-text-strong-default);
+    border-color: transparent;
+  }
+
+  // Filtre ACTIF alors que son panneau est refermé. Les bulles pays et champ
+  // recherché montrent leur sélection dans le glyphe (drapeau, « ID ») ; type et
+  // statut n'ont pas ce luxe — sans marque, rien ne dit que le corpus est filtré.
+  // Marque discrète (texte accent seul, pas de fond) : elle ne doit pas se
+  // confondre avec --active, qui signifie « panneau ouvert ».
+  &--set:not(&--active) {
+    color: var(--semantic-color-interactive-text-strong-default);
+  }
+}
+
+.ds-spotlight__bubble-label {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+}
+
+// ── Panneaux de filtre (morph depuis la bulle) ──────────────────────────────
+// Même surface que le dropdown résultats ; l'origine de la mise à l'échelle
+// est ancrée en haut à droite (là où vivent les bulles) pour suggérer que le
+// panneau « sort » de la bulle cliquée, façon Spotlight macOS.
+// AUCUNE animation propre ici — ni `opacity`, ni `scale`, ni `blur`. Le panneau
+// n'apparaît pas : il est découvert par la hauteur du panneau qui morphe
+// (.ds-spotlight__body / grid-template-rows), et masqué de la même façon quand
+// elle se referme. C'est la différence entre un fondu et un morph.
+.ds-spotlight__filter-panel {
+  padding: var(--semantic-measurement-spacing-xs);
+
+  // Panneau quitté (bulle cliquée à nouveau, chevron-retour, Échap, option
+  // choisie) : reste monté le temps que la ligne de grille se referme (voir
+  // `closingPanel()`), sinon `@if` le retirerait du DOM instantanément et la
+  // fermeture n'aurait rien à rogner.
+  &--out {
+    pointer-events: none;
+  }
+}
+
+.ds-spotlight__filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-xxs);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.ds-spotlight__filter-option {
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+  width: 100%;
+  padding: var(--semantic-measurement-spacing-s);
+  border: none;
+  border-radius: var(--semantic-border-radius-m);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color: var(--semantic-color-static-text-main-primary);
+  transition: background-color 130ms var(--sp-ease-out), color 130ms var(--sp-ease-out);
+
+  &:hover {
+    background: var(--sp-glass-inner);
+  }
+
+  &--active {
+    background: var(--sp-glass-inner-accent);
+    color: var(--semantic-color-interactive-text-strong-default);
+  }
+}
+
+.ds-spotlight__filter-option-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  flex-shrink: 0;
+  font-size: var(--semantic-font-text-style-size-s);
 }
 
 // ── Dropdown résultats ──────────────────────────────────────────────────────
-// Collé directement sous la barre (aucune marge) : c'est la même surface.
-// Entrée : fondu + légère descente. La barre reste fixe (ancrage haut).
+// Collé directement sous la barre (aucune marge) : c'est la même surface. Pas
+// d'animation d'entrée propre — comme le panneau de filtre, il est découvert par
+// la hauteur du panneau qui morphe, pas par un fondu.
 .ds-spotlight__dropdown {
   padding: var(--semantic-measurement-spacing-xs);
   display: flex;
   flex-direction: column;
   gap: var(--semantic-measurement-spacing-xxs);
-  animation: sp-dropdown-in var(--sp-dur-row) var(--sp-ease-out) both;
-}
-
-@keyframes sp-dropdown-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 
 // ── Ligne de résultat ─────────────────────────────────────────────────────────
@@ -186,7 +952,7 @@
 
   // Sélection teintée accent (bleu), comme la surbrillance de Spotlight macOS.
   &--active {
-    background: var(--semantic-color-interactive-background-light-default);
+    background: var(--sp-glass-inner-accent);
     color: var(--semantic-color-interactive-text-strong-default);
 
     .ds-spotlight__row-icon,
@@ -243,7 +1009,7 @@
     transform 120ms var(--sp-ease-out);
 
   &:hover {
-    background: var(--semantic-color-static-background-main-tertiary);
+    background: var(--sp-glass-inner);
     color: var(--semantic-color-static-icon-main-secondary);
   }
 
@@ -275,16 +1041,54 @@
 
 // ── Accessibilité : coupe toute animation si l'OS le demande ────────────────
 @media (prefers-reduced-motion: reduce) {
-  .ds-spotlight__backdrop,
   .ds-spotlight__panel,
   .ds-spotlight__dropdown,
   .ds-spotlight__row,
-  .ds-spotlight__clear {
+  .ds-spotlight__clear,
+  .ds-spotlight__filter-panel,
+  .ds-spotlight__bubbles {
     animation: none;
   }
   .ds-spotlight__row,
   .ds-spotlight__row-copy,
-  .ds-spotlight__search {
+  .ds-spotlight__search,
+  .ds-spotlight__bubble,
+  .ds-spotlight__bubbles,
+  .ds-spotlight__panel,
+  .ds-spotlight__stage,
+  .ds-spotlight__search-icon-glyph,
+  .ds-spotlight__search-icon-chevron,
+  .ds-spotlight__filter-option {
+    transition: none;
+  }
+  // Squish/flou et sortie du panneau sont purement décoratifs : on les
+  // neutralise complètement plutôt que de les rendre instantanés.
+  .ds-spotlight__panel--squish,
+  .ds-spotlight__bubbles--squish {
+    transform: none;
+    filter: none;
+  }
+  // Le panneau quitté n'a plus d'animation de sortie propre : sans transition de
+  // grille pour le rogner, il resterait affiché le temps de `closingPanel()`.
+  .ds-spotlight__filter-panel--out {
+    display: none;
+  }
+  // Couche liquide décorative : purement une fantaisie de mouvement, on la
+  // supprime plutôt que de la neutraliser à mi-chemin.
+  .ds-spotlight__goo {
+    display: none;
+  }
+  // Fission liquide : purement narrative. On la supprime en bloc plutôt que de
+  // la jouer instantanément (huit étapes compressées à zéro = un clignotement).
+  .ds-spotlight__stage--fission .ds-spotlight__goo-bar,
+  .ds-spotlight__stage--fission .ds-spotlight__goo-blob {
+    animation: none;
+  }
+  // Les délais de 560ms sur `scale` et sur l'opacité des icônes sont calés sur la
+  // fission, qui n'est pas jouée ici : sans ça les bulles resteraient absentes
+  // une demi-seconde après un morph devenu instantané.
+  .ds-spotlight__bubble,
+  .ds-spotlight__bubble > * {
     transition: none;
   }
 }
