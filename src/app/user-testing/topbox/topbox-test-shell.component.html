@@ -14,9 +14,33 @@
     <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Search">
       <ds-icon name="search" [size]="16" />
     </ds-button-icon>
-    <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Help">
-      <ds-icon name="help" [size]="16" />
-    </ds-button-icon>
+    <!-- « ? » : même mécanique de dropdown que le compte, à gauche de la barre
+         d'actions. Deux entrées seulement — le centre d'aide, et l'aide-mémoire
+         clavier, dont le raccourci est affiché DANS l'entrée. -->
+    <div class="ut-help" (click)="$event.stopPropagation()">
+      <ds-button-icon
+        type="tertiary"
+        [reversed]="true"
+        size="s"
+        ariaLabel="Help"
+        (clicked)="toggleHelpMenu()"
+      >
+        <ds-icon name="help" [size]="16" />
+      </ds-button-icon>
+      @if (helpMenuOpen()) {
+        <div class="ut-help__menu">
+          <ds-flyout-menu>
+            <ds-flyout-menu-item label="Help with Qirin" icon="launch" />
+            <ds-flyout-menu-item
+              label="Keyboard shortcuts"
+              icon="keyboard"
+              [shortcut]="['?']"
+              (clicked)="openShortcutsPanel()"
+            />
+          </ds-flyout-menu>
+        </div>
+      }
+    </div>
     <ds-button-icon type="tertiary" [reversed]="true" size="s" ariaLabel="Notifications">
       <ds-icon name="bell" [size]="16" />
     </ds-button-icon>
@@ -47,6 +71,22 @@
 
 <!-- Modals/dialogs — rendus hors du scroll container .ut-main -->
 <ng-content select="[slot=modals]" />
+
+<!-- Aide-mémoire clavier — docké en bas, hors du scroll container. -->
+<ds-shortcuts-panel
+  [(open)]="shortcuts.panelOpen"
+  [groups]="shortcutGroups"
+  [used]="shortcuts.used()"
+  [note]="shortcuts.note()"
+  (activated)="onPanelActivate($event)"
+/>
+<!-- Onglet « Layout » en attente : le panneau l'affiche dès qu'on lui repasse
+     [keyboard]="shortcuts.keyboardView()" et (layoutChange)="shortcuts.setLayout($event)".
+     Il n'est PAS nécessaire au bon fonctionnement — les lettres sont reconnues
+     par ce qui est gravé sur la touche (voir keyboard-layout.ts), donc les
+     raccourcis marchent déjà à l'identique en AZERTY. L'onglet ne servirait qu'à
+     le montrer. -->
+
 
 <!-- ══ Layout : sidenav + main ══════════════════════════════════ -->
 <div class="ut-layout">

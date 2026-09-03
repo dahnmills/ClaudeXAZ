@@ -1,0 +1,12 @@
+<span class="ds-shortcut-row__label">
+  {{ label() }}
+  @if (context()) {
+    <span class="ds-shortcut-row__context">{{ context() }}</span>
+  }
+</span>
+<span class="ds-shortcut-row__leader" aria-hidden="true"></span>
+<ds-shortcut-keys
+  class="ds-shortcut-row__keys"
+  [keys]="keys()"
+  [tone]="used() ? 'accent' : 'default'"
+/>

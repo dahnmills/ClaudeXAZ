@@ -14,6 +14,7 @@ import { SpotlightPage } from './pages/spotlight/spotlight.page';
 import { NotificationModuleComponent } from './pages/notification-module/notification-module.component';
 import { MaintenanceComponent } from './pages/maintenance/maintenance.component';
 import { LoadingComponent } from './pages/loading/loading.component';
+import { KeyboardShortcutsPage } from './pages/keyboard-shortcuts/keyboard-shortcuts.page';
 import { ReviewShellComponent } from './shared/feedback/review-shell.component';
 import { ResultsComponent } from './pages/results/results.component';
 import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
@@ -45,6 +46,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'notification-module', component: NotificationModuleComponent },
   { path: 'maintenance', component: MaintenanceComponent },
   { path: 'loading', component: LoadingComponent },
+  { path: 'keyboard-shortcuts', component: KeyboardShortcutsPage },
 ];
 
 export const appRoutes: Routes = [

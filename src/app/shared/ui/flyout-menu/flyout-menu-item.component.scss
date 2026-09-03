@@ -56,6 +56,15 @@
   color:       var(--semantic-color-interactive-text-strong-alt-default); // Grey/900
 }
 
+// ── Shortcut ──────────────────────────────────────────────────
+// Poussé à droite : le raccourci se lit en colonne d'un menu à l'autre, sans
+// dépendre de la longueur du label.
+.ds-flyout-menu-item__shortcut {
+  flex-shrink:  0;
+  margin-left:  auto;
+  padding-left: var(--semantic-measurement-spacing-m);
+}
+
 // ── Label ─────────────────────────────────────────────────────
 .ds-flyout-menu-item__label {
   font-family:    var(--semantic-font-family);

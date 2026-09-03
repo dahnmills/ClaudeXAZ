@@ -1,0 +1,42 @@
+// Les classes de variante sont posées sur l'HÔTE (`[class]` dans le décorateur),
+// donc les sélecteurs doivent partir de `:host` — un `.ds-keycap` nu ne
+// matcherait rien sous l'encapsulation émulée d'Angular.
+:host {
+  display: inline-flex;
+}
+
+// Le carré est la métaphore : hauteur = largeur minimale, pour qu'une lettre
+// seule donne une touche carrée et qu'un mot (Alt, Shift) l'étire en largeur
+// SANS changer de hauteur — sinon la ligne de touches se désaligne.
+.ds-keycap__key {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: var(--semantic-measurement-sizing-l);
+  height: var(--semantic-measurement-sizing-l);
+  padding: 0 var(--semantic-measurement-spacing-xs);
+
+  border: var(--semantic-border-size-s) solid var(--semantic-color-static-border-main-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+  background: var(--semantic-color-static-background-main-primary);
+
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-s);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: 1;
+  color: var(--semantic-color-static-text-main-secondary);
+  white-space: nowrap;
+}
+
+:host.ds-keycap--wide .ds-keycap__key {
+  padding: 0 var(--semantic-measurement-spacing-s);
+}
+
+// « Déjà utilisé » : touche pleine, comme les raccourcis essayés de Figma.
+:host.ds-keycap--tone-accent .ds-keycap__key {
+  border-color: var(--semantic-color-interactive-border-strong-default);
+  background: var(--semantic-color-interactive-background-strong-default);
+  color: var(--semantic-color-static-text-main-reversed);
+}

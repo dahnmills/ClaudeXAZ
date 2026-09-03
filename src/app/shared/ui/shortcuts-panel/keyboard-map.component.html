@@ -1,0 +1,41 @@
+<div class="ds-keyboard-map">
+  <div class="ds-keyboard-map__side">
+    <div class="ds-keyboard-map__picker" role="group" aria-label="Keyboard layout">
+      @for (l of view().layouts; track l.value) {
+        <ds-tag
+          type="select"
+          [label]="l.label"
+          [selected]="view().layout === l.value"
+          (toggled)="layoutChange.emit(l.value)"
+        />
+      }
+    </div>
+
+    <p class="ds-keyboard-map__note">
+      Shortcuts follow the letters printed on your keys: Alt + M is the key marked M,
+      wherever your layout puts it. Blue keys already carry a shortcut.
+    </p>
+
+    <!-- Dire d'où vient le dessin : sans cette ligne, un clavier faux passerait
+         pour une affirmation du produit plutôt que pour une supposition. -->
+    <p class="ds-keyboard-map__hint">
+      @switch (view().source) {
+        @case ('browser') { Layout read from your browser. }
+        @case ('manual')  { Showing the layout you picked. Matching doesn't depend on it. }
+        @default          { Your browser doesn't expose the layout — pick yours to correct the map. }
+      }
+    </p>
+  </div>
+
+  <!-- `aria-hidden` : une carte de touches n'a rien à annoncer que les lignes de
+       raccourcis ne disent déjà, et 26 lettres égrenées seraient du bruit. -->
+  <div class="ds-keyboard-map__keys" aria-hidden="true">
+    @for (row of view().rows; track $index) {
+      <div class="ds-keyboard-map__row">
+        @for (letter of row; track letter) {
+          <ds-keycap [label]="letter.toUpperCase()" [tone]="isLit(letter) ? 'accent' : 'default'" />
+        }
+      </div>
+    }
+  </div>
+</div>

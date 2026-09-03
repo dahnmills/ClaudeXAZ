@@ -30,6 +30,17 @@
     border-radius: 2px;
   }
 
+  // ── Fill container ──────────────────────────────────────────
+  // Part égale de la largeur du parent (`flex-basis: 0`, pas `auto` : sinon les
+  // libellés longs prendraient plus de place). L'indicateur du bas suit
+  // automatiquement, il est déjà en `width: 100%`.
+  &.ds-tab--fill {
+    flex:      1 1 0;
+    min-width: 0;
+
+    .ds-tab__content { justify-content: center; }
+  }
+
   // ── Disabled ────────────────────────────────────────────────
   &.ds-tab--disabled {
     opacity:        var(--semantic-measurement-opacity-disabled);

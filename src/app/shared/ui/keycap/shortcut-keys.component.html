@@ -1,0 +1,7 @@
+@for (k of keys(); track $index) {
+  @if (k === then) {
+    <span class="ds-shortcut-keys__then">then</span>
+  } @else {
+    <ds-keycap [label]="k" [tone]="tone()" />
+  }
+}

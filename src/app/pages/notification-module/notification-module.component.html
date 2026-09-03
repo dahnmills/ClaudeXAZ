@@ -11,35 +11,38 @@
 
   <div class="nm-body">
     <!-- ── Module de recherche (réf. Figma DS Draft Search 57:629) ──────────── -->
-    <!-- Rangée principale : 4 filtres + Include copy + Search. -->
+    <!-- Les huit critères sont toujours visibles : il n'y a pas de « More
+         criteria » à déplier. UNE seule grille pour les deux rangées — c'est ce
+         qui garantit l'alignement des colonnes. Les champs occupent les quatre
+         premières colonnes, « Include copy » + « Search » une cinquième colonne
+         qui n'existe que sur la première rangée : la deuxième s'arrête donc au
+         bout des champs, sans courir sous la case à cocher. -->
     <div class="nm-search">
-      <div class="nm-search__main">
-        <div class="nm-search__fields">
-          <ds-select label="Status code" [options]="statusCodeOptions" [(value)]="statusCodeFilter" />
-          <ds-select label="BU" [options]="buOptions" [(value)]="buFilter" />
-          <ds-select label="Notification type" [options]="typeOptions" [(value)]="typeFilter" />
-          <div class="nm-datefield">
-            <div class="nm-datefield__trigger" (click)="toggleDate()">
-              <ds-input-text label="Execution date" placeholder="e.g. Jul 2022 - Nov 2024"
-                [value]="dateQuery()">
-                <ds-icon slot="append" name="calendar" [size]="16" />
-              </ds-input-text>
-            </div>
-            @if (dateOpen()) {
-              <div class="nm-datefield__backdrop" (click)="closeDate()"></div>
-              <div class="nm-datefield__panel">
-                <ds-date-range
-                  type="dual"
-                  [(startDate)]="dateStart"
-                  [(endDate)]="dateEnd"
-                  [showTime]="true"
-                  [showFooter]="true"
-                  (applied)="applyDate($event)"
-                  (cancelled)="closeDate()"
-                />
-              </div>
-            }
+      <div class="nm-search__grid">
+        <ds-select label="Status code" [options]="statusCodeOptions" [(value)]="statusCodeFilter" />
+        <ds-select label="BU" [options]="buOptions" [(value)]="buFilter" />
+        <ds-select label="Notification type" [options]="typeOptions" [(value)]="typeFilter" />
+        <div class="nm-datefield">
+          <div class="nm-datefield__trigger" (click)="toggleDate()">
+            <ds-input-text label="Execution date" placeholder="e.g. Jul 2022 - Nov 2024"
+              [value]="dateQuery()">
+              <ds-icon slot="append" name="calendar" [size]="16" />
+            </ds-input-text>
           </div>
+          @if (dateOpen()) {
+            <div class="nm-datefield__backdrop" (click)="closeDate()"></div>
+            <div class="nm-datefield__panel">
+              <ds-date-range
+                type="dual"
+                [(startDate)]="dateStart"
+                [(endDate)]="dateEnd"
+                [showTime]="true"
+                [showFooter]="true"
+                (applied)="applyDate($event)"
+                (cancelled)="closeDate()"
+              />
+            </div>
+          }
         </div>
 
         <div class="nm-search__aside">
@@ -50,27 +53,12 @@
           />
           <ds-button type="primary">Search</ds-button>
         </div>
+
+        <ds-input-text label="Policy ID" placeholder="e.g. 4471023" [(value)]="policyQuery" />
+        <ds-input-text label="Extension ID" placeholder="e.g. EXT-88120" [(value)]="extensionQuery" />
+        <ds-input-text label="Buyer ID" placeholder="e.g. 137381425" [(value)]="buyerQuery" />
+        <ds-input-text label="Notification ID" placeholder="e.g. NOTIF-88120-A" [(value)]="notifIdQuery" />
       </div>
-
-      <ds-divider />
-
-      <!-- Bascule « More criteria » alignée à droite. -->
-      <div class="nm-search__toggle">
-        <ds-button type="plain" (clicked)="toggleMoreCriteria()">
-          {{ moreCriteriaOpen() ? 'Less criteria' : 'More criteria' }}
-          <ds-icon slot="icon-right" [name]="moreCriteriaOpen() ? 'chevron-up' : 'chevron-down'" [size]="16" />
-        </ds-button>
-      </div>
-
-      <!-- Rangée secondaire dépliable. -->
-      @if (moreCriteriaOpen()) {
-        <div class="nm-search__fields">
-          <ds-input-text label="Policy ID" placeholder="e.g. 4471023" [(value)]="policyQuery" />
-          <ds-input-text label="Extension ID" placeholder="e.g. EXT-88120" [(value)]="extensionQuery" />
-          <ds-input-text label="Buyer ID" placeholder="e.g. 137381425" [(value)]="buyerQuery" />
-          <ds-input-text label="Notification ID" placeholder="e.g. NOTIF-88120-A" [(value)]="notifIdQuery" />
-        </div>
-      }
     </div>
 
     <!-- ── Tableau des notifications ───────────────────────────────────────── -->

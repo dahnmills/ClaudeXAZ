@@ -9,9 +9,7 @@ import {
   BadgeComponent,
   ButtonComponent,
   ButtonIconComponent,
-  CardComponent,
   CheckboxComponent,
-  DividerComponent,
   SelectComponent,
   InputTextComponent,
   ModalComponent,
@@ -64,8 +62,8 @@ interface MediaBox {
     TopboxTestShellComponent,
     PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, PageTitleComponent,
     IconComponent, BadgeComponent,
-    ButtonComponent, ButtonIconComponent, CardComponent,
-    CheckboxComponent, DividerComponent,
+    ButtonComponent, ButtonIconComponent,
+    CheckboxComponent,
     SelectComponent, InputTextComponent, ModalComponent,
     FlyoutMenuComponent, FlyoutMenuItemComponent,
     TableRowComponent, CellComponent, CellHeaderComponent, CellActionComponent,
@@ -136,10 +134,6 @@ export class NotificationModuleComponent {
   notifIdQuery     = signal<string>('');
   /** Case « Include copy » du module de recherche (réf. Figma DS Draft Search 57:629). */
   includeCopy      = signal<boolean>(false);
-  /** Rangée « More criteria » dépliée. */
-  moreCriteriaOpen = signal<boolean>(false);
-
-  toggleMoreCriteria() { this.moreCriteriaOpen.update(o => !o); }
 
   /** Sélection multiple des lignes (checkbox de tête de ligne). */
   selectedRows = signal<Set<string>>(new Set());

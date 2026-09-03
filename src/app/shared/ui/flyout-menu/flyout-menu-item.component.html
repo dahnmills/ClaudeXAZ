@@ -3,3 +3,6 @@
   <ds-icon class="ds-flyout-menu-item__icon" [name]="icon()!" [size]="16" />
 }
 <span class="ds-flyout-menu-item__label">{{ label() }}</span>
+@if (shortcut().length) {
+  <ds-shortcut-keys class="ds-flyout-menu-item__shortcut" [keys]="shortcut()" />
+}

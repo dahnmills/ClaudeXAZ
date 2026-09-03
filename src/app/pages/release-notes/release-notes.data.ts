@@ -23,6 +23,40 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog — it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'keyboard-shortcuts',
+    date: '2026-09-03',
+    category: 'feature',
+    screens: ['keyboard-shortcuts'],
+    title: 'Keyboard shortcuts and their reference panel',
+    description:
+      'The product answers to the keyboard: Alt-based combinations jump between sections, open tools and drive the table. The « ? » button in the header now opens a help menu, and its "Keyboard shortcuts" entry docks a reference panel at the bottom of the page — read the combination, or click the line to run it on the spot.',
+    changes: [
+      'Added the « ? » header menu (same mechanics as the account menu) with two entries: "Help with Qirin" and "Keyboard shortcuts", the latter showing its own `?` shortcut',
+      'Added the reference panel docked at the bottom of the window: categories as full-width tabs, and `label ····· [Alt][M]` rows in three roomy columns',
+      'The panel keeps the same height whatever the tab, so the page underneath never jumps when you browse categories',
+      'The panel does not trap focus and has no backdrop — it stays open while you try a shortcut, and the row you just fired reports back inside the panel rather than under it',
+      'Clicking a row runs the shortcut, exactly as typing it would; a shortcut already tried is marked, so the panel doubles as a learning surface',
+      'Catalogued 65 shortcuts across 8 categories (essentials, go to, tools, table, buyer, view, filters, editing). The navigation ones are wired — Alt+M opens ManA, Alt+B buyers, and so on; the rest report that they are not wired in this prototype yet',
+      'Shortcuts are matched on the letter printed on your key, not on its position: Alt+M is the key marked M whether the layout is QWERTY, AZERTY or QWERTZ. Digits stay position-based, since AZERTY prints symbols on its top row',
+      'Shortcuts stay inert while typing in a field, apart from a small allow-list (Escape, the panel itself)',
+      'New design-system atoms: `ds-keycap` and `ds-shortcut-keys` (a rendered key combination), `ds-shortcut-row`, `ds-shortcuts-panel`. `ds-tab` gained `fill` for evenly-spread tab strips, `ds-flyout-menu-item` gained `shortcut` so a menu entry can teach its own combination, and a `keyboard` icon joined the registry',
+    ],
+  },
+  {
+    id: 'notification-module-search-always-open',
+    date: '2026-09-03',
+    category: 'design',
+    screens: ['notification-module'],
+    title: 'Notification Module: the whole search form, always open',
+    description:
+      'The "More criteria" disclosure is gone — its second row of fields is now permanently visible and aligned with the first. Eight criteria on screen, in one grid, nothing to unfold before searching.',
+    changes: [
+      'Removed the "More criteria" toggle and the divider underneath it: Policy ID, Extension ID, Buyer ID and Notification ID are always shown',
+      'Both rows now share one grid, so the second row\'s fields line up with the four above them instead of being offset',
+      '"Include copy" and the Search button stay on the first row, and the second row stops at the end of the fields rather than running under them',
+    ],
+  },
+  {
     id: 'spotlight-filter-bubbles',
     date: '2026-09-01',
     category: 'feature',

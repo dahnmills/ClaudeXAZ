@@ -92,3 +92,7 @@ export * from './collapsible-table/collapsible-table.component';
 export * from './grid-selection/grid-selection.component';
 export * from './pie-chart/pie-chart.component';
 export * from './spotlight/spotlight.component';
+export * from './keycap/keycap.component';
+export * from './keycap/shortcut-keys.component';
+export * from './shortcuts-panel/shortcut-row.component';
+export * from './shortcuts-panel/shortcuts-panel.component';

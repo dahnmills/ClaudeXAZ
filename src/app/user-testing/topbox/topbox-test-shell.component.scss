@@ -70,6 +70,27 @@
   height: 100%;
 }
 
+// Menu du « ? » : même ancrage que celui du compte. Aligné à droite du bouton
+// et non à gauche — le bouton est près du bord, un menu ouvert vers la droite
+// sortirait de l'écran.
+.ut-help {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
+
+.ut-help__menu {
+  position: absolute;
+  top: calc(100% + var(--semantic-measurement-spacing-xs));
+  right: 0;
+  z-index: 100;
+  color: var(--semantic-color-static-text-main-primary);
+
+  // Assez large pour que le raccourci ne colle pas au libellé le plus long.
+  ds-flyout-menu { min-width: calc(var(--semantic-measurement-sizing-3xl) * 5); }
+}
+
 .ut-account__menu {
   position: absolute;
   top: calc(100% + 4px);

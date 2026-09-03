@@ -1,0 +1,133 @@
+:host {
+  // La barre ne doit pas se redimensionner en changeant d'onglet : elle est
+  // ancrée au bas de la fenêtre, donc toute variation de hauteur pousse la page
+  // qu'on est venu consulter. C'est le CORPS qui est figé (en nombre de
+  // lignes), pas le panneau : ainsi la hauteur totale ne dépend d'aucun contenu
+  // et il n'y a pas un pixel de mou sous la dernière ligne.
+  --ksp-rows: 4;
+  --ksp-row: calc(var(--semantic-measurement-sizing-l) + var(--semantic-measurement-spacing-s) * 2);
+  --ksp-body-h: calc(var(--ksp-rows) * var(--ksp-row) + var(--semantic-measurement-spacing-l) * 2);
+  // Nombre de colonnes FIXE (et non une largeur de colonne) : avec
+  // `column-width`, le navigateur ajustait le nombre de colonnes à la largeur
+  // de fenêtre, donc le nombre de lignes, donc la hauteur. Quatre rangées ×
+  // trois colonnes = 12 places, la taille de la plus grosse catégorie. Trois et
+  // non quatre colonnes : le filet de liaison a besoin de longueur pour relier
+  // un libellé court à ses touches, et les colonnes larges laissent respirer.
+  --ksp-cols: 3;
+  --ksp-dur: 220ms;
+  --ksp-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  display: contents;
+}
+
+.ds-shortcuts-panel {
+  position: fixed;
+  inset: auto 0 0 0;
+  // Sous les modals (1000) : un raccourci ne doit pas passer devant une
+  // confirmation. Au-dessus du contenu de page.
+  z-index: 900;
+
+  display: flex;
+  flex-direction: column;
+  max-height: 60vh;
+
+  background: var(--semantic-color-static-background-main-primary);
+  border-top: var(--semantic-border-size-s) solid var(--semantic-color-static-border-main-tertiary);
+  box-shadow: var(--semantic-shadow-flyout);
+
+  font-family: var(--semantic-font-family);
+  animation: ds-shortcuts-panel-in var(--ksp-dur) var(--ksp-ease);
+}
+
+@keyframes ds-shortcuts-panel-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+// ── Bandeau de service ─────────────────────────────────────────────────────
+// La croix a sa propre ligne : partagée avec les onglets, elle rognait la bande
+// et tirait l'œil vers le coin au moment même où il doit balayer les catégories.
+// Ligne volontairement basse et vide à gauche — c'est de l'air, pas un en-tête.
+.ds-shortcuts-panel__chrome {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--semantic-measurement-spacing-m);
+  flex: 0 0 auto;
+
+  padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-l) 0;
+}
+
+// Retour de la dernière action. Seul voisin de la croix : il peut donc rester
+// dans le flux sans rien décaler d'important. Le snackbar ne peut pas faire ce
+// travail ici — il est ancré au même bord de fenêtre et recouvrirait la ligne
+// qu'on vient de déclencher.
+.ds-shortcuts-panel__note {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  font-size: var(--semantic-font-text-style-size-s);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color: var(--semantic-color-static-text-brand);
+}
+
+.ds-shortcuts-panel__close {
+  flex: 0 0 auto;
+}
+
+// ── Bande d'onglets ────────────────────────────────────────────────────────
+// Les onglets se répartissent toute la largeur (`fill`) : la bande lit alors
+// comme un segmenté et l'indicateur bleu devient une vraie zone repérable
+// plutôt qu'un trait de la largeur d'un mot.
+.ds-shortcuts-panel__tabs {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+
+  padding: 0 var(--semantic-measurement-spacing-l);
+  border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+}
+
+// `ds-tab` n'a volontairement pas de padding propre (spec Figma : c'est le
+// parent qui le donne, comme dans le header).
+.ds-shortcuts-panel__tabs ds-tab {
+  padding: 0 var(--semantic-measurement-spacing-s);
+}
+
+// ── Corps ──────────────────────────────────────────────────────────────────
+.ds-shortcuts-panel__body {
+  flex: 0 0 auto;
+  height: var(--ksp-body-h);
+  overflow-y: auto;
+  padding: var(--semantic-measurement-spacing-l);
+}
+
+// Pas de filet inter-colonnes : le pointillé de chaque ligne relie déjà son
+// libellé à ses touches, donc rien ne pousse à apparier la colonne 2 avec les
+// touches de la colonne 1. Un troisième type de trait par ligne (bordures de
+// touches + pointillés + filets) ne faisait que charger.
+.ds-shortcuts-panel__columns {
+  column-count: var(--ksp-cols);
+  column-gap: var(--semantic-measurement-spacing-3xl);
+}
+
+// Sous ~1100px, quatre colonnes couperaient les libellés. On passe à deux et
+// c'est le corps qui défile — la hauteur du panneau, elle, ne bouge pas.
+@media (max-width: 1100px) {
+  :host { --ksp-cols: 2; }
+}
+
+// Une ligne coupée entre deux colonnes serait illisible (libellé d'un côté,
+// touches de l'autre).
+.ds-shortcuts-panel__columns ds-shortcut-row {
+  break-inside: avoid;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-shortcuts-panel {
+    animation: none;
+  }
+}

@@ -27,6 +27,10 @@ export class TabComponent {
   disabled = input<boolean>(false);
 
   // Figma 57:231 — extra slots
+  /** Répartition « fill container » : l'onglet prend une part égale de la
+   *  largeur du parent, libellé centré. La spec Figma laisse déjà le padding au
+   *  parent — la distribution relève du même contrat de layout. */
+  fill     = input<boolean>(false);
   icon     = input<boolean>(false);          // gates [slot=icon] rendering
   counter  = input<number | null>(null);     // red badge top-right
   counterStyle = input<TabCounterStyle>('badge');
@@ -41,5 +45,6 @@ export class TabComponent {
     `ds-tab--tone-${this.tone()}`,
     this.selected() ? 'ds-tab--selected'  : '',
     this.disabled() ? 'ds-tab--disabled'  : '',
+    this.fill()     ? 'ds-tab--fill'      : '',
   ].filter(Boolean).join(' '));
 }

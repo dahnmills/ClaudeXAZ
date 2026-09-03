@@ -1,0 +1,5 @@
+// Le fond est rendu par <app-buyer-summary>, et le panneau par le shell qu'elle
+// monte (<ds-shortcuts-panel> dans app-topbox-test-shell). Rien à styler ici.
+:host {
+  display: block;
+}

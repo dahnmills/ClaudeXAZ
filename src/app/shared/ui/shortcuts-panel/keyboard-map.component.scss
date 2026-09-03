@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.ds-keyboard-map {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--semantic-measurement-spacing-3xl);
+}
+
+.ds-keyboard-map__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-s);
+  // Mesure de lecture : sans plafond, la phrase courrait sur toute la largeur du
+  // panneau et deviendrait illisible d'un bout à l'autre.
+  max-width: calc(var(--semantic-measurement-sizing-3xl) * 9);
+}
+
+.ds-keyboard-map__picker {
+  display: flex;
+  gap: var(--semantic-measurement-spacing-xs);
+}
+
+.ds-keyboard-map__note,
+.ds-keyboard-map__hint {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+}
+
+.ds-keyboard-map__note {
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+.ds-keyboard-map__hint {
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+// ── Le clavier ─────────────────────────────────────────────────────────────
+// Trois rangées de lettres, décalées comme sur un vrai clavier : c'est ce
+// décrochement qui fait reconnaître un clavier plutôt qu'un tableau de lettres.
+.ds-keyboard-map__keys {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-xxs);
+  flex: none;
+}
+
+.ds-keyboard-map__row {
+  display: flex;
+  gap: var(--semantic-measurement-spacing-xxs);
+}
+
+.ds-keyboard-map__row:nth-child(2) {
+  padding-left: var(--semantic-measurement-spacing-s);
+}
+
+.ds-keyboard-map__row:nth-child(3) {
+  padding-left: var(--semantic-measurement-spacing-l);
+}

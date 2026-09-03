@@ -40,46 +40,36 @@
   gap: var(--semantic-measurement-spacing-m);
 }
 
-// Module de recherche (réf. Figma DS Draft Search 57:629) : carte grise,
-// rangée principale (4 filtres + Include copy + Search), divider, bascule
-// « More criteria » à droite, puis rangée secondaire dépliable.
+// Module de recherche (réf. Figma DS Draft Search 57:629) : carte grise, huit
+// critères sur deux rangées, plus Include copy + Search en bout de première
+// rangée.
 .nm-search {
-  display: flex;
-  flex-direction: column;
-  gap: var(--semantic-measurement-spacing-s);
   padding: var(--semantic-measurement-spacing-m);
   background: var(--semantic-color-static-background-main-secondary);
   border-radius: var(--semantic-border-radius-m);
 
-  // Rangée principale : les 4 filtres prennent l'espace, l'aside reste compact.
-  &__main {
-    display: flex;
-    align-items: flex-end;
-    gap: var(--semantic-measurement-spacing-l);
-  }
-
-  // Grille des filtres (4 colonnes égales), réutilisée par la rangée secondaire.
-  &__fields {
-    flex: 1;
+  // UNE grille pour les deux rangées : deux grilles séparées ne pourraient pas
+  // s'aligner, celle du haut étant rétrécie par l'aside. Cinquième colonne en
+  // `auto` = largeur de l'aside ; les champs se partagent le reste à parts
+  // égales, et la rangée du bas s'arrête naturellement à la quatrième colonne.
+  &__grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
     gap: var(--semantic-measurement-spacing-m);
-    min-width: 0;
+    align-items: end;
   }
 
-  // Include copy + Search alignés en bas de la rangée (sur la ligne des champs).
+  // Include copy + Search : cinquième colonne, première rangée seulement.
+  // `spacing-s` de rab pour retrouver la respiration de spacing-l face aux
+  // champs, sans élargir la gouttière entre les champs eux-mêmes.
   &__aside {
+    grid-column: 5;
+    grid-row: 1;
     display: flex;
     align-items: center;
     gap: var(--semantic-measurement-spacing-l);
     padding-bottom: var(--semantic-measurement-spacing-xs);
-    flex: none;
-  }
-
-  // Bascule « More/Less criteria » alignée à droite sous le divider.
-  &__toggle {
-    display: flex;
-    justify-content: flex-end;
+    padding-left: var(--semantic-measurement-spacing-s);
   }
 }
 

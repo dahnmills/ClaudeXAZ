@@ -1,0 +1,68 @@
+// L'état `--used` est une classe posée sur l'hôte : tous les sélecteurs de
+// variante partent donc de `:host`.
+:host {
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+
+  // Respiration verticale : la rangée fait 40px pour une touche de 24. C'est le
+  // rapport du panneau de Figma, et il compte — resserré, un tableau de 12
+  // lignes de texte gris se lit comme un pavé et on ne repère plus la ligne
+  // qu'on cherche.
+  padding: var(--semantic-measurement-spacing-s);
+  border-radius: var(--semantic-border-radius-s);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+:host:hover {
+  background: var(--semantic-color-interactive-background-muted-hover);
+}
+
+:host:active {
+  background: var(--semantic-color-interactive-background-muted-active);
+}
+
+:host:focus-visible {
+  outline: var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+  outline-offset: var(--semantic-measurement-spacing-xxs);
+}
+
+.ds-shortcut-row__label {
+  flex: 0 1 auto;
+  min-width: 0;
+
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color: var(--semantic-color-static-text-main-primary);
+}
+
+// Portée : « in a table », « while editing ». Le raccourci existe mais n'est pas
+// actif partout — le dire ici évite le raccourci qui « ne marche pas ».
+.ds-shortcut-row__context {
+  margin-left: var(--semantic-measurement-spacing-xs);
+  font-size: var(--semantic-font-text-style-size-s);
+  color: var(--semantic-color-static-text-main-tertiary);
+  white-space: nowrap;
+}
+
+// Filet de liaison libellé → combo. Boîte de hauteur nulle centrée : le trait
+// tombe donc sur la ligne médiane de la rangée, pas sous le texte.
+.ds-shortcut-row__leader {
+  flex: 1 1 auto;
+  align-self: center;
+  min-width: var(--semantic-measurement-spacing-m);
+  height: 0;
+  border-bottom: var(--semantic-border-size-s) dotted var(--semantic-color-static-border-main-tertiary);
+}
+
+.ds-shortcut-row__keys {
+  flex: 0 0 auto;
+}
+
+// Un raccourci déjà utilisé se lit aussi dans son libellé, pas seulement dans
+// ses touches — sinon le bleu des carrés passe pour une simple emphase.
+:host.ds-shortcut-row--used .ds-shortcut-row__label {
+  color: var(--semantic-color-static-text-brand);
+}

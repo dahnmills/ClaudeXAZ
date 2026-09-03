@@ -1,0 +1,70 @@
+@if (open()) {
+  <!-- `region` et non `dialog` : le panneau ne piège pas le focus et ne bloque
+       pas la page — c'est ce qui permet d'essayer un raccourci en le lisant. -->
+  <section class="ds-shortcuts-panel" role="region" aria-label="Keyboard shortcuts">
+    <!-- Ligne de service : la croix, et le retour de la dernière action quand il
+         y en a un. Pas de titre — on arrive par le menu « Keyboard shortcuts »
+         ou par `?`, et l'écran est couvert de carrés de clavier ; le nom est
+         porté par `aria-label`. Pas de recherche non plus : les catégories
+         tiennent en un coup d'œil, un champ de plus n'apportait qu'un second
+         système de navigation en concurrence avec les onglets. -->
+    <div class="ds-shortcuts-panel__chrome">
+      <!-- Toujours rendu, vide au repos : le retour d'action n'a pas à décaler
+           la croix de fermeture en apparaissant. -->
+      <span class="ds-shortcuts-panel__note" role="status">{{ note() }}</span>
+
+      <ds-button-icon
+        class="ds-shortcuts-panel__close"
+        type="tertiary"
+        size="s"
+        ariaLabel="Close keyboard shortcuts"
+        (clicked)="close()"
+      >
+        <ds-icon name="close" [size]="16" />
+      </ds-button-icon>
+    </div>
+
+    <nav class="ds-shortcuts-panel__tabs" role="tablist" aria-label="Shortcut categories">
+      @for (g of groups(); track g.key) {
+        <ds-tab
+          [fill]="true"
+          [selected]="activeKey() === g.key"
+          (clicked)="pickCategory(g.key)"
+        >{{ g.label }}</ds-tab>
+      }
+
+      <!-- En dernier, comme chez Figma : c'est un réglage, pas une catégorie de
+           raccourcis. Ne s'affiche que si l'hôte fournit `keyboard`. -->
+      @if (keyboard()) {
+        <ds-tab
+          [fill]="true"
+          [selected]="showLayout()"
+          (clicked)="pickCategory(layoutKey)"
+        >Layout</ds-tab>
+      }
+    </nav>
+
+    <div class="ds-shortcuts-panel__body">
+      @if (showLayout()) {
+        @if (keyboard(); as kb) {
+          <ds-keyboard-map [view]="kb" (layoutChange)="layoutChange.emit($event)" />
+        }
+      } @else {
+        <!-- Colonnes CSS (et non grille) : le flux remplit une colonne avant de
+             passer à la suivante, donc l'ordre de lecture reste vertical comme
+             dans une liste. Une grille aurait rangé les lignes en zigzag. -->
+        <div class="ds-shortcuts-panel__columns">
+          @for (s of visibleShortcuts(); track s.id) {
+            <ds-shortcut-row
+              [label]="s.label"
+              [keys]="s.keys"
+              [context]="s.context ?? ''"
+              [used]="isUsed(s)"
+              (activated)="activated.emit(s)"
+            />
+          }
+        </div>
+      }
+    </div>
+  </section>
+}

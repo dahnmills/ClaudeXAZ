@@ -1,0 +1,12 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-xxs);
+}
+
+.ds-shortcut-keys__then {
+  padding: 0 var(--semantic-measurement-spacing-xxs);
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-s);
+  color: var(--semantic-color-static-text-main-tertiary);
+}
