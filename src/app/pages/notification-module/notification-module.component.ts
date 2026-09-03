@@ -9,6 +9,7 @@ import {
   BadgeComponent,
   ButtonComponent,
   ButtonIconComponent,
+  DividerComponent,
   CheckboxComponent,
   SelectComponent,
   InputTextComponent,
@@ -63,6 +64,7 @@ interface MediaBox {
     PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, PageTitleComponent,
     IconComponent, BadgeComponent,
     ButtonComponent, ButtonIconComponent,
+    DividerComponent,
     CheckboxComponent,
     SelectComponent, InputTextComponent, ModalComponent,
     FlyoutMenuComponent, FlyoutMenuItemComponent,
@@ -83,7 +85,7 @@ export class NotificationModuleComponent {
 
   // Options des filtres du bloc de recherche (statiques — proto).
   readonly statusCodeOptions: SelectOption[] = [
-    { value: '',          label: 'All' },
+    { value: '',          label: 'All statuses' },
     { value: 'delivered', label: 'Delivered' },
     { value: 'partial',   label: 'Partially delivered' },
     { value: 'failed',    label: 'Distribution failed' },
@@ -98,7 +100,7 @@ export class NotificationModuleComponent {
     { value: 'GB07', label: 'GB07' },
   ];
   readonly typeOptions: SelectOption[] = [
-    { value: '',     label: 'All' },
+    { value: '',     label: 'All types' },
     { value: 'grade',  label: 'Grade change' },
     { value: 'limit',  label: 'Limit decision' },
     { value: 'cancel', label: 'Cancellation' },
@@ -132,8 +134,31 @@ export class NotificationModuleComponent {
   extensionQuery   = signal<string>('');
   buyerQuery       = signal<string>('');
   notifIdQuery     = signal<string>('');
-  /** Case « Include copy » du module de recherche (réf. Figma DS Draft Search 57:629). */
+  /** Case « Include copies » du module de recherche (réf. Figma DS Draft Search 57:629). */
   includeCopy      = signal<boolean>(false);
+
+  /** Au moins un critère saisi → il y a quelque chose à remettre à zéro. */
+  hasCriteria = computed(() =>
+    !!(this.policyQuery() || this.extensionQuery() || this.buyerQuery() || this.notifIdQuery()
+      || this.statusCodeFilter() || this.buFilter() || this.typeFilter() || this.dateQuery()
+      || this.includeCopy()),
+  );
+
+  /** Vide les huit critères et la case. La plage de dates part aussi, sinon le
+   *  calendrier réouvert proposerait encore la sélection précédente. */
+  resetSearch() {
+    this.policyQuery.set('');
+    this.extensionQuery.set('');
+    this.buyerQuery.set('');
+    this.notifIdQuery.set('');
+    this.statusCodeFilter.set('');
+    this.buFilter.set('');
+    this.typeFilter.set('');
+    this.dateQuery.set('');
+    this.dateStart.set(null);
+    this.dateEnd.set(null);
+    this.includeCopy.set(false);
+  }
 
   /** Sélection multiple des lignes (checkbox de tête de ligne). */
   selectedRows = signal<Set<string>>(new Set());

@@ -40,36 +40,110 @@
   gap: var(--semantic-measurement-spacing-m);
 }
 
-// Module de recherche (réf. Figma DS Draft Search 57:629) : carte grise, huit
-// critères sur deux rangées, plus Include copy + Search en bout de première
-// rangée.
+// Module de recherche (réf. Figma DS Draft Search 57:629) : carte grise (le fond
+// du module de recherche partout dans le produit — c'est ce qui le distingue du
+// tableau blanc en dessous), deux groupes de critères séparés par un filet
+// vertical, actions sous un filet horizontal.
 .nm-search {
   padding: var(--semantic-measurement-spacing-m);
   background: var(--semantic-color-static-background-main-secondary);
   border-radius: var(--semantic-border-radius-m);
 
-  // UNE grille pour les deux rangées : deux grilles séparées ne pourraient pas
-  // s'aligner, celle du haut étant rétrécie par l'aside. Cinquième colonne en
-  // `auto` = largeur de l'aside ; les champs se partagent le reste à parts
-  // égales, et la rangée du bas s'arrête naturellement à la quatrième colonne.
-  &__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+
+  // ── Les deux groupes ────────────────────────────────────────────────────
+  // Ratio 4/5 : les identifiants sont courts et de longueur connue, les
+  // filtres portent des libellés d'option entiers (« Partially delivered »).
+  // Leur donner la même largeur aurait tronqué les seconds pour rien.
+  &__groups {
+    display: flex;
+    align-items: stretch;
+    gap: var(--semantic-measurement-spacing-l);
+  }
+
+  &__group {
+    flex: 4 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--semantic-measurement-spacing-s);
+
+    &--filters { flex: 5 1 0; }
+  }
+
+  // Titre de groupe : même typo que tout libellé de zone du produit (14 SemiBold
+  // primaire, cf. .nm-infobox__key / .nm-distid__key). Plus petit que les labels
+  // de champs (16 Regular) mais plus gras : c'est un autre niveau, pas un champ
+  // de plus.
+  &__group-title {
+    margin: 0;
+    font-family: var(--semantic-font-family);
+    font-size: var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    line-height: var(--semantic-font-text-style-line-height-m);
+    color: var(--semantic-color-static-text-main-primary);
+  }
+
+  // Grille interne au groupe. `align-items: end` garde les champs alignés par
+  // le bas même si un label passe sur deux lignes.
+  &__fields {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--semantic-measurement-spacing-m);
     align-items: end;
   }
 
-  // Include copy + Search : cinquième colonne, première rangée seulement.
-  // `spacing-s` de rab pour retrouver la respiration de spacing-l face aux
-  // champs, sans élargir la gouttière entre les champs eux-mêmes.
-  &__aside {
-    grid-column: 5;
-    grid-row: 1;
+  // La date est plus large que les trois selects : elle affiche deux bornes.
+  &__group--filters &__fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) 1.35fr;
+  }
+
+  // ── Pied ────────────────────────────────────────────────────────────────
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--semantic-measurement-spacing-l);
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: var(--semantic-measurement-spacing-xs);
+    min-width: 0;
+  }
+
+  &__hint {
+    font-family: var(--semantic-font-family);
+    font-size: var(--semantic-font-text-style-size-m);
+    color: var(--semantic-color-static-text-main-tertiary);
+    cursor: pointer;
+  }
+
+  &__actions {
     display: flex;
     align-items: center;
     gap: var(--semantic-measurement-spacing-l);
-    padding-bottom: var(--semantic-measurement-spacing-xs);
-    padding-left: var(--semantic-measurement-spacing-s);
+    flex-shrink: 0;
+  }
+}
+
+// Sous ~1180px, huit champs sur une ligne rognent les libellés d'option : les
+// deux groupes passent l'un sous l'autre et le filet se met à l'horizontale —
+// c'est le même séparateur, il ne disparaît pas.
+@media (max-width: 1180px) {
+  .nm-search__groups {
+    flex-direction: column;
+  }
+
+  // Sélecteur descendant volontaire : à égalité de spécificité avec le
+  // `:host.ds-divider--orientation-vertical` de l'atome, l'ordre des feuilles
+  // décide, et il n'est pas garanti.
+  .nm-search__groups > .nm-search__split {
+    width: 100%;
+    height: 1px;
   }
 }
 

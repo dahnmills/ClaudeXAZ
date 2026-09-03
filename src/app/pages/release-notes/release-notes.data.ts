@@ -23,6 +23,22 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog — it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'notification-module-search-groups',
+    date: '2026-09-03',
+    category: 'design',
+    screens: ['notification-module'],
+    title: 'Notification Module: search split from filtering',
+    description:
+      'The eight criteria are now two labelled groups either side of a vertical rule — "Search by identifier" for a notification you already know, "Filter results" for a list you do not. Include copies, Reset and Search moved to a footer under a horizontal rule, since they act on both groups.',
+    changes: [
+      'Grouped the four ID fields under "Search by identifier" and the four filters under "Filter results", separated by a vertical rule — flat on one grid, the eight boxes read as eight equal criteria to fill in',
+      'Added the footer row: "Include copies — show duplicated notifications too" on the left (the hint is clickable too), Reset and Search on the right',
+      'Added Reset, which clears the eight criteria, the date range and the checkbox. Disabled rather than hidden while there is nothing to clear, so the Search button never shifts',
+      'The filters now read "All statuses" / "All" / "All types" as placeholders instead of pre-selected values: a filter that is not set looks like a filter that is not set',
+      'Under 1180px the two groups stack and the rule turns horizontal — the same separator, not a hidden one',
+    ],
+  },
+  {
     id: 'keyboard-shortcuts',
     date: '2026-09-03',
     category: 'feature',
