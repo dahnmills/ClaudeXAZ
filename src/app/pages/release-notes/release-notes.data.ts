@@ -27,15 +27,16 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     date: '2026-09-03',
     category: 'design',
     screens: ['notification-module'],
-    title: 'Notification Module: search split from filtering',
+    title: 'Notification Module: the criteria, then what you do with them',
     description:
-      'The eight criteria are now two labelled groups either side of a vertical rule — "Search by identifier" for a notification you already know, "Filter results" for a list you do not. Include copies, Reset and Search moved to a footer under a horizontal rule, since they act on both groups.',
+      'The eight criteria stay one grid — four filters above, four identifiers below, column against column — and a vertical rule now closes that grid on the right. What sits beyond the rule is not a ninth criterion: Include copies on the filters\' line, Reset and Search on the identifiers\' line.',
     changes: [
-      'Grouped the four ID fields under "Search by identifier" and the four filters under "Filter results", separated by a vertical rule — flat on one grid, the eight boxes read as eight equal criteria to fill in',
-      'Added the footer row: "Include copies — show duplicated notifications too" on the left (the hint is clickable too), Reset and Search on the right',
+      'The four filters and the four ID fields share one grid, so each field of the bottom row lines up with the one above it',
+      'Added the vertical rule at the end of the grid, spanning both rows, and the column beyond it: the option on the first line, the actions on the second',
+      'The checkbox and the two buttons sit on the very axis of the field boxes of their row, whatever their own height — the column\'s cells take the height of a field, and centre what they hold',
       'Added Reset, which clears the eight criteria, the date range and the checkbox. Disabled rather than hidden while there is nothing to clear, so the Search button never shifts',
       'The filters now read "All statuses" / "All" / "All types" as placeholders instead of pre-selected values: a filter that is not set looks like a filter that is not set',
-      'Under 1180px the two groups stack and the rule turns horizontal — the same separator, not a hidden one',
+      'Under 1180px the grid falls back to two columns, the rule goes away and the option and the actions move under the fields — the actions staying flush right',
     ],
   },
   {

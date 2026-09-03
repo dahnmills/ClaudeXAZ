@@ -11,81 +11,63 @@
 
   <div class="nm-body">
     <!-- ── Module de recherche (réf. Figma DS Draft Search 57:629) ──────────── -->
-    <!-- Deux intentions différentes, donc deux blocs séparés par un filet
-         vertical : à gauche on cherche UNE notification qu'on connaît déjà par
-         son identifiant, à droite on réduit une liste qu'on ne connaît pas.
-         Mélangées sur une même grille, les huit cases se lisaient comme huit
-         critères équivalents à remplir. Les actions descendent sous un filet
-         horizontal : elles portent sur les deux blocs à la fois. -->
+    <!-- UNE seule grille pour les huit critères : c'est ce qui garantit que la
+         rangée du bas s'aligne colonne par colonne sur celle du haut. Filet
+         vertical en cinquième colonne, sur les deux rangées : ce qui est à sa
+         droite n'est pas un neuvième critère mais ce qu'on fait des huit. -->
     <div class="nm-search">
-      <div class="nm-search__groups">
-        <section class="nm-search__group">
-          <h2 class="nm-search__group-title">Search by identifier</h2>
-          <div class="nm-search__fields">
-            <ds-input-text label="Policy ID" placeholder="4471023" [(value)]="policyQuery" />
-            <ds-input-text label="Extension ID" placeholder="EXT-88120" [(value)]="extensionQuery" />
-            <ds-input-text label="Buyer ID" placeholder="137381425" [(value)]="buyerQuery" />
-            <ds-input-text label="Notification ID" placeholder="NOTIF-88120-A" [(value)]="notifIdQuery" />
+      <div class="nm-search__grid">
+        <!-- Rangée 1 — filtres. « All … » en placeholder et non en valeur
+             sélectionnée : un filtre non posé doit se lire comme non posé, et
+             l'option de même libellé dans la liste sert de retour en arrière. -->
+        <ds-select label="Status code" placeholder="All statuses"
+          [options]="statusCodeOptions" [(value)]="statusCodeFilter" />
+        <ds-select label="BU" placeholder="All"
+          [options]="buOptions" [(value)]="buFilter" />
+        <ds-select label="Notification type" placeholder="All types"
+          [options]="typeOptions" [(value)]="typeFilter" />
+        <div class="nm-datefield">
+          <div class="nm-datefield__trigger" (click)="toggleDate()">
+            <ds-input-text label="Execution date" placeholder="Jul 2022 – Nov 2024"
+              [value]="dateQuery()">
+              <ds-icon slot="append" name="calendar" [size]="16" />
+            </ds-input-text>
           </div>
-        </section>
+          @if (dateOpen()) {
+            <div class="nm-datefield__backdrop" (click)="closeDate()"></div>
+            <div class="nm-datefield__panel">
+              <ds-date-range
+                type="dual"
+                [(startDate)]="dateStart"
+                [(endDate)]="dateEnd"
+                [showTime]="true"
+                [showFooter]="true"
+                (applied)="applyDate($event)"
+                (cancelled)="closeDate()"
+              />
+            </div>
+          }
+        </div>
 
+        <!-- Rangée 2 — identifiants. -->
+        <ds-input-text label="Policy ID" placeholder="4471023" [(value)]="policyQuery" />
+        <ds-input-text label="Extension ID" placeholder="EXT-88120" [(value)]="extensionQuery" />
+        <ds-input-text label="Buyer ID" placeholder="137381425" [(value)]="buyerQuery" />
+        <ds-input-text label="Notification ID" placeholder="NOTIF-88120-A" [(value)]="notifIdQuery" />
+
+        <!-- Colonne de droite : l'option au niveau de la 1re rangée, les actions
+             au niveau de la 2e — chacune alignée sur la boîte des champs. -->
         <ds-divider class="nm-search__split" orientation="vertical" />
 
-        <section class="nm-search__group nm-search__group--filters">
-          <h2 class="nm-search__group-title">Filter results</h2>
-          <div class="nm-search__fields">
-            <!-- « All … » en placeholder et non en valeur : un filtre non posé
-                 doit se lire comme non posé, et l'option de même libellé dans la
-                 liste sert alors de retour en arrière. -->
-            <ds-select label="Status code" placeholder="All statuses"
-              [options]="statusCodeOptions" [(value)]="statusCodeFilter" />
-            <ds-select label="BU" placeholder="All"
-              [options]="buOptions" [(value)]="buFilter" />
-            <ds-select label="Notification type" placeholder="All types"
-              [options]="typeOptions" [(value)]="typeFilter" />
-            <div class="nm-datefield">
-              <div class="nm-datefield__trigger" (click)="toggleDate()">
-                <ds-input-text label="Execution date" placeholder="Jul 2022 – Nov 2024"
-                  [value]="dateQuery()">
-                  <ds-icon slot="append" name="calendar" [size]="16" />
-                </ds-input-text>
-              </div>
-              @if (dateOpen()) {
-                <div class="nm-datefield__backdrop" (click)="closeDate()"></div>
-                <div class="nm-datefield__panel">
-                  <ds-date-range
-                    type="dual"
-                    [(startDate)]="dateStart"
-                    [(endDate)]="dateEnd"
-                    [showTime]="true"
-                    [showFooter]="true"
-                    (applied)="applyDate($event)"
-                    (cancelled)="closeDate()"
-                  />
-                </div>
-              }
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <ds-divider />
-
-      <div class="nm-search__footer">
-        <div class="nm-search__option">
+        <div class="nm-search__aside nm-search__aside--option">
           <ds-checkbox
             label="Include copies"
             [checked]="includeCopy()"
             (checkedChange)="includeCopy.set($event)"
           />
-          <!-- Ce que la case fait, en clair : « copies » seul ne dit pas de quoi.
-               Cliquable comme le libellé — la cible reste une seule phrase. -->
-          <span class="nm-search__hint" (click)="includeCopy.set(!includeCopy())">
-            — show duplicated notifications too
-          </span>
         </div>
 
-        <div class="nm-search__actions">
+        <div class="nm-search__aside nm-search__aside--actions">
           <!-- Reset en plain : vider huit champs remplis ne doit pas se présenter
                avec le même poids visuel que lancer la recherche. Désactivé plutôt
                que masqué — apparaître/disparaître décalerait le bouton Search. -->

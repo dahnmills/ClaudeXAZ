@@ -42,108 +42,74 @@
 
 // Module de recherche (réf. Figma DS Draft Search 57:629) : carte grise (le fond
 // du module de recherche partout dans le produit — c'est ce qui le distingue du
-// tableau blanc en dessous), deux groupes de critères séparés par un filet
-// vertical, actions sous un filet horizontal.
+// tableau blanc en dessous), huit critères sur deux rangées, et une colonne à
+// droite du filet vertical pour ce qu'on en fait.
 .nm-search {
   padding: var(--semantic-measurement-spacing-m);
   background: var(--semantic-color-static-background-main-secondary);
   border-radius: var(--semantic-border-radius-m);
 
-  display: flex;
-  flex-direction: column;
-  gap: var(--semantic-measurement-spacing-m);
-
-  // ── Les deux groupes ────────────────────────────────────────────────────
-  // Ratio 4/5 : les identifiants sont courts et de longueur connue, les
-  // filtres portent des libellés d'option entiers (« Partially delivered »).
-  // Leur donner la même largeur aurait tronqué les seconds pour rien.
-  &__groups {
-    display: flex;
-    align-items: stretch;
-    gap: var(--semantic-measurement-spacing-l);
-  }
-
-  &__group {
-    flex: 4 1 0;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--semantic-measurement-spacing-s);
-
-    &--filters { flex: 5 1 0; }
-  }
-
-  // Titre de groupe : même typo que tout libellé de zone du produit (14 SemiBold
-  // primaire, cf. .nm-infobox__key / .nm-distid__key). Plus petit que les labels
-  // de champs (16 Regular) mais plus gras : c'est un autre niveau, pas un champ
-  // de plus.
-  &__group-title {
-    margin: 0;
-    font-family: var(--semantic-font-family);
-    font-size: var(--semantic-font-text-style-size-m);
-    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-    line-height: var(--semantic-font-text-style-line-height-m);
-    color: var(--semantic-color-static-text-main-primary);
-  }
-
-  // Grille interne au groupe. `align-items: end` garde les champs alignés par
-  // le bas même si un label passe sur deux lignes.
-  &__fields {
+  // UNE grille pour les deux rangées : deux grilles séparées ne pourraient pas
+  // s'aligner, celle du haut étant rétrécie par la colonne de droite. Colonne 5
+  // = le filet, colonne 6 = l'option/les actions ; les champs se partagent le
+  // reste à parts égales. `align-items: end` les garde alignés par le bas même
+  // si un label passe sur deux lignes.
+  &__grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto auto;
     gap: var(--semantic-measurement-spacing-m);
     align-items: end;
   }
 
-  // La date est plus large que les trois selects : elle affiche deux bornes.
-  &__group--filters &__fields {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) 1.35fr;
+  // Filet sur les deux rangées : il sépare deux natures de contenu, pas deux
+  // lignes. `spacing-s` de rab de chaque côté (16 de gouttière + 8) pour qu'il
+  // respire plus que l'écart entre deux champs.
+  &__split {
+    grid-column: 5;
+    grid-row: 1 / span 2;
+    margin-left: var(--semantic-measurement-spacing-s);
   }
 
-  // ── Pied ────────────────────────────────────────────────────────────────
-  &__footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--semantic-measurement-spacing-l);
-  }
+  // Hauteur d'un champ (32px = la boîte de ds-input-text / ds-select) et
+  // contenu centré dedans : case et boutons tombent alors exactement sur l'axe
+  // des champs de leur rangée, malgré leurs hauteurs propres différentes
+  // (20px pour la case, 32 pour un bouton).
+  &__aside {
+    grid-column: 6;
+    align-self: end;
+    height: var(--semantic-measurement-spacing-xl);
 
-  &__option {
-    display: flex;
-    align-items: center;
-    gap: var(--semantic-measurement-spacing-xs);
-    min-width: 0;
-  }
-
-  &__hint {
-    font-family: var(--semantic-font-family);
-    font-size: var(--semantic-font-text-style-size-m);
-    color: var(--semantic-color-static-text-main-tertiary);
-    cursor: pointer;
-  }
-
-  &__actions {
     display: flex;
     align-items: center;
     gap: var(--semantic-measurement-spacing-l);
-    flex-shrink: 0;
+    padding-left: var(--semantic-measurement-spacing-s);
+
+    &--option  { grid-row: 1; }
+    &--actions { grid-row: 2; }
   }
 }
 
-// Sous ~1180px, huit champs sur une ligne rognent les libellés d'option : les
-// deux groupes passent l'un sous l'autre et le filet se met à l'horizontale —
-// c'est le même séparateur, il ne disparaît pas.
+// Sous ~1180px, quatre champs par rangée rognent les libellés d'option : on
+// passe à deux colonnes, et la colonne de droite devient une rangée en pied —
+// le filet vertical n'aurait alors plus rien à séparer.
 @media (max-width: 1180px) {
-  .nm-search__groups {
-    flex-direction: column;
+  .nm-search__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  // Sélecteur descendant volontaire : à égalité de spécificité avec le
-  // `:host.ds-divider--orientation-vertical` de l'atome, l'ordre des feuilles
-  // décide, et il n'est pas garanti.
-  .nm-search__groups > .nm-search__split {
-    width: 100%;
-    height: 1px;
+  .nm-search__split {
+    display: none;
+  }
+
+  .nm-search__aside {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    height: auto;
+    padding-left: 0;
+  }
+
+  .nm-search__aside--actions {
+    justify-content: flex-end;
   }
 }
 
