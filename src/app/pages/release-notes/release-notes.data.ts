@@ -23,6 +23,21 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog — it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'notification-module-search-footer',
+    date: '2026-09-07',
+    category: 'design',
+    screens: ['notification-module'],
+    title: 'Notification Module: the search form gets a footer',
+    description:
+      'The vertical rule and the column of actions beside the fields are gone. The eight criteria now take the full width of the card, and a rule running from edge to edge closes them off: under it, Include copies on the left, Reset and Search on the right.',
+    changes: [
+      'The four filters and the four ID fields spread over the whole card — four equal columns instead of four narrowed by a right-hand column',
+      'Replaced the vertical rule by a horizontal one that goes from one edge of the card to the other: what is under it applies to the eight criteria at once, and a rule stopping short of the edges would only have looked like a gap between two blocks',
+      'Include copies, Reset and Search moved into that footer, on a single line',
+      'Under 1180px the grid falls back to two columns; the footer already fits on one line at that width, so it does not move',
+    ],
+  },
+  {
     id: 'notification-module-search-groups',
     date: '2026-09-03',
     category: 'design',

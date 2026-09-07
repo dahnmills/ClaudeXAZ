@@ -12,9 +12,9 @@
   <div class="nm-body">
     <!-- ── Module de recherche (réf. Figma DS Draft Search 57:629) ──────────── -->
     <!-- UNE seule grille pour les huit critères : c'est ce qui garantit que la
-         rangée du bas s'aligne colonne par colonne sur celle du haut. Filet
-         vertical en cinquième colonne, sur les deux rangées : ce qui est à sa
-         droite n'est pas un neuvième critère mais ce qu'on fait des huit. -->
+         rangée du bas s'aligne colonne par colonne sur celle du haut. Puis un
+         filet d'un bord à l'autre, et un pied : ce qui est sous le filet n'est
+         pas un neuvième critère mais ce qu'on fait des huit. -->
     <div class="nm-search">
       <div class="nm-search__grid">
         <!-- Rangée 1 — filtres. « All … » en placeholder et non en valeur
@@ -54,20 +54,20 @@
         <ds-input-text label="Extension ID" placeholder="EXT-88120" [(value)]="extensionQuery" />
         <ds-input-text label="Buyer ID" placeholder="137381425" [(value)]="buyerQuery" />
         <ds-input-text label="Notification ID" placeholder="NOTIF-88120-A" [(value)]="notifIdQuery" />
+      </div>
 
-        <!-- Colonne de droite : l'option au niveau de la 1re rangée, les actions
-             au niveau de la 2e — chacune alignée sur la boîte des champs. -->
-        <ds-divider class="nm-search__split" orientation="vertical" />
+      <ds-divider />
 
-        <div class="nm-search__aside nm-search__aside--option">
-          <ds-checkbox
-            label="Include copies"
-            [checked]="includeCopy()"
-            (checkedChange)="includeCopy.set($event)"
-          />
-        </div>
+      <!-- Pied : l'option qui élargit le résultat à gauche, les deux actions à
+           droite. Les deux portent sur les huit critères réunis. -->
+      <div class="nm-search__footer">
+        <ds-checkbox
+          label="Include copies"
+          [checked]="includeCopy()"
+          (checkedChange)="includeCopy.set($event)"
+        />
 
-        <div class="nm-search__aside nm-search__aside--actions">
+        <div class="nm-search__actions">
           <!-- Reset en plain : vider huit champs remplis ne doit pas se présenter
                avec le même poids visuel que lancer la recherche. Désactivé plutôt
                que masqué — apparaître/disparaître décalerait le bouton Search. -->
