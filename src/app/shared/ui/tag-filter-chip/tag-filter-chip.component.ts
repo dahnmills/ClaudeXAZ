@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, OnDestroy, computed, inject, input, model, signal } from '@angular/core';
 import { ChipComponent } from '../chip/chip.component';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
+import { InputSearchComponent } from '../input-search/input-search.component';
 import { SingleOpenFlyout, claimFlyout, releaseFlyout } from '../flyout-menu/single-open-flyout';
 import { FlyoutMenuComponent } from '../flyout-menu/flyout-menu.component';
 import { IconComponent } from '../icon/icon.component';
@@ -13,11 +14,17 @@ export interface TagFilterOption { value: string; label: string; }
  * `variant="field"`: ds-select-styled bordered box + label, used as a
  * multi-value form field inside the rule modal (matches ds-select chrome
  * so it sits naturally in a grid of single-select dropdowns).
+ *
+ * `searchable` ajoute un champ de recherche en tête du flyout. Il s'active
+ * champ par champ, pas au-delà d'un seuil d'options : ce qui appelle une
+ * recherche, c'est d'être branché sur un référentiel (secteurs NACE, formes
+ * juridiques nationales), pas de compter beaucoup d'entrées. Une liste fermée
+ * de 13 grades se lit d'un coup d'œil, un référentiel de 500 codes non.
  */
 @Component({
   selector: 'ds-tag-filter-chip',
   standalone: true,
-  imports: [ChipComponent, CheckboxComponent, FlyoutMenuComponent, IconComponent],
+  imports: [ChipComponent, CheckboxComponent, FlyoutMenuComponent, IconComponent, InputSearchComponent],
   templateUrl: './tag-filter-chip.component.html',
   styleUrl: './tag-filter-chip.component.scss',
 })
@@ -27,8 +34,10 @@ export class TagFilterChipComponent implements SingleOpenFlyout, OnDestroy {
   selected    = model<Set<string>>(new Set());
   variant     = input<'chip' | 'field'>('chip');
   placeholder = input<string>('Any');
+  searchable  = input<boolean>(false);
 
-  open = signal(false);
+  open   = signal(false);
+  search = signal('');
 
   private elRef = inject(ElementRef);
 
@@ -45,6 +54,16 @@ export class TagFilterChipComponent implements SingleOpenFlyout, OnDestroy {
     return labels.length ? labels.join(', ') : '';
   });
 
+  // On cherche dans la valeur ET dans le libellé : un code NACE se retrouve
+  // aussi bien en tapant « 62 » qu'en tapant « program ».
+  visibleOptions = computed(() => {
+    const q = this.search().trim().toLowerCase();
+    if (!q) return this.options();
+    return this.options().filter(
+      o => o.value.toLowerCase().includes(q) || o.label.toLowerCase().includes(q),
+    );
+  });
+
   toggleOpen(): void {
     if (this.open()) {
       this.closeFlyout();
@@ -57,6 +76,7 @@ export class TagFilterChipComponent implements SingleOpenFlyout, OnDestroy {
   closeFlyout(): void {
     releaseFlyout(this);
     this.open.set(false);
+    this.search.set('');   // réouvrir doit montrer la liste entière
   }
 
   ngOnDestroy(): void {

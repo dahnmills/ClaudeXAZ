@@ -113,3 +113,19 @@
   max-height:     calc(var(--semantic-measurement-sizing-3xl) * 4); // ~8 options visibles
   overflow-y:     auto;
 }
+
+// La recherche reste au-dessus de la liste qui défile : elle ne doit pas
+// disparaître quand on descend dans les résultats.
+.ds-tag-filter-chip__search {
+  padding:       0 var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-xs);
+  border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  margin-bottom: var(--semantic-measurement-spacing-xs);
+}
+
+.ds-tag-filter-chip__empty {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+  padding:     var(--semantic-measurement-spacing-xxs) 0;
+}

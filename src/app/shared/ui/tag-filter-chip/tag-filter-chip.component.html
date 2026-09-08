@@ -18,12 +18,24 @@
     @if (open()) {
       <div class="ds-tag-filter-chip__flyout ds-tag-filter-chip__flyout--field">
         <ds-flyout-menu>
+          @if (searchable()) {
+            <div class="ds-tag-filter-chip__search">
+              <!-- Casse du libellé conservée : « Search NACE », pas « Search nace ». -->
+              <ds-input-search
+                [placeholder]="'Search ' + label()"
+                [value]="search()"
+                (valueChange)="search.set($event)" />
+            </div>
+          }
           <div class="ds-tag-filter-chip__options">
-            @for (opt of options(); track opt.value) {
+            @for (opt of visibleOptions(); track opt.value) {
               <ds-checkbox
                 [label]="opt.label"
                 [checked]="isChecked(opt.value)"
                 (checkedChange)="toggleValue(opt.value)" />
+            }
+            @if (!visibleOptions().length) {
+              <span class="ds-tag-filter-chip__empty">No match</span>
             }
           </div>
         </ds-flyout-menu>
@@ -40,12 +52,23 @@
   @if (open()) {
     <div class="ds-tag-filter-chip__flyout">
       <ds-flyout-menu>
+        @if (searchable()) {
+          <div class="ds-tag-filter-chip__search">
+            <ds-input-search
+              [placeholder]="'Search ' + label()"
+              [value]="search()"
+              (valueChange)="search.set($event)" />
+          </div>
+        }
         <div class="ds-tag-filter-chip__options">
-          @for (opt of options(); track opt.value) {
+          @for (opt of visibleOptions(); track opt.value) {
             <ds-checkbox
               [label]="opt.label"
               [checked]="isChecked(opt.value)"
               (checkedChange)="toggleValue(opt.value)" />
+          }
+          @if (!visibleOptions().length) {
+            <span class="ds-tag-filter-chip__empty">No match</span>
           }
         </div>
       </ds-flyout-menu>
