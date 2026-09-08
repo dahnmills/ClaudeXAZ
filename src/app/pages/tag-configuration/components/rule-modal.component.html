@@ -46,7 +46,9 @@
               <span class="rm-exposure__currency">{{ currency() }}</span>
             </div>
           </fieldset>
-          <ds-tag-filter-chip variant="field" label="New autograde" [options]="GRADE_OPTIONS" [selected]="newAutoGrade()" (selectedChange)="newAutoGrade.set($event)" />
+          <!-- Pas de « (no grade) » ici : un autograde absent est lu OLD par le
+               moteur, ce que couvrent déjà les critères de fraîcheur. -->
+          <ds-tag-filter-chip variant="field" label="New autograde" [options]="AUTOGRADE_OPTIONS" [selected]="newAutoGrade()" (selectedChange)="newAutoGrade.set($event)" />
         </div>
       </div>
     </div>
@@ -57,9 +59,16 @@
         <!-- One concept, 5 facets. Kept on their own row instead of split
              across an unrelated 3-column grid. -->
         <div class="rm-grid">
+          <!-- Seul critère de grade à garder « (no grade) » : une société peut
+               n'avoir aucun grade valide, et rien d'autre n'attrape ce cas. -->
           <ds-tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="cvgValue()" (selectedChange)="cvgValue.set($event)" />
-          <ds-tag-filter-chip variant="field" label="Type" [options]="GRADE_TYPE_OPTIONS" [selected]="cvgType()" (selectedChange)="cvgType.set($event)" />
-          <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="cvgFreshness()" (selectionChange)="cvgFreshness.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Type" [options]="GRADE_TYPE_OPTIONS" [selected]="cvgType()" (selectedChange)="onCvgTypeChange($event)" />
+          <div class="rm-field">
+            <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="cvgFreshness()" [disabled]="!cvgFreshnessEnabled()" (selectionChange)="cvgFreshness.set($event)" />
+            @if (cvgFreshnessHint()) {
+              <span class="rm-hint">{{ cvgFreshnessHint() }}</span>
+            }
+          </div>
           <!-- Valeur unique parmi trois, comme les autres listes de cette
                rangée : même mécanique, même chrome. -->
           <ds-select label="Transferred" [options]="TRANSFERRED_OPTIONS" [value]="transferred()" (selectionChange)="transferred.set($event)" />
@@ -75,7 +84,7 @@
       <span class="rm-group__title">Last checked autograde</span>
       <div class="rm-card">
         <div class="rm-grid">
-          <ds-tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="lastAgValue()" (selectedChange)="lastAgValue.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Value" [options]="AUTOGRADE_OPTIONS" [selected]="lastAgValue()" (selectedChange)="lastAgValue.set($event)" />
           <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="lastAgFreshness()" (selectionChange)="lastAgFreshness.set($event)" />
           <ds-select class="rm-grid__wide" label="New autograde vs last checked autograde" [options]="COMPARISON_OPTIONS" [value]="newVsLastAg()" (selectionChange)="newVsLastAg.set($event)" />
         </div>
@@ -86,8 +95,10 @@
       <span class="rm-group__title">Company profile</span>
       <div class="rm-card">
         <div class="rm-grid">
-          <ds-tag-filter-chip variant="field" label="NACE" [options]="NACE_OPTIONS" [selected]="nace()" (selectedChange)="nace.set($event)" />
-          <ds-tag-filter-chip variant="field" label="Legal form" [options]="legalFormOptions()" [selected]="legalForm()" (selectedChange)="legalForm.set($event)" />
+          <!-- Recherche sur les deux référentiels : secteurs NACE et formes
+               juridiques du pays. Les listes fermées n'en ont pas besoin. -->
+          <ds-tag-filter-chip variant="field" label="NACE" [searchable]="true" [options]="NACE_OPTIONS" [selected]="nace()" (selectedChange)="nace.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Legal form" [searchable]="true" [options]="legalFormOptions()" [selected]="legalForm()" (selectedChange)="legalForm.set($event)" />
           <ds-tag-filter-chip variant="field" label="Company role" [options]="COMPANY_ROLE_OPTIONS" [selected]="companyRole()" (selectedChange)="companyRole.set($event)" />
         </div>
       </div>

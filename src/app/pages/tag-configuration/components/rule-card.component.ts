@@ -43,6 +43,11 @@ export class RuleCardComponent {
    *  d'un set copié d'un autre pays : on la garde (la retirer élargirait la
    *  règle) mais on la signale. Liste vide = pas de contrôle. */
   knownLegalForms = input<string[]>([]);
+  /** Bornes du déplacement, calculées par la page sur la liste **affichée** : une
+   *  entrée de menu qui ne peut rien faire se grise plutôt que de sortir en
+   *  silence. */
+  canMoveUp   = input<boolean>(true);
+  canMoveDown = input<boolean>(true);
 
   edit     = output<void>();
   remove   = output<void>();

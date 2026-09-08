@@ -22,7 +22,11 @@
       }
     </div>
 
-    <div class="rule-card__actions" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+    <!-- On n'arrête que les touches qui déplieraient la carte (l'en-tête écoute
+         Entrée et Espace). Un `(keydown)` global arrêtait aussi Échap avant le
+         `document`, et le menu ⋯ ne se fermait alors qu'au clic extérieur. -->
+    <div class="rule-card__actions" (click)="$event.stopPropagation()"
+         (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
       @if (mode() === 'edit') {
         <ds-button-icon type="plain" tone="default" ariaLabel="Rule actions" (clicked)="toggleMenu()">
           <ds-icon name="context-vertical" [size]="16" />
@@ -30,8 +34,8 @@
         @if (menuOpen()) {
           <ds-flyout-menu class="rule-card__menu">
             <ds-flyout-menu-item label="Edit"      icon="edit"  (clicked)="onEdit()" />
-            <ds-flyout-menu-item label="Move up"   icon="arrow-up"   (clicked)="onMoveUp()" />
-            <ds-flyout-menu-item label="Move down" icon="arrow-down" (clicked)="onMoveDown()" />
+            <ds-flyout-menu-item label="Move up"   icon="arrow-up"   [disabled]="!canMoveUp()"   (clicked)="onMoveUp()" />
+            <ds-flyout-menu-item label="Move down" icon="arrow-down" [disabled]="!canMoveDown()" (clicked)="onMoveDown()" />
             <ds-flyout-menu-item label="Delete"    icon="trash" (clicked)="onRemove()" />
           </ds-flyout-menu>
         }

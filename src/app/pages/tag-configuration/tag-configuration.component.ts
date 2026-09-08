@@ -23,13 +23,12 @@ import { RuleModalComponent }       from './components/rule-modal.component';
 import { FreshnessModalComponent }  from './components/freshness-modal.component';
 import { TransExclModalComponent }  from './components/trans-excl-modal.component';
 import {
-  TagRule, Country, CountryCode, FreshnessConfig, StatusReasonCode, FILTER_KEYS, FilterKey,
+  TagRule, Country, CountryCode, FreshnessConfig, StatusReasonCode, RuleFilter,
   RuleSetHistoryEntry, RuleSetDraft,
 } from './tag-configuration.models';
 import {
   COUNTRIES, countryByCode, rulesForCountry, freshnessForCountry, codesForCountry, historyForCountry,
-  legalFormsForCountry, seedDrafts,
-  SENSITIVITY_OPTIONS, GRADE_OPTIONS, GRADE_TYPE_OPTIONS, FRESHNESS_OPTIONS,
+  legalFormsForCountry, seedDrafts, RULE_FILTERS,
 } from './tag-configuration.data';
 import { HistoryRowComponent, HistoryAction } from './components/history-row.component';
 import { FunctionalNoticeComponent } from '../../shared/ui/functional-notice/functional-notice.component';
@@ -272,17 +271,15 @@ export class TagConfigurationComponent {
   currentFilters = signal<Record<string, FilterValue>>({});
   appliedFilters = signal<Record<string, FilterValue>>({});
 
-  filters: FilterDefinition[] = [
-    { id: 'sensitivity',  label: 'Sensitivity',           type: 'checkbox-list', defaultOpen: true, options: SENSITIVITY_OPTIONS },
-    { id: 'newAutoGrade', label: 'New autograde',         type: 'checkbox-list', defaultOpen: true, options: GRADE_OPTIONS },
-    { id: 'cvgValue',     label: 'CVG - Value',           type: 'checkbox-list', defaultOpen: true, options: GRADE_OPTIONS },
-    { id: 'cvgType',      label: 'CVG - Type',            type: 'checkbox-list', defaultOpen: true, options: GRADE_TYPE_OPTIONS },
-    { id: 'cvgFreshness', label: 'CVG - Freshness',       type: 'checkbox-list', defaultOpen: true, options: FRESHNESS_OPTIONS },
-  ];
+  // Le panneau se déduit de la table de filtres : ouvrir un sixième critère à
+  // GCAM est une entrée de plus dans RULE_FILTERS, pas trois endroits à retoucher.
+  filters: FilterDefinition[] = RULE_FILTERS.map(f => ({
+    id: f.id, label: f.label, type: 'checkbox-list' as const, defaultOpen: true, options: f.options,
+  }));
 
   activeFilterCount = computed(() => {
-    const f = this.appliedFilters();
-    return FILTER_KEYS.reduce((n, k) => n + (this.isActiveValue(f[k]) ? 1 : 0), 0);
+    const v = this.appliedFilters();
+    return RULE_FILTERS.reduce((n, f) => n + (this.isActiveValue(v[f.id]) ? 1 : 0), 0);
   });
 
   openDrawer(): void {
@@ -301,9 +298,13 @@ export class TagConfigurationComponent {
   }
 
   filteredRules = computed(() => {
-    const f = this.appliedFilters();
-    return this.rules().filter(r => FILTER_KEYS.every(k => this.matches(r, k, this.toSet(f[k]))));
+    const v = this.appliedFilters();
+    return this.rules().filter(r => RULE_FILTERS.every(f => this.matches(r, f, this.toSet(v[f.id]))));
   });
+
+  /** Ce que le filtre cache : la barre en tête de liste le dit, parce que l'ordre
+   *  s'applique au jeu entier, pas à ce qu'on voit. */
+  hiddenRuleCount = computed(() => this.rules().length - this.filteredRules().length);
 
   private toSet(v: FilterValue | undefined): Set<string> {
     return new Set(Array.isArray(v) ? v.map(String) : []);
@@ -345,24 +346,16 @@ export class TagConfigurationComponent {
     this.currentFilters.set({});
   }
 
-  private matches(r: TagRule, key: FilterKey, sel: Set<string>): boolean {
-    if (sel.size === 0) return true;               // filter off
-    const c = r.criteria;
-    // "Any" selected → match rules where the criterion is explicitly Any (null/empty)
-    const anySelected = sel.has('Any');
-    const val = (() => {
-      switch (key) {
-        case 'sensitivity':  return c.sensitivity;
-        case 'newAutoGrade': return c.newAutoGrade;
-        case 'cvgType':      return c.cvgType;
-        case 'cvgValue':     return c.cvgValue;
-        case 'cvgFreshness': return c.cvgFreshness == null ? null : [c.cvgFreshness];
-      }
-    })();
-    const isAny = val == null || (Array.isArray(val) && val.length === 0);
-    if (isAny) return anySelected;
-    // OR within the chip: rule matches if any of its values is selected
-    return (val as string[]).some(v => sel.has(v));
+  /** Le filtre porte sa propre façon de lire le critère : plus aucun nom de
+   *  critère ici. Deux comportements à préserver, et c'est tout : « Any » coché
+   *  rend les règles qui ne contraignent pas le critère, et cocher plusieurs
+   *  valeurs fait un OU (« 04 » et « Any » sortent donc ensemble). */
+  private matches(r: TagRule, filter: RuleFilter, sel: Set<string>): boolean {
+    if (sel.size === 0) return true;               // filtre inactif
+    const val = filter.read(r.criteria);
+    const isAny = val == null || val.length === 0;
+    if (isAny) return sel.has('Any');
+    return val.some(v => sel.has(v));
   }
 
   toggleExpandAll(): void {
@@ -375,17 +368,38 @@ export class TagConfigurationComponent {
     this.expandedIds.update(s => { const n = new Set(s); n.has(r.id) ? n.delete(r.id) : n.add(r.id); return n; });
   }
 
+  /** Bornes calculées sur la liste **affichée** : sous filtre, la première règle
+   *  visible n'a plus de voisine au-dessus qu'on puisse viser. */
+  canMoveUp(r: TagRule): boolean { return this.filteredRules()[0]?.id !== r.id; }
+  canMoveDown(r: TagRule): boolean {
+    const v = this.filteredRules();
+    return v[v.length - 1]?.id !== r.id;
+  }
+
   moveUp(r: TagRule): void { this.move(r, -1); }
   moveDown(r: TagRule): void { this.move(r, +1); }
+
+  /** Le déplacement vise la voisine **visible** : sous filtre, échanger avec la
+   *  voisine de la liste complète pouvait ne rien changer à l'écran quand celle-ci
+   *  était masquée. Et c'est une insertion, pas un échange : seule la règle
+   *  manipulée bouge, les autres glissent d'un cran, comme au glisser-déposer et
+   *  comme avec le champ Position. */
   private move(r: TagRule, delta: number): void {
+    const visible = this.filteredRules();
+    const target = visible[visible.findIndex(x => x.id === r.id) + delta];
+    if (!target) return;
+
     const list = [...this.rules()].sort((a, b) => a.position - b.position);
-    const i = list.findIndex(x => x.id === r.id);
-    const j = i + delta;
-    if (j < 0 || j >= list.length) return;
-    [list[i], list[j]] = [list[j], list[i]];
-    list.forEach((x, idx) => (x.position = idx + 1));
-    this.rules.set([...list]);
-    this.toaster.show('Rule order updated', { tone: 'success' });
+    const [moved] = list.splice(list.findIndex(x => x.id === r.id), 1);
+    const at = list.findIndex(x => x.id === target.id) + (delta > 0 ? 1 : 0);
+    list.splice(at, 0, moved);
+
+    const renumbered = list.map((x, idx) => ({ ...x, position: idx + 1 }));
+    this.rules.set(renumbered);
+    // L'écran ne montre qu'une partie de l'ordre : le toast donne la position
+    // atteinte dans le jeu entier, pas seulement « quelque chose a bougé ».
+    const pos = renumbered.findIndex(x => x.id === r.id) + 1;
+    this.toaster.show(`Rule moved to position ${pos} of ${renumbered.length}`, { tone: 'success' });
   }
 
   // --- validation d'un brouillon en jeu actif ------------------------------

@@ -23,6 +23,26 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'tag-configuration-second-review',
+    date: '2026-09-08',
+    category: 'design',
+    screens: ['tag-configuration'],
+    title: 'TAG Configuration: searchable references, clearer verdicts, honest reordering',
+    description:
+      'Second round of review notes on the auto-grading rules. The two fields fed by a reference list can now be searched instead of scrolled. The three verdicts say which of the two grades wins. The evaluation order is written above the list, where the list is read. And moving a rule while a filter is on now actually moves it on screen.',
+    changes: [
+      'NACE and Legal form open with a search box: type "62" or "program", both find the same sector. The list is back in full the next time you open it',
+      'The sector list carries the fifty-odd realistic codes it will have in production, not five',
+      'The verdicts are named after the grades in play: "Accept AUG" (the new autograde becomes the valid grade), "Keep MAG" (the new autograde is discarded, the manual grade stays valid), "Create task" (send to manual review before applying). Same colours, same meaning',
+      'An exported rule set now carries the codes the API speaks, ACCEPT / REFUSE / CREATE_TASK, instead of display words',
+      '"(no grade)" left the two autograde criteria, where an absent autograde is read as OLD anyway. It stays on the current valid grade, the one case nothing else catches',
+      'The freshness of the valid grade only opens up for a manual grade. Tick Automatic as well and it greys out, saying why, and its value returns to "Any" instead of being saved out of sight',
+      'One permanent line above the list: "Rules are evaluated top to bottom, the first match decides." Under a filter, its right-hand side counts what is hidden',
+      'Move up / Move down work on the list you see: a rule lands next to its visible neighbour, the toast gives the position it actually reached, and the two entries grey out on the first and last visible rule',
+      'The three-dot menu of a rule now closes on Escape, not only on a click outside',
+    ],
+  },
+  {
     id: 'header-not-dimmed-while-editing',
     date: '2026-09-08',
     category: 'design',

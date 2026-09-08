@@ -10,15 +10,17 @@ import {
   TagRule, RuleCriteria, EMPTY_CRITERIA, Decision, Grade, Sensitivity, GradeType, Freshness, Comparison,
 } from '../tag-configuration.models';
 import {
-  SENSITIVITY_OPTIONS, GRADE_OPTIONS, GRADE_TYPE_OPTIONS, FRESHNESS_OPTIONS,
+  SENSITIVITY_OPTIONS, GRADE_OPTIONS, AUTOGRADE_OPTIONS, GRADE_TYPE_OPTIONS, FRESHNESS_OPTIONS,
   COMPARISON_OPTIONS, COMPANY_ROLE_OPTIONS, NACE_OPTIONS,
   EXPOSURE_OP_OPTIONS, TRANSFERRED_OPTIONS,
 } from '../tag-configuration.data';
 
+// Le verdict nomme les deux grades en présence : l'autograde qui arrive (AUG) et
+// le grade manuel valide (MAG). Chaque sous-titre dit lequel des deux gagne.
 const DECISION_CARDS: { value: Decision; label: string; sublabel: string; tone: RadioCardTone }[] = [
-  { value: 'Accept',     label: 'Accept',      sublabel: 'Auto-grade the company, no manual review', tone: 'success' },
-  { value: 'Refuse',     label: 'Refuse',      sublabel: 'Reject the new grade automatically',        tone: 'error' },
-  { value: 'CreateTask', label: 'Create task', sublabel: 'Send to manual review before applying',     tone: 'warning' },
+  { value: 'ACCEPT',      label: 'Accept AUG',  sublabel: 'The new autograde becomes the valid grade',              tone: 'success' },
+  { value: 'REFUSE',      label: 'Keep MAG',    sublabel: 'The new autograde is discarded, the manual grade stays valid', tone: 'error' },
+  { value: 'CREATE_TASK', label: 'Create task', sublabel: 'Send to manual review before applying',                  tone: 'warning' },
 ];
 
 /**
@@ -63,6 +65,7 @@ export class RuleModalComponent {
 
   // option lists exposed to the template
   SENSITIVITY_OPTIONS = SENSITIVITY_OPTIONS; GRADE_OPTIONS = GRADE_OPTIONS;
+  AUTOGRADE_OPTIONS = AUTOGRADE_OPTIONS;
   GRADE_TYPE_OPTIONS = GRADE_TYPE_OPTIONS; FRESHNESS_OPTIONS = FRESHNESS_OPTIONS;
   COMPARISON_OPTIONS = COMPARISON_OPTIONS; DECISION_CARDS = DECISION_CARDS;
   COMPANY_ROLE_OPTIONS = COMPANY_ROLE_OPTIONS; NACE_OPTIONS = NACE_OPTIONS;
@@ -94,7 +97,24 @@ export class RuleModalComponent {
   nace            = signal<Set<string>>(new Set());
   legalForm       = signal<Set<string>>(new Set());
   companyRole     = signal<Set<string>>(new Set());
-  decision        = signal<Decision>('Accept');
+  decision        = signal<Decision>('ACCEPT');
+
+  /** Une fraîcheur ne se dit que d'un grade manuel. Le type étant multi-valeurs,
+   *  le critère n'a de sens que si la sélection est exactement « Manual » : avec
+   *  Automatic coché à côté, le seuil ne viserait qu'une partie des cas alors
+   *  qu'on croirait lire une règle entière. Sélection vide (« Any ») comprise. */
+  cvgFreshnessEnabled = computed(() => {
+    const t = this.cvgType();
+    return t.size === 1 && t.has('Manual');
+  });
+  cvgFreshnessHint = computed(() => this.cvgFreshnessEnabled() ? '' : 'Only for a manual grade');
+
+  /** Le type change : une fraîcheur qui vient de se griser retombe à « Any ».
+   *  La garder l'enregistrerait sans que personne ne puisse plus la lire. */
+  onCvgTypeChange(next: Set<string>): void {
+    this.cvgType.set(next);
+    if (!this.cvgFreshnessEnabled()) this.cvgFreshness.set('Any');
+  }
 
   confirmCloseOpen = signal(false);
   private baseline = '';
@@ -120,13 +140,13 @@ export class RuleModalComponent {
       this.nace.set(new Set(c.nace ?? []));
       this.legalForm.set(new Set(c.legalForm ?? []));
       this.companyRole.set(new Set(c.companyRole ?? []));
-      this.decision.set(r?.decision ?? 'Accept');
+      this.decision.set(r?.decision ?? 'ACCEPT');
 
       // Snapshot straight from the source data (c / r), never via buildCriteria()/
       // the signals: reading those signals here would register them as effect
       // dependencies, turning every field edit into a re-run that resets the form
       // back to c (EMPTY_CRITERIA in create mode).
-      this.baseline = JSON.stringify(c) + (r?.decision ?? 'Accept') + String(r?.position ?? this.ruleCount() + 1);
+      this.baseline = JSON.stringify(c) + (r?.decision ?? 'ACCEPT') + String(r?.position ?? this.ruleCount() + 1);
     });
   }
 
@@ -141,7 +161,8 @@ export class RuleModalComponent {
       newAutoGrade: this.setToNull<Grade>(this.newAutoGrade()),
       cvgValue: this.setToNull<Grade>(this.cvgValue()),
       cvgType: this.setToNull<GradeType>(this.cvgType()),
-      cvgFreshness: this.singleToNull<Freshness>(this.cvgFreshness()),
+      // Champ grisé : on n'enregistre rien, même si une valeur traîne dans l'état.
+      cvgFreshness: this.cvgFreshnessEnabled() ? this.singleToNull<Freshness>(this.cvgFreshness()) : null,
       transferred: this.transferred() === 'Any' ? null : this.transferred() === 'Yes',
       newVsCvg: this.singleToNull<Comparison>(this.newVsCvg()),
       lastAgValue: this.setToNull<Grade>(this.lastAgValue()),

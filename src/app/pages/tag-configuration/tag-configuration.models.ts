@@ -7,7 +7,10 @@ export type Grade =
 export type GradeType  = 'Automatic' | 'Manual';
 export type Freshness  = 'Fresh' | 'Outdated' | 'Old';
 export type Comparison = 'Upgrade' | 'Same' | 'Downgrade';
-export type Decision   = 'Accept' | 'Refuse' | 'CreateTask';
+/** Codes de décision du moteur, tels qu'ils partent et reviennent par l'API.
+ *  La valeur stockée est le code, jamais le libellé : c'est elle que transporte
+ *  l'export JSON d'un jeu de règles. Les libellés vivent dans DECISION_BADGE. */
+export type Decision   = 'ACCEPT' | 'REFUSE' | 'CREATE_TASK';
 export type CountryCode = 'FR' | 'DE' | 'NO' | 'PT';
 
 /** null = "Any" (criterion inactive, ignored in matching). */
@@ -85,12 +88,28 @@ export const EMPTY_CRITERIA: RuleCriteria = {
 export type BadgeStatus  = 'info' | 'warning' | 'success' | 'error' | 'neutral';
 export type BadgeVariant = 'light' | 'strong';
 
+// Vocabulaire GCAM : le verdict porte sur les deux grades en présence, le
+// nouvel autograde (AUG) et le grade manuel valide (MAG). « Accept » seul ne
+// disait pas ce qui était accepté, « Refuse » laissait croire à un rejet de la
+// société. Les codes, eux, ne bougent pas.
 export const DECISION_BADGE: Record<Decision, { label: string; status: BadgeStatus; variant: BadgeVariant }> = {
-  Accept:     { label: 'Accept',      status: 'success', variant: 'strong' },
-  Refuse:     { label: 'Refuse',      status: 'error',   variant: 'strong' },
-  CreateTask: { label: 'Create task', status: 'warning', variant: 'strong' },
+  ACCEPT:      { label: 'Accept AUG',  status: 'success', variant: 'strong' },
+  REFUSE:      { label: 'Keep MAG',    status: 'error',   variant: 'strong' },
+  CREATE_TASK: { label: 'Create task', status: 'warning', variant: 'strong' },
 };
 
-/** P4 filter chip keys (the 5 filterable criteria). */
-export const FILTER_KEYS = ['sensitivity', 'newAutoGrade', 'cvgType', 'cvgValue', 'cvgFreshness'] as const;
-export type FilterKey = typeof FILTER_KEYS[number];
+/**
+ * Un filtre de la liste de règles : sa déclaration porte aussi la façon de lire
+ * le critère correspondant. Ajouter un filtre est alors une entrée de plus dans
+ * RULE_FILTERS, sans toucher au moteur de filtrage.
+ *
+ * `read` rend les valeurs du critère pour une règle. `null` ou tableau vide
+ * valent « Any » : la règle ne contraint pas ce critère, elle ne sort donc que
+ * si « Any » est coché.
+ */
+export interface RuleFilter {
+  id: string;
+  label: string;
+  options: { value: string; label: string }[];
+  read: (c: RuleCriteria) => string[] | null;
+}

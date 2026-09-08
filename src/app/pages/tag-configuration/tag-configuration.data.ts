@@ -1,6 +1,6 @@
 import {
   Country, CountryCode, TagRule, FreshnessConfig, StatusReasonCode,
-  EMPTY_CRITERIA, RuleSetDraft, RuleSetHistoryEntry,
+  EMPTY_CRITERIA, RuleSetDraft, RuleSetHistoryEntry, RuleFilter,
 } from './tag-configuration.models';
 
 // Un pays, une devise, un référentiel de formes juridiques. Pas de région :
@@ -24,10 +24,22 @@ export const SENSITIVITY_OPTIONS = [
   { value: 'None', label: 'None' },
 ];
 
+const GRADES = ['01','02','03','04','05','06','07','08','09','10'];
+
+// Deux listes de grades, et c'est voulu. « (no grade) » n'a de sens que pour le
+// grade valide courant : une société peut n'en avoir aucun, et aucun autre
+// critère n'attrape ce cas. Côté autogrades, l'absence est lue OLD par le
+// moteur, donc déjà couverte par les règles sur la fraîcheur.
 export const GRADE_OPTIONS = [
   { value: 'Any', label: 'Any' },
-  ...['01','02','03','04','05','06','07','08','09','10'].map(g => ({ value: g, label: g })),
+  ...GRADES.map(g => ({ value: g, label: g })),
   { value: 'NA', label: 'NA' }, { value: 'noGrade', label: '(no grade)' },
+];
+
+export const AUTOGRADE_OPTIONS = [
+  { value: 'Any', label: 'Any' },
+  ...GRADES.map(g => ({ value: g, label: g })),
+  { value: 'NA', label: 'NA' },
 ];
 
 export const GRADE_TYPE_OPTIONS = [
@@ -60,12 +72,72 @@ export const TRANSFERRED_OPTIONS = [
   { value: 'Any', label: 'Any' }, { value: 'Yes', label: 'Yes' }, { value: 'No', label: 'No' },
 ];
 
+// Extrait du référentiel des secteurs d'activité (NACE Rev. 2), trié par code.
+// En production la liste vient de /tradeSectors et compte plusieurs centaines
+// d'entrées : d'où la recherche sur ce champ, qui doit répondre au code comme
+// au libellé.
 export const NACE_OPTIONS = [
-  { value: '62.01', label: '62.01: Computer programming' },
-  { value: '41.20', label: '41.20: Construction of buildings' },
-  { value: '46.90', label: '46.90: Non-specialised wholesale' },
-  { value: '68.20', label: '68.20: Renting of real estate' },
+  { value: '01.11', label: '01.11: Growing of cereals' },
+  { value: '01.41', label: '01.41: Raising of dairy cattle' },
+  { value: '03.11', label: '03.11: Marine fishing' },
+  { value: '05.10', label: '05.10: Mining of hard coal' },
+  { value: '08.11', label: '08.11: Quarrying of stone' },
+  { value: '10.11', label: '10.11: Processing of meat' },
+  { value: '10.51', label: '10.51: Operation of dairies' },
   { value: '10.71', label: '10.71: Bread & fresh pastry' },
+  { value: '11.02', label: '11.02: Manufacture of wine' },
+  { value: '13.10', label: '13.10: Preparation of textile fibres' },
+  { value: '14.13', label: '14.13: Manufacture of outerwear' },
+  { value: '16.23', label: "16.23: Builders' carpentry" },
+  { value: '17.21', label: '17.21: Corrugated paper & board' },
+  { value: '18.12', label: '18.12: Other printing' },
+  { value: '20.14', label: '20.14: Basic organic chemicals' },
+  { value: '21.20', label: '21.20: Pharmaceutical preparations' },
+  { value: '22.22', label: '22.22: Plastic packing goods' },
+  { value: '23.61', label: '23.61: Concrete products' },
+  { value: '24.10', label: '24.10: Basic iron & steel' },
+  { value: '25.11', label: '25.11: Metal structures' },
+  { value: '26.20', label: '26.20: Computers & peripherals' },
+  { value: '27.12', label: '27.12: Electricity distribution apparatus' },
+  { value: '28.25', label: '28.25: Non-domestic cooling equipment' },
+  { value: '29.10', label: '29.10: Manufacture of motor vehicles' },
+  { value: '30.11', label: '30.11: Building of ships' },
+  { value: '31.01', label: '31.01: Office & shop furniture' },
+  { value: '32.50', label: '32.50: Medical & dental instruments' },
+  { value: '33.12', label: '33.12: Repair of machinery' },
+  { value: '35.11', label: '35.11: Production of electricity' },
+  { value: '36.00', label: '36.00: Water collection & supply' },
+  { value: '38.11', label: '38.11: Collection of non-hazardous waste' },
+  { value: '41.20', label: '41.20: Construction of buildings' },
+  { value: '42.11', label: '42.11: Construction of roads' },
+  { value: '43.22', label: '43.22: Plumbing & heating installation' },
+  { value: '45.11', label: '45.11: Sale of cars' },
+  { value: '46.90', label: '46.90: Non-specialised wholesale' },
+  { value: '47.11', label: '47.11: Retail in non-specialised stores' },
+  { value: '49.41', label: '49.41: Freight transport by road' },
+  { value: '50.20', label: '50.20: Sea freight water transport' },
+  { value: '52.10', label: '52.10: Warehousing & storage' },
+  { value: '55.10', label: '55.10: Hotels & similar accommodation' },
+  { value: '56.10', label: '56.10: Restaurants & mobile food service' },
+  { value: '58.29', label: '58.29: Other software publishing' },
+  { value: '61.10', label: '61.10: Wired telecommunications' },
+  { value: '62.01', label: '62.01: Computer programming' },
+  { value: '62.02', label: '62.02: Computer consultancy' },
+  { value: '63.11', label: '63.11: Data processing & hosting' },
+  { value: '64.19', label: '64.19: Other monetary intermediation' },
+  { value: '68.20', label: '68.20: Renting of real estate' },
+  { value: '69.20', label: '69.20: Accounting & tax consultancy' },
+  { value: '70.22', label: '70.22: Business & management consultancy' },
+  { value: '71.12', label: '71.12: Engineering activities' },
+  { value: '73.11', label: '73.11: Advertising agencies' },
+  { value: '77.11', label: '77.11: Renting of cars' },
+  { value: '78.10', label: '78.10: Employment placement agencies' },
+  { value: '81.21', label: '81.21: General cleaning of buildings' },
+  { value: '82.20', label: '82.20: Activities of call centres' },
+  { value: '85.59', label: '85.59: Other education' },
+  { value: '86.10', label: '86.10: Hospital activities' },
+  { value: '87.30', label: '87.30: Residential care for the elderly' },
+  { value: '95.11', label: '95.11: Repair of computers' },
 ];
 
 // Les formes juridiques sont un référentiel national : une SARL n'existe pas en
@@ -94,18 +166,35 @@ export const STATUS_REASON_REFERENTIAL: StatusReasonCode[] = [
   { code: 'INTER', label: 'Disqualified' },
 ];
 
+// Les filtres de la liste de règles, déclarés une seule fois : le libellé, les
+// options et la façon de lire le critère correspondant. Ouvrir un sixième filtre
+// est une entrée de plus ici, le moteur de filtrage ne bouge pas.
+// Note : le filtre du nouvel autograde suit son critère et n'offre pas
+// « (no grade) », alors que celui du grade valide courant le garde.
+export const RULE_FILTERS: RuleFilter[] = [
+  { id: 'sensitivity',  label: 'Sensitivity',     options: SENSITIVITY_OPTIONS, read: c => c.sensitivity },
+  { id: 'newAutoGrade', label: 'New autograde',   options: AUTOGRADE_OPTIONS,   read: c => c.newAutoGrade },
+  { id: 'cvgValue',     label: 'CVG - Value',     options: GRADE_OPTIONS,       read: c => c.cvgValue },
+  { id: 'cvgType',      label: 'CVG - Type',      options: GRADE_TYPE_OPTIONS,  read: c => c.cvgType },
+  { id: 'cvgFreshness', label: 'CVG - Freshness', options: FRESHNESS_OPTIONS,   read: c => c.cvgFreshness == null ? null : [c.cvgFreshness] },
+];
+
 // --- mock generators ---
 
+// La fraîcheur du grade valide ne se dit que d'un grade manuel (règle 2 :
+// « garder le MAG parce qu'il est encore frais »). Un jeu de règles où elle
+// cohabiterait avec un type automatique serait incohérent avec la modale, qui
+// grise le champ dans ce cas.
 const FR_RULES: TagRule[] = [
-  { id: 'fr-1', position: 1, decision: 'Accept',
-    criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['08','09','10'], cvgValue: ['04','05','06'], cvgType: ['Automatic'], cvgFreshness: 'Fresh' } },
-  { id: 'fr-2', position: 2, decision: 'Refuse',
-    criteria: { ...EMPTY_CRITERIA, sensitivity: ['S1'], cvgValue: ['04','05'], transferred: true } },
-  { id: 'fr-3', position: 3, decision: 'CreateTask',
+  { id: 'fr-1', position: 1, decision: 'ACCEPT',
+    criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['08','09','10'], cvgValue: ['04','05','06'], cvgType: ['Automatic'] } },
+  { id: 'fr-2', position: 2, decision: 'REFUSE',
+    criteria: { ...EMPTY_CRITERIA, sensitivity: ['S1'], cvgValue: ['04','05'], cvgType: ['Manual'], cvgFreshness: 'Fresh', transferred: true } },
+  { id: 'fr-3', position: 3, decision: 'CREATE_TASK',
     criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['04'], lastAgFreshness: 'Outdated' } },
-  { id: 'fr-4', position: 4, decision: 'Accept',
+  { id: 'fr-4', position: 4, decision: 'ACCEPT',
     criteria: { ...EMPTY_CRITERIA, exposure: { op: '<=', amount: 100000 }, nace: ['62.01'] } },
-  { id: 'fr-5', position: 5, decision: 'CreateTask',
+  { id: 'fr-5', position: 5, decision: 'CREATE_TASK',
     criteria: { ...EMPTY_CRITERIA, companyRole: ['Prospect'] } },
 ];
 
@@ -114,7 +203,7 @@ const FR_RULES: TagRule[] = [
 function noRules(): TagRule[] {
   const sens = ['SN','S0','S1','S2','S3'] as const;
   const types = ['Automatic','Manual'] as const;
-  const decisions = ['Accept','Refuse','CreateTask'] as const;
+  const decisions = ['ACCEPT','REFUSE','CREATE_TASK'] as const;
   const out: TagRule[] = [];
   let n = 1;
   for (const s of sens) {
@@ -128,7 +217,7 @@ function noRules(): TagRule[] {
             sensitivity: [s],
             cvgType: [t],
             cvgValue: i % 2 === 0 ? ['04','05'] : null,
-            cvgFreshness: i % 3 === 0 ? 'Fresh' : null,
+            cvgFreshness: t === 'Manual' && i % 3 === 0 ? 'Fresh' : null,
             newAutoGrade: i % 4 === 0 ? ['08'] : null,
             exposure: i % 6 === 0 ? { op: '>', amount: 2500000 } : null,
             legalForm: i % 5 === 0 ? ['AS'] : null,
@@ -155,15 +244,15 @@ export function rulesForCountry(code: CountryCode): TagRule[] {
 // --- publication history mocks (History tab) ---
 
 const FR_RULES_V1: TagRule[] = [
-  { id: 'fr-1', position: 1, decision: 'Accept',
-    criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['08', '09', '10'], cvgValue: ['04', '05'], cvgType: ['Automatic'], cvgFreshness: 'Fresh' } },
-  { id: 'fr-2', position: 2, decision: 'Refuse',
-    criteria: { ...EMPTY_CRITERIA, cvgValue: ['04', '05'], transferred: true } },
-  { id: 'fr-3', position: 3, decision: 'CreateTask',
+  { id: 'fr-1', position: 1, decision: 'ACCEPT',
+    criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['08', '09', '10'], cvgValue: ['04', '05'], cvgType: ['Automatic'] } },
+  { id: 'fr-2', position: 2, decision: 'REFUSE',
+    criteria: { ...EMPTY_CRITERIA, cvgValue: ['04', '05'], cvgType: ['Manual'], cvgFreshness: 'Fresh', transferred: true } },
+  { id: 'fr-3', position: 3, decision: 'CREATE_TASK',
     criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['04'], lastAgFreshness: 'Outdated' } },
-  { id: 'fr-4', position: 4, decision: 'Accept',
+  { id: 'fr-4', position: 4, decision: 'ACCEPT',
     criteria: { ...EMPTY_CRITERIA, exposure: { op: '<=', amount: 100000 }, nace: ['62.01'] } },
-  { id: 'fr-5', position: 5, decision: 'CreateTask',
+  { id: 'fr-5', position: 5, decision: 'CREATE_TASK',
     criteria: { ...EMPTY_CRITERIA, companyRole: ['Prospect'] } },
 ];
 
@@ -191,19 +280,19 @@ export function historyForCountry(code: CountryCode): RuleSetHistoryEntry[] {
 // Brouillon en dur sur la France : l'historique montre les quatre états dès
 // l'ouverture, et la toolbar propose Resume / Delete sans avoir à éditer.
 const FR_DRAFT_RULES: TagRule[] = [
-  // règle 1 : seuil de fraîcheur retiré
-  { id: 'fr-1', position: 1, decision: 'Accept',
+  { id: 'fr-1', position: 1, decision: 'ACCEPT',
     criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['08','09','10'], cvgValue: ['04','05','06'], cvgType: ['Automatic'] } },
-  { id: 'fr-2', position: 2, decision: 'Refuse',
+  // règle 2 : type et seuil de fraîcheur du grade valide retirés
+  { id: 'fr-2', position: 2, decision: 'REFUSE',
     criteria: { ...EMPTY_CRITERIA, sensitivity: ['S1'], cvgValue: ['04','05'], transferred: true } },
-  { id: 'fr-3', position: 3, decision: 'CreateTask',
+  { id: 'fr-3', position: 3, decision: 'CREATE_TASK',
     criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['04'], lastAgFreshness: 'Outdated' } },
-  { id: 'fr-4', position: 4, decision: 'Accept',
+  { id: 'fr-4', position: 4, decision: 'ACCEPT',
     criteria: { ...EMPTY_CRITERIA, exposure: { op: '<=', amount: 100000 }, nace: ['62.01'] } },
-  { id: 'fr-5', position: 5, decision: 'CreateTask',
+  { id: 'fr-5', position: 5, decision: 'CREATE_TASK',
     criteria: { ...EMPTY_CRITERIA, companyRole: ['Prospect'] } },
   // règle ajoutée, pas encore validée
-  { id: 'fr-6', position: 6, decision: 'Refuse',
+  { id: 'fr-6', position: 6, decision: 'REFUSE',
     criteria: { ...EMPTY_CRITERIA, sensitivity: ['S3'], exposure: { op: '>', amount: 500000 }, legalForm: ['SCI'] } },
 ];
 

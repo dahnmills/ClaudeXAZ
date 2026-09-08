@@ -123,10 +123,19 @@
         <ds-functional-notice status="warning" emphasis="medium" [title]="notice.title" [message]="notice.message" />
       }
 
-      @if (activeFilterCount() > 0) {
+      <!-- L'ordre fait partie du jeu de règles : il se dit là où on lit la liste,
+           pas seulement dans l'aide du champ Position. Ligne permanente, en
+           lecture comme en édition ; sa droite ne se remplit que sous filtre, et
+           dit alors combien de règles sont hors de vue. -->
+      @if (hasRules()) {
         <div class="tag-config__filters-result">
-          <span>{{ filteredRules().length }} of {{ rules().length }} rules</span>
-          <ds-button type="plain" (clicked)="clearFilters()">Clear filters</ds-button>
+          <span>Rules are evaluated top to bottom, the first match decides.</span>
+          @if (activeFilterCount() > 0) {
+            <span class="tag-config__filters-count">
+              <span>{{ filteredRules().length }} of {{ rules().length }} rules · {{ hiddenRuleCount() }} hidden</span>
+              <ds-button type="plain" (clicked)="clearFilters()">Clear filters</ds-button>
+            </span>
+          }
         </div>
       }
 
@@ -147,6 +156,7 @@
               <tag-rule-card
                 [rule]="r" [currency]="currentCountry().currency" [expanded]="isExpanded(r)" [mode]="mode()"
                 [knownLegalForms]="knownLegalForms()"
+                [canMoveUp]="canMoveUp(r)" [canMoveDown]="canMoveDown(r)"
                 (toggled)="toggleCard(r)"
                 (edit)="openEdit(r)"
                 (remove)="requestDelete(r)"

@@ -43,9 +43,16 @@
     min-width: var(--semantic-measurement-sizing-none);
   }
   &__spacer  { flex: 1; }
+  // Ligne permanente en tête de liste : à gauche l'ordre d'évaluation, à droite
+  // le décompte du filtre quand il y en a un. Les deux zones se tiennent aux
+  // extrémités, la droite peut donc rester vide sans décaler la gauche.
   &__filters-result {
-    display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--semantic-measurement-spacing-s);
     font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary);
+  }
+  &__filters-count {
+    display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s);
   }
   &__list  { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-s); }
   &__drag-row {

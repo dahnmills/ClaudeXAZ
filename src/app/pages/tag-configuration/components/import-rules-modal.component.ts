@@ -7,9 +7,9 @@ import { TagRule, EMPTY_CRITERIA } from '../tag-configuration.models';
 
 /** A plausible parsed rule set for the mock JSON import. No real file parsing, no real backend. */
 const MOCK_IMPORTED_RULES: TagRule[] = [
-  { id: 'imported-1', position: 1, decision: 'Accept',
+  { id: 'imported-1', position: 1, decision: 'ACCEPT',
     criteria: { ...EMPTY_CRITERIA, sensitivity: ['S0'], newAutoGrade: ['08', '09', '10'] } },
-  { id: 'imported-2', position: 2, decision: 'Refuse',
+  { id: 'imported-2', position: 2, decision: 'REFUSE',
     criteria: { ...EMPTY_CRITERIA, sensitivity: ['S3'] } },
 ];
 
