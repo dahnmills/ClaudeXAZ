@@ -23,6 +23,22 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'header-not-dimmed-while-editing',
+    date: '2026-09-08',
+    category: 'design',
+    screens: ['tag-configuration'],
+    title: 'The header stops looking disabled while you edit',
+    description:
+      'While a draft was open, the top bar was faded out but still clickable, and the account menu, being part of it, inherited the fade: you could read the page through it. Faded meant nothing, so the fade is gone. What you can use is shown at full strength, and what actually takes you off the draft still asks before it does.',
+    changes: [
+      'The header keeps its full opacity while a draft is open, like the side nav next to it, which was never faded in the first place',
+      'The account menu and the "?" menu are opaque again: no more page showing through the options',
+      'Nothing in the navigation is switched off: the keyboard reference and the account menu stay reachable while editing, which is exactly when they are wanted',
+      'Leaving a modified draft still asks the three-way question. Opening a menu is not leaving, so it does not ask',
+      'Fixed at the root what was patched at the surface: the fade created a stacking context, which is why the account menu used to slide under the toolbar buttons',
+    ],
+  },
+  {
     id: 'no-em-dashes-in-the-copy',
     date: '2026-09-08',
     category: 'content',

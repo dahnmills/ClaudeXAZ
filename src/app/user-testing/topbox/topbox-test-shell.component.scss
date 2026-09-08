@@ -11,13 +11,12 @@
   font-family:    var(--semantic-font-family);
 }
 
-// Dims the global nav header without affecting page content, used while
-// a persistent draft-mode snackbar is shown, so attention stays on the
-// in-progress edit instead of the (still clickable, but visually secondary) nav.
-.ut-header--dimmed {
-  opacity:    var(--semantic-measurement-opacity-disabled);
-  transition: opacity 150ms ease;
-}
+// Le header n'est jamais atténué, pas même pendant l'édition d'un brouillon.
+// L'atténuation empruntait le token d'opacité « disabled » à quelque chose qui
+// restait cliquable : le flyout du compte, enfant du header, en héritait et
+// laissait voir la page au travers. Ce qui est accessible se montre à pleine
+// opacité, et les sorties réelles passent par la garde à trois issues de la
+// page (requestLeave), pas par un signal visuel qui ne bloque rien.
 
 .ut-layout {
   display:  flex;
