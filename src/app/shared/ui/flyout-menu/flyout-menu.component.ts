@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 /**
- * Flyout Menu — panneau dropdown contenant des actions.
+ * Flyout Menu : panneau dropdown contenant des actions.
  * Le positionnement (ancre, top/left, etc.) est géré par le consommateur.
  * Compose des <ds-flyout-menu-item> en content projection.
  */

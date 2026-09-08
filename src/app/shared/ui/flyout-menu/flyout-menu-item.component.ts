@@ -3,7 +3,7 @@ import { IconComponent, type IconName } from '../icon/icon.component';
 import { ShortcutKeysComponent, type KeyCombo } from '../keycap/shortcut-keys.component';
 
 /**
- * Atom interne au composant Flyout Menu — entrée d'action (icône + label) avec ses états.
+ * Atom interne au composant Flyout Menu : entrée d'action (icône + label) avec ses états.
  * Pas destiné à être utilisé en dehors d'un <ds-flyout-menu>.
  *
  * `shortcut` affiche la combinaison clavier de l'action, alignée à droite. Un

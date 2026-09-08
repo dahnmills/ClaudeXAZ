@@ -75,7 +75,7 @@ export interface Board {
   slots: { widgetType: string; cols: 1 | 2; rows: 1 | 2 }[];
 }
 
-// Default boards available on every buyer — content mirrors the demo widgets
+// Default boards available on every buyer: content mirrors the demo widgets
 export const DEFAULT_BOARDS: Board[] = [
   {
     id: 'common', name: 'Common', builtin: true,
@@ -143,7 +143,7 @@ export interface CardZone { id: string; blocks: CardBlock[]; }
 
 export interface CustomCard { id: string; name: string; layoutId: string; zones: CardZone[]; }
 
-// Card layouts — the skeleton chosen first. Each defines its zone count; the CSS
+// Card layouts: the skeleton chosen first. Each defines its zone count; the CSS
 // (grid-template-areas, class bs-zones--<id>) drives the actual placement.
 // Drawn from dashboard tools: sidebar/master-detail (Dynatrace, Grafana),
 // hero KPI banner (Power BI), triptych (Looker Studio).
@@ -204,14 +204,14 @@ export const WIDGET_TYPE_OPTIONS: SelectOption[] = [
 ];
 
 export const WIDGET_SIZE_OPTIONS: SelectOption[] = [
-  { value: 'S', label: '1×1 — Small' },
-  { value: 'M', label: '2×1 — Medium' },
-  { value: 'L', label: '2×2 — Large' },
+  { value: 'S', label: 'Small (1×1)' },
+  { value: 'M', label: 'Medium (2×1)' },
+  { value: 'L', label: 'Large (2×2)' },
 ];
 
 export const CARD_PREVIEWS: CardPreview[] = WIDGET_TYPE_OPTIONS.map(o => ({ id: o.value, label: o.label }));
 
-// Buyer data catalogue — flat list of real data points the analyst can compose
+// Buyer data catalogue: flat list of real data points the analyst can compose
 // onto a Figures block. Mirrors the demo widget mocks, grouped for the picker.
 export const DATA_CATALOG: DataPoint[] = [
   { id: 'exposure',       label: 'Exposure',         value: '1 548 000',      category: 'Risk' },
@@ -298,7 +298,7 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
   private store   = inject(BuyerSummaryStore);
   private toaster = inject(ToasterService);
 
-  // Pending timers — cleared on destroy to avoid callbacks on a dead component
+  // Pending timers: cleared on destroy to avoid callbacks on a dead component
   private timers = new Set<ReturnType<typeof setTimeout>>();
   private schedule(fn: () => void, ms: number): void {
     const id = setTimeout(() => { this.timers.delete(id); fn(); }, ms);
@@ -387,7 +387,7 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
     this.customCards().map(c => ({ id: c.id, label: c.name, custom: true }))
   );
 
-  // Front-only filter — "gr" → "Grade". Custom cards listed first.
+  // Front-only filter: "gr" → "Grade". Custom cards listed first.
   filteredCards = computed(() => {
     const all = [...this.customCardPreviews(), ...CARD_PREVIEWS];
     const q = this.cardFilter().trim().toLowerCase();
@@ -408,7 +408,7 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
   builderTitle = computed(() => {
     const verb = this.editingCardId() ? 'Edit' : 'Create';
     return this.builderStep() === 'layout'
-      ? `${verb} custom card — pick a layout`
+      ? `${verb} custom card: pick a layout`
       : `${verb} custom card`;
   });
 
@@ -528,7 +528,7 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
     if (board && !board.builtin) {
       this.editBoard(board);
     } else {
-      // built-in boards aren't editable in place — open the boards drawer
+      // built-in boards aren't editable in place: open the boards drawer
       this.openBoardsDrawer();
     }
   }
@@ -697,7 +697,7 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
     this.slots.update(arr => arr.map((s, idx) =>
       idx === i ? { ...s, widgetType: val, loading: true } : s
     ));
-    // Track by uid (not index) — list may reorder during the delay
+    // Track by uid (not index): list may reorder during the delay
     this.schedule(() => {
       this.slots.update(arr => arr.map(s =>
         s.uid === uid ? { ...s, loading: false } : s
@@ -834,7 +834,7 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
     }, 700);
   }
 
-  // ── Drag & drop — native HTML5. Deterministic: the browser fires dragover on
+  // ── Drag & drop: native HTML5. Deterministic: the browser fires dragover on
   //    the real slot under the pointer, so placement always matches the cue. ──
 
   // Reorder: a board slot starts dragging (whole card is draggable)
@@ -891,8 +891,8 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
     this.dropIndex.set(rel > 0.5 ? index + 1 : index);
   }
 
-  // Grid-level dragover: only authorise the drop. Never overwrite the target —
-  // it stays whatever the last hovered slot (or the Add tile) computed, so the
+  // Grid-level dragover: only authorise the drop. Never overwrite the target.
+  // It stays whatever the last hovered slot (or the Add tile) computed, so the
   // gap between two cards doesn't reset the insertion point to "append".
   onGridDragOver(ev: DragEvent): void {
     ev.preventDefault();
@@ -996,7 +996,7 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
   }
 
   openCardBuilder(): void {
-    this.drawerOpen.set(false);   // the builder opens as a modal — close the drawer behind it
+    this.drawerOpen.set(false);   // the builder opens as a modal. Close the drawer behind it
     this.editingCardId.set(null);
     this.builderStep.set('layout');
     this.selectedBlockKey.set(null);
@@ -1181,7 +1181,7 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
     this.setFieldQuery(block.id, '');
   }
 
-  // Reorder a chosen field within the block — drives its position in the card
+  // Reorder a chosen field within the block. Drives its position in the card
   moveDataPoint(zoneId: string, block: CardBlock, dpId: string, dir: -1 | 1): void {
     const cur = [...(block.dataPointIds ?? [])];
     const i = cur.indexOf(dpId);

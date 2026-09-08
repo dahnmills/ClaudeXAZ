@@ -1,4 +1,4 @@
-# TAG Configuration v2 — Design Spec
+# TAG Configuration v2: Design Spec
 
 **Date:** 2026-07-16
 **Status:** Approved for planning
@@ -40,13 +40,13 @@ pages/tag-configuration/
 ├── tag-configuration.data.ts                    # mock rules + freshness + codes + referentials
 └── components/
     ├── rule-card.component.*          # one collapsible rule card, 4 criteria groups
-    ├── tag-filter-chip.component.*    # NEW — multi-select chip + flyout
+    ├── tag-filter-chip.component.*    # NEW. Multi-select chip + flyout
     ├── rule-modal.component.*         # Create/Edit rule (14 criteria, 4 groups + outcome)
     ├── freshness-modal.component.*    # 2 thresholds × 2 grade types + validation
     └── trans-excl-modal.component.*   # TRANS-NA-EXCL codes (read-only + search-add)
 ```
 
-**Composition strictness (per CLAUDE.md):** every visual element uses DS atoms — no native `<button>/<input>/<select>/<svg>`, no restyled pill/box. Only ONE new component is justified: `tag-filter-chip` (a multi-select filter chip, absent from the DS). All colours/spacing/radii reference semantic tokens. No hardcoded values.
+**Composition strictness (per CLAUDE.md):** every visual element uses DS atoms. No native `<button>/<input>/<select>/<svg>`, no restyled pill/box. Only ONE new component is justified: `tag-filter-chip` (a multi-select filter chip, absent from the DS). All colours/spacing/radii reference semantic tokens. No hardcoded values.
 
 ---
 
@@ -64,21 +64,21 @@ type Decision    = 'Accept'|'Refuse'|'CreateTask';
 type RuleStatus  = 'Valid'|'NC';
 
 interface RuleCriteria {
-  // Group 1 — Core
+  // Group 1: Core
   sensitivity:  Sensitivity[] | null;
   exposure:     { op: '>'|'<='; amount: number } | null;
   newAutoGrade: Grade[] | null;
-  // Group 2 — Current valid grade (blue accent)
+  // Group 2: Current valid grade (blue accent)
   cvgValue:     Grade[] | null;
   cvgType:      GradeType[] | null;
   cvgFreshness: Freshness | null;
   transferred:  boolean | null;               // Any / Yes / No
   newVsCvg:     Comparison | null;
-  // Group 3 — Last checked autograde (orange accent)
+  // Group 3: Last checked autograde (orange accent)
   lastAgValue:     Grade[] | null;
   lastAgFreshness: Freshness | null;
   newVsLastAg:     Comparison | null;
-  // Group 4 — Other (collapsible)
+  // Group 4: Other (collapsible)
   nace:        string[] | null;
   legalForm:   string[] | null;
   companyRole: string[] | null;               // Insured/Prospect/Formerly insured/noRole
@@ -102,14 +102,14 @@ interface StatusReasonCode { code: string; label: string; }   // TRANS-NA-EXCL e
 
 **Swagger field mapping** (BN §P1): `sensitivityCriteria`, `exposureCriteria`, `newAutoGradeValueCriteria`, `currentValidGradesValueCriteria`, `currentValidGradesTypeCriteria`, `currentValidGradeFreshnessCriteria`, `transferredValidManualGradeCriteria`, `newAutoGradeComparisonWithCVGCriteria`, `lastCheckedAutoGradeValueCriteria`, `lastCheckedAutogradeFreshnessCriteria`, `newAutoGradeComparisonWithLastAGCriteria`, `mainTradeSectorCriteria`, `legalFormCriteria`, `companyRoleCriteria`, outcome `ruleDecisionCode`. Freshness: `freshnessConfiguration.{lastCheckedAutograde|validManualGrade}.{freshUpToMonths|oldAfterMonths}`. Exclusion: `preliminaryRuleConfiguration.statusReasonCodes`.
 
-**Decision → badge** (semantic, kept from prior — a correct call independent of the bad specs):
+**Decision → badge** (semantic, kept from prior. A correct call independent of the bad specs):
 `Accept`→success/strong, `Refuse`→error/strong, `CreateTask`→warning/strong. Via `ds-badge`, never a custom pill.
 
 **Country/currency:** mock several countries (France/EUR, Germany/EUR, Northern Europe, Portugal/EUR). Northern Europe seeded with ~67 rules to exercise P4 filtering. Currency label on Exposure derives from the selected country.
 
 ---
 
-## 5. Page — `tag-configuration.component`
+## 5. Page. `Tag-configuration.component`
 
 Wrapped in `app-topbox-test-shell`, `ds-page-header` (breadcrumb Home › TAG Configuration + title "Task After Grading Configuration"). 32px lateral padding, 16px gaps, semantic tokens (per existing page-authoring pattern).
 
@@ -151,12 +151,12 @@ Composes `ds-card`. Inputs: `rule`, `expanded` (or self-managed via `expandedAll
 
 - **Header (clickable, role=button, toggles):** position number (discreet neutral chip) · active-criteria summary (label/value segments, wraps; Any omitted) · `ds-badge` decision · `ds-button-icon` ⋯ menu (Edit / Move up / Move down / Delete) · chevron. Position control + menu `stopPropagation`.
 - **Body (expanded):** 4 groups via `ds-properties-panel` (variant flat), full width, each group its own section:
-  1. "Sensitivity · Exposure · New autograde" — no accent.
-  2. "Current valid grade" — **blue** accent header: Value / Type / Freshness / Transferred / New AG vs CVG.
-  3. "Last checked autograde" — **orange** accent header (`--semantic-color-static-text-main-functional-warning`): Value / Freshness / New AG vs Last AG.
-  4. "Other" — grey, **collapsible**; collapsed by default when NACE + Legal form + Company role are all Any (shows "▸ Other — all Any"). Expandable manually. State does not persist across sessions.
+  1. "Sensitivity · Exposure · New autograde". No accent.
+  2. "Current valid grade". **Blue** accent header: Value / Type / Freshness / Transferred / New AG vs CVG.
+  3. "Last checked autograde". **Orange** accent header (`--semantic-color-static-text-main-functional-warning`): Value / Freshness / New AG vs Last AG.
+  4. "Other". Grey, **collapsible**; collapsed by default when NACE + Legal form + Company role are all Any (shows "▸ Other. All Any"). Expandable manually. State does not persist across sessions.
 - **"Any" styling:** muted grey token text. Non-Any values: normal weight, tinted with the group accent.
-- Value formatting: grade lists shown comma-joined (avoid the `-` join that implied a false range — a known prior defect); comparisons render ↑/=/↓ + word; exposure renders `> 500,000 EUR`.
+- Value formatting: grade lists shown comma-joined (avoid the `-` join that implied a false range. A known prior defect); comparisons render ↑/=/↓ + word; exposure renders `> 500,000 EUR`.
 - Delete → `ds-confirm-dialog` (danger) + undo toast (restores snapshot).
 
 ---
@@ -192,17 +192,17 @@ All use `ds-modal` + `ds-modal-header` / `ds-modal-content` / `ds-modal-footer`.
 ### 8.2 freshness-modal (P2)
 - Title "Edit grade freshness thresholds".
 - Table, 2 rows × 5 columns:
-  - Col 1: grade type label — Row 1 "Last checked autograde", Row 2 "Valid manual grade (transferred or not)".
-  - Col 2–3: Current Fresh up to / Old after — **read-only** (muted input style).
-  - Col 4–5: New Fresh up to / New Old after — editable `ds-input-text` (months).
+  - Col 1: grade type label. Row 1 "Last checked autograde", Row 2 "Valid manual grade (transferred or not)".
+  - Col 2–3: Current Fresh up to / Old after. **Read-only** (muted input style).
+  - Col 4–5: New Fresh up to / New Old after. Editable `ds-input-text` (months).
 - Constraint `oldAfterMonths ≥ freshUpToMonths` per row; violation → `ds-functional-notice` (warning) inline "Old after (months) must be ≥ Fresh up to (months)"; Save disabled while violated.
-- Save emits new `FreshnessConfig` (draft — no immediate production effect; conveyed in copy).
+- Save emits new `FreshnessConfig` (draft: no immediate production effect; conveyed in copy).
 
 ### 8.3 trans-excl-modal (P3, NEW)
 - Title "Edit TRANS-NA-EXCL". Context subtitle: "Status reason codes excluded from TRANS-NA calculation for [country]. Changes follow the DRAFT/VALIDATED lifecycle." + `ds-tag` "Draft".
 - "Current codes" section: read-only list, one row per code = code key (bold) + description + remove `ds-button-icon`. Uses `ds-properties-panel` or `ds-table-row` (DS list primitive), not raw rows.
 - "Add codes" section: `ds-input-search` (placeholder "Search codes…") + multi-select results in a `ds-flyout-menu`. Referential mock stands in for `/riskinfo/v3/dataRef/tableTypes/COMPANY_STATUS_REASON/codes`.
-- Empty list save explicitly allowed; when empty show `ds-functional-notice` (info) "No codes configured — saving will allow all status reason codes."
+- Empty list save explicitly allowed; when empty show `ds-functional-notice` (info) "No codes configured. Saving will allow all status reason codes."
 - Footer: Cancel (ghost) + Save (primary). Save emits `StatusReasonCode[]`.
 
 ---
@@ -227,7 +227,7 @@ All semantic. Blue accent (Current valid grade) = existing interactive/info blue
 
 - Delete old folder; recreate per §3.
 - Route `tag-configuration` (`app.routes.ts`) and the index-page link stay unchanged (same path, same `TagConfigurationComponent` class name).
-- No changes to shared DS atoms except adding `tag-filter-chip` — which lives in the page's `components/`, NOT in `shared/ui/`, since it is TAG-specific (revisit promoting it to `shared/ui/` only if reused elsewhere).
+- No changes to shared DS atoms except adding `tag-filter-chip`, which lives in the page's `components/`, NOT in `shared/ui/`, since it is TAG-specific (revisit promoting it to `shared/ui/` only if reused elsewhere).
 
 ---
 

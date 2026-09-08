@@ -1,9 +1,9 @@
 @if (open()) {
   <!-- `region` et non `dialog` : le panneau ne piège pas le focus et ne bloque
-       pas la page — c'est ce qui permet d'essayer un raccourci en le lisant. -->
+       pas la page : c'est ce qui permet d'essayer un raccourci en le lisant. -->
   <section class="ds-shortcuts-panel" role="region" aria-label="Keyboard shortcuts">
     <!-- Ligne de service : la croix, et le retour de la dernière action quand il
-         y en a un. Pas de titre — on arrive par le menu « Keyboard shortcuts »
+         y en a un. Pas de titre. On arrive par le menu « Keyboard shortcuts »
          ou par `?`, et l'écran est couvert de carrés de clavier ; le nom est
          porté par `aria-label`. Pas de recherche non plus : les catégories
          tiennent en un coup d'œil, un champ de plus n'apportait qu'un second

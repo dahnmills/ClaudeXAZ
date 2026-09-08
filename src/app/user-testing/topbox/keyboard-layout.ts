@@ -9,19 +9,19 @@ import { signal } from '@angular/core';
  * - `event.code` est une POSITION physique, nommée d'après le QWERTY US. La
  *   touche marquée `M` d'un AZERTY français a pour `code` `Semicolon` ; la
  *   position appelée `KeyM`, elle, imprime `,`.
- * - `event.key` est le CARACTÈRE produit, donc la légende — sauf quand un
+ * - `event.key` est le CARACTÈRE produit, donc la légende, sauf quand un
  *   modificateur compose autre chose (macOS : ⌥ + M donne `µ`).
  *
  * Un raccourci se retient par ce qu'on lit sur la touche. « Alt + M » doit donc
  * viser la touche marquée M, quelle que soit sa position. D'où ce module : il
  * expose la légende réelle par position quand le navigateur la donne
- * (`navigator.keyboard.getLayoutMap()`, Chromium), ce qui sert deux fois — au
+ * (`navigator.keyboard.getLayoutMap()`, Chromium), ce qui sert deux fois, au
  * décodage des événements (`normalizeEventKey`) et au dessin du clavier de
  * l'onglet Layout.
  *
  * Hors Chromium l'API n'existe pas : on retombe sur une table de dispositions
  * et l'utilisateur choisit la sienne dans l'onglet Layout. Ce choix n'affecte
- * QUE le dessin — le décodage, lui, passe par `event.key`, qui est déjà correct
+ * QUE le dessin : le décodage, lui, passe par `event.key`, qui est déjà correct
  * partout où aucun modificateur ne compose de caractère.
  */
 
@@ -55,7 +55,7 @@ const FALLBACK_ROWS: Record<LayoutId, readonly string[]> = {
 
 /**
  * Légendes lues dans le navigateur, par `code`. `null` = pas encore lu, ou API
- * absente — deux cas que l'appelant traite pareil (repli), d'où un seul état.
+ * absente : deux cas que l'appelant traite pareil (repli), d'où un seul état.
  */
 const legends = signal<ReadonlyMap<string, string> | null>(null);
 

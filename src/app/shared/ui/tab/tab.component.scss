@@ -9,7 +9,7 @@
 //   • Indicateur : 4px, coloré, visible quand selected
 //   • Default tone : BlueA pour selected, Grey/900 pour unselected
 //   • Accent tone  : Grey/900 pour selected, Grey/900 pour unselected
-//   • Reversed tone : blanc (pour fond sombre — header)
+//   • Reversed tone : blanc (pour fond sombre, header)
 //   • Disabled : opacity 0.40
 // =============================================================
 
@@ -49,7 +49,7 @@
   }
 
   // ============================================================
-  // TONE — DEFAULT  (sur fond clair : BlueA selected, gris unselected)
+  // TONE / DEFAULT  (sur fond clair : BlueA selected, gris unselected)
   // ============================================================
   &.ds-tab--tone-default {
     .ds-tab__content { color: var(--semantic-color-static-text-main-primary); }       // Grey/900
@@ -76,7 +76,7 @@
       }
     }
 
-    // Hover unselected — show faint indicator
+    // Hover unselected: show faint indicator
     &:not(.ds-tab--selected):hover:not(.ds-tab--disabled) .ds-tab__indicator {
       opacity:    0.35;
       background: var(--semantic-color-interactive-border-strong-hover);
@@ -84,7 +84,7 @@
   }
 
   // ============================================================
-  // TONE — ACCENT  (sur fond clair : Grey/900 selected + indicator Grey/900)
+  // TONE / ACCENT  (sur fond clair : Grey/900 selected + indicator Grey/900)
   // ============================================================
   &.ds-tab--tone-accent {
     .ds-tab__content { color: var(--semantic-color-static-text-main-primary); }
@@ -113,7 +113,7 @@
   }
 
   // ============================================================
-  // TONE — REVERSED  (sur fond sombre : blanc partout)
+  // TONE / REVERSED  (sur fond sombre : blanc partout)
   // ============================================================
   &.ds-tab--tone-reversed {
     .ds-tab__content { color: var(--semantic-color-interactive-text-neutral-default); } // white

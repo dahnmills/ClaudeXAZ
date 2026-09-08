@@ -119,7 +119,7 @@ export const WithBreadcrumbsAndTitle: Story = {
 };
 
 export const PolicyContext: Story = {
-  name: 'Policy — full',
+  name: 'Policy: full',
   args: { topbox: true, breadcrumb: true, tabs: true },
   render: (args) => ({
     props: args,

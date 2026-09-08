@@ -13,7 +13,7 @@ interface Verdict {
 }
 
 /**
- * Echo — tableau de bord autonome d'analyse des retours testeurs.
+ * Echo : tableau de bord autonome d'analyse des retours testeurs.
  * Identité produit propre (tokens --vb-*), indépendante du design system Qirin.
  * Lit le brut (localStorage en mode local, sinon Supabase via /rest), le
  * présente filtrable et exportable. Aucune interprétation destructrice : le
@@ -186,7 +186,7 @@ export class ResultsComponent {
     };
   });
 
-  /** « The Room » — verdict qualitatif dérivé du vrai ratio de réactions. */
+  /** « The Room » : verdict qualitatif dérivé du vrai ratio de réactions. */
   verdict = computed<Verdict>(() => {
     const s = this.stats();
     if (s.total === 0) {

@@ -2,7 +2,7 @@ import { Component, computed, input, output } from '@angular/core';
 import { ShortcutKeysComponent, type KeyCombo } from '../keycap/shortcut-keys.component';
 
 /**
- * Atome interne au panneau de raccourcis — une ligne « libellé … combo ».
+ * Atome interne au panneau de raccourcis : une ligne « libellé … combo ».
  *
  * Le pointillé entre les deux n'est pas décoratif : sur trois colonnes de
  * libellés de longueurs très inégales, c'est lui qui rattache visuellement le
@@ -10,7 +10,7 @@ import { ShortcutKeysComponent, type KeyCombo } from '../keycap/shortcut-keys.co
  * Figma). Sans lui l'œil dérape d'une ligne à l'autre.
  *
  * La ligne est cliquable et déclenche l'action : le panneau sert alors de
- * palette de commandes autant que d'aide-mémoire — on peut faire la chose sans
+ * palette de commandes autant que d'aide-mémoire. On peut faire la chose sans
  * connaître encore son raccourci, tout en le lisant. L'interactivité vit sur
  * l'hôte (pas de `<button>` natif), comme `ds-flyout-menu-item`.
  *

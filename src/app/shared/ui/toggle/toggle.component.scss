@@ -1,5 +1,5 @@
 // =============================================================
-// Toggle — switch on/off
+// Toggle : switch on/off
 // Source : Figma > -Components--Data-Entry > .Toggle (node 2044:2853)
 // =============================================================
 
@@ -67,7 +67,7 @@
   transform:        translateX(0);
 }
 
-// ── States — OFF (non sélectionné) ──
+// ── States : OFF (non sélectionné) ──
 
 :host(.ds-toggle--state-Hover):not(.ds-toggle--selected):not(.ds-toggle--error) .ds-toggle__track,
 :host(:hover):not(.ds-toggle--selected):not(.ds-toggle--disabled):not(.ds-toggle--error) .ds-toggle__track {
@@ -84,7 +84,7 @@
   background-color: var(--semantic-color-interactive-background-strong-alt-disabled);
 }
 
-// ── States — ON (sélectionné) ──
+// ── States : ON (sélectionné) ──
 
 :host(.ds-toggle--selected) .ds-toggle__knob {
   transform: translateX(20px); // 40 − 2 (padding) − 2 (padding) − 16 (knob) = 20
@@ -104,7 +104,7 @@
   background-color: var(--semantic-color-interactive-background-strong-active);
 }
 
-// ── States — Erreur ──
+// ── States: Erreur ──
 
 :host(.ds-toggle--error) .ds-toggle__track {
   background-color: var(--semantic-color-interactive-background-strong-negative-default);

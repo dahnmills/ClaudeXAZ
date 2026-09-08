@@ -47,7 +47,7 @@
 // ── Bandeau de service ─────────────────────────────────────────────────────
 // La croix a sa propre ligne : partagée avec les onglets, elle rognait la bande
 // et tirait l'œil vers le coin au moment même où il doit balayer les catégories.
-// Ligne volontairement basse et vide à gauche — c'est de l'air, pas un en-tête.
+// Ligne volontairement basse et vide à gauche. C'est de l'air, pas un en-tête.
 .ds-shortcuts-panel__chrome {
   display: flex;
   align-items: center;
@@ -60,7 +60,7 @@
 
 // Retour de la dernière action. Seul voisin de la croix : il peut donc rester
 // dans le flux sans rien décaler d'important. Le snackbar ne peut pas faire ce
-// travail ici — il est ancré au même bord de fenêtre et recouvrirait la ligne
+// travail ici : il est ancré au même bord de fenêtre et recouvrirait la ligne
 // qu'on vient de déclencher.
 .ds-shortcuts-panel__note {
   flex: 0 1 auto;
@@ -115,7 +115,7 @@
 }
 
 // Sous ~1100px, quatre colonnes couperaient les libellés. On passe à deux et
-// c'est le corps qui défile — la hauteur du panneau, elle, ne bouge pas.
+// c'est le corps qui défile : la hauteur du panneau, elle, ne bouge pas.
 @media (max-width: 1100px) {
   :host { --ksp-cols: 2; }
 }

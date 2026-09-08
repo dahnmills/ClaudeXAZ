@@ -6,7 +6,7 @@ import { RuleCardComponent } from '../../tag-configuration/components/rule-card.
 import { GradeStoryEntry } from '../grade-story.models';
 
 /**
- * TAG explanation modal (BN AZTQIRIN-55735) — answers "why did this TAG
+ * TAG explanation modal (BN AZTQIRIN-55735): answers "why did this TAG
  * decision happen": the buyer inputs read at calculation time, and the
  * exact rule that matched them. Two distinct groups per the ticket's UX
  * challenge, stacked (not side-by-side) since the rule card's own 6-column

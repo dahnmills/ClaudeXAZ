@@ -3,12 +3,12 @@ import { Component, computed, input, output } from '@angular/core';
 export type TableRowState = 'default' | 'active' | 'disabled';
 
 /**
- * Rangée d'un tableau — wrapper flex pour des <ds-cell> / <ds-cell-action> / <ds-cell-selection>.
+ * Rangée d'un tableau : wrapper flex pour des <ds-cell> / <ds-cell-action> / <ds-cell-selection>.
  *
  * États :
- *   • default   — normal
- *   • active    — sélectionnée (ex. ligne courante d'un détail)
- *   • disabled  — non interactive, opacité réduite
+ *   • default  : normal
+ *   • active    : sélectionnée (ex. ligne courante d'un détail)
+ *   • disabled  : non interactive, opacité réduite
  *
  * Comportement :
  *   • interactive=true → la rangée gère hover + cursor + clavier + emit `clicked`
@@ -32,7 +32,7 @@ export type TableRowState = 'default' | 'active' | 'disabled';
 export class TableRowComponent {
   state       = input<TableRowState>('default');
   interactive = input<boolean>(false);
-  /** Marque la ligne comme nouvelle — bg subtil + cells en gras */
+  /** Marque la ligne comme nouvelle : bg subtil + cells en gras */
   new         = input<boolean>(false);
 
   clicked = output<MouseEvent | KeyboardEvent>();

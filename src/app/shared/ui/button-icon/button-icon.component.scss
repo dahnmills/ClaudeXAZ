@@ -8,7 +8,7 @@
 // Fidélité Figma :
 //   • Size S : 32×32px, padding 0 8px, radius 4px
 //   • Size M : 40×40px, padding 0 8px, radius 4px
-//   • Plain S : 16×16px — Plain M : 24×24px (no padding, no border)
+//   • Plain S : 16×16px. Plain M : 24×24px (no padding, no border)
 //   • L'icône hérite de `color` via currentColor
 //   • disabled : opacity 0.40, pointer-events none
 // =============================================================
@@ -51,7 +51,7 @@
   }
 
   // ============================================================
-  // TYPE — PRIMARY  (fond coloré, icône blanche)
+  // TYPE / PRIMARY  (fond coloré, icône blanche)
   // ============================================================
   &.ds-button-icon--type-primary {
     background:   var(--semantic-color-interactive-background-strong-default);
@@ -118,7 +118,7 @@
   }
 
   // ============================================================
-  // TYPE — SECONDARY  (fond blanc, bordure colorée)
+  // TYPE / SECONDARY  (fond blanc, bordure colorée)
   // ============================================================
   &.ds-button-icon--type-secondary {
     background:   var(--semantic-color-interactive-background-muted-default);
@@ -180,7 +180,7 @@
   }
 
   // ============================================================
-  // TYPE — TERTIARY  (transparent, icône colorée)
+  // TYPE / TERTIARY  (transparent, icône colorée)
   // ============================================================
   &.ds-button-icon--type-tertiary {
     background:   transparent;
@@ -212,7 +212,7 @@
   }
 
   // ============================================================
-  // TYPE — PLAIN  (icône seule, taille = icône uniquement)
+  // TYPE / PLAIN  (icône seule, taille = icône uniquement)
   // ============================================================
   &.ds-button-icon--type-plain {
     background:    transparent;
@@ -220,7 +220,7 @@
     color:         var(--semantic-color-interactive-text-strong-default);
     border-radius: 0;
 
-    // Override de la taille — l'icône occupe tout l'espace
+    // Override de la taille : l'icône occupe tout l'espace
     &.ds-button-icon--size-s {
       width:  var(--foundation-spacing-16);  // 16px
       height: var(--foundation-spacing-16);  // 16px

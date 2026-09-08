@@ -21,12 +21,12 @@
   border-radius: var(--semantic-border-radius-s);
   padding:       var(--semantic-measurement-spacing-l); // 24px
 
-  // Variante sans padding — contenu full-bleed ou gérant son propre espacement
+  // Variante sans padding : contenu full-bleed ou gérant son propre espacement
   &.ds-card--no-padding {
     padding: 0;
   }
 
-  // Détachement au repos — état open/active d'une row expandable (voir DESIGN.md Elevation)
+  // Détachement au repos : état open/active d'une row expandable (voir DESIGN.md Elevation)
   &.ds-card--elevated {
     box-shadow: var(--semantic-shadow-card);
   }

@@ -9,7 +9,7 @@ export interface BuyerCompany {
 
 /**
  * Transfert de la company sélectionnée/créée entre la page Search et la page
- * Buyer Summary. Singleton root — survit à la navigation.
+ * Buyer Summary. Singleton root. Survit à la navigation.
  *
  * `justCreated` pilote le toaster de succès affiché une seule fois à l'arrivée
  * (consommé via consumeJustCreated() pour ne pas se redéclencher).

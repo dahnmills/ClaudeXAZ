@@ -1,5 +1,5 @@
 // =============================================================
-// Crumb — atom
+// Crumb: atom
 // Source : Figma > -Components--Action > Crumb (node 1709:14619)
 //
 // Variants : Default (link + chevron) / Current page (semibold, brand color, no chevron)
@@ -18,7 +18,7 @@
   height:      20px;
 }
 
-// ── Disabled (lien) — Link gère son propre disabled ; ici on ne désactive plus le span current
+// ── Disabled (lien) : Link gère son propre disabled ; ici on ne désactive plus le span current
 :host.ds-crumb--disabled {
   opacity:        var(--semantic-measurement-opacity-disabled);
   pointer-events: none;

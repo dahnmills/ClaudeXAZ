@@ -113,7 +113,7 @@
 
   &__grid {
     display: grid;
-    // Fixed card width (not 1fr) — every preview needs a known, identical
+    // Fixed card width (not 1fr): every preview needs a known, identical
     // box to scale its content into. A flexible column width would make
     // the uniform CSS scale factor below wrong on wider viewports.
     grid-template-columns: repeat(auto-fill, 240px);
@@ -150,10 +150,10 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    // Purely illustrative — nothing inside should be clickable/hoverable.
+    // Purely illustrative: nothing inside should be clickable/hoverable.
     pointer-events: none;
     // Several components (Modal, Drawer, Popin, Filter Drawer, Spotlight)
-    // are `position: fixed` in their own stylesheet — real overlays, not
+    // are `position: fixed` in their own stylesheet, real overlays, not
     // thumbnails. `contain: paint` gives this box its own containing block,
     // so a "fixed" descendant positions itself relative to THIS box instead
     // of the viewport, and gets clipped by its overflow instead of covering
@@ -161,13 +161,13 @@
     contain: paint;
   }
   // Fixed "design canvas" every component renders into at its real size,
-  // then shrunk with ONE uniform scale — never stretched, so nothing gets
+  // then shrunk with ONE uniform scale: never stretched, so nothing gets
   // distorted. Ratio matches the grid preview box exactly (240/420 =
   // 140/245) so a component that fills the canvas fills the thumbnail
   // too; a small atom (e.g. an icon) just renders small, which is fine.
   // --preview-scale is overridden by the list layout below (smaller
-  // thumbnail, same 420:245 canvas, so the ratio — and the "no distortion"
-  // guarantee — stays identical).
+  // thumbnail, same 420:245 canvas, so the ratio, and the "no distortion"
+  // guarantee: stays identical).
   &__preview-inner {
     flex-shrink: 0;
     width: 420px;
@@ -215,7 +215,7 @@
       border-radius: 10px;
       border-bottom: none;
       border: 1px solid #efeef5;
-      --preview-scale: 0.244898; // 60/245 — same 420:245 canvas, smaller thumbnail
+      --preview-scale: 0.244898; // 60/245. Same 420:245 canvas, smaller thumbnail
     }
     .dsc-card__info { flex-direction: row; align-items: baseline; gap: 10px; }
     .dsc-card__category { flex-shrink: 0; width: 90px; }
@@ -239,8 +239,8 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    // Darker than the rest of this page's muted grey (#8b8798, ~3.5:1) —
-    // this label is read as real taxonomy, not a decorative caption, so it
+    // Darker than the rest of this page's muted grey (#8b8798, ~3.5:1).
+    // This label is read as real taxonomy, not a decorative caption, so it
     // needs to clear 4.5:1 on white.
     color: #56526b;
   }
@@ -256,7 +256,7 @@
     color: #b5b1c4;
   }
 
-  // Same pill shape/size as .dsc__view-btn (the grid/list toggle) — one
+  // Same pill shape/size as .dsc__view-btn (the grid/list toggle), one
   // icon-button vocabulary across the page instead of inventing a second.
   &__icon-link {
     display: inline-flex;

@@ -17,7 +17,7 @@ import { SHORTCUT_LETTERS } from './shortcuts.data';
  * navigation la détruit. Un signal local perdrait à chaque saut trois choses
  * qu'on veut justement garder : le panneau ouvert (on enchaîne les raccourcis en
  * le lisant), la liste des raccourcis déjà essayés (les touches passent en
- * bleu — c'est cumulé que ça a du sens) et la disposition clavier choisie. Un
+ * bleu : c'est cumulé que ça a du sens) et la disposition clavier choisie. Un
  * service racine survit aux navigations, contrairement au composant.
  */
 @Injectable({ providedIn: 'root' })
@@ -73,7 +73,7 @@ export class ShortcutsService {
     };
   });
 
-  /** Choix de disposition. N'affecte QUE le dessin — voir keyboard-layout.ts. */
+  /** Choix de disposition. N'affecte QUE le dessin. Voir keyboard-layout.ts. */
   setLayout(id: string) {
     const option = LAYOUT_OPTIONS.find((o) => o.value === id);
     if (option) this.layoutPick.set(option.value);

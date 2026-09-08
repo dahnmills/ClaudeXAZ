@@ -1,7 +1,7 @@
 {
   "name": "@dahnmills/design-system",
   "version": "0.1.0",
-  "description": "Qirin design system — shared/ui components and design tokens.",
+  "description": "Qirin design system: shared/ui components and design tokens.",
   "repository": {
     "type": "git",
     "url": "https://github.com/dahnmills/ClaudeXAZ.git"

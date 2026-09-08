@@ -38,7 +38,7 @@ export class TooltipDirective implements OnDestroy {
   }
 
   // focusin (not focus) so it fires even when the trigger itself isn't
-  // focusable but wraps a disabled control — e.g. a disabled button inside
+  // focusable but wraps a disabled control: e.g. a disabled button inside
   // a tabindex="0" wrapper still needs its tooltip reachable by keyboard.
   @HostListener('focusin')    onFocusIn() { this.show(); }
   @HostListener('mouseleave') onLeave()   { this.cancel(); }

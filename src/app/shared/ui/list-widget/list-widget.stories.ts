@@ -9,7 +9,7 @@ const meta: Meta<ListWidgetComponent> = {
 export default meta;
 type Story = StoryObj<ListWidgetComponent>;
 
-/** Widget "Job to do" — items avec badge de priorité, icône d'action = lien externe. */
+/** Widget "Job to do" : items avec badge de priorité, icône d'action = lien externe. */
 export const JobToDo: Story = {
   args: {
     title: 'Job to do',
@@ -28,7 +28,7 @@ export const JobToDo: Story = {
   }),
 };
 
-/** Widget "Notepad" — rappels avec badge info, icône d'action = menu contextuel. */
+/** Widget "Notepad" : rappels avec badge info, icône d'action = menu contextuel. */
 export const Notepad: Story = {
   args: {
     title: 'Notepad',

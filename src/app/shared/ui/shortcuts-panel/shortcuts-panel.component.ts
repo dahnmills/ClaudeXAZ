@@ -8,7 +8,7 @@ import type { KeyCombo } from '../keycap/shortcut-keys.component';
 
 /** Une entrée du catalogue, telle qu'AFFICHÉE (touches déjà résolues pour l'OS). */
 export interface Shortcut {
-  /** Identifiant stable — clé de l'état « déjà utilisé ». Un même raccourci
+  /** Identifiant stable : clé de l'état « déjà utilisé ». Un même raccourci
    *  peut apparaître dans plusieurs catégories : le même `id` garantit que les
    *  deux lignes s'allument ensemble. */
   id: string;
@@ -25,11 +25,11 @@ export interface ShortcutGroup {
 }
 
 /** Clé de l'onglet Layout. Préfixée pour ne pouvoir collisionner avec aucune
- *  catégorie du catalogue — ce n'en est pas une, elle ne liste rien. */
+ *  catégorie du catalogue : ce n'en est pas une, elle ne liste rien. */
 const LAYOUT_KEY = '__layout';
 
 /**
- * Organisme — panneau d'aide-mémoire des raccourcis clavier, docké en bas.
+ * Organisme : panneau d'aide-mémoire des raccourcis clavier, docké en bas.
  *
  * Trois partis pris, tirés de l'observation des panneaux qui marchent (Figma,
  * Linear, Gmail) :
@@ -82,7 +82,7 @@ export class ShortcutsPanelComponent {
 
   readonly layoutKey = LAYOUT_KEY;
 
-  /** Retombe sur la première catégorie si la sélection n'existe plus — y compris
+  /** Retombe sur la première catégorie si la sélection n'existe plus, y compris
    *  quand l'onglet Layout était actif et que `keyboard` disparaît. */
   activeKey = computed<string>(() => {
     const wanted = this.category();

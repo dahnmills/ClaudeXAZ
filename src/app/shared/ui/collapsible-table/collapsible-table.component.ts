@@ -2,7 +2,7 @@ import { Component, computed, input, model } from '@angular/core';
 import { IconComponent, type IconName } from '../icon/icon.component';
 
 /**
- * Collapsible Table — section pliable autour d'une table.
+ * Collapsible Table : section pliable autour d'une table.
  * Source : Figma > Data Display > Collapsible Table 🟢
  *
  * Le contenu (table, list, properties-panel, etc.) est passé via ng-content.

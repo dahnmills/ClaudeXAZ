@@ -15,7 +15,7 @@
       <ds-icon name="search" [size]="16" />
     </ds-button-icon>
     <!-- « ? » : même mécanique de dropdown que le compte, à gauche de la barre
-         d'actions. Deux entrées seulement — le centre d'aide, et l'aide-mémoire
+         d'actions. Deux entrées seulement. Le centre d'aide, et l'aide-mémoire
          clavier, dont le raccourci est affiché DANS l'entrée. -->
     <div class="ut-help" (click)="$event.stopPropagation()">
       <ds-button-icon
@@ -69,10 +69,10 @@
   </ng-container>
 </ds-header>
 
-<!-- Modals/dialogs — rendus hors du scroll container .ut-main -->
+<!-- Modals/dialogs : rendus hors du scroll container .ut-main -->
 <ng-content select="[slot=modals]" />
 
-<!-- Aide-mémoire clavier — docké en bas, hors du scroll container. -->
+<!-- Aide-mémoire clavier : docké en bas, hors du scroll container. -->
 <ds-shortcuts-panel
   [(open)]="shortcuts.panelOpen"
   [groups]="shortcutGroups"
@@ -82,7 +82,7 @@
 />
 <!-- Onglet « Layout » en attente : le panneau l'affiche dès qu'on lui repasse
      [keyboard]="shortcuts.keyboardView()" et (layoutChange)="shortcuts.setLayout($event)".
-     Il n'est PAS nécessaire au bon fonctionnement — les lettres sont reconnues
+     Il n'est PAS nécessaire au bon fonctionnement. Les lettres sont reconnues
      par ce qui est gravé sur la touche (voir keyboard-layout.ts), donc les
      raccourcis marchent déjà à l'identique en AZERTY. L'onglet ne servirait qu'à
      le montrer. -->

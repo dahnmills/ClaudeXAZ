@@ -9,7 +9,7 @@ import { IconComponent, type IconName } from '../icon/icon.component';
  * Coquille de widget Buyer Summary : titre + actions (lien "see figures" +
  * bouton-icône lien externe) + séparateur + contenu projeté.
  *
- * Compose `ds-card` (bg/bordure/radius/padding) — ne réimplémente pas la boîte.
+ * Compose `ds-card` (bg/bordure/radius/padding). Ne réimplémente pas la boîte.
  * Le contenu (chart, properties-panel, liste…) est passé en ng-content.
  */
 @Component({

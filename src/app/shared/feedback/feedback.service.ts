@@ -8,7 +8,7 @@ const QUEUE_KEY = 'qirin.feedback.queue';   // insert non confirmés (offline)
 const LOCAL_KEY = 'qirin.feedback.local';   // stockage brut en l'absence de Supabase
 
 /**
- * Capture les retours des testeurs et les persiste — Supabase si configuré,
+ * Capture les retours des testeurs et les persiste. Supabase si configuré,
  * sinon `localStorage`. Offline-safe : un insert Supabase échoué est mis en
  * file et rejoué au prochain démarrage. Le testeur ne voit jamais d'erreur.
  *

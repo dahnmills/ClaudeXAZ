@@ -1,4 +1,4 @@
-// Radio Card — mêmes tokens que Checkbox Card, radio button au lieu de checkbox
+// Radio Card : mêmes tokens que Checkbox Card, radio button au lieu de checkbox
 
 :host {
   display:        flex;
@@ -47,7 +47,7 @@
     outline-offset: 2px;
   }
 
-  // Tone — selected state tints toward a functional color instead of the
+  // Tone: selected state tints toward a functional color instead of the
   // default interactive blue. Unselected state is identical across tones.
   // :hover/:active on --selected above outrank these on specificity (extra
   // pseudo-class), so they must be repeated here or the tone gets clobbered

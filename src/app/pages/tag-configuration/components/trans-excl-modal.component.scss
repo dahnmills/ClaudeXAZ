@@ -1,5 +1,5 @@
 // =============================================================
-// TRANS-NA-EXCL modal — grey panel + white card per group (same
+// TRANS-NA-EXCL modal: grey panel + white card per group (same
 // rm-panel/rm-group/rm-card vocabulary as rule-modal and the company
 // wizards): "Current codes" (read-only list) and "Add codes"
 // (search-add from the status reason referential). Empty list allowed.
@@ -85,7 +85,7 @@
 }
 
 // Anchors the flyout directly under the search field instead of leaving it
-// in the card's flex flow — the card's own gap (spacing-m, 16px) plus the
+// in the card's flex flow: the card's own gap (spacing-m, 16px) plus the
 // flyout's margin-top stacked on top of it read as "the dropdown is
 // floating away from its trigger" instead of an attached menu.
 .te-search-wrap {

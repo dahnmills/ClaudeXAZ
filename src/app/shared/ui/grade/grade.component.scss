@@ -1,4 +1,4 @@
-// Grade — pastille colorée + score optionnel
+// Grade : pastille colorée + score optionnel
 // Source : Figma > Data Display > Grade 🟢
 // Type=Manual (M1-10) / Automatic (A1-10) / NC (N/C) / NA (N/A)
 // Couleurs : --semantic-color-static-background-grade-{1..10}
@@ -86,7 +86,7 @@
   color:      var(--semantic-color-static-text-subtle-primary);
 }
 
-// ── NC / NA — fond gris clair ──────────────────────────────
+// ── NC / NA: fond gris clair ──────────────────────────────
 :host.ds-grade--type-nc .ds-grade__pill,
 :host.ds-grade--type-na .ds-grade__pill {
   background: var(--semantic-color-static-background-grade-none);

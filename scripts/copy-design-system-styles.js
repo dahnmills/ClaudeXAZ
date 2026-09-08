@@ -1,6 +1,6 @@
 // ng-packagr refuses to copy assets from outside its project root (the
 // library project root is src/app/shared/ui, but the tokens live in
-// src/styles) — so the tokens are copied here, after the ng-packagr build,
+// src/styles): so the tokens are copied here, after the ng-packagr build,
 // with a plain fs copy instead of ng-package.json's "assets" option.
 const fs = require('fs');
 const path = require('path');

@@ -1,5 +1,5 @@
 // =============================================================
-// Radio — bouton radio
+// Radio: bouton radio
 // Source : Figma > -Components--Data-Entry > .Radio (node 2044:2569)
 // =============================================================
 
@@ -68,7 +68,7 @@
   transition:       background-color 0.15s ease;
 }
 
-// ── States — non sélectionné ──
+// ── States : non sélectionné ──
 
 :host(.ds-radio--state-Hover):not(.ds-radio--selected) .ds-radio__circle,
 :host(:hover):not(.ds-radio--selected):not(.ds-radio--disabled):not(.ds-radio--error) .ds-radio__circle {
@@ -80,7 +80,7 @@
   border-color: var(--semantic-color-interactive-border-strong-alt-active);
 }
 
-// ── States — sélectionné (sans erreur) ──
+// ── States : sélectionné (sans erreur) ──
 
 :host(.ds-radio--selected):not(.ds-radio--error) .ds-radio__circle {
   border-color: var(--semantic-color-interactive-border-strong-default);
@@ -107,7 +107,7 @@
   background-color: var(--semantic-color-interactive-icon-strong-active);
 }
 
-// ── States — erreur ──
+// ── States: erreur ──
 
 :host(.ds-radio--error) .ds-radio__circle {
   border-color: var(--semantic-color-interactive-border-strong-negative-default);

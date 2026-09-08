@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 
 /**
- * Atom interne au composant Flyout — entrée individuelle (titre + référence + badge optionnel).
+ * Atom interne au composant Flyout : entrée individuelle (titre + référence + badge optionnel).
  * Pas destiné à être utilisé en dehors d'un <ds-flyout>.
  */
 @Component({

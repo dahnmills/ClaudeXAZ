@@ -60,7 +60,7 @@
   max-width: 1600px;
 }
 
-// One shared canvas — both connectors, the cable, and the disconnect burst
+// One shared canvas: both connectors, the cable, and the disconnect burst
 // all live in the same coordinate space, so they can genuinely touch (and
 // overlap) when "plugged in", and the burst fires exactly at each tip.
 .maint__canvas {

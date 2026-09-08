@@ -4,7 +4,7 @@ import { KeycapComponent } from './keycap.component';
 /**
  * Jeton de séquence dans un combo. Sépare deux touches pressées L'UNE APRÈS
  * L'AUTRE (accord : « G puis I ») de deux touches pressées ENSEMBLE.
- * Reconnu ici uniquement à l'affichage — c'est l'appelant qui décide si son
+ * Reconnu ici uniquement à l'affichage : c'est l'appelant qui décide si son
  * catalogue utilise des accords.
  */
 export const KEY_THEN = 'then';
@@ -17,7 +17,7 @@ export const KEY_THEN = 'then';
 export type KeyCombo = readonly string[];
 
 /**
- * Molécule — rend un combo complet en composant `ds-keycap`.
+ * Molécule : rend un combo complet en composant `ds-keycap`.
  *
  * Pas de « + » entre les touches : les carrés accolés suffisent à lire la
  * simultanéité, et c'est la convention de Figma comme de macOS. Le mot « then »

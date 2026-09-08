@@ -1,5 +1,5 @@
 // =============================================================
-// Topbox — atom
+// Topbox: atom
 // Source : Figma > -Components--Data Display > .Topbox (node 1704:15463)
 //
 // Spec :
@@ -162,7 +162,7 @@ $grade-bg: (
   white-space: nowrap;
 }
 
-// ── Action — chevron variant (accordion toggle) ────────────────
+// ── Action: chevron variant (accordion toggle) ────────────────
 .ds-topbox__chevron {
   display:         inline-flex;
   align-items:     center;
@@ -181,7 +181,7 @@ $grade-bg: (
   flex-shrink:     0;
   transition:      background-color 0.15s ease;
 
-  // Même logique que .ds-topbox__action — visible sur fond Grey/050
+  // Même logique que .ds-topbox__action. Visible sur fond Grey/050
   &:hover  {
     background-color: var(--semantic-color-interactive-background-light-alt-hover);
     color:            var(--semantic-color-interactive-text-strong-alt-hover);

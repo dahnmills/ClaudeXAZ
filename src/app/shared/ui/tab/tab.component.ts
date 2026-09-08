@@ -26,10 +26,10 @@ export class TabComponent {
   selected = input<boolean>(false);
   disabled = input<boolean>(false);
 
-  // Figma 57:231 — extra slots
+  // Figma 57:231, extra slots
   /** Répartition « fill container » : l'onglet prend une part égale de la
    *  largeur du parent, libellé centré. La spec Figma laisse déjà le padding au
-   *  parent — la distribution relève du même contrat de layout. */
+   *  parent : la distribution relève du même contrat de layout. */
   fill     = input<boolean>(false);
   icon     = input<boolean>(false);          // gates [slot=icon] rendering
   counter  = input<number | null>(null);     // red badge top-right

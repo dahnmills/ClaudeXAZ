@@ -13,7 +13,7 @@
     color:     var(--semantic-color-static-text-main-tertiary);
   }
 
-  // Each clickable zone gets its own border + hover fill — the visual
+  // Each clickable zone gets its own border + hover fill, the visual
   // indicator the BN asks for, so the two zones read as distinct targets
   // rather than one row that happens to react differently depending on
   // where you click.

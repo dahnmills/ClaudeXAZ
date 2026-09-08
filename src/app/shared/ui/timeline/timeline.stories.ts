@@ -42,7 +42,7 @@ export const SingleEvent: Story = {
     template: `
       <ds-timeline>
         <ds-timeline-event title="Single event" status="info" [isLast]="true" [open]="true">
-          Just one item — no descending line.
+          Just one item: no descending line.
         </ds-timeline-event>
       </ds-timeline>
     `,

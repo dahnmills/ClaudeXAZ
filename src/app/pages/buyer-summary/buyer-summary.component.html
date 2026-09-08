@@ -50,7 +50,7 @@
         <!-- Light overlay on the page behind the slots (configure mode) -->
         <div class="bs-configure-overlay" aria-hidden="true"></div>
 
-        <!-- Floating action bar — light, elevated, anchored bottom-center.
+        <!-- Floating action bar: light, elevated, anchored bottom-center.
              Builder convention (Figma/Framer/Material floating toolbar).
              Hidden while the card-builder modal is open (it would float over it). -->
         @if (!builderOpen()) {
@@ -68,7 +68,7 @@
         <!-- Surface above overlay: slots only -->
         <div class="bs-configure-surface">
 
-        <!-- Slot grid — native HTML5 drag & drop (reliable hover target,
+        <!-- Slot grid: native HTML5 drag & drop (reliable hover target,
              full control over placement). flex-wrap mirrors the 4-col grid. -->
         <div
           class="bs-slots"
@@ -92,7 +92,7 @@
               (dragend)="onDragEnd()"
               (dragover)="onSlotDragOver($event, i, slot)"
             >
-              <!-- ── Floating toolbar — present in every state ── -->
+              <!-- ── Floating toolbar: present in every state ── -->
               <div class="bs-toolbar" (click)="$event.stopPropagation()">
                 @if (slot.widgetType && !slot.loading) {
                   <div class="bs-toolbar__sizes" role="group" aria-label="Card size">
@@ -133,14 +133,14 @@
                 </div>
               }
 
-              <!-- ── STATE: configured — real widget ── -->
+              <!-- ── STATE: configured, real widget ── -->
               @else if (slot.widgetType) {
                 <ng-container [ngTemplateOutlet]="widgetTpl" [ngTemplateOutletContext]="{ $implicit: slot.widgetType }" />
                 <button class="bs-slot__resize" type="button" aria-label="Resize card"
                   (pointerdown)="startResize($event, i)"></button>
               }
 
-              <!-- ── STATE: empty — selectable placeholder ── -->
+              <!-- ── STATE: empty. Selectable placeholder ── -->
               @else {
                 <button class="bs-slot__empty" type="button"
                   (click)="pickForSlot(slot.uid)"
@@ -203,7 +203,7 @@
                 [class.bs-grid__cell--wide]="slot.cols === 2"
                 [class.bs-grid__cell--tall]="slot.rows === 2">
 
-                <!-- Context menu — 3-dots + flyout -->
+                <!-- Context menu: 3-dots + flyout -->
                 <div class="bs-card-menu" (click)="$event.stopPropagation()">
                   <ds-button-icon type="plain" ariaLabel="Card options"
                     (clicked)="toggleCardMenu(i)">
@@ -238,7 +238,7 @@
     }
   </div>
 
-  <!-- ═══ Single board control drawer — boards / create / cards / layouts ═══ -->
+  <!-- ═══ Single board control drawer: boards / create / cards / layouts ═══ -->
   <ds-drawer [title]="drawerTitle()" [open]="drawerOpen()"
     [showBack]="drawerView() === 'create'" backLabel="Boards"
     (back)="drawerView.set('boards')" (closed)="closeDrawer()">
@@ -414,7 +414,7 @@
       </div>
     </ds-modal>
 
-    <!-- ═══ Card builder — pick a layout, then fill its zones with DS blocks ═══ -->
+    <!-- ═══ Card builder: pick a layout, then fill its zones with DS blocks ═══ -->
     <ds-modal [title]="builderTitle()" size="xlarge" [open]="builderOpen()"
       contentHeight="640px" [closeOnBackdrop]="false"
       [showBack]="builderStep() === 'compose'" backLabel="Layout"
@@ -463,7 +463,7 @@
               </div>
             </div>
 
-            <!-- Right: inspector — edits the selected block with room to breathe -->
+            <!-- Right: inspector. Edits the selected block with room to breathe -->
             <div class="bs-inspector">
               @if (selectedBlock(); as sel) {
                 <div class="bs-inspector__header">
@@ -505,7 +505,7 @@
   </ng-container>
 </app-topbox-test-shell>
 
-<!-- Shared widget renderer — used by configure preview AND validated ready board.
+<!-- Shared widget renderer: used by configure preview AND validated ready board.
      chartHeight defaults to 110 (fits a 1×1 slot); callers may override. -->
 <ng-template #widgetTpl let-type let-chartH="chartHeight" let-hideAction="hideAction">
   @switch (type) {
@@ -583,9 +583,9 @@
   }
 </ng-template>
 
-<!-- Custom card renderer — a named ds-widget-card whose zones are laid out by the
+<!-- Custom card renderer: a named ds-widget-card whose zones are laid out by the
      chosen layout. Used by the board (pure render) AND the builder canvas
-     (editable: overlays, inline editors, add-block) — strict WYSIWYG. -->
+     (editable: overlays, inline editors, add-block), strict WYSIWYG. -->
 <ng-template #customCardTpl let-card let-chartH="chartHeight" let-editable="editable">
   <ds-widget-card [title]="card.name || 'Untitled card'" [externalLink]="false">
     <div class="bs-custom-card bs-zones bs-zones--{{ card.layoutId }}"
@@ -629,7 +629,7 @@
           }
 
           @if (editable) {
-            <!-- Inline tile row — 4 block types, always visible, 1 click = add -->
+            <!-- Inline tile row: 4 block types, always visible, 1 click = add -->
             <div class="bs-cv-addrow" role="group" aria-label="Add block"
               (click)="$event.stopPropagation()">
               @for (b of BLOCK_KINDS; track b.kind) {
@@ -647,7 +647,7 @@
   </ds-widget-card>
 </ng-template>
 
-<!-- Pure render of one block — shared by board and canvas -->
+<!-- Pure render of one block: shared by board and canvas -->
 <ng-template #blockRenderTpl let-block let-chartH="chartHeight">
   @switch (block.kind) {
     @case ('heading') {
@@ -678,7 +678,7 @@
   }
 </ng-template>
 
-<!-- Inline editor of one block — canvas only -->
+<!-- Inline editor of one block: canvas only -->
 <ng-template #blockEditorTpl let-block let-zoneId="zoneId">
   @switch (block.kind) {
     @case ('heading') {
@@ -697,7 +697,7 @@
         (selectionChange)="setBlockMetric(zoneId, block.id, $event)" />
     }
     @case ('figures') {
-      <!-- Selected wells — ordered list that drives the card order -->
+      <!-- Selected wells: ordered list that drives the card order -->
       <div class="bs-wells">
         <span class="bs-wells__title">
           Selected
@@ -724,11 +724,11 @@
             </div>
           </div>
         } @empty {
-          <p class="bs-wells__empty">No field yet — pick from the catalogue below.</p>
+          <p class="bs-wells__empty">No field yet. Pick from the catalogue below.</p>
         }
       </div>
 
-      <!-- Search + click to add — fast for 21 fields, no checkbox wall -->
+      <!-- Search + click to add: fast for 21 fields, no checkbox wall -->
       <div class="bs-field-search">
         <ds-input-search placeholder="Search a field to add…"
           [value]="fieldQuery(block.id)"

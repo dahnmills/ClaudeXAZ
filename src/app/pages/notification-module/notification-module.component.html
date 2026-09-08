@@ -17,7 +17,7 @@
          pas un neuvième critère mais ce qu'on fait des huit. -->
     <div class="nm-search">
       <div class="nm-search__grid">
-        <!-- Rangée 1 — filtres. « All … » en placeholder et non en valeur
+        <!-- Rangée 1 : filtres. « All … » en placeholder et non en valeur
              sélectionnée : un filtre non posé doit se lire comme non posé, et
              l'option de même libellé dans la liste sert de retour en arrière. -->
         <ds-select label="Status code" placeholder="All statuses"
@@ -49,7 +49,7 @@
           }
         </div>
 
-        <!-- Rangée 2 — identifiants. -->
+        <!-- Rangée 2 : identifiants. -->
         <ds-input-text label="Policy ID" placeholder="4471023" [(value)]="policyQuery" />
         <ds-input-text label="Extension ID" placeholder="EXT-88120" [(value)]="extensionQuery" />
         <ds-input-text label="Buyer ID" placeholder="137381425" [(value)]="buyerQuery" />
@@ -70,7 +70,7 @@
         <div class="nm-search__actions">
           <!-- Reset en plain : vider huit champs remplis ne doit pas se présenter
                avec le même poids visuel que lancer la recherche. Désactivé plutôt
-               que masqué — apparaître/disparaître décalerait le bouton Search. -->
+               que masqué : apparaître/disparaître décalerait le bouton Search. -->
           <ds-button
             type="plain"
             tone="accent"
@@ -134,7 +134,7 @@
             size="s"
           />
         </ds-cell>
-        <!-- Étape 2 : statut de distribution — vide tant que le document n'est pas généré. -->
+        <!-- Étape 2 : statut de distribution. Vide tant que le document n'est pas généré. -->
         <ds-cell style="flex:1.4;">
           @if (isGenerated(row)) {
             <ds-badge [label]="row.statusLabel" [status]="row.statusTone" variant="strong" size="s" />
@@ -205,7 +205,7 @@
           </div>
         } @else {
 
-        <!-- Filtres de statut (single-select, chips pill — réf. Figma 3541:7191) -->
+        <!-- Filtres de statut (single-select, chips pill. Réf. Figma 3541:7191) -->
         <div class="nm-modal__filters">
           <button
             type="button"

@@ -17,7 +17,7 @@ const MIN_ZONE = 12;
 const THUMB_MAX_W = 480;
 
 /**
- * Echo — compagnon de feedback continu, non-invasif. Identité visuelle propre
+ * Echo : compagnon de feedback continu, non-invasif. Identité visuelle propre
  * (tokens --ec-*, bleu électrique), indépendante du design system Qirin.
  * Monté UNIQUEMENT dans le ReviewShell (`/review/*`) → n'apparaît jamais sur
  * les routes de dev normales.

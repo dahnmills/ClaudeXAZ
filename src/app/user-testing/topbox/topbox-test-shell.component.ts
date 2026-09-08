@@ -34,7 +34,7 @@ const ZONE_PREFIXES = ['/review', '/prototype', '/user-testing'];
  * Porte aussi le clavier de l'application : c'est le seul composant présent sur
  * tous les écrans produit, donc le bon endroit pour écouter les raccourcis et
  * pour héberger le panneau d'aide-mémoire. Le catalogue et l'état vivent à côté
- * (shortcuts.data.ts, ShortcutsService) — ici il n'y a que l'écoute et le
+ * (shortcuts.data.ts, ShortcutsService). Ici il n'y a que l'écoute et le
  * dispatch.
  *
  * Slots :
@@ -160,7 +160,7 @@ export class TopboxTestShellComponent {
     // Le reste n'est pas encore branché : le proto teste la découvrabilité et
     // la mémorisation des combinaisons, pas les écrans de destination. Le
     // retour est ce qui prouve que la frappe a bien été reçue.
-    this.notify(`${def.label} — not wired in this prototype yet`);
+    this.notify(`${def.label}: not wired in this prototype yet`);
   }
 
   /** Panneau ouvert : le retour va dans sa bande d'onglets. Le snackbar est ancré

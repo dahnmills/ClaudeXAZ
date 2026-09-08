@@ -5,7 +5,7 @@ import { ButtonIconComponent } from '../button-icon/button-icon.component';
 export type CellActionSize = 's' | 'm';
 
 /**
- * Cellule d'action en bout de ligne — bouton 3 points qui ouvre un flyout-menu.
+ * Cellule d'action en bout de ligne : bouton 3 points qui ouvre un flyout-menu.
  * Le menu est passé via le slot [slot=menu] (typiquement un <ds-flyout-menu>).
  *
  *   <ds-cell-action ariaLabel="Row actions">

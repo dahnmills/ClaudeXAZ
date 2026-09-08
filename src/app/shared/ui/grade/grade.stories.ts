@@ -16,7 +16,7 @@ const meta: Meta<GradeComponent> = {
 export default meta;
 type Story = StoryObj<GradeComponent>;
 
-/** Story principale — joue avec les controls pour tester toutes les combinaisons. */
+/** Story principale : joue avec les controls pour tester toutes les combinaisons. */
 export const Playground: Story = {
   args: { type: 'manual', grade: 5, score: 5.0, size: 'm' },
 };

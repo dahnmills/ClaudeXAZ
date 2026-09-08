@@ -81,7 +81,7 @@ export const Playground: Story = {
     props: args,
     template: `
       <ds-collapsible-table [category]="category" [icon]="icon" [(open)]="open" [disabled]="disabled">
-        <p>Body content — typically a table, list, or properties panel.</p>
+        <p>Body content: typically a table, list, or properties panel.</p>
       </ds-collapsible-table>
     `,
   }),

@@ -239,7 +239,7 @@
   gap: var(--semantic-measurement-spacing-s);
 }
 
-// ───── Nested section (depth > 0) — card style accordion ─────
+// ───── Nested section (depth > 0): card style accordion ─────
 .ds-filter-drawer__section--nested {
   border: var(--semantic-border-size-s) solid transparent;
   border-radius: var(--semantic-border-radius-m);

@@ -1,5 +1,5 @@
 /**
- * Feedback Companion — configuration Supabase.
+ * Feedback Companion: configuration Supabase.
  *
  * Laisse `supabaseUrl` / `supabaseAnonKey` vides pour tester en local sans
  * backend : les retours sont alors stockés en `localStorage` (clé

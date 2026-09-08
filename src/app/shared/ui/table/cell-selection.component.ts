@@ -39,7 +39,7 @@ export class CellSelectionComponent {
 
   checkedChange = output<boolean>();
   toggleChange  = output<boolean>();
-  /** Émis au mousedown sur le drag handle — le parent peut initier un drag. */
+  /** Émis au mousedown sur le drag handle. Le parent peut initier un drag. */
   dragStart     = output<MouseEvent>();
 
   hostClasses = computed(() => [

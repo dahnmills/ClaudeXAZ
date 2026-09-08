@@ -38,7 +38,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
 
 .bs-grid ds-newsfeed { grid-column: span 2; }
 
-// Validated custom board — cells honour the configured size
+// Validated custom board: cells honour the configured size
 .bs-grid__cell {
   position:  relative;
   display:   flex;
@@ -51,7 +51,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   &--tall { grid-row: span 2; }
 }
 
-// Card context menu (3-dots) — overlaps the widget header's action slot
+// Card context menu (3-dots): overlaps the widget header's action slot
 .bs-card-menu {
   position: absolute;
   top:      var(--semantic-measurement-spacing-l);   // align with widget title row
@@ -123,10 +123,10 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   z-index:  95;
 }
 
-// ── Floating action bar — board editor ───────────────────────────────────────
+// ── Floating action bar: board editor ───────────────────────────────────────
 // Light, elevated, anchored bottom-center. Persistent through edit mode.
 // Convention: Figma/Framer/Material 3 floating toolbar (light surface, strong
-// shadow, rounded) — NOT a dark snackbar (which reads as a transient notice).
+// shadow, rounded). NOT a dark snackbar (which reads as a transient notice).
 .bs-floatbar {
   position:        fixed;
   bottom:          var(--semantic-measurement-spacing-xl);
@@ -152,7 +152,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   background: var(--semantic-color-static-border-subtle-tertiary);
 }
 
-// ── Configure — slot grid ─────────────────────────────────────────────────────
+// ── Configure: slot grid ─────────────────────────────────────────────────────
 // flex-wrap: 4 columns, cards span 1 or 2 cols / 1 or 2 rows.
 .bs-slots {
   display:   flex;
@@ -162,7 +162,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   padding:   var(--semantic-measurement-spacing-xl) var(--semantic-measurement-spacing-xl) var(--foundation-spacing-96);
 }
 
-// ── Slot card — matches Figma exactly ────────────────────────────────────────
+// ── Slot card: matches Figma exactly ────────────────────────────────────────
 // bg: #f5f5f5 (surface-secondary), border: 1px dashed #d2d2d2, padding: 24px, radius: 4px
 .bs-slot {
   --gap:     var(--semantic-measurement-spacing-m);
@@ -222,12 +222,12 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
     }
   }
 
-  // The slot currently being dragged — faded in place
+  // The slot currently being dragged: faded in place
   &--dragging {
     opacity: 0.35;
   }
 
-  // Insertion bar — blue rule on the left edge of the slot at the drop index
+  // Insertion bar : blue rule on the left edge of the slot at the drop index
   &--insert-before::before {
     content:       '';
     position:      absolute;
@@ -240,7 +240,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
     z-index:       6;
   }
 
-  // Aiming an empty placeholder — full highlight (drop fills/replaces it)
+  // Aiming an empty placeholder: full highlight (drop fills/replaces it)
   &--drop-on {
     border-style: solid;
     border-color: var(--semantic-color-interactive-border-strong-default);
@@ -249,14 +249,14 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   }
 }
 
-// ── Slot: empty placeholder — dashed, awaits a card ──────────────────────────
+// ── Slot: empty placeholder. Dashed, awaits a card ──────────────────────────
 .bs-slot--placeholder {
   border-style: dashed;
   border-color: var(--semantic-color-static-border-subtle-tertiary);
   transition:   border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
 }
 
-// Targeted placeholder — the spot the next picked card will fill
+// Targeted placeholder: the spot the next picked card will fill
 .bs-slot--targeted {
   border-color: var(--semantic-color-interactive-border-strong-default);
   background:   var(--semantic-color-interactive-background-light-default);
@@ -269,7 +269,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
 }
 
 
-// ── Slot: configured state — la vraie widget card remplit le slot ─────────────
+// ── Slot: configured state. La vraie widget card remplit le slot ─────────────
 .bs-slot--configured {
   padding:    0;
   border:     none;
@@ -317,7 +317,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   white-space:   nowrap;
 }
 
-// Show toolbar on hover — lifts into place
+// Show toolbar on hover : lifts into place
 .bs-slot:hover .bs-toolbar {
   opacity:    1;
   visibility: visible;
@@ -408,7 +408,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   justify-content: center;
 }
 
-// Loader cercle bleu gradient — Figma node 2529:116908
+// Loader cercle bleu gradient: Figma node 2529:116908
 // arc bleu (#008ED6 → lighter), rotation continue. Shared loading visual.
 .bs-loader {
   display:       block;
@@ -444,8 +444,8 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   border:    0;
 }
 
-// "Choose a card" title — Figma Copy/Large(18)/Semibold
-// ── Empty slot — clickable empty state opening the picker ────────────────────
+// "Choose a card" title: Figma Copy/Large(18)/Semibold
+// ── Empty slot: clickable empty state opening the picker ────────────────────
 .bs-slot__empty {
   display:         flex;
   flex-direction:  column;
@@ -501,7 +501,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
 
 
 // ── Drawer content ────────────────────────────────────────────────────────────
-// Drawer body has no padding by default — add consistent inset for both tabs
+// Drawer body has no padding by default. Add consistent inset for both tabs
 .drawer-content {
   display:        flex;
   flex-direction: column;
@@ -592,7 +592,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   }
   &:active { cursor: grabbing; }
 
-  // Mini live preview of the widget — real widget clipped into a fixed window
+  // Mini live preview of the widget: real widget clipped into a fixed window
   &__preview {
     position:       relative;
     height:         180px;
@@ -613,7 +613,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
     }
   }
 
-  // "Drag" badge over the preview — signals the drag affordance, hover only
+  // "Drag" badge over the preview: signals the drag affordance, hover only
   &__drag-badge {
     position:      absolute;
     top:           var(--semantic-measurement-spacing-xs);
@@ -661,7 +661,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   flex:           1;
 }
 
-// ── Modal action buttons — consistent spacing ────────────────────────────────
+// ── Modal action buttons: consistent spacing ────────────────────────────────
 .bs-modal-actions {
   display:         flex;
   align-items:     center;
@@ -677,7 +677,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   color:       var(--semantic-color-static-text-main-secondary);
 }
 
-// ── Create board (drawer view) — layout picker ───────────────────────────────
+// ── Create board (drawer view): layout picker ───────────────────────────────
 .create-board__sub {
   margin:      0;
   font-family: var(--semantic-font-family);
@@ -786,7 +786,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
 
   &:hover { background: var(--semantic-color-interactive-background-subtle-hover); }
 
-  // Secondary CTA — custom card creation sits below the board CTA, quieter
+  // Secondary CTA: custom card creation sits below the board CTA, quieter
   &--alt {
     background:   var(--semantic-color-static-background-main-primary);
     border-style: solid;
@@ -846,7 +846,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   min-width:      0;
 }
 
-// ── Zone layouts — shared by the real card AND the picker diagrams ───────────
+// ── Zone layouts: shared by the real card AND the picker diagrams ───────────
 // Generic .bs-zone children placed by grid; nth-child spans handle full-width
 // header/hero rows. Skeletons drawn from BI tools (sidebar, split, hero banner).
 .bs-zones {
@@ -895,7 +895,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   white-space: pre-wrap;
 }
 
-// ── Card builder — canvas (structure) + inspector (block content) ────────────
+// ── Card builder: canvas (structure) + inspector (block content) ────────────
 .bs-builder2 {
   display:               grid;
   grid-template-columns: 1.4fr 1fr;
@@ -966,7 +966,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   width:       100%;
 }
 
-// ── Inspector — edits the selected block, with room to breathe ───────────────
+// ── Inspector: edits the selected block, with room to breathe ───────────────
 .bs-inspector {
   display:          flex;
   flex-direction:   column;
@@ -1014,7 +1014,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   }
 }
 
-// ── Canvas block wrapper — hover toolbar; click selects ──────────────────────
+// ── Canvas block wrapper: hover toolbar; click selects ──────────────────────
 .bs-custom-card--editable {
   .bs-zone { gap: var(--semantic-measurement-spacing-s); }
 }
@@ -1036,7 +1036,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   }
 }
 
-// Floating per-block toolbar — same convention as the board's bs-toolbar
+// Floating per-block toolbar: same convention as the board's bs-toolbar
 .bs-cv-toolbar {
   position:      absolute;
   top:           calc(-1 * var(--semantic-measurement-spacing-l));
@@ -1061,7 +1061,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   visibility: visible;
 }
 
-// Add-block — a row of tiles, always visible, 1 click = add (no menu)
+// Add-block: a row of tiles, always visible, 1 click = add (no menu)
 .bs-cv-addrow {
   display:               grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1113,8 +1113,8 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
 
 // Figures: catalogue scrolls in its own bounded window. overscroll-behavior
 // isolates it from the left column so the two scrolls don't chain (the cause of
-// the erratic feel) — the column still scrolls for everything else.
-// ── Figures: selected "wells" — ordered list that drives the card order ──────
+// the erratic feel): the column still scrolls for everything else.
+// ── Figures: selected "wells". Ordered list that drives the card order ──────
 // Pattern from Power BI / Metabase field wells: a separate ordered, reorderable,
 // removable list of the chosen fields (the catalogue below only adds to it).
 .bs-wells {
@@ -1211,7 +1211,7 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   }
 }
 
-// ── Figures: field search picker — type to filter, click to add ──────────────
+// ── Figures: field search picker. Type to filter, click to add ──────────────
 .bs-field-search {
   display:        flex;
   flex-direction: column;
@@ -1367,19 +1367,19 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   to   { opacity: 1; }
 }
 
-// Slot insertion — fade + lift
+// Slot insertion: fade + lift
 @keyframes slot-in {
   from { opacity: 0; transform: translateY(8px) scale(0.98); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-// Drop-target placeholder — gentle pulse
+// Drop-target placeholder: gentle pulse
 @keyframes placeholder-pulse {
   0%, 100% { opacity: 0.6; }
   50%      { opacity: 1; }
 }
 
-// Targeted "Pick a card" — soft breathing ring
+// Targeted "Pick a card": soft breathing ring
 @keyframes target-pulse {
   0%, 100% { box-shadow: 0 0 0 1px var(--semantic-color-interactive-border-strong-default); }
   50%      { box-shadow: 0 0 0 3px var(--semantic-color-interactive-background-subtle-default); }

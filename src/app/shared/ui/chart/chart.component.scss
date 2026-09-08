@@ -2,7 +2,7 @@
   display: flex;
   gap: var(--semantic-measurement-spacing-xs);
   width: 100%;
-  // Hauteur d'une rangée de libellés axe X — sert à aligner l'axe Y sur le tracé.
+  // Hauteur d'une rangée de libellés axe X. Sert à aligner l'axe Y sur le tracé.
   --ds-chart-x-axis-h: 16px;
   --ds-chart-line:  var(--semantic-color-interactive-background-strong-default);
 }

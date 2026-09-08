@@ -82,7 +82,7 @@ export const WithoutFooter: Story = {
         [contentHeight]="contentHeight"
         (closed)="isOpen.set(false)"
       >
-        <p>This modal has no footer — close via the X button, the backdrop, or Escape.</p>
+        <p>This modal has no footer: close via the X button, the backdrop, or Escape.</p>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
       </ds-modal>
     `,
@@ -133,7 +133,7 @@ export const Large: Story = {
       >
         <p>Full buyer details here. Use this size for complex forms or rich data displays.</p>
         @for (n of [].constructor(8); track $index) {
-          <p>Section {{ $index + 1 }} — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p>Section {{ $index + 1 }}: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         }
 
         <div slot="actions">

@@ -4,7 +4,7 @@
 // Variants : Tone (Default/Neutral/Reversed) × State × Size × Weight × Decoration
 //
 // Fidélité Figma :
-//   • Size M : 16px / lh 24px   — Size S : 14px / lh 20px
+//   • Size M : 16px / lh 24px  . Size S : 14px / lh 20px
 //   • Default : BlueA/500 → 600 (hover) → 700 (active)
 //   • Neutral  : Grey/900 → Grey/800 (hover) → Grey/700 (active)
 //   • Reversed : blanc (tous états)
@@ -49,7 +49,7 @@
     text-decoration: underline;
   }
 
-  // ── Tone — Default (BlueA) ────────────────────────────────────
+  // ── Tone: Default (BlueA) ────────────────────────────────────
   &.ds-link--tone-default .ds-link__anchor {
     color: var(--semantic-color-interactive-text-strong-default);
 
@@ -57,7 +57,7 @@
     &:active:not([aria-disabled]) { color: var(--semantic-color-interactive-text-strong-active); }
   }
 
-  // ── Tone — Neutral (Grey) ─────────────────────────────────────
+  // ── Tone: Neutral (Grey) ─────────────────────────────────────
   &.ds-link--tone-neutral .ds-link__anchor {
     color: var(--semantic-color-static-text-main-primary); // Grey/900
 
@@ -65,7 +65,7 @@
     &:active:not([aria-disabled]) { color: var(--semantic-color-static-text-main-secondary); }          // Grey/700
   }
 
-  // ── Tone — Reversed (white, for dark backgrounds) ─────────────
+  // ── Tone: Reversed (white, for dark backgrounds) ─────────────
   &.ds-link--tone-reversed .ds-link__anchor {
     color: var(--semantic-color-interactive-text-neutral-default); // white
 

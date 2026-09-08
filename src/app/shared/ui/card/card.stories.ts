@@ -44,7 +44,7 @@ export const WithBadgeAndButton: Story = {
           <div style="font-size:14px;font-weight:600;">Polices actives</div>
           <ds-badge label="Actif" status="success" variant="light" size="s"></ds-badge>
         </div>
-        <div style="font-size:14px;color:#414141;">Contrat n° 12345678 — expire le 01/12/2026</div>
+        <div style="font-size:14px;color:#414141;">Contrat n° 12345678 : expire le 01/12/2026</div>
         <div style="display:flex;gap:12px;align-items:center;">
           <ds-button type="primary">Déclarer un sinistre</ds-button>
           <ds-link tone="default" href="#">Voir le détail</ds-link>

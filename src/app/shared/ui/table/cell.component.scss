@@ -1,5 +1,5 @@
 // =============================================================
-// Cell — cellule de données
+// Cell : cellule de données
 // Source : Figma > -Components--Data Display > Cell Properties (node 8:4196)
 //
 // Spec :
@@ -56,7 +56,7 @@
   white-space:    nowrap;
 }
 
-// Variant "New" / emphasized — bold
+// Variant "New" / emphasized: bold
 :host.ds-cell--emphasized .ds-cell__content {
   font-weight: var(--semantic-font-text-style-font-weight-bold);
 }

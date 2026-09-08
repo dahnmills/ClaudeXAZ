@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 /**
- * Timeline — conteneur vertical d'events.
+ * Timeline: conteneur vertical d'events.
  * Source : Figma > Data Display > Timeline 🟠
  *
  * Compose <ds-timeline-event> en children.

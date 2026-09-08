@@ -28,7 +28,7 @@ export class ButtonIconComponent {
   size     = input<ButtonIconSize>('s');
   reversed = input<boolean>(false);
   disabled = input<boolean>(false);
-  /** Obligatoire pour l'accessibilité — remplace le label textuel absent */
+  /** Obligatoire pour l'accessibilité : remplace le label textuel absent */
   ariaLabel = input.required<string>();
 
   clicked = output<void>();

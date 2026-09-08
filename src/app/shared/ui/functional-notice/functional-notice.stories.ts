@@ -28,13 +28,13 @@ export const Playground: Story = {
   },
 };
 
-/** Toutes les emphases × tous les status — vue de comparaison */
+/** Toutes les emphases × tous les status, vue de comparaison */
 export const Matrix: Story = {
   render: () => ({
     template: `
       <div style="display:flex;flex-direction:column;gap:24px;">
         <div>
-          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Emphasis : High</h4>
+          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Emphasis: High</h4>
           <div style="display:flex;flex-direction:column;gap:8px;max-width:600px;">
             <ds-functional-notice status="info"    emphasis="high" title="Title" message="Lorem ipsum dolor sit amet."></ds-functional-notice>
             <ds-functional-notice status="success" emphasis="high" title="Title" message="Lorem ipsum dolor sit amet."></ds-functional-notice>
@@ -43,7 +43,7 @@ export const Matrix: Story = {
           </div>
         </div>
         <div>
-          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Emphasis : Medium</h4>
+          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Emphasis: Medium</h4>
           <div style="display:flex;flex-direction:column;gap:8px;max-width:600px;">
             <ds-functional-notice status="info"    emphasis="medium" title="Title" message="Lorem ipsum dolor sit amet."></ds-functional-notice>
             <ds-functional-notice status="success" emphasis="medium" title="Title" message="Lorem ipsum dolor sit amet."></ds-functional-notice>
@@ -52,7 +52,7 @@ export const Matrix: Story = {
           </div>
         </div>
         <div>
-          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Emphasis : Low (inline)</h4>
+          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Emphasis: Low (inline)</h4>
           <div style="display:flex;flex-direction:column;gap:8px;max-width:600px;">
             <ds-functional-notice status="info"    emphasis="low" message="Lorem ipsum dolor sit amet."></ds-functional-notice>
             <ds-functional-notice status="success" emphasis="low" message="Lorem ipsum dolor sit amet."></ds-functional-notice>

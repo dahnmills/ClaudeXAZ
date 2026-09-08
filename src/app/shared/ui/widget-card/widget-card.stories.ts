@@ -13,7 +13,7 @@ const meta: Meta<WidgetCardComponent> = {
 export default meta;
 type Story = StoryObj<WidgetCardComponent>;
 
-/** Widget chiffré (figures-only) — contenu = properties-panel stacked/flat. */
+/** Widget chiffré (figures-only) : contenu = properties-panel stacked/flat. */
 export const Figures: Story = {
   render: () => ({
     props: {
@@ -35,7 +35,7 @@ export const Figures: Story = {
   }),
 };
 
-/** Widget graphique — lien "see figures" + ds-chart projeté. */
+/** Widget graphique : lien "see figures" + ds-chart projeté. */
 export const Graph: Story = {
   render: () => ({
     props: {

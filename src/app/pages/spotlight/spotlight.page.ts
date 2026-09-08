@@ -8,7 +8,7 @@ import {
   type SpotlightItem,
 } from '../../shared/ui';
 
-// Pays proposés dans le panneau de la bulle drapeau — limités aux drapeaux
+// Pays proposés dans le panneau de la bulle drapeau, limités aux drapeaux
 // disponibles dans `ds-flag`.
 const COUNTRIES: SpotlightCountry[] = [
   { code: 'fr', name: 'France' },
@@ -20,8 +20,8 @@ const COUNTRIES: SpotlightCountry[] = [
 
 // ── Corpus recherché (mock) ────────────────────────────────────────────────
 // Multi-entités : la palette indexe des buyers ET des applications, comme le
-// montre la maquette (ManA — Manual Assessment).
-// Le `country` est ce que filtre la bulle drapeau — un item sans pays est donc
+// montre la maquette (ManA : Manual Assessment).
+// Le `country` est ce que filtre la bulle drapeau. Un item sans pays est donc
 // exclu dès qu'un pays est sélectionné (cas de ManA, qui n'en a pas).
 const CORPUS: SpotlightItem[] = [
   { id: '137381425', name: 'Amazon GB',                 type: 'Buyer',       icon: 'buyers', status: 'Open', statusTone: 'success', country: 'gb' },

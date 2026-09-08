@@ -19,7 +19,7 @@ export interface GradeStoryEntry {
   gradeType:  GradeType;
   gradeValue: GradeValue | null;
   score:      number | null;
-  /** Grade status shown next to the grade — its own clickable zone (opens the TAG explanation modal). */
+  /** Grade status shown next to the grade. Its own clickable zone (opens the TAG explanation modal). */
   status:     'Valid' | 'NC';
   tagInputs:  TagInputsSnapshot;
   tagRule:    TagRule;

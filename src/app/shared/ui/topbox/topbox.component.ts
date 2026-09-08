@@ -38,7 +38,7 @@ export class TopboxComponent {
   actionLabel        = input<string | null>('View full details');
   actionIcon         = input<IconName>('info-circle');
   actionIconPosition = input<'left' | 'right'>('left');
-  /** 'button' = bouton classique avec label + icône — 'chevron' = chevron toggle (accordéon) */
+  /** 'button' = bouton classique avec label + icône. 'Chevron' = chevron toggle (accordéon) */
   actionType         = input<'button' | 'chevron'>('button');
   /** N'a d'effet que si actionType === 'chevron' : pivote le chevron + classe d'état host */
   expanded           = input<boolean>(false);

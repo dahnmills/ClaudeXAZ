@@ -1,4 +1,4 @@
-// Design System — Barrel export
+// Design System: Barrel export
 // Ajouter chaque composant validé ici
 
 export * from './badge/badge.component';

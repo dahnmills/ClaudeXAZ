@@ -41,7 +41,7 @@
 }
 
 // Module de recherche (réf. Figma DS Draft Search 57:629) : carte grise (le fond
-// du module de recherche partout dans le produit — c'est ce qui le distingue du
+// du module de recherche partout dans le produit. C'est ce qui le distingue du
 // tableau blanc en dessous), huit critères sur deux rangées, puis un pied pour
 // ce qu'on en fait.
 //
@@ -64,7 +64,7 @@
   }
 
   // Pied : l'option à gauche, les actions à droite. Ce qui est ici agit sur les
-  // huit critères d'un coup — d'où la position sous le filet, et non en
+  // huit critères d'un coup : d'où la position sous le filet, et non en
   // neuvième case de la grille.
   &__footer {
     display: flex;
@@ -103,7 +103,7 @@
   }
 
   // Positionnement seul : ds-date-range apporte déjà son propre fond/bordure/radius.
-  // On ajoute juste l'ombre flottante — pas de 2e boîte.
+  // On ajoute juste l'ombre flottante : pas de 2e boîte.
   // Ancré à droite : le calendrier dual (2 mois) est large, on évite le débord.
   &__panel {
     position: absolute;
@@ -190,7 +190,7 @@
     min-width: 0; // autorise le wrap/truncate du contenu long
   }
 
-  // Libellé de zone — SemiBold + primaire pour bien le voir.
+  // Libellé de zone : SemiBold + primaire pour bien le voir.
   &__key {
     font-size: var(--semantic-font-text-style-size-m);       // 14
     font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
@@ -227,7 +227,7 @@
   }
 }
 
-// ── Chips de filtre (single-select — réf. Figma Chip 3541:7191) ──────────────
+// ── Chips de filtre (single-select : réf. Figma Chip 3541:7191) ──────────────
 // Pill : padding 8/16, radius pill, typo 14 SemiBold lh16 tracking 1px.
 // Non-sélectionné : fond blanc, bordure + texte grey-700 (→ grey-600/500 states).
 // Sélectionné : fond bleu plein (blue-a-400 → 500 → 700), texte blanc.
@@ -301,7 +301,7 @@
 
   ds-icon { color: var(--semantic-color-static-icon-main-tertiary); }
 
-  // Titre de l'état vide (ex : « Document ongoing ») — plus visible que la phrase.
+  // Titre de l'état vide (ex : « Document ongoing »), plus visible que la phrase.
   &__title {
     font-size: var(--semantic-font-text-style-size-l);
     font-weight: var(--semantic-font-text-style-font-weight-bold);
@@ -311,7 +311,7 @@
   }
 }
 
-// Tiret « — » quand la distribution n'a pas encore démarré (document non généré).
+// Tiret « : » quand la distribution n'a pas encore démarré (document non généré).
 .nm-dash {
   color: var(--semantic-color-static-text-main-tertiary);
 }
@@ -374,7 +374,7 @@
     color: var(--semantic-color-static-text-main-secondary);    // grey-700 #414141
   }
   // 2e ligne : statut final de la distribution, écrit dans la couleur fonctionnelle
-  // (pas un tag) — vert=distributed, rouge=failed, etc. via --nm-fg de la tone class.
+  // (pas un tag) : vert=distributed, rouge=failed, etc. via --nm-fg de la tone class.
   &__status {
     font-size: var(--semantic-font-text-style-size-m);       // 14
     font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
@@ -432,7 +432,7 @@
 
 // Réf. Figma Comparison (3538:6238) : fond de couleur sur TOUTE la boîte
 // (~5 % fonctionnel), bordure fonctionnelle pleine, radius 8, padding 16.
-// Pas de barre d'entête — titre + badge posés sur le même fond.
+// Pas de barre d'entête : titre + badge posés sur le même fond.
 .nm-box {
   display: flex;
   flex-direction: column;
@@ -457,12 +457,12 @@
     gap: var(--semantic-measurement-spacing-s);
   }
   &__title {
-    font-size: var(--semantic-font-text-style-size-l);       // 16 — plus gros pour identifier vite
+    font-size: var(--semantic-font-text-style-size-l);       // 16, plus gros pour identifier vite
     font-weight: var(--semantic-font-text-style-font-weight-bold); // bold
     line-height: var(--semantic-font-text-style-line-height-l);
     color: var(--semantic-color-static-text-main-secondary); // grey-700 #414141
   }
-  // Media type accolé au titre : « Normal media · Email » — poids normal, secondaire.
+  // Media type accolé au titre : « Normal media · Email ». Poids normal, secondaire.
   &__media {
     font-weight: var(--semantic-font-text-style-font-weight-regular);
     color: var(--semantic-color-static-text-main-tertiary);

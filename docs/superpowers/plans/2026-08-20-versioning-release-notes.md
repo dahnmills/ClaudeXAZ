@@ -6,7 +6,7 @@
 
 **Architecture:** One canonical data file (`screens.data.ts`) replaces the two hardcoded screen lists in `IndexPage` and `UserTestingHomePage`. A second data file (`release-notes.data.ts`) holds a hand-authored, git-versioned array of dated entries. A new standalone `ReleaseNotesComponent` reads both, filters client-side (category multi-toggle AND screen single-select), and is reachable from a 5th, always-visible Hub zone.
 
-**Tech Stack:** Angular 19 standalone components, signals (`signal`/`computed`), `@if`/`@for`/`@switch` control flow, SCSS (meta-harness visual identity shared with Hub/`UserTestingHomePage` — hardcoded hex, not `_semantic.scss` product tokens, since these are harness pages, not product screens).
+**Tech Stack:** Angular 19 standalone components, signals (`signal`/`computed`), `@if`/`@for`/`@switch` control flow, SCSS (meta-harness visual identity shared with Hub/`UserTestingHomePage`. Hardcoded hex, not `_semantic.scss` product tokens, since these are harness pages, not product screens).
 
 **Spec:** `docs/superpowers/specs/2026-08-20-versioning-release-notes-design.md`
 
@@ -14,11 +14,11 @@
 
 - No backend: all data is static TS, git-versioned, hand-edited at push time (per spec §1, §6).
 - No unit tests: static display + pure filter predicate, consistent with the rest of the prototype's meta-pages (spec §5). Verification = `ng build` + manual browser check.
-- All 11 screens start at version `{ major: 1, minor: 0, patch: 0 }` (spec §1) — no historical backfill.
+- All 11 screens start at version `{ major: 1, minor: 0, patch: 0 }` (spec §1). No historical backfill.
 - Version bump rule: `feature` → bump `minor` (reset `patch` to 0); `fix`/`design`/`content` → bump `patch`; `major` is a manual judgment call, never automatic (spec §2).
-- A `ReleaseNote.screens` array MAY be empty for meta/harness-level changes (e.g. tooling, listing pages) that don't map to one of the 11 tracked screens — such entries render with no screen tags, don't bump any version, and are excluded whenever a screen filter is active.
-- Release Notes hub zone is NOT `adminOnly` — always visible, unlike Review/Résultats (spec §3).
-- Meta/harness pages (`Hub`, `IndexPage`, `UserTestingHomePage`, `ReleaseNotesComponent`) share one visual language: `Inter` body, `'Bricolage Grotesque'` display, flat `#f6f5fa` background, `#2b6bff`-family blue as the default accent, white cards with `#e9e7f2` borders. Do not use `_semantic.scss` product tokens on these pages — this is deliberate, matching the existing `hub.page.scss`/`user-testing-home.page.scss`.
+- A `ReleaseNote.screens` array MAY be empty for meta/harness-level changes (e.g. tooling, listing pages) that don't map to one of the 11 tracked screens. Such entries render with no screen tags, don't bump any version, and are excluded whenever a screen filter is active.
+- Release Notes hub zone is NOT `adminOnly`. Always visible, unlike Review/Résultats (spec §3).
+- Meta/harness pages (`Hub`, `IndexPage`, `UserTestingHomePage`, `ReleaseNotesComponent`) share one visual language: `Inter` body, `'Bricolage Grotesque'` display, flat `#f6f5fa` background, `#2b6bff`-family blue as the default accent, white cards with `#e9e7f2` borders. Do not use `_semantic.scss` product tokens on these pages. This is deliberate, matching the existing `hub.page.scss`/`user-testing-home.page.scss`.
 
 ---
 
@@ -71,7 +71,7 @@ export function versionLabel(v: ScreenVersion): string {
 - [ ] **Step 2: Verify it compiles**
 
 Run: `npx ng build --configuration development`
-Expected: build succeeds (no new errors — pre-existing unused-import warnings on unrelated files are fine).
+Expected: build succeeds (no new errors. Pre-existing unused-import warnings on unrelated files are fine).
 
 - [ ] **Step 3: Commit**
 
@@ -286,7 +286,7 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SCREENS, Screen, versionLabel } from '../screens.data';
 
-// Not every screen is Useberry-eligible — this curated order is intentional.
+// Not every screen is Useberry-eligible: this curated order is intentional.
 const CURATED_PATHS = [
   'search',
   'admin-data',
@@ -381,7 +381,7 @@ export class UserTestingHomePage {
 
 - [ ] **Step 3: Update the grid areas and add the version pill style**
 
-Apply the same `&__label-row`/`&__version` change as Task 2 Step 3, inside the existing `.uth` block — replace:
+Apply the same `&__label-row`/`&__version` change as Task 2 Step 3, inside the existing `.uth` block, replace:
 
 ```scss
   &__open {
@@ -856,7 +856,7 @@ Add the route next to `results`, top-level, no shell:
   { path: 'release-notes', component: ReleaseNotesComponent },
 ```
 
-Resulting section of `src/app/app.routes.ts` (for context — insert immediately after the `results` route):
+Resulting section of `src/app/app.routes.ts` (for context. Insert immediately after the `results` route):
 
 ```ts
   // ── Récupération du brut (dashboard Echo) ───────────────────────────────
@@ -994,7 +994,7 @@ Run: `npx ng serve --port 4300`
 
 - [ ] **Step 2: Check the Hub**
 
-Open `http://localhost:4300/#/`. Expected: 5 zones visible without admin mode (Prototype, Univers isolés, Notes de version — Review and Résultats stay hidden until admin unlock, unchanged from before). The amber "Notes de version" card opens `/release-notes`.
+Open `http://localhost:4300/#/`. Expected: 5 zones visible without admin mode (Prototype, Univers isolés, Notes de version. Review and Résultats stay hidden until admin unlock, unchanged from before). The amber "Notes de version" card opens `/release-notes`.
 
 - [ ] **Step 3: Check the two screen listings**
 
@@ -1008,4 +1008,4 @@ Open `http://localhost:4300/#/release-notes`. Expected: 2 seeded entries, newest
 
 Resize the viewport to ≤560px on `/prototype`, `/user-testing`, and `/release-notes`. Expected: cards stack, filter row on `/release-notes` wraps to a column, nothing overflows horizontally.
 
-No commit for this task — it's verification only. If any check fails, fix the relevant task's files and re-run `npx ng build --configuration development` before re-checking.
+No commit for this task: it's verification only. If any check fails, fix the relevant task's files and re-run `npx ng build --configuration development` before re-checking.

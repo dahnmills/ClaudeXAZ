@@ -10,12 +10,12 @@
 
 ## Global Constraints
 
-- Angular 19 standalone only, no NgModule. Signals for reactivity (`signal`/`computed`/`input`/`output`/`model`). Control-flow blocks `@if`/`@for`/`@switch` — never `*ngIf`/`*ngFor`.
-- SCSS only. **No hardcoded colours/spacing/radii/sizes** — every value references a semantic CSS custom property. No `style=""` inline in templates.
-- **Composition strictness:** no native `<button>/<a>/<input>/<textarea>/<select>/<svg>` inside these components — use `ds-button`, `ds-button-icon`, `ds-link`, `ds-input-text`, `ds-icon`, etc. No restyled pill/box; reuse `ds-badge`, `ds-chip`, `ds-card`.
+- Angular 19 standalone only, no NgModule. Signals for reactivity (`signal`/`computed`/`input`/`output`/`model`). Control-flow blocks `@if`/`@for`/`@switch`. Never `*ngIf`/`*ngFor`.
+- SCSS only. **No hardcoded colours/spacing/radii/sizes**. Every value references a semantic CSS custom property. No `style=""` inline in templates.
+- **Composition strictness:** no native `<button>/<a>/<input>/<textarea>/<select>/<svg>` inside these components. Use `ds-button`, `ds-button-icon`, `ds-link`, `ds-input-text`, `ds-icon`, etc. No restyled pill/box; reuse `ds-badge`, `ds-chip`, `ds-card`.
 - Selector prefix `ds-` for reusable atoms; TAG-specific page components live in `pages/tag-configuration/components/` and may use a `tag-` selector prefix.
 - Convention: **`null` = "Any"** (criterion inactive) everywhere in the data model.
-- No test runner exists in this repo. The verification cycle per task = `npm run build` (compiles + typechecks; must succeed with no errors) and, where visual, checking the rendered result via the running app (`npm start`, route `#/review/tag-configuration` or `#/prototype/tag-configuration`) and/or Storybook. There is NO unit-test framework — do not add one.
+- No test runner exists in this repo. The verification cycle per task = `npm run build` (compiles + typechecks; must succeed with no errors) and, where visual, checking the rendered result via the running app (`npm start`, route `#/review/tag-configuration` or `#/prototype/tag-configuration`) and/or Storybook. There is NO unit-test framework. Do not add one.
 - Route path `tag-configuration` and class name `TagConfigurationComponent` must stay unchanged (existing `app.routes.ts` + index-page link depend on them).
 - Semantic tokens to use: blue accent (Current valid grade) = existing interactive/info blue tokens; orange accent (Last checked autograde) = `--semantic-color-static-text-main-functional-warning`; muted "Any" text = subtle/tertiary text token.
 
@@ -49,7 +49,7 @@ Task order builds bottom-up: delete old → model → data → filter-chip → r
 - Create: `src/app/pages/tag-configuration/tag-configuration.component.scss`
 
 **Interfaces:**
-- Produces: `TagConfigurationComponent` (standalone, selector `app-tag-configuration`) — imported by `app.routes.ts` at path `tag-configuration`.
+- Produces: `TagConfigurationComponent` (standalone, selector `app-tag-configuration`). Imported by `app.routes.ts` at path `tag-configuration`.
 
 - [ ] **Step 1: Delete the old folder**
 
@@ -237,7 +237,7 @@ git commit -m "feat: TAG v2 data model aligned to BN swagger"
   - `freshnessForCountry(code: CountryCode): FreshnessConfig`
   - `codesForCountry(code: CountryCode): StatusReasonCode[]`
   - `STATUS_REASON_REFERENTIAL: StatusReasonCode[]`
-  - Option lists: `SENSITIVITY_OPTIONS`, `GRADE_OPTIONS`, `GRADE_TYPE_OPTIONS`, `FRESHNESS_OPTIONS`, `COMPARISON_OPTIONS`, `DECISION_OPTIONS`, `COMPANY_ROLE_OPTIONS`, `NACE_OPTIONS`, `LEGAL_FORM_OPTIONS`, `EXPOSURE_OP_OPTIONS`, `TRANSFERRED_OPTIONS` — each `{ value: string; label: string }[]`. Where the criterion allows "Any" as an explicit filter/select value, the option list includes `{ value: 'Any', label: 'Any' }` as the first entry.
+  - Option lists: `SENSITIVITY_OPTIONS`, `GRADE_OPTIONS`, `GRADE_TYPE_OPTIONS`, `FRESHNESS_OPTIONS`, `COMPARISON_OPTIONS`, `DECISION_OPTIONS`, `COMPANY_ROLE_OPTIONS`, `NACE_OPTIONS`, `LEGAL_FORM_OPTIONS`, `EXPOSURE_OP_OPTIONS`, `TRANSFERRED_OPTIONS`. Each `{ value: string; label: string }[]`. Where the criterion allows "Any" as an explicit filter/select value, the option list includes `{ value: 'Any', label: 'Any' }` as the first entry.
 
 - [ ] **Step 1: Write the data file**
 
@@ -304,11 +304,11 @@ export const TRANSFERRED_OPTIONS = [
 ];
 
 export const NACE_OPTIONS = [
-  { value: '62.01', label: '62.01 — Computer programming' },
-  { value: '41.20', label: '41.20 — Construction of buildings' },
-  { value: '46.90', label: '46.90 — Non-specialised wholesale' },
-  { value: '68.20', label: '68.20 — Renting of real estate' },
-  { value: '10.71', label: '10.71 — Bread & fresh pastry' },
+  { value: '62.01', label: '62.01. Computer programming' },
+  { value: '41.20', label: '41.20. Construction of buildings' },
+  { value: '46.90', label: '46.90. Non-specialised wholesale' },
+  { value: '68.20', label: '68.20. Renting of real estate' },
+  { value: '10.71', label: '10.71. Bread & fresh pastry' },
 ];
 
 export const LEGAL_FORM_OPTIONS = [
@@ -507,7 +507,7 @@ export class TagFilterChipComponent {
 </div>
 ```
 
-> Note: match `ds-chip`, `ds-checkbox`, `ds-link` input/output names to what Step 1 found (e.g. the checkbox output may be `checkedChange` or `change`; the link click may be `clicked` or `click`). If a `ds-flyout-menu` container fits better than a bare div, use it — but the div + tokens is acceptable since the flyout is a positioned surface, not a restyled interactive atom.
+> Note: match `ds-chip`, `ds-checkbox`, `ds-link` input/output names to what Step 1 found (e.g. the checkbox output may be `checkedChange` or `change`; the link click may be `clicked` or `click`). If a `ds-flyout-menu` container fits better than a bare div, use it, but the div + tokens is acceptable since the flyout is a positioned surface, not a restyled interactive atom.
 
 - [ ] **Step 4: Write the SCSS (tokens only)**
 
@@ -539,7 +539,7 @@ export class TagFilterChipComponent {
 }
 ```
 
-> Note: confirm each token name exists in `_semantic.scss`; substitute the nearest correct semantic token where a name differs. The `box-shadow` fallback is only a safety net — prefer a real elevation token if one exists.
+> Note: confirm each token name exists in `_semantic.scss`; substitute the nearest correct semantic token where a name differs. The `box-shadow` fallback is only a safety net. Prefer a real elevation token if one exists.
 
 - [ ] **Step 5: Build to verify it compiles**
 
@@ -567,7 +567,7 @@ git commit -m "feat: tag-filter-chip multi-select filter chip"
 - Produces: `RuleCardComponent`, selector `tag-rule-card`.
   - Inputs: `rule = input.required<TagRule>()`, `currency = input<string>('EUR')`, `expanded = input<boolean>(false)`.
   - Outputs: `edit = output<void>()`, `remove = output<void>()`, `moveUp = output<void>()`, `moveDown = output<void>()`, `toggled = output<void>()`.
-  - Public helper (also used by the modal for its group rendering, keep exported): a pure formatter module — see Step 1.
+  - Public helper (also used by the modal for its group rendering, keep exported): a pure formatter module. See Step 1.
 
 - [ ] **Step 1: Create a shared criteria-formatting helper**
 
@@ -738,7 +738,7 @@ Header always visible (clickable to toggle); the 4 groups render when `expanded(
       <!-- Group 4 Other (collapsible) -->
       <section class="rule-group rule-group--other">
         @if (otherCollapsedByDefault() && !otherOpen()) {
-          <button class="rule-group__toggle" type="button" (click)="toggleOther($event)">▸ Other — all Any</button>
+          <button class="rule-group__toggle" type="button" (click)="toggleOther($event)">▸ Other, all Any</button>
         } @else {
           <h4 class="rule-group__title">Other</h4>
           <div class="rule-group__fields">
@@ -753,7 +753,7 @@ Header always visible (clickable to toggle); the 4 groups render when `expanded(
 </ds-card>
 ```
 
-> Note: the `▸ Other` toggle uses a native `<button>` — replace with `ds-button` (plain/tertiary variant) to satisfy composition strictness; the snippet uses `<button>` only as a placeholder. Confirm `ds-button-icon` icon names (`more-vertical`, `chevron-up/down`) exist in the icon registry; add paths if missing (per CLAUDE.md).
+> Note: the `▸ Other` toggle uses a native `<button>`. Replace with `ds-button` (plain/tertiary variant) to satisfy composition strictness; the snippet uses `<button>` only as a placeholder. Confirm `ds-button-icon` icon names (`more-vertical`, `chevron-up/down`) exist in the icon registry; add paths if missing (per CLAUDE.md).
 
 - [ ] **Step 4: Write the SCSS (tokens only)**
 
@@ -802,7 +802,7 @@ Key rules: head is a flex row; summary segments wrap; `--any` values muted; grou
 }
 ```
 
-> Note: verify every token name against `_semantic.scss`/`_tokens.scss`; substitute the nearest correct token where a name differs. Avoid the `12px`/`11px` literal fallbacks if a real font-size token exists — use it directly.
+> Note: verify every token name against `_semantic.scss`/`_tokens.scss`; substitute the nearest correct token where a name differs. Avoid the `12px`/`11px` literal fallbacks if a real font-size token exists. Use it directly.
 
 - [ ] **Step 5: Build to verify it compiles**
 
@@ -818,7 +818,7 @@ git commit -m "feat: rule-card with 4 grouped criteria + muted Any + collapsible
 
 ---
 
-### Task 6: Page skeleton — toolbar, chips bar, list, filtering
+### Task 6: Page skeleton. Toolbar, chips bar, list, filtering
 
 **Files:**
 - Modify: `src/app/pages/tag-configuration/tag-configuration.component.ts`
@@ -979,7 +979,7 @@ export class TagConfigurationComponent {
 }
 ```
 
-> Note: match `ToasterService`'s real method signature (check `toaster.service.ts`) — the `show?.({...})` calls assume a `show({message, actionLabel?, action?})` API; adapt to the actual method (it may be `push`/`add`, and the undo action shape may differ). Match `ds-select`, `ds-button-split` input/output names to their real APIs.
+> Note: match `ToasterService`'s real method signature (check `toaster.service.ts`). The `show?.({...})` calls assume a `show({message, actionLabel?, action?})` API; adapt to the actual method (it may be `push`/`add`, and the undo action shape may differ). Match `ds-select`, `ds-button-split` input/output names to their real APIs.
 
 - [ ] **Step 2: Write the template**
 
@@ -1092,7 +1092,7 @@ Expected: France shows 5 cards; switching to Germany shows the empty state; Nort
 
 ```bash
 git add src/app/pages/tag-configuration/tag-configuration.component.*
-git commit -m "feat: TAG page — toolbar, filter chips, list, filtering, delete-undo"
+git commit -m "feat: TAG page. Toolbar, filter chips, list, filtering, delete-undo"
 ```
 
 ---
@@ -1448,7 +1448,7 @@ Expected: "Create rule" opens the modal with 4 groups + Outcome; corrected label
 
 ```bash
 git add src/app/pages/tag-configuration/components/rule-modal.component.* src/app/pages/tag-configuration/tag-configuration.component.*
-git commit -m "feat: rule create/edit modal — 4 groups, corrected labels, +4 fields"
+git commit -m "feat: rule create/edit modal. 4 groups, corrected labels, +4 fields"
 ```
 
 ---
@@ -1539,7 +1539,7 @@ Two rows × (label + 2 read-only current + 2 editable new), with the validation 
   <ds-modal (backdrop)="closed.emit()">
     <ds-modal-header title="Edit grade freshness thresholds" (close)="closed.emit()" />
     <ds-modal-content>
-      <p class="fm-intro">Defines Fresh / Outdated / Old boundaries. Changes apply to all rules for this country (draft — effective on next validation).</p>
+      <p class="fm-intro">Defines Fresh / Outdated / Old boundaries. Changes apply to all rules for this country (draft. Effective on next validation).</p>
 
       <div class="fm-table">
         <div class="fm-row fm-row--head">
@@ -1625,7 +1625,7 @@ Expected: "Edit freshness" opens 2 rows × 5 cols; current cols read-only; editi
 
 ```bash
 git add src/app/pages/tag-configuration/components/freshness-modal.component.* src/app/pages/tag-configuration/tag-configuration.component.*
-git commit -m "feat: freshness modal — 3-state model, 2 thresholds/type, validation"
+git commit -m "feat: freshness modal. 3-state model, 2 thresholds/type, validation"
 ```
 
 ---
@@ -1717,7 +1717,7 @@ export class TransExclModalComponent {
 
       <h4 class="te-section">Current codes</h4>
       @if (isEmpty()) {
-        <ds-functional-notice status="info" message="No codes configured — saving will allow all status reason codes." />
+        <ds-functional-notice status="info" message="No codes configured. Saving will allow all status reason codes." />
       } @else {
         <div class="te-list">
           @for (c of local(); track c.code) {
@@ -1735,7 +1735,7 @@ export class TransExclModalComponent {
       @if (search()) {
         <ds-flyout-menu>
           @for (c of candidates(); track c.code) {
-            <ds-flyout-menu-item [label]="c.code + ' — ' + c.label" (selected)="add(c)" />
+            <ds-flyout-menu-item [label]="c.code + '. ' + c.label" (selected)="add(c)" />
           }
           @if (candidates().length === 0) {
             <ds-flyout-menu-item label="No matching codes" [disabled]="true" />
@@ -1794,7 +1794,7 @@ Expected: "Edit TRANS-NA-EXCL" opens; France shows 5 codes read-only with remove
 
 ```bash
 git add src/app/pages/tag-configuration/components/trans-excl-modal.component.* src/app/pages/tag-configuration/tag-configuration.component.*
-git commit -m "feat: TRANS-NA-EXCL modal — read-only codes + search-add, empty allowed"
+git commit -m "feat: TRANS-NA-EXCL modal. Read-only codes + search-add, empty allowed"
 ```
 
 ---
@@ -1830,7 +1830,7 @@ If any structural decision diverged from the spec during implementation, note it
 
 ```bash
 git add -A src/app/pages/tag-configuration
-git commit -m "chore: TAG v2 integration pass — acceptance sweep, token/composition cleanup"
+git commit -m "chore: TAG v2 integration pass. Acceptance sweep, token/composition cleanup"
 ```
 
 ---
@@ -1839,5 +1839,5 @@ git commit -m "chore: TAG v2 integration pass — acceptance sweep, token/compos
 
 - **Spec coverage:** P1 (Tasks 5, 7) · P2 (Task 8) · P3 (Task 9) · P4 (Tasks 4, 6). Model/data (Tasks 2, 3). Page shell/filtering/delete (Task 6). Deletion of old code (Task 1). Integration (Task 10). All spec sections mapped.
 - **Type consistency:** `RuleCriteria`/`TagRule`/`FreshnessConfig`/`StatusReasonCode` defined in Task 2, consumed with identical field names in Tasks 3, 5, 7, 8, 9. `FilterKey`/`FILTER_KEYS` defined Task 2, used Task 6. Formatters in `criteria-format.ts` (Task 5) used only by rule-card.
-- **Known adaptation:** every DS atom binding (input/output names) is a best-guess to be confirmed against the real component TS before wiring — flagged in each task's Step-1 note. This is the single biggest execution risk; the implementer must read the atom before binding, not after.
+- **Known adaptation:** every DS atom binding (input/output names) is a best-guess to be confirmed against the real component TS before wiring. Flagged in each task's Step-1 note. This is the single biggest execution risk; the implementer must read the atom before binding, not after.
 - **No test runner:** verification is `npm run build` + visual check, per Global Constraints. This is deliberate, not a placeholder.

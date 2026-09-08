@@ -10,7 +10,7 @@ import { ShortcutsService } from '../../user-testing/topbox/shortcuts.service';
  * avec la fonctionnalité posée dessus. Tester le panneau sur un fond vide ne
  * dirait rien de ce qu'il occulte ni de ce qu'on peut encore lire au-dessus.
  *
- * Le panneau s'ouvre à l'arrivée — c'est le sujet de l'écran. Le chemin réel
+ * Le panneau s'ouvre à l'arrivée : c'est le sujet de l'écran. Le chemin réel
  * (« ? » → « Keyboard shortcuts », ou la touche `?`) reste disponible une fois
  * qu'on l'a fermé, et fonctionne de la même façon sur tous les autres écrans.
  */

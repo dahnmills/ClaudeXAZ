@@ -44,7 +44,7 @@ export const Scrollable: Story = {
         <ds-modal-content [height]="height">
           <p>Scroll down to see more content.</p>
           @for (n of [].constructor(20); track $index) {
-            <p>Line {{ $index + 1 }} — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <p>Line {{ $index + 1 }}: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           }
         </ds-modal-content>
       </div>

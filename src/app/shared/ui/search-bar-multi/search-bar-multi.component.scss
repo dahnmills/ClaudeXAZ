@@ -27,7 +27,7 @@
 .ds-search-bar-multi__field-slot { flex: 1 0 0; min-width: 0; }
 
 // Dropdowns : occupent toute la largeur de leur slot (largeur fixe) pour que
-// le chevron soit poussé à droite — position constante quel que soit le label
+// le chevron soit poussé à droite : position constante quel que soit le label
 // (le label garde flex:1). Sinon le dropdown est inline-flex et rétrécit au
 // contenu, collant le chevron au texte.
 .ds-search-bar-multi__type,
@@ -70,20 +70,20 @@
     margin-top: calc(var(--semantic-measurement-spacing-m) * -1);
     margin-bottom: calc(var(--semantic-measurement-spacing-m) * -1);
     // Le border passe de 1px (normal) à 2px : le pixel en plus est absorbé
-    // à GAUCHE (margin-left -1px) pour que le bord droit — donc le champ et
-    // son placeholder — ne bouge pas quand on entre en erreur.
+    // à GAUCHE (margin-left -1px) pour que le bord droit, donc le champ et
+    // son placeholder : ne bouge pas quand on entre en erreur.
     margin-left: -1px;
     background: var(--semantic-color-static-border-main-functional-negative);
   }
 }
 
 // ── État erreur (champ obligatoire vide, après blur) ────────────────────
-// Figma node 3718:14832 (Search Bar — Error), vérifié via les assets réels :
+// Figma node 3718:14832 (Search Bar. Error), vérifié via les assets réels :
 //   - Le panneau rouge (Red/050) remplit la HAUTEUR DE LA RANGÉE uniquement
 //     (le padding vertical du host reste blanc, cf. cible) ET comble tout le
 //     flex-gap de part et d'autre pour toucher les dividers adjacents.
-//   - Le helper text est rendu HORS de la barre (sous la carte, centré) —
-//     voir .ds-search-bar-multi__error-msg.
+//   - Le helper text est rendu HORS de la barre (sous la carte, centré).
+//     Voir .ds-search-bar-multi__error-msg.
 .ds-search-bar-multi__slot--error {
   position: relative;
   // stretch : le slot en erreur (sinon centré à ~24px dans une rangée de

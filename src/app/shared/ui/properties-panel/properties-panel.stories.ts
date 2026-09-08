@@ -56,7 +56,7 @@ export default meta;
 type Story = StoryObj<PropertiesPanelComponent>;
 
 export const TwoColumnsCards: Story = {
-  name: '2 columns — card variant',
+  name: '2 columns: card variant',
   args: { sections, columns: 2, variant: 'card' },
   render: (args) => ({
     props: args,
@@ -69,7 +69,7 @@ export const TwoColumnsCards: Story = {
 };
 
 export const FourColumnsFlat: Story = {
-  name: '4 columns — flat variant (accordion style)',
+  name: '4 columns: flat variant (accordion style)',
   args: { sections, columns: 4, variant: 'flat' },
   render: (args) => ({
     props: args,

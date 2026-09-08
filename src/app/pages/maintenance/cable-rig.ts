@@ -2,7 +2,7 @@
  * A plug + cable rendered as a flat, single-color silhouette (matching the
  * classic "unplugged" icon style), sharing one canvas/coordinate space with
  * its counterpart so the two connectors can genuinely touch when "plugged
- * in". The cable is a decorative wave (not a physics sag) — the previous
+ * in". The cable is a decorative wave (not a physics sag), the previous
  * gravity-simulated rope read as droopy, not the clean, controlled curve
  * this style calls for. The plug's position still eases via a damped
  * spring, which is what gives the unplug motion its organic settle.
@@ -11,18 +11,18 @@
 export interface CableRigColors {
   plug: string;
   cable: string;
-  /** The page background — used to "punch" the socket's receptacle holes. */
+  /** The page background: used to "punch" the socket's receptacle holes. */
   socketPunch: string;
 }
 
 const BODY_SIZE = 60;
 const PRONG_LENGTH = 20;
 // Both bodies are measured from the centerline by the SAME formula
-// (BODY_SIZE + half the body-to-body gap) regardless of male/female — that
+// (BODY_SIZE + half the body-to-body gap) regardless of male/female, that
 // symmetry is what guarantees the two solid body rectangles never overlap.
 // Only the thin prong is allowed to cross the centerline: with a 6px gap
 // between the bodies and a 20px prong, the prong reaches 14px past the
-// female's face — visibly inserted, without the bodies ever touching.
+// female's face: visibly inserted, without the bodies ever touching.
 const BODY_GAP_CONNECTED = 6;
 const BODY_GAP_RESTING = 130;
 const ANCHOR_INSET = 40; // px the cable's far end sits in from the canvas edge
@@ -68,7 +68,7 @@ export class CableRig {
     }
   }
 
-  /** Switch the spring target from "connected" to "resting" — the unplug. */
+  /** Switch the spring target from "connected" to "resting", the unplug. */
   startDisconnect(): void {
     this.targetOffset = this.restingOffset;
   }
@@ -87,7 +87,7 @@ export class CableRig {
     return this.side === 'left' ? ANCHOR_INSET : this.canvasWidth - ANCHOR_INSET;
   }
 
-  /** The connector's outward-facing tip — where this rig's burst fires from. */
+  /** The connector's outward-facing tip: where this rig's burst fires from. */
   private tipX(): number {
     const px = this.plugX();
     return this.side === 'left' ? px + this.plugDepth : px - this.plugDepth;
@@ -137,7 +137,7 @@ export class CableRig {
     const ax = this.anchorX();
     const px = this.plugX();
     const cy = this.centerY;
-    // One gentle S-curve for the whole run — not a repeating wave. A single
+    // One gentle S-curve for the whole run. Not a repeating wave. A single
     // sine half-period (0 → π) bends one way then back, which is the "one
     // elegant curve" look; multiple periods read as a mechanical zigzag.
     const points: { x: number; y: number }[] = [];
@@ -164,7 +164,7 @@ export class CableRig {
     ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
     ctx.stroke();
 
-    // Explicit rounded terminator at the anchor end — a stroke cap sitting
+    // Explicit rounded terminator at the anchor end, a stroke cap sitting
     // this close to the canvas edge otherwise gets half-clipped and reads
     // as a flat cut rather than a rounded tip.
     ctx.fillStyle = this.colors.cable;
@@ -196,7 +196,7 @@ export class CableRig {
       ctx.beginPath(); ctx.arc(holeX, py + 13, 6, 0, Math.PI * 2); ctx.fill();
     }
 
-    // A small grip texture near where the cable meets the body — the detail
+    // A small grip texture near where the cable meets the body, the detail
     // that reads as "crafted" rather than a plain box, per the reference.
     ctx.fillStyle = this.colors.socketPunch;
     const backEdge = facingCenter === 1 ? bodyLeft : bodyLeft + BODY_SIZE;

@@ -2,7 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { IconComponent, type IconName } from '../icon/icon.component';
 
 /**
- * Atom interne au composant Flyout — bloc de section avec label, icône et items.
+ * Atom interne au composant Flyout : bloc de section avec label, icône et items.
  * Pas destiné à être utilisé en dehors d'un <ds-flyout>.
  */
 @Component({

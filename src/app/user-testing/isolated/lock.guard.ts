@@ -5,7 +5,7 @@ import { CanDeactivateFn } from '@angular/router';
  *
  * Empêche tout écran `/user-testing/*` d'être quitté : un clic interne qui
  * déclenche `router.navigate(['/buyer-summary', id])` (parcours search → buyer,
- * par ex.) est annulé — on reste sur l'URL et l'environnement courants. Chaque
+ * par ex.) est annulé. On reste sur l'URL et l'environnement courants. Chaque
  * univers est strictement mono-écran ; on ne peut ni enchaîner un parcours, ni
  * retomber sur l'index des scénarios.
  *

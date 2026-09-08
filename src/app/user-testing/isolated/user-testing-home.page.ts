@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SCREENS, Screen, versionLabel } from '../screens.data';
 
-// Not every screen is Useberry-eligible — this curated order is intentional.
+// Not every screen is Useberry-eligible: this curated order is intentional.
 const CURATED_PATHS = [
   'search',
   'admin-data',

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
 /**
- * Atom interne au composant Modal — zone de contenu scrollable.
+ * Atom interne au composant Modal : zone de contenu scrollable.
  * Pas destiné à être utilisé en dehors d'un <ds-modal>.
  */
 @Component({

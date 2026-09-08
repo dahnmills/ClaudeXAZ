@@ -21,7 +21,7 @@ import { legendLetter } from './keyboard-layout';
  *                        Neutralisée dès qu'un champ de saisie a le focus.
  *
  * Ctrl/⌘ n'est utilisé que là où il redit exactement ce que l'OS dit déjà
- * (S = enregistrer, Z = annuler) — la seule circonstance où l'article de Knock
+ * (S = enregistrer, Z = annuler). La seule circonstance où l'article de Knock
  * juge légitime d'écraser un raccourci natif.
  *
  * ── Combinaisons volontairement évitées ───────────────────────────────────
@@ -35,13 +35,13 @@ import { legendLetter } from './keyboard-layout';
  * Une lettre est reconnue par ce qui est GRAVÉ sur la touche, pas par sa
  * position : « Alt + M » vise la touche marquée M, qu'elle soit à droite du N
  * (QWERTY) ou au bout de la rangée du milieu (AZERTY). Les chiffres, eux, sont
- * reconnus par position — c'est elle qui ne bouge pas d'une disposition à
+ * reconnus par position : c'est elle qui ne bouge pas d'une disposition à
  * l'autre. Détail dans keyboard-layout.ts.
  *
  * ── `bind: false` ─────────────────────────────────────────────────────────
  * Certaines combinaisons (flèches, Entrée, Espace, PgDn, zoom) ont déjà un sens
- * natif dans la page. On les DOCUMENTE — le testeur doit savoir qu'elles
- * existent — sans les capter : les intercepter globalement casserait le
+ * natif dans la page. On les DOCUMENTE. Le testeur doit savoir qu'elles
+ * existent : sans les capter : les intercepter globalement casserait le
  * défilement et l'activation des boutons.
  */
 
@@ -53,7 +53,7 @@ export type ComboToken = string;
 export interface ShortcutDef {
   id: string;
   /** Catégories où la ligne apparaît. Un raccourci essentiel est listé deux
-   *  fois — même `id`, donc les deux lignes s'allument ensemble. */
+   *  fois : même `id`, donc les deux lignes s'allument ensemble. */
   groups: string[];
   label: string;
   /** Combinaison canonique, indépendante de l'OS et de la disposition clavier. */
@@ -123,7 +123,7 @@ export function comboSignature(combo: readonly ComboToken[]): string {
 /**
  * Touche pressée, normalisée.
  *
- * Deux règles, et elles s'opposent — c'est ce qui rend la fonction non
+ * Deux règles, et elles s'opposent. C'est ce qui rend la fonction non
  * triviale :
  *
  * - Les CHIFFRES se lisent par POSITION (`event.code`). Sur AZERTY la rangée
@@ -133,7 +133,7 @@ export function comboSignature(combo: readonly ComboToken[]): string {
  * - Les LETTRES se lisent par LÉGENDE, c'est-à-dire ce qui est gravé dessus. La
  *   touche marquée `M` d'un AZERTY est à la position que QWERTY nomme
  *   `Semicolon` : se fier au `code` obligerait à presser `,` pour déclencher
- *   « Alt + M ». Trois sources, par fiabilité décroissante — `event.key` (déjà
+ *   « Alt + M ». Trois sources, par fiabilité décroissante. `Event.key` (déjà
  *   la légende, sauf modificateur composant un caractère), la Keyboard Map du
  *   navigateur (voir keyboard-layout.ts), puis le `code` qui suppose un QWERTY.
  *
@@ -194,7 +194,7 @@ export function inTextField(): boolean {
 /**
  * Les trois seules exceptions à la règle « en saisie, on ne capte rien » :
  * Échap (sortir), le plan Alt (notre espace de noms, qui ne produit aucun
- * caractère), et Ctrl/⌘+S — c'est précisément en train de saisir qu'on veut
+ * caractère), et Ctrl/⌘+S. C'est précisément en train de saisir qu'on veut
  * enregistrer.
  */
 export function allowedWhileTyping(signature: string): boolean {
@@ -227,7 +227,7 @@ export const SHORTCUTS: ShortcutDef[] = [
   { id: 'search', groups: ['essential'],            label: 'Search Qirin',                    combo: ['/'] },
   { id: 'close',  groups: ['essential', 'editing'], label: 'Close the panel, menu or dialog', combo: ['esc'] },
 
-  // Menu latéral — mapping spatial : le chiffre EST la position dans la nav.
+  // Menu latéral : mapping spatial : le chiffre EST la position dans la nav.
   { id: 'nav-home',         groups: ['essential', 'goto'], label: 'Home',         combo: ['alt', '1'], route: '/home' },
   { id: 'nav-messages',     groups: ['goto'],              label: 'Messages',     combo: ['alt', '2'] },
   { id: 'nav-analytics',    groups: ['goto'],              label: 'Analytics',    combo: ['alt', '3'] },
@@ -236,7 +236,7 @@ export const SHORTCUTS: ShortcutDef[] = [
   { id: 'nav-applications', groups: ['goto'],              label: 'Applications', combo: ['alt', '6'] },
 
   // Destinations nommées hors menu latéral
-  { id: 'goto-mana',          groups: ['essential', 'goto'], label: 'ManA — Manual Assessment', combo: ['alt', 'm'] },
+  { id: 'goto-mana',          groups: ['essential', 'goto'], label: 'ManA (Manual Assessment)', combo: ['alt', 'm'] },
   { id: 'goto-notifications', groups: ['goto'],              label: 'Notifications',            combo: ['alt', 'n'], route: '/notification-module' },
   { id: 'goto-watchlist',     groups: ['goto'],              label: 'Watchlist',                combo: ['alt', 'w'] },
   { id: 'goto-recent',        groups: ['goto'],              label: 'Recently viewed',          combo: ['alt', 'r'] },
@@ -254,7 +254,7 @@ export const SHORTCUTS: ShortcutDef[] = [
   { id: 'tool-logout',        groups: ['tools'],              label: 'Log out',              combo: ['alt', 'shift', 'l'] },
   { id: 'help',               groups: ['essential', 'tools'], label: 'Help with Qirin',      combo: ['alt', 'shift', 'h'] },
 
-  // Dossier acheteur — lettre seule, coupée dès qu'un champ a le focus.
+  // Dossier acheteur : lettre seule, coupée dès qu'un champ a le focus.
   { id: 'buyer-grade',    groups: ['buyer'], label: 'Request a new grade',   combo: ['g'], context: IN_BUYER },
   { id: 'buyer-copy-id',  groups: ['buyer'], label: 'Copy the buyer ID',     combo: ['c'], context: IN_BUYER },
   { id: 'buyer-watch',    groups: ['buyer'], label: 'Add to the watchlist',  combo: ['w'], context: IN_BUYER },
@@ -263,7 +263,7 @@ export const SHORTCUTS: ShortcutDef[] = [
   { id: 'buyer-print',    groups: ['buyer'], label: 'Print the dossier',     combo: ['p'], context: IN_BUYER },
   { id: 'buyer-exposure', groups: ['buyer'], label: 'Open the exposure tab', combo: ['x'], context: IN_BUYER },
 
-  // Tables — presque tout est natif, donc documenté sans être capté.
+  // Tables : presque tout est natif, donc documenté sans être capté.
   { id: 'table-next-row',   groups: ['table'], label: 'Next row',                   combo: ['down'],          context: IN_TABLE, bind: false },
   { id: 'table-prev-row',   groups: ['table'], label: 'Previous row',               combo: ['up'],            context: IN_TABLE, bind: false },
   { id: 'table-open-row',   groups: ['table'], label: 'Open the selected row',      combo: ['enter'],         context: IN_TABLE, bind: false },

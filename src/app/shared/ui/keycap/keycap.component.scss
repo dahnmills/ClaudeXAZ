@@ -1,5 +1,5 @@
 // Les classes de variante sont posées sur l'HÔTE (`[class]` dans le décorateur),
-// donc les sélecteurs doivent partir de `:host` — un `.ds-keycap` nu ne
+// donc les sélecteurs doivent partir de `:host`, un `.ds-keycap` nu ne
 // matcherait rien sous l'encapsulation émulée d'Angular.
 :host {
   display: inline-flex;
@@ -7,7 +7,7 @@
 
 // Le carré est la métaphore : hauteur = largeur minimale, pour qu'une lettre
 // seule donne une touche carrée et qu'un mot (Alt, Shift) l'étire en largeur
-// SANS changer de hauteur — sinon la ligne de touches se désaligne.
+// SANS changer de hauteur : sinon la ligne de touches se désaligne.
 .ds-keycap__key {
   box-sizing: border-box;
   display: inline-flex;

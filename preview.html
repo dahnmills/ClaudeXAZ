@@ -120,7 +120,7 @@
       --semantic-font-text-style-size-l:     var(--foundation-font-size-16);
       --semantic-font-text-style-line-height-l: var(--foundation-font-line-height-24);
 
-      /* Button — interactive background */
+      /* Button: interactive background */
       --semantic-color-interactive-background-strong-default:      var(--foundation-color-blue-a-500);
       --semantic-color-interactive-background-strong-hover:        var(--foundation-color-blue-a-600);
       --semantic-color-interactive-background-strong-active:       var(--foundation-color-blue-a-700);
@@ -134,7 +134,7 @@
       --semantic-color-interactive-background-muted-alt-active:    var(--foundation-color-grey-100);
       --semantic-color-interactive-background-neutral-default:     var(--foundation-color-white-1000);
 
-      /* Button — interactive border */
+      /* Button: interactive border */
       --semantic-color-interactive-border-strong-default:     var(--foundation-color-blue-a-500);
       --semantic-color-interactive-border-strong-hover:       var(--foundation-color-blue-a-600);
       --semantic-color-interactive-border-strong-active:      var(--foundation-color-blue-a-700);
@@ -146,7 +146,7 @@
       --semantic-color-interactive-border-neutral-default:    var(--foundation-color-white-1000);
       --semantic-color-interactive-border-focus:              var(--foundation-color-blue-a-400);
 
-      /* Button — interactive text */
+      /* Button: interactive text */
       --semantic-color-interactive-text-strong-default:      var(--foundation-color-blue-a-500);
       --semantic-color-interactive-text-strong-hover:        var(--foundation-color-blue-a-600);
       --semantic-color-interactive-text-strong-active:       var(--foundation-color-blue-a-700);
@@ -593,13 +593,13 @@
 <body>
 
   <h1>Design System Preview</h1>
-  <p>Fichier de prévisualisation standalone — pas besoin d'Angular. Ouvrir dans un navigateur.</p>
+  <p>Fichier de prévisualisation standalone: pas besoin d'Angular. Ouvrir dans un navigateur.</p>
 
   <!-- =========================================================
        BADGE
   ========================================================== -->
   <div class="section">
-    <h2>Badge — Style Light, Size S</h2>
+    <h2>Badge: Style Light, Size S</h2>
     <div class="row">
       <span class="label">Info</span>
       <span class="ds-badge ds-badge--style-light ds-badge--status-info ds-badge--size-s">
@@ -631,7 +631,7 @@
       </span>
     </div>
 
-    <h2>Badge — Style Strong, Size S</h2>
+    <h2>Badge: Style Strong, Size S</h2>
     <div class="row">
       <span class="label">Info</span>
       <span class="ds-badge ds-badge--style-strong ds-badge--status-info ds-badge--size-s">
@@ -663,7 +663,7 @@
       </span>
     </div>
 
-    <h2>Badge — Size M (Light)</h2>
+    <h2>Badge: Size M (Light)</h2>
     <div class="row">
       <span class="ds-badge ds-badge--style-light ds-badge--status-info ds-badge--size-m">
         <span class="ds-badge__content"><span class="ds-badge__label">En cours</span></span>
@@ -681,7 +681,7 @@
        BUTTON
   ========================================================== -->
   <div class="section">
-    <h2>Button — Type × Tone × Reversed</h2>
+    <h2>Button: Type × Tone × Reversed</h2>
 
     <div class="row">
       <span class="label">Primary</span>
@@ -711,7 +711,7 @@
       <button class="ds-button ds-button--type-plain ds-button--tone-default ds-button--disabled"><span class="ds-button__label">Désactivé</span></button>
     </div>
 
-    <h2>Button — Reversed (sur fond sombre)</h2>
+    <h2>Button: Reversed (sur fond sombre)</h2>
     <div class="dark-bg">
       <button class="ds-button ds-button--type-primary ds-button--reversed"><span class="ds-button__label">Primary</span></button>
       <button class="ds-button ds-button--type-secondary ds-button--reversed"><span class="ds-button__label">Secondary</span></button>
@@ -724,7 +724,7 @@
        BUTTON ICON
   ========================================================== -->
   <div class="section">
-    <h2>Button Icon — Type × Tone, Size S</h2>
+    <h2>Button Icon: Type × Tone, Size S</h2>
     <div class="row">
       <span class="label">Primary</span>
       <!-- SVG inline avec currentColor -->
@@ -790,7 +790,7 @@
       </button>
     </div>
 
-    <h2>Button Icon — Reversed (fond sombre)</h2>
+    <h2>Button Icon: Reversed (fond sombre)</h2>
     <div class="dark-bg">
       <button class="ds-button-icon ds-button-icon--type-primary ds-button-icon--reversed ds-button-icon--size-s" aria-label="Fermer">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -811,13 +811,13 @@
        CARD
   ========================================================== -->
   <div class="section">
-    <h2>Card — Conteneur avec padding</h2>
+    <h2>Card: Conteneur avec padding</h2>
     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
 
       <!-- Card simple avec texte -->
       <div class="ds-card">
         <div style="font-size:12px; font-weight:600; color: var(--semantic-color-static-text-main-primary); margin-bottom:4px;">Titre de la carte</div>
-        <div style="font-size:12px; color: var(--semantic-color-static-text-main-secondary);">Contenu libre — ng-content projeté ici.</div>
+        <div style="font-size:12px; color: var(--semantic-color-static-text-main-secondary);">Contenu libre: ng-content projeté ici.</div>
       </div>
 
       <!-- Card avec Badge -->
@@ -844,7 +844,7 @@
       </div>
     </div>
 
-    <h2>Card — Sans padding (noPadding)</h2>
+    <h2>Card: Sans padding (noPadding)</h2>
     <div style="max-width: 340px;">
       <div class="ds-card ds-card--no-padding" style="overflow:hidden;">
         <div style="background: var(--semantic-color-interactive-background-strong-default); padding: 16px; color:white; font-size:12px; font-weight:600;">Header full-bleed</div>
@@ -857,7 +857,7 @@
        LINK
   ========================================================== -->
   <div class="section">
-    <h2>Link — Tones</h2>
+    <h2>Link: Tones</h2>
     <div class="row">
       <span class="label">Default</span>
       <span class="ds-link ds-link--tone-default">
@@ -892,7 +892,7 @@
         </a>
       </span>
     </div>
-    <h2>Link — Reversed (fond sombre)</h2>
+    <h2>Link: Reversed (fond sombre)</h2>
     <div class="dark-bg">
       <span class="ds-link ds-link--tone-reversed">
         <a class="ds-link__anchor" href="#">
@@ -901,11 +901,11 @@
       </span>
     </div>
 
-    <h2>Link — Composition dans une Card</h2>
+    <h2>Link: Composition dans une Card</h2>
     <div style="max-width: 400px;">
       <div class="ds-card" style="display:flex; flex-direction:column; gap:12px;">
         <div style="font-size:14px; font-weight:600; color: var(--semantic-color-static-text-main-primary);">Votre police auto</div>
-        <div style="font-size:14px; color: var(--semantic-color-static-text-main-secondary);">Contrat n° 12345678 — expire le 01/12/2026</div>
+        <div style="font-size:14px; color: var(--semantic-color-static-text-main-secondary);">Contrat n° 12345678: expire le 01/12/2026</div>
         <div style="display:flex; gap:12px; align-items:center;">
           <button class="ds-button ds-button--type-primary ds-button--tone-default"><span class="ds-button__label">Déclarer un sinistre</span></button>
           <span class="ds-link ds-link--tone-default">
@@ -920,7 +920,7 @@
        TAB
   ========================================================== -->
   <div class="section">
-    <h2>Tab — Tone Default (fond clair)</h2>
+    <h2>Tab: Tone Default (fond clair)</h2>
     <div class="row" style="align-items:stretch; border-bottom: 1px solid var(--semantic-color-static-border-subtle-tertiary);">
       <div class="ds-tab ds-tab--tone-default ds-tab--selected" role="tab" aria-selected="true" tabindex="0">
         <span class="ds-tab__content"><span class="ds-tab__label">Tableau de bord</span></span>
@@ -940,7 +940,7 @@
       </div>
     </div>
 
-    <h2>Tab — Tone Reversed (dans un header sombre)</h2>
+    <h2>Tab: Tone Reversed (dans un header sombre)</h2>
     <div style="background: var(--semantic-color-static-background-brand); padding: 0 16px; display:flex; gap:16px; align-items:stretch;">
       <div class="ds-tab ds-tab--tone-reversed ds-tab--selected" role="tab" aria-selected="true" tabindex="0">
         <span class="ds-tab__content"><span class="ds-tab__label">Accueil</span></span>
@@ -961,7 +961,7 @@
        INPUT TEXT
   ========================================================== -->
   <div class="section">
-    <h2>Input Text — États</h2>
+    <h2>Input Text: États</h2>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; max-width:720px;">
 
       <!-- Default -->
@@ -1083,7 +1083,7 @@
        HEADER
   ========================================================== -->
   <div class="section">
-    <h2>Header — Barre de navigation principale</h2>
+    <h2>Header: Barre de navigation principale</h2>
 
     <div class="ds-header" role="banner" style="border-radius:4px;">
 
@@ -1170,7 +1170,7 @@
         <span class="ds-spinner__ring" aria-hidden="true"></span>
       </div>
     </div>
-    <p>Arc 270° (Grey/500) + creux 90° (Grey/200) — animation 0.75s</p>
+    <p>Arc 270° (Grey/500) + creux 90° (Grey/200): animation 0.75s</p>
   </div>
 
   <!-- =========================================================
@@ -1178,7 +1178,7 @@
   ========================================================== -->
   <div class="section">
     <h2>Skeleton Item</h2>
-    <p>Composant générique — width/height/radius configurables. Shimmer animé.</p>
+    <p>Composant générique: width/height/radius configurables. Shimmer animé.</p>
 
     <div style="display:flex; flex-direction:column; gap:8px; max-width:400px;">
       <!-- Lignes de texte (défaut Figma : 12px) -->

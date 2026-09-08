@@ -18,7 +18,7 @@ const meta: Meta<FiltersTestPageComponent> = {
 Full filters scenario page.
 
 Slide-in drawer (no overlay) launched from a single Filters button above the table.
-Filter values are the source of truth — the table dataset is filtered live from \`currentFilters\`.
+Filter values are the source of truth: the table dataset is filtered live from \`currentFilters\`.
         `,
       },
     },

@@ -24,7 +24,7 @@ interface Tip {
   text: string;
 }
 
-// Qirin usage tips — sober, factual, one fact per screen (PRODUCT.md tone:
+// Qirin usage tips: sober, factual, one fact per screen (PRODUCT.md tone:
 // trustworthy / precise / efficient, never playful). About using the app,
 // not the business rules it enforces.
 const TIPS: Tip[] = [
@@ -77,7 +77,7 @@ export class LoadingComponent implements OnInit, OnDestroy {
   }
 
   // Joue la séquence une seule fois : elle s'arrête sur 'converge' (icône
-  // centrée, "Connecting") et ne boucle pas — l'app est chargée, terminé.
+  // centrée, "Connecting") et ne boucle pas. L'app est chargée, terminé.
   private runSequence(): void {
     const step = SEQUENCE[this.sequenceStep];
     this.phase.set(step.phase);

@@ -1,5 +1,5 @@
 // =============================================================
-// Topbox Test Shell — User Testing layout
+// Topbox Test Shell: User Testing layout
 // =============================================================
 
 :host {
@@ -11,7 +11,7 @@
   font-family:    var(--semantic-font-family);
 }
 
-// Dims the global nav header without affecting page content — used while
+// Dims the global nav header without affecting page content, used while
 // a persistent draft-mode snackbar is shown, so attention stays on the
 // in-progress edit instead of the (still clickable, but visually secondary) nav.
 .ut-header--dimmed {
@@ -71,7 +71,7 @@
 }
 
 // Menu du « ? » : même ancrage que celui du compte. Aligné à droite du bouton
-// et non à gauche — le bouton est près du bord, un menu ouvert vers la droite
+// et non à gauche : le bouton est près du bord, un menu ouvert vers la droite
 // sortirait de l'écran.
 .ut-help {
   position: relative;

@@ -9,13 +9,13 @@ import { FreshnessConfig } from '../tag-configuration.models';
 const THRESHOLD_ORDER_ERROR = '"Old after" must be greater than or equal to "Fresh up to".';
 
 /**
- * Edit grade freshness thresholds modal (P2) — 3-state model (Fresh / Outdated / Old),
+ * Edit grade freshness thresholds modal (P2): 3-state model (Fresh / Outdated / Old),
  * 2 thresholds (freshUpToMonths, oldAfterMonths) x 2 grade types (Last checked autograde,
  * Valid manual grade). Current values are read-only; New values are the editable draft.
  * Per-group constraint: oldAfterMonths >= freshUpToMonths.
  *
  * Layout: one rm-card per grade type, each with 4 small label-above-input fields
- * (not a 5-column table) — a threshold value is 1-3 digits, so sizing every field
+ * (not a 5-column table): a threshold value is 1-3 digits, so sizing every field
  * to fit its own label (instead of a shared table column) keeps inputs compact.
  *
  * Composition: ds-modal (self-composes header/content/footer via title input +

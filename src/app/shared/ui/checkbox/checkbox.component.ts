@@ -3,16 +3,16 @@ import { Component, computed, input, output } from '@angular/core';
 export type CheckboxState = 'Default' | 'Hover' | 'Active' | 'Disabled';
 
 /**
- * Case à cocher — rendue sur un carré de 20px.
+ * Case à cocher : rendue sur un carré de 20px.
  *
  * États Figma :
  *   Default, Hover, Active, Disabled
  *
  * Propriétés :
- *   checked       — état coché
- *   indeterminate — état intermédiaire (l'indicateur "-")
- *   error         — bordure rouge + fond rouge quand checked
- *   disabled      — opacité 40%, pointer-events none
+ *   checked       : état coché
+ *   indeterminate : état intermédiaire (l'indicateur "-")
+ *   error        : bordure rouge + fond rouge quand checked
+ *   disabled      : opacité 40%, pointer-events none
  */
 @Component({
   selector: 'ds-checkbox',

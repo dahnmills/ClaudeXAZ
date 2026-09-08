@@ -70,7 +70,7 @@
   }
 
   // ============================================================
-  // TYPE — PRIMARY
+  // TYPE / PRIMARY
   // ============================================================
   &.ds-button--type-primary {
     background:   var(--semantic-color-interactive-background-strong-default);
@@ -147,7 +147,7 @@
   }
 
   // ============================================================
-  // TYPE — SECONDARY
+  // TYPE / SECONDARY
   // ============================================================
   &.ds-button--type-secondary {
     background:   var(--semantic-color-interactive-background-muted-default);
@@ -225,7 +225,7 @@
   }
 
   // ============================================================
-  // TYPE — TERTIARY
+  // TYPE / TERTIARY
   // ============================================================
   &.ds-button--type-tertiary {
     background:   transparent;
@@ -280,7 +280,7 @@
   }
 
   // ============================================================
-  // TYPE — PLAIN (inline, no padding, height 24px)
+  // TYPE / PLAIN (inline, no padding, height 24px)
   // ============================================================
   &.ds-button--type-plain {
     padding:      0;
@@ -337,7 +337,7 @@
   }
 }
 
-// ── Content wrapper (rendered always — visibility toggled on loading) ─
+// ── Content wrapper (rendered always : visibility toggled on loading) ─
 .ds-button__content {
   display:     inline-flex;
   align-items: center;

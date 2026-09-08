@@ -126,9 +126,9 @@ const CHART_MONTHS = ['May', 'Jul', 'Sep', 'Nov', 'Jan', 'Mar', 'May', 'Jul'];
 const CHART_DATA = [6, 6, 6, 7, 6, 5, 5, 6];
 
 const PIE_SEGMENTS: PieChartSegment[] = [
-  { label: 'Low risk', value: 62, tone: 'positive', tooltip: 'Low risk — 62%' },
-  { label: 'Medium risk', value: 24, tone: 'warning', tooltip: 'Medium risk — 24%' },
-  { label: 'High risk', value: 14, tone: 'negative', tooltip: 'High risk — 14%' },
+  { label: 'Low risk', value: 62, tone: 'positive', tooltip: 'Low risk: 62%' },
+  { label: 'Medium risk', value: 24, tone: 'warning', tooltip: 'Medium risk: 24%' },
+  { label: 'High risk', value: 14, tone: 'negative', tooltip: 'High risk: 14%' },
 ];
 
 const GRID_LAYOUT: LayoutConfig = {

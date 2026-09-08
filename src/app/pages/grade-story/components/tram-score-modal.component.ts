@@ -5,7 +5,7 @@ import { PropertiesPanelComponent, PropertySection } from '../../../shared/ui/pr
 import { GradeStoryEntry } from '../grade-story.models';
 
 /**
- * TRAM score details — placeholder content (BN AZTQIRIN-55735 keeps "same
+ * TRAM score details: placeholder content (BN AZTQIRIN-55735 keeps "same
  * content as today" for this modal; the real TRAM2/TRAM3 calculation
  * explanation lives outside this Design System prototype, so this stands in
  * as a plausible mock focused on proving the click-zone split, not on the

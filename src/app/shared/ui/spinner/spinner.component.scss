@@ -50,7 +50,7 @@
 
 // Tone "current" : hérite de la couleur du parent (Button loading state).
 // L'arc reste opaque (currentColor), le creux passe à la même couleur en
-// faible opacité — meilleure intégration sur fonds colorés.
+// faible opacité : meilleure intégration sur fonds colorés.
 :host.ds-spinner--tone-current .ds-spinner__ring {
   border-top-color:    currentColor;
   border-left-color:   currentColor;

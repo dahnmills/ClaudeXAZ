@@ -1,13 +1,13 @@
-# CLAUDE.md — Design System Angular 19
+# CLAUDE.md. Design System Angular 19
 
 ## Stack & conventions générales
 
 - **Framework** : Angular 19, mode standalone obligatoire (pas de NgModule)
-- **Styles** : SCSS — pas de Tailwind, pas de CSS-in-JS
+- **Styles** : SCSS. Pas de Tailwind, pas de CSS-in-JS
 - **Réactivité** : Signals Angular (`signal()`, `computed()`, `input()`, `output()`)
 - **Syntaxe template** : blocs de contrôle `@if`, `@for`, `@switch` (jamais `*ngIf`/`*ngFor`)
 - **Pas de valeurs en dur** : toute couleur, espacement, taille ou rayon doit référencer un CSS custom property issu des tokens Figma
-- **Source de vérité** : les fichiers Figma (Tokens, Components, Layout) — jamais le code
+- **Source de vérité** : les fichiers Figma (Tokens, Components, Layout), jamais le code
 
 ---
 
@@ -107,7 +107,7 @@ Les tokens sémantiques sont des **aliases vers Foundation**, jamais vers des va
 | Dossier | `{nom}/` | `button/` |
 | SCSS BEM | `.ds-{nom}__element--modifier` | `.ds-button__icon--left` |
 
-Les composants internes Figma préfixés `.` (ex: `.Content`, `.Action`) sont des **sous-éléments** — ils ne génèrent pas de composant Angular autonome, mais des éléments/modificateurs SCSS ou des éléments de template internes.
+Les composants internes Figma préfixés `.` (ex: `.Content`, `.Action`) sont des **sous-éléments**. Ils ne génèrent pas de composant Angular autonome, mais des éléments/modificateurs SCSS ou des éléments de template internes.
 
 ---
 
@@ -161,7 +161,7 @@ Les états qui changent le comportement ou la structure (disabled, error, readon
 ### Syntaxe template
 
 ```html
-<!-- Blocs de contrôle Angular 19 — obligatoire -->
+<!-- Blocs de contrôle Angular 19 : obligatoire -->
 @if (disabled()) {
   <span class="ds-button__overlay"></span>
 }
@@ -226,20 +226,43 @@ Organismes
 
 ## Règles de cohérence entre composants
 
-1. **Un composant par session de travail** — jamais de batch
+1. **Un composant par session de travail**, jamais de batch
 2. **Toujours lire le composant dans Figma via MCP** avant de coder
 3. **Référencer les composants validés** comme pattern pour les suivants
 4. **Mettre à jour ce fichier** à chaque décision structurante validée
 5. **Aucune valeur en dur** dans aucun `.scss` ou `.ts`
 6. **Pas de `style=""` inline** dans les templates
 7. **Export systématique** dans `src/app/shared/ui/index.ts` après validation
-8. **Pas de logique métier** dans les composants UI — props in, events out
+8. **Pas de logique métier** dans les composants UI, props in, events out
+
+---
+
+## Formulaires : libellés de champ
+
+Deux règles globales, portées par les atomes de saisie (`input-text`, `input-email`,
+`input-date`, `input-search`, `select`, `textarea`, `tag-filter-chip`) et valables sur
+tout écran qui les compose.
+
+1. **Graisse semi-bold** : `font-weight: var(--semantic-font-text-style-font-weight-semi-bold)`
+   sur le libellé. La taille ne change pas (`--semantic-font-text-style-size-l`, 16px).
+2. **Jamais un libellé sur deux lignes.** On ne tronque pas non plus, ce n'est pas une
+   colonne de tableau : on donne au champ la largeur qu'il faut (grille, `grid-column: span 2`)
+   ou on réorganise la rangée. Raccourcir le libellé n'est acceptable que si le sens reste
+   exact.
+
+---
+
+## Écriture
+
+Pas de tiret cadratin (`—`) dans la prose : commentaires, textes d'interface, release
+notes, documentation. Deux-points, virgule, point ou parenthèses selon ce que la phrase
+demande. Seule exception : le `—` seul comme marque de valeur vide dans une cellule.
 
 ---
 
 ## Composition stricte (cascade design system)
 
-Toute molécule ou organisme doit composer les atomes existants au lieu de les réimplémenter. Quand on modifie un atome, le changement doit cascader naturellement à tous ses consommateurs — pas de duplication d'états, de couleurs, ni de markup natif.
+Toute molécule ou organisme doit composer les atomes existants au lieu de les réimplémenter. Quand on modifie un atome, le changement doit cascader naturellement à tous ses consommateurs. Pas de duplication d'états, de couleurs, ni de markup natif.
 
 ### Interdictions dans `shared/ui/**` (hors atome lui-même)
 
@@ -252,7 +275,7 @@ Toute molécule ou organisme doit composer les atomes existants au lieu de les r
 ### Cas légitimes de garder un atome propre (siblings, pas wrappers)
 
 - **Crumb** wrap `<ds-link>` ✓ (texte inline simple)
-- **FlyoutMenuItem**, **SideNavItem**, **Tab**, **StandaloneDropdown** : restent des atomes parallèles à Link/Button — leurs primitives interactives (full-width row + bg-states) ne se mappent pas à Link/Button. C'est OK.
+- **FlyoutMenuItem**, **SideNavItem**, **Tab**, **StandaloneDropdown** : restent des atomes parallèles à Link/Button. Leurs primitives interactives (full-width row + bg-states) ne se mappent pas à Link/Button. C'est OK.
 
 ### Exception unique
 
@@ -293,7 +316,7 @@ Seul l'atome sous-jacent peut utiliser le natif :
 
 Strategic + visual design context lives in two root files, written via `/impeccable init`:
 
-- **`PRODUCT.md`** — register (`product`), users (credit analysts + country admins), product purpose, brand personality (sober · reliable · dense), anti-references, design principles, a11y (WCAG AA).
-- **`DESIGN.md`** — visual system in Stitch format: token frontmatter + the six sections (Overview, Colors, Typography, Elevation, Components, Do's and Don'ts). North Star: *"The Underwriter's Desk"*.
+- **`PRODUCT.md`**. Register (`product`), users (credit analysts + country admins), product purpose, brand personality (sober · reliable · dense), anti-references, design principles, a11y (WCAG AA).
+- **`DESIGN.md`**. Visual system in Stitch format: token frontmatter + the six sections (Overview, Colors, Typography, Elevation, Components, Do's and Don'ts). North Star: *"The Underwriter's Desk"*.
 
 Read both before designing or generating new screens. They encode the rules already enforced in `_tokens.scss` / `_semantic.scss` and the composition strictness in this file. Sidecar `.impeccable/design.json` powers `/impeccable live`.

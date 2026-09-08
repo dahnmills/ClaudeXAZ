@@ -11,7 +11,7 @@ export interface PieChartSegment {
 
 /**
  * Donut chart minimal en SVG (segments en cercles superposés, pas d'arcs
- * <path> — un stroke-dasharray/-dashoffset par segment suffit pour un anneau
+ * <path> : un stroke-dasharray/-dashoffset par segment suffit pour un anneau
  * et évite toute trigonométrie). Tooltip par segment tenu en signal local
  * (pas dsTooltip) car chaque segment porte un texte différent au survol.
  */
@@ -35,7 +35,7 @@ export class PieChartComponent {
 
   total = computed(() => this.segments().reduce((sum, s) => sum + s.value, 0));
 
-  /** Small visual gap between segments — otherwise stroke-linecap:round's
+  /** Small visual gap between segments: otherwise stroke-linecap:round's
    * rounded ends overlap invisibly at full-length segments. */
   private readonly gapDeg = 3;
 

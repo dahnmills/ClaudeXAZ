@@ -9,7 +9,7 @@
 
 // --- Tokens locaux (lecture seule, ne pas modifier) ----------
 
-// Light style — couleurs par status
+// Light style: couleurs par status
 $badge-light-colors: (
   info: (
     bg:   --semantic-color-static-background-subtle-functional-informative,
@@ -38,7 +38,7 @@ $badge-light-colors: (
   ),
 );
 
-// Strong style — couleurs par status
+// Strong style: couleurs par status
 $badge-strong-colors: (
   info: (
     bg:   --semantic-color-static-background-functional-informative,

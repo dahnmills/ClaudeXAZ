@@ -11,13 +11,13 @@ import { StatusReasonCode } from '../tag-configuration.models';
 import { STATUS_REASON_REFERENTIAL } from '../tag-configuration.data';
 
 /**
- * Edit TRANS-NA-EXCL modal (P3) — status reason codes excluded from the
+ * Edit TRANS-NA-EXCL modal (P3): status reason codes excluded from the
  * TRANS-NA calculation for the current country.
  *
  * "Current codes" is a read-only list (code key + description + remove).
  * "Add codes" is a search box filtering the referential (excluding already
  * -selected codes) rendered as a ds-flyout-menu; clicking a candidate adds it.
- * An empty list is a valid, savable state — shown with an info notice
+ * An empty list is a valid, savable state. Shown with an info notice
  * explaining that saving with no codes will allow all status reason codes.
  *
  * Composition: ds-modal (self-composes header/content/footer via title input

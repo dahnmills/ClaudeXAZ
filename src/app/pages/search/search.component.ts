@@ -165,7 +165,7 @@ export class SearchComponent {
   searchCountry = signal<FlagCode | null>(null);
   searchIdType = signal<IdTypeOption | null>(null);
   searchQuery = signal<string>('');
-  /** Requête réellement appliquée (figée au clic Search — pas à la volée). */
+  /** Requête réellement appliquée (figée au clic Search, pas à la volée). */
   appliedQuery = signal<string>('');
   /** Type de recherche figé au clic Search (sert à qualifier les résultats). */
   appliedType = signal<SearchType>('company-id');

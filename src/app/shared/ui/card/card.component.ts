@@ -14,10 +14,10 @@ import { Component, input } from '@angular/core';
   },
 })
 export class CardComponent {
-  /** Supprime le padding interne — utile quand le contenu gère son propre espacement */
+  /** Supprime le padding interne : utile quand le contenu gère son propre espacement */
   noPadding = input<boolean>(false);
-  /** État de chargement — passe aria-busy=true */
+  /** État de chargement : passe aria-busy=true */
   loading   = input<boolean>(false);
-  /** Détache la carte au repos (ex : row expandable en état ouvert) — voir DESIGN.md Elevation */
+  /** Détache la carte au repos (ex : row expandable en état ouvert). Voir DESIGN.md Elevation */
   elevated  = input<boolean>(false);
 }

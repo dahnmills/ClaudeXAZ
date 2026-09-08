@@ -11,7 +11,7 @@ import { GRADE_STORY_ENTRIES } from './grade-story.data';
 import { GradeStoryEntry } from './grade-story.models';
 
 /**
- * Grade story page (BN AZTQIRIN-55735 prototype) — one autograde row per
+ * Grade story page (BN AZTQIRIN-55735 prototype), one autograde row per
  * entry, each with two independently clickable zones: the grade/score value
  * opens TRAM score details, the grade status opens the new TAG explanation
  * modal. Replaces the old "click anywhere on the row" behaviour.

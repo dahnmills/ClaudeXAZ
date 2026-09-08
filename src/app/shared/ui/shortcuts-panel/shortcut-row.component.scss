@@ -6,7 +6,7 @@
   gap: var(--semantic-measurement-spacing-s);
 
   // Respiration verticale : la rangée fait 40px pour une touche de 24. C'est le
-  // rapport du panneau de Figma, et il compte — resserré, un tableau de 12
+  // rapport du panneau de Figma, et il compte. Resserré, un tableau de 12
   // lignes de texte gris se lit comme un pavé et on ne repère plus la ligne
   // qu'on cherche.
   padding: var(--semantic-measurement-spacing-s);
@@ -39,7 +39,7 @@
 }
 
 // Portée : « in a table », « while editing ». Le raccourci existe mais n'est pas
-// actif partout — le dire ici évite le raccourci qui « ne marche pas ».
+// actif partout : le dire ici évite le raccourci qui « ne marche pas ».
 .ds-shortcut-row__context {
   margin-left: var(--semantic-measurement-spacing-xs);
   font-size: var(--semantic-font-text-style-size-s);
@@ -62,7 +62,7 @@
 }
 
 // Un raccourci déjà utilisé se lit aussi dans son libellé, pas seulement dans
-// ses touches — sinon le bleu des carrés passe pour une simple emphase.
+// ses touches : sinon le bleu des carrés passe pour une simple emphase.
 :host.ds-shortcut-row--used .ds-shortcut-row__label {
   color: var(--semantic-color-static-text-brand);
 }

@@ -27,7 +27,7 @@ export interface SpotlightCountry {
   name: string;
 }
 
-/** Champ recherché — bulle « Aa / ID ». Nom par défaut. */
+/** Champ recherché : bulle « Aa / ID ». Nom par défaut. */
 export type SpotlightMode = 'name' | 'id';
 
 /** Bulle de filtre actuellement ouverte (une seule à la fois), ou aucune. */
@@ -121,7 +121,7 @@ export class SpotlightComponent {
    * Panneau en cours de FERMETURE : reste rendu (avec une classe `--out`) le
    * temps de son animation de sortie, pendant qu'`openPanel` est déjà à
    * `null`/une autre valeur. Sans ça, le contenu disparaît net (retiré du DOM
-   * par `@if`) au lieu de sortir en fondu — ni liquide ni fluide.
+   * par `@if`) au lieu de sortir en fondu, ni liquide ni fluide.
    */
   closingPanel = signal<FilterPanel>(null);
   /** Pulse "liquide" (léger squish + flou) qui accompagne CHAQUE changement de bulle ouverte. */
@@ -130,7 +130,7 @@ export class SpotlightComponent {
    * Vrai pendant tout le morph (largeur bulles↔barre) : pilote uniquement la
    * couche liquide décorative (.ds-spotlight__goo), qui comble l'espace
    * entre la barre et la bulle pour créer le col qui se pince/rompt. Le
-   * contenu réel (icônes, texte) n'est jamais masqué — il reste visible tout
+   * contenu réel (icônes, texte) n'est jamais masqué, il reste visible tout
    * du long, seule la matière derrière lui se reforme.
    */
   morphing = signal<boolean>(false);
@@ -225,7 +225,7 @@ export class SpotlightComponent {
   completion = computed<{ typed: string; ghost: string } | null>(() => {
     // Un panneau de filtre est ouvert : la barre ne cherche plus des entités, elle
     // filtre le panneau. Proposer un nom de buyer en texte fantôme n'aurait aucun
-    // sens là — et Tab l'accepterait par-dessus le filtre en cours.
+    // sens là : et Tab l'accepterait par-dessus le filtre en cours.
     if (this.openPanel()) return null;
     const raw = this.query();
     if (!raw || raw !== raw.trimStart()) return null; // pas de complétion si espace en tête
@@ -264,7 +264,7 @@ export class SpotlightComponent {
       if (this.morphingTimeoutId !== null) clearTimeout(this.morphingTimeoutId);
     });
     // Squish liquide à CHAQUE changement de bulle ouverte (ouverture, retour,
-    // bascule vers l'autre bulle) — pas seulement à l'ouverture. Ignore le
+    // bascule vers l'autre bulle) : pas seulement à l'ouverture. Ignore le
     // premier run (montage du composant, rien à animer).
     let firstRun = true;
     let prevPanel: FilterPanel = null;

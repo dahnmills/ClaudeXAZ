@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { Component } from '@angular/core';
 
 // =============================================================
-// Foundation / Tokens — viewer Storybook
+// Foundation / Tokens: viewer Storybook
 // Source : src/styles/_tokens.scss + _semantic.scss
 // Lit les CSS custom properties calculées à l'exécution depuis
 // le DOM. Pas de duplication des valeurs en TS.
@@ -40,7 +40,7 @@ function readTokens(prefix: string): TokenRow[] {
   template: `
     <div class="page">
       <h2>Foundation / Color</h2>
-      <p>Palette brute (couleurs absolues). À ne pas utiliser directement — passer par Semantic.</p>
+      <p>Palette brute (couleurs absolues). À ne pas utiliser directement : passer par Semantic.</p>
       <div class="grid">
         @for (t of foundationColors; track t.name) {
           <div class="swatch">

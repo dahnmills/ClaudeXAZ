@@ -24,7 +24,7 @@ export const Default: Story = {
   parameters: { backgrounds: { default: 'light' } },
 };
 
-// ── Reversed (sur fond sombre — header) ──────────────────────
+// ── Reversed (sur fond sombre : header) ──────────────────────
 export const Reversed: Story = {
   args: { reversed: true },
   parameters: { backgrounds: { default: 'dark' } },

@@ -3,7 +3,7 @@ import { Component, computed, input, output } from '@angular/core';
 export type RadioState = 'Default' | 'Hover' | 'Active' | 'Disabled';
 
 /**
- * Bouton radio — cercle de 20px, dot de 8px.
+ * Bouton radio: cercle de 20px, dot de 8px.
  *
  * États Figma : Default, Hover, Active, Disabled
  * Propriétés   : selected, error, disabled, label

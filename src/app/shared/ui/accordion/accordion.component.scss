@@ -1,4 +1,4 @@
-// Accordion — header cliquable + body pliable
+// Accordion: header cliquable + body pliable
 // Source : Figma > Data Display > Accordion 🟢
 // Tones : default (bg=white) / alt (bg=accent-muted)
 // Title : Title/H2 (20/28/600)
@@ -50,7 +50,7 @@
   color:       var(--semantic-color-interactive-icon-strong-alt-default);
 }
 
-// Tone Alt — fond légèrement teinté
+// Tone Alt : fond légèrement teinté
 :host.ds-accordion--tone-alt .ds-accordion__header {
   background: var(--semantic-color-static-background-main-secondary);
 

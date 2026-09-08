@@ -60,37 +60,37 @@ export const DS_COMPONENTS: DsComponentEntry[] = [
   { name: 'Segmented Control', folder: 'segmented-control', category: 'Action', storybookTitle: 'Design System/Action/Segmented Control', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
   { name: 'Pie Chart', folder: 'pie-chart', category: 'Data Display', storybookTitle: 'Design System/Data Display/Pie Chart', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
   { name: 'Newsfeed', folder: 'newsfeed', category: 'Data Display', storybookTitle: 'Design System/Data Display/Newsfeed', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
-  { name: 'Drawer', folder: 'drawer', category: 'Layout', storybookTitle: 'Design System/Layout/Drawer', hasAutodocs: false, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche', note: "Story has no 'autodocs' tag — links to the Default story instead of the docs page." },
+  { name: 'Drawer', folder: 'drawer', category: 'Layout', storybookTitle: 'Design System/Layout/Drawer', hasAutodocs: false, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche', note: "Story has no 'autodocs' tag, so it links to the Default story instead of the docs page." },
   { name: 'Input Search', folder: 'input-search', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Input Search', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
   { name: 'Grid Selection', folder: 'grid-selection', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Grid Selection', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
   { name: 'Chart', folder: 'chart', category: 'Data Display', storybookTitle: 'Design System/Data Display/Chart', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
   { name: 'Grade', folder: 'grade', category: 'Data Display', storybookTitle: 'Design System/Data Display/Grade', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
   { name: 'Button Split', folder: 'button-split', category: 'Action', storybookTitle: 'Design System/Action/Button Split', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche' },
-  { name: 'Spotlight', folder: 'spotlight', category: 'UI', storybookTitle: 'UI/Spotlight', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche', note: "Storybook title falls outside the 'Design System/*' taxonomy — naming inconsistency." },
+  { name: 'Spotlight', folder: 'spotlight', category: 'UI', storybookTitle: 'UI/Spotlight', hasAutodocs: true, usageCount: 1, usagePages: ['buyer-summary'], status: 'niche', note: "Storybook title falls outside the 'Design System/*' taxonomy. Naming inconsistency." },
   { name: 'Search Bar Multi', folder: 'search-bar-multi', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Search Bar Multi', hasAutodocs: true, usageCount: 1, usagePages: ['search'], status: 'niche' },
   { name: 'More Criteria', folder: 'more-criteria', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/More Criteria', hasAutodocs: true, usageCount: 1, usagePages: ['search'], status: 'niche' },
   { name: 'Result Card', folder: 'result-card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Result Card', hasAutodocs: true, usageCount: 1, usagePages: ['search'], status: 'niche' },
   { name: 'Date Range', folder: 'date-range', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Date Range', hasAutodocs: true, usageCount: 1, usagePages: null, status: 'niche' },
   { name: 'Search Bar', folder: 'search-bar', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Search Bar', hasAutodocs: true, usageCount: 1, usagePages: ['home'], status: 'niche', note: "Confirmed distinct from Search Bar Multi (checked by hand, not a duplicate)." },
-  { name: 'Action Card', folder: 'action-card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Action Card', hasAutodocs: true, usageCount: 1, usagePages: ['admin-data'], status: 'niche', note: "Corrected on 2026-08-26 — the initial audit listed it as an orphan (0 usage), but it's actually used (selectable variant) in admin-data.component.html:118, the activity picker." },
+  { name: 'Action Card', folder: 'action-card', category: 'Data Display', storybookTitle: 'Design System/Data Display/Action Card', hasAutodocs: true, usageCount: 1, usagePages: ['admin-data'], status: 'niche', note: "Corrected on 2026-08-26. The initial audit listed it as an orphan (0 usage), but it's actually used (selectable variant) in admin-data.component.html:118, the activity picker." },
   { name: 'Filter Drawer', folder: 'filter-drawer', category: 'Layout', storybookTitle: 'Design System/Layout/Filter Drawer', hasAutodocs: true, usageCount: 2, usagePages: null, status: 'niche' },
   { name: 'Radio Card', folder: 'radio-card', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Radio Card', hasAutodocs: true, usageCount: 2, usagePages: null, status: 'niche' },
   { name: 'Stepper', folder: 'stepper', category: 'Navigation', storybookTitle: 'Design System/Navigation/Stepper', hasAutodocs: true, usageCount: 2, usagePages: ['company-creation-wizard', 'company-edit-wizard'], status: 'niche' },
-  { name: 'Tag Filter Chip', folder: 'tag-filter-chip', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Tag Filter Chip', hasAutodocs: true, usageCount: 1, usagePages: ['tag-configuration (via rule-modal)'], status: 'niche', note: "Promoted from pages/tag-configuration/components/ on 2026-08-26 — was already well built, just never moved." },
+  { name: 'Tag Filter Chip', folder: 'tag-filter-chip', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Tag Filter Chip', hasAutodocs: true, usageCount: 1, usagePages: ['tag-configuration (via rule-modal)'], status: 'niche', note: "Promoted from pages/tag-configuration/components/ on 2026-08-26. Was already well built, just never moved." },
 
-  // ── Chip vs Tag vs Badge: distinct in Figma — not a duplicate, don't merge ──
-  { name: 'Chip', folder: 'chip', category: 'Action', storybookTitle: 'Design System/Action/Chip', hasAutodocs: true, usageCount: 1, usagePages: ['tag-filter-chip (internal)'], status: 'internal', note: "The initial audit compared it to Tag on API alone (similar props/ARIA) — but Chip, Tag and Badge are 3 distinct components in Figma. Source of truth is Figma, not code: not a merge to make, despite the surface resemblance." },
+  // ── Chip vs Tag vs Badge: distinct in Figma. Not a duplicate, don't merge ──
+  { name: 'Chip', folder: 'chip', category: 'Action', storybookTitle: 'Design System/Action/Chip', hasAutodocs: true, usageCount: 1, usagePages: ['tag-filter-chip (internal)'], status: 'internal', note: "The initial audit compared it to Tag on API alone (similar props/ARIA), but Chip, Tag and Badge are 3 distinct components in Figma. Source of truth is Figma, not code: not a merge to make, despite the surface resemblance." },
   { name: 'Tag', folder: 'tag', category: 'Action', storybookTitle: 'Design System/Action/Tag', hasAutodocs: true, usageCount: null, usagePages: ['properties-panel (internal)', 'action-card (internal)'], status: 'internal' },
 
-  // ── Select Button / Tile: re-qualified — not a duplicate (distinct visual specs) ──
+  // ── Select Button / Tile: re-qualified. Not a duplicate (distinct visual specs) ──
   { name: 'Select Button', folder: 'select-button', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Select Button', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan', note: "The initial audit called it a duplicate of Tile (similar API), but their visual specs are distinct: Select Button = 160px bordered rectangle + optional sublabel; Tile = fixed 104×104 square, no border. Likely two different Figma components, not a duplicate. Orphan (0 usage) still holds." },
-  { name: 'Tile', folder: 'tile', category: 'Action', storybookTitle: 'Design System/Action/Tile', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan', note: 'See Select Button — re-qualified, not a duplicate.' },
+  { name: 'Tile', folder: 'tile', category: 'Action', storybookTitle: 'Design System/Action/Tile', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan', note: 'See Select Button. Re-qualified, not a duplicate.' },
 
   // ── Orphans: built, storied, never adopted ──────────────────────────────
   { name: 'Timeline Event', folder: 'timeline', category: 'Internals', storybookTitle: 'Design System/Internals/Timeline Event', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
   { name: 'Toggle', folder: 'toggle', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Toggle', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
   { name: 'Popover', folder: 'popover', category: 'Feedback', storybookTitle: 'Design System/Feedback/Popover', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan' },
-  { name: 'Flyout (base panel)', folder: 'flyout', category: 'Layout', storybookTitle: 'Design System/Layout/Flyout', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan', note: 'Flyout Menu (which uses it internally) is well adopted — only the base panel, used directly, isn\'t.' },
+  { name: 'Flyout (base panel)', folder: 'flyout', category: 'Layout', storybookTitle: 'Design System/Layout/Flyout', hasAutodocs: true, usageCount: 0, usagePages: null, status: 'orphan', note: 'Flyout Menu (which uses it internally) is well adopted. Only the base panel, used directly, isn\'t.' },
 
   // ── Internal composites (used only through another DS component) ───────
   { name: 'Flyout Item', folder: 'flyout', category: 'Internals', storybookTitle: 'Design System/Internals/Flyout Item', hasAutodocs: true, usageCount: null, usagePages: null, status: 'internal' },
@@ -106,12 +106,12 @@ export const DS_COMPONENTS: DsComponentEntry[] = [
   { name: 'Button Range', folder: 'button-range', category: 'Action', storybookTitle: 'Design System/Action/Button Range', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
   { name: 'Button Range Group', folder: 'button-range', category: 'Action', storybookTitle: 'Design System/Action/Button Range Group', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
   { name: 'Checkbox Card', folder: 'checkbox-card', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Checkbox Card', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
-  { name: 'Collapsible Table', folder: 'collapsible-table', category: 'Data Display', storybookTitle: 'Design System/Data Display/Collapsible Table', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: "Its story hand-writes an HTML table of raw CSS tokens to document 'Design Tokens' — no shared addon behind it, risk of drift from the real tokens." },
+  { name: 'Collapsible Table', folder: 'collapsible-table', category: 'Data Display', storybookTitle: 'Design System/Data Display/Collapsible Table', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: "Its story hand-writes an HTML table of raw CSS tokens to document 'Design Tokens'. No shared addon behind it, risk of drift from the real tokens." },
   { name: 'Popin (Confirm Dialog)', folder: 'confirm-dialog', category: 'Feedback', storybookTitle: 'Design System/Feedback/Popin', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
   { name: 'Divider', folder: 'divider', category: 'Foundation', storybookTitle: 'Design System/Foundation/Divider', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
   { name: 'Flag', folder: 'flag', category: 'Foundation', storybookTitle: 'Design System/Foundation/Flag', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
   { name: 'Functional Notice', folder: 'functional-notice', category: 'Feedback', storybookTitle: 'Design System/Feedback/Functional Notice', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
-  { name: 'Inline Edit', folder: 'inline-edit', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Inline Edit', hasAutodocs: false, usageCount: null, usagePages: null, status: 'niche', note: "Not detailed in the audit. Story has no 'autodocs' tag — links to the Default story instead of the docs page." },
+  { name: 'Inline Edit', folder: 'inline-edit', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Inline Edit', hasAutodocs: false, usageCount: null, usagePages: null, status: 'niche', note: "Not detailed in the audit. Story has no 'autodocs' tag. Links to the Default story instead of the docs page." },
   { name: 'Input Date', folder: 'input-date', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Input Date', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
   { name: 'Input Email', folder: 'input-email', category: 'Data Entry', storybookTitle: 'Design System/Data Entry/Input Email', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
   { name: 'List Widget', folder: 'list-widget', category: 'Data Display', storybookTitle: 'Design System/Data Display/List Widget', hasAutodocs: true, usageCount: null, usagePages: null, status: 'niche', note: 'Not detailed in the audit.' },
@@ -134,7 +134,7 @@ export interface MutualizationTarget {
   description: string;
   occurrences: string[];
   effort: 'low' | 'medium' | 'high';
-  /** On hold per product decision — see note. Not abandoned, just not prioritized. */
+  /** On hold per product decision : see note. Not abandoned, just not prioritized. */
   onHold?: string;
 }
 
@@ -147,18 +147,18 @@ export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
       'pages/admin-data/company-edit-wizard/company-edit-wizard.component.html',
     ],
     effort: 'high',
-    onHold: "On hold as of 2026-08-26 — none of these 3 patterns are being mutualized right now.",
+    onHold: "On hold as of 2026-08-26: none of these 3 patterns are being mutualized right now.",
   },
   {
     title: 'Clickable option row',
-    description: "Icon + label + secondary info, clickable — recoded independently 3 times. 2 of the 3 already live in the DS without knowing about each other.",
+    description: "Icon + label + secondary info, clickable, recoded independently 3 times. 2 of the 3 already live in the DS without knowing about each other.",
     occurrences: [
       'shared/ui/search-bar/search-bar.component.html (flyout item)',
       'shared/ui/spotlight/spotlight.component.html (row)',
       'pages/search/search.component.html (recent-search row)',
     ],
     effort: 'medium',
-    onHold: "On hold as of 2026-08-26 — none of these 3 patterns are being mutualized right now.",
+    onHold: "On hold as of 2026-08-26: none of these 3 patterns are being mutualized right now.",
   },
   {
     title: 'Empty state',
@@ -168,18 +168,18 @@ export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
       'pages/tag-configuration/tag-configuration.component.html (×2)',
     ],
     effort: 'medium',
-    onHold: "On hold as of 2026-08-26 — none of these 3 patterns are being mutualized right now.",
+    onHold: "On hold as of 2026-08-26: none of these 3 patterns are being mutualized right now.",
   },
   {
     title: 'Native buttons in buyer-summary',
-    description: "The initial audit assumed ~17 native <button>s were reusable as-is (ds-tab, ds-tile, ds-radio-card, ds-checkbox-card, ds-button-icon, ds-segmented-control). Checked CSS-by-CSS on 2026-08-26: every button has a deliberate bespoke style (dashed borders on CTAs, dimensions/indicator different from ds-tab, own shapes for the size/layout/block pickers). None is a pixel-perfect swap without changing the render — same pattern as Select Button/Tile.",
+    description: "The initial audit assumed ~17 native <button>s were reusable as-is (ds-tab, ds-tile, ds-radio-card, ds-checkbox-card, ds-button-icon, ds-segmented-control). Checked CSS-by-CSS on 2026-08-26: every button has a deliberate bespoke style (dashed borders on CTAs, dimensions/indicator different from ds-tab, own shapes for the size/layout/block pickers). None is a pixel-perfect swap without changing the render, same pattern as Select Button/Tile.",
     occurrences: ['pages/buyer-summary/buyer-summary.component.html'],
     effort: 'medium',
-    onHold: "Decision from 2026-08-26: these buttons aren't forced into DS atoms without a prior Figma/visual check — risk of changing the render.",
+    onHold: "Decision from 2026-08-26: these buttons aren't forced into DS atoms without a prior Figma/visual check: risk of changing the render.",
   },
   {
     title: 'File upload',
-    description: "Native <input type=\"file\"> — a genuine gap, no file-upload atom exists in the DS.",
+    description: "Native <input type=\"file\">: a genuine gap, no file-upload atom exists in the DS.",
     occurrences: ['pages/tag-configuration/components/import-rules-modal.component.html'],
     effort: 'medium',
   },
@@ -187,10 +187,10 @@ export const MUTUALIZATION_TARGETS: MutualizationTarget[] = [
 
 // Research from 2026-08-26: for each orphan, is there a native pattern in
 // pages/** that could reasonably adopt it? Checked CSS-by-CSS before
-// suggesting anything — after the Select Button/Tile lesson, a shape
+// suggesting anything: after the Select Button/Tile lesson, a shape
 // resemblance isn't enough, it needs a real visual match. Rendered as a
 // left/right visual comparison directly in the dashboard's template
-// (design-system-audit.component.html), not here as text — avoids two
+// (design-system-audit.component.html), not here as text, avoids two
 // sources of truth for the same content.
 
 export function storybookSlug(title: string): string {
@@ -202,7 +202,7 @@ export function storybookSlug(title: string): string {
 
 /**
  * Dev: `npm run storybook` serves on its own port (6006), separate from
- * `ng serve` (4200) — there is no /storybook path locally. Prod: the
+ * `ng serve` (4200): there is no /storybook path locally. Prod: the
  * GitHub Pages build nests the static Storybook output under /storybook
  * inside this very app, so it must be reached relative to <base href>.
  */
@@ -220,7 +220,7 @@ export function storybookHref(
 /**
  * meta.title -> id of the FIRST real story (not the autodocs page), for
  * embedding a live thumbnail. Extracted from `dist/storybook/index.json`
- * on 2026-08-26 (`npm run build-storybook`) — a snapshot, not computed at
+ * on 2026-08-26 (`npm run build-storybook`) : a snapshot, not computed at
  * runtime, since the app can't read Storybook's build manifest live.
  * Regenerate by rebuilding Storybook and re-running the same extraction
  * whenever component stories are added/renamed/reordered.
@@ -317,15 +317,15 @@ const STORYBOOK_FIRST_STORY_ID: Record<string, string> = {
 };
 
 /**
- * Live embed of the component's first story — the visual, not a description.
+ * Live embed of the component's first story. The visual, not a description.
  *
  * Deliberately NOT `iframe.html?id=...` (Storybook's bare preview frame):
  * that frame expects a postMessage handshake from the manager UI to know
  * which story to render, and never gets one when loaded standalone in our
- * own iframe — it just sits on its loading spinner forever, no error, no
+ * own iframe : it just sits on its loading spinner forever, no error, no
  * console output. The supported way to embed a single story full-screen is
  * the same URL the "View story" link already uses, with `viewMode=story`
- * added — that's Storybook's own "full screen story" mode (hides the
+ * added: that's Storybook's own "full screen story" mode (hides the
  * sidebar/toolbar), and it boots the real app instead of the bare frame.
  */
 export function storybookIframeSrc(

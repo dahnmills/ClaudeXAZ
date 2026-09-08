@@ -1,13 +1,13 @@
 // =============================================================
 // FOUNDATION TOKENS
 // Source : Figma > Tokens > Collection "Foundation"
-// NE PAS ÉDITER MANUELLEMENT — source de vérité : Figma
+// NE PAS ÉDITER MANUELLEMENT : source de vérité : Figma
 // =============================================================
 
 :root {
 
   // -----------------------------------------------------------
-  // COULEURS — Red
+  // COULEURS / Red
   // -----------------------------------------------------------
   --foundation-color-red-050: #fce4e8;
   --foundation-color-red-100: #fcbac2;
@@ -21,7 +21,7 @@
   --foundation-color-red-900: #430a0c;
 
   // -----------------------------------------------------------
-  // COULEURS — BlueA (bleu primaire marque)
+  // COULEURS / BlueA (bleu primaire marque)
   // -----------------------------------------------------------
   --foundation-color-blue-a-025: #f1f9fa;
   --foundation-color-blue-a-050: #d9eaf2;
@@ -36,7 +36,7 @@
   --foundation-color-blue-a-900: #002c66;
 
   // -----------------------------------------------------------
-  // COULEURS — BlueB (bleu secondaire)
+  // COULEURS / BlueB (bleu secondaire)
   // -----------------------------------------------------------
   --foundation-color-blue-b-050: #ecf0f8;
   --foundation-color-blue-b-100: #dae2f1;
@@ -50,7 +50,7 @@
   --foundation-color-blue-b-900: #1e2d52;
 
   // -----------------------------------------------------------
-  // COULEURS — Green
+  // COULEURS / Green
   // -----------------------------------------------------------
   --foundation-color-green-050: #e8f3e9;
   --foundation-color-green-100: #c4e3c7;
@@ -64,7 +64,7 @@
   --foundation-color-green-900: #113b15;
 
   // -----------------------------------------------------------
-  // COULEURS — Orange
+  // COULEURS / Orange
   // -----------------------------------------------------------
   --foundation-color-orange-050: #fdf8e9;
   --foundation-color-orange-100: #fcecbb;
@@ -78,7 +78,7 @@
   --foundation-color-orange-900: #513005;
 
   // -----------------------------------------------------------
-  // COULEURS — Grey
+  // COULEURS / Grey
   // -----------------------------------------------------------
   --foundation-color-grey-050: #f5f5f5;
   --foundation-color-grey-100: #ececec;
@@ -92,7 +92,7 @@
   --foundation-color-grey-900: #121212;
 
   // -----------------------------------------------------------
-  // COULEURS — Black & White
+  // COULEURS / Black & White
   // -----------------------------------------------------------
   --foundation-color-black-000: #000000;
   --foundation-color-white-1000: #ffffff;
@@ -158,12 +158,12 @@
   --foundation-opacity-100: 1;
 
   // -----------------------------------------------------------
-  // TYPOGRAPHIE — Font Family
+  // TYPOGRAPHIE / Font Family
   // -----------------------------------------------------------
   --foundation-font-family: 'Allianz Neo', sans-serif;
 
   // -----------------------------------------------------------
-  // TYPOGRAPHIE — Font Size
+  // TYPOGRAPHIE / Font Size
   // -----------------------------------------------------------
   --foundation-font-size-12: 12px;
   --foundation-font-size-14: 14px;
@@ -178,7 +178,7 @@
   --foundation-font-size-64: 64px;
 
   // -----------------------------------------------------------
-  // TYPOGRAPHIE — Font Weight
+  // TYPOGRAPHIE / Font Weight
   // -----------------------------------------------------------
   --foundation-font-weight-thin:        100;
   --foundation-font-weight-extra-light: 200;
@@ -191,7 +191,7 @@
   --foundation-font-weight-black:       900;
 
   // -----------------------------------------------------------
-  // TYPOGRAPHIE — Line Height
+  // TYPOGRAPHIE / Line Height
   // -----------------------------------------------------------
   --foundation-font-line-height-16: 16px;
   --foundation-font-line-height-20: 20px;
@@ -204,7 +204,7 @@
   --foundation-font-line-height-72: 72px;
 
   // -----------------------------------------------------------
-  // TYPOGRAPHIE — Letter Spacing
+  // TYPOGRAPHIE / Letter Spacing
   // -----------------------------------------------------------
   --foundation-font-letter-spacing-0:   0px;
   --foundation-font-letter-spacing-0-2: 0.2px;
@@ -221,7 +221,7 @@
   --foundation-shadow-bottom-300: 0 2px 3px 0 rgba(65, 65, 65, 0.45);
   --foundation-shadow-bottom-400: 0 2px 4px 0 rgba(65, 65, 65, 0.50);
   --foundation-shadow-bottom-500: 0 4px 8px 0 rgba(65, 65, 65, 0.50);
-  // Figma: Shadows / Bottom / 800 — snackbar, floating bars
+  // Figma: Shadows / Bottom / 800, snackbar, floating bars
   --foundation-shadow-bottom-800: 0 8px 24px 0 rgba(65, 65, 65, 0.35);
 
   // Shadow d'élévation produit (barre de recherche, panneaux flottants)

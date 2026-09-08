@@ -31,15 +31,15 @@ export const Variants: Story = {
           <ds-pagination [style]="'infinite'" [page]="12" [total]="32"></ds-pagination>
         </div>
         <div>
-          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Classic — short range</h4>
+          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Classic: short range</h4>
           <ds-pagination [page]="3" [total]="5" [siblings]="1" [showFirstLast]="true"></ds-pagination>
         </div>
         <div>
-          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Classic — long range avec ellipses</h4>
+          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Classic : long range avec ellipses</h4>
           <ds-pagination [page]="17" [total]="21" [siblings]="2" [showFirstLast]="true"></ds-pagination>
         </div>
         <div>
-          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Classic — sans First/Last</h4>
+          <h4 style="margin:0 0 8px 0;font-size:14px;font-weight:600;">Classic : sans First/Last</h4>
           <ds-pagination [page]="5" [total]="16" [siblings]="1" [showFirstLast]="false"></ds-pagination>
         </div>
       </div>

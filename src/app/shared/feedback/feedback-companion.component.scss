@@ -1,5 +1,5 @@
 /* ============================================================================
-   Echo — compagnon de feedback testeur. Identité propre (--ec-*, bleu
+   Echo : compagnon de feedback testeur. Identité propre (--ec-*, bleu
    électrique), indépendante des tokens Qirin. Scopé à :host.
    ========================================================================= */
 
@@ -293,7 +293,7 @@
   &__opt { color: var(--ec-ink-3); font-weight: 500; }
 }
 
-/* Réactions — segmentées, sélectionnables */
+/* Réactions : segmentées, sélectionnables */
 .fb-react-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .fb-react {
   display: inline-flex;

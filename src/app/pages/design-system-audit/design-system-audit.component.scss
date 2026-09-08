@@ -320,7 +320,7 @@
 }
 
 // Static reproduction of buyer-summary's .bs-toolbar (no hover-reveal, no
-// absolute positioning — this is a thumbnail, not the live interaction).
+// absolute positioning: this is a thumbnail, not the live interaction).
 .preview-toolbar {
   display: flex;
   align-items: center;

@@ -48,7 +48,7 @@ import {
   ALERTING_MESSAGE,
 } from './notification-module.model';
 
-/** Une boîte média (Normal ou Backup) — statuts indépendants. */
+/** Une boîte média (Normal ou Backup) : statuts indépendants. */
 interface MediaBox {
   key:    'normal' | 'backup';
   title:  string;   // « Normal media » / « Backup media »
@@ -83,7 +83,7 @@ export class NotificationModuleComponent {
   sortDir  = signal<'asc' | 'desc' | null>('desc');
   menuFor  = signal<string | null>(null);
 
-  // Options des filtres du bloc de recherche (statiques — proto).
+  // Options des filtres du bloc de recherche (statiques. Proto).
   readonly statusCodeOptions: SelectOption[] = [
     { value: '',          label: 'All statuses' },
     { value: 'delivered', label: 'Delivered' },

@@ -1,4 +1,4 @@
-# Versioning & Release Notes — Design Spec
+# Versioning & Release Notes: Design Spec
 
 **Date:** 2026-08-20
 **Status:** Approved for planning
@@ -8,7 +8,7 @@
 
 ## 1. Context & decision
 
-The prototype currently lists its screens in two places that have drifted apart: `IndexPage` (`/prototype`, `/review`) and `UserTestingHomePage` (`/user-testing`, curated subset). Both hardcode their own `{path, label, hint}` list — no shared source, no notion of version.
+The prototype currently lists its screens in two places that have drifted apart: `IndexPage` (`/prototype`, `/review`) and `UserTestingHomePage` (`/user-testing`, curated subset). Both hardcode their own `{path, label, hint}` list. No shared source, no notion of version.
 
 **Decision:** introduce a single canonical screen catalogue (`SCREENS`), give each screen a `major.minor.patch` version, and add a new **Release Notes** page that lists dated, categorized entries describing what changed on which screen(s). The Hub gets a 5th zone, always visible, linking to it.
 
@@ -83,9 +83,9 @@ pages/release-notes/
 
 ---
 
-## 4. Release Notes page — UI
+## 4. Release Notes page. UI
 
-Same visual language as Hub/`UserTestingHomePage` (Bricolage Grotesque title, Inter body, white cards, `#2b6bff`-family accents, radial-gradient-free flat background) — this is a meta/harness page, not a product screen, so it does not use `_semantic.scss` product tokens.
+Same visual language as Hub/`UserTestingHomePage` (Bricolage Grotesque title, Inter body, white cards, `#2b6bff`-family accents, radial-gradient-free flat background). This is a meta/harness page, not a product screen, so it does not use `_semantic.scss` product tokens.
 
 - Header: eyebrow "Changelog", title "Notes de version", lead sentence.
 - Filter row: 
@@ -108,6 +108,6 @@ No unit tests: this is static display + a pure filter predicate over an in-memor
 ## 6. Ongoing process (not code, but part of this spec)
 
 At every push that changes a screen's behavior, visuals, or copy:
-1. Add one entry to `RELEASE_NOTES` (top of the array) — date, category, affected screen path(s), a short title, a one/two-sentence description of what changed and why.
+1. Add one entry to `RELEASE_NOTES` (top of the array). Date, category, affected screen path(s), a short title, a one/two-sentence description of what changed and why.
 2. Bump the `version` of each affected `Screen` in `SCREENS` per the rule in §2.
 3. Both happen in the same commit as the change they describe.

@@ -2,13 +2,13 @@
   <div class="ds-spotlight__backdrop" (click)="onBackdrop()"></div>
 
   <!-- Filtre "goo" (metaballs) : les formes qui se rapprochent fusionnent,
-       celles qui s'écartent se pincent puis se détachent — flou + seuillage
+       celles qui s'écartent se pincent puis se détachent, flou + seuillage
        de contraste, la technique classique du liquide/verre organique. -->
   <svg class="ds-spotlight__goo-defs" aria-hidden="true">
     <defs>
       <!-- stdDeviation pilote la DISTANCE de pontage : au-delà, deux formes
            voisines restent fondues. À 14 un écart de 8px (le gap au repos entre
-           deux bulles) restait ponté — les gouttes n'auraient jamais fini
+           deux bulles) restait ponté : les gouttes n'auraient jamais fini
            SÉPARÉES. À 10, la rupture tombe vers ~12px : le col se pince
            pendant l'écartement puis casse avant la position d'arrivée.
            Le seuil du feColorMatrix (a × 24 − 10 → coupe à α ≈ 0.42) doit rester
@@ -22,7 +22,7 @@
              `feComposite operator="atop"` remettait chaque forme source (avec son
              propre bord net, son ombre portée et son backdrop-filter) PAR-DESSUS
              la silhouette fusionnée : les contours individuels se croisaient, les
-             cols et les creux étaient recouverts — le liquide ne se lisait pas.
+             cols et les creux étaient recouverts : le liquide ne se lisait pas.
              La matière est donc reconstruite ici, à partir de la seule silhouette
              fusionnée. -->
 
@@ -35,7 +35,7 @@
 
         <!-- Le seuillage pousse l'intérieur à l'opaque : on le ramène à l'alpha
              du verre. `slope` doit rester égal à l'alpha de --sp-glass-goo-bg
-             (0.80) — sinon la couche liquide ne se lit plus comme le même
+             (0.80), sinon la couche liquide ne se lit plus comme le même
              matériau que la barre et les bulles réelles. -->
         <feComponentTransfer in="goo" result="goo-glass">
           <feFuncA type="linear" slope="0.8" />
@@ -59,8 +59,8 @@
   >
     <!-- Couche liquide décorative : c'est ELLE qu'on voit pendant tout le morph
          (les vraies formes sont réduites à zéro à ce moment-là). À l'aller elle
-         fusionne les lobes dans la barre ; au retour elle joue la fission —
-         l'extrémité s'étire, une masse mère se gonfle et se détache, s'allonge
+         fusionne les lobes dans la barre ; au retour elle joue la fission.
+         L'extrémité s'étire, une masse mère se gonfle et se détache, s'allonge
          en lobes reliés, les cols se pincent puis cassent. Les cols et les
          creux ne sont pas dessinés : le filtre metaball les produit à partir de
          l'écart entre les lobes. Un lobe par bulle, dans le MÊME ORDRE
@@ -125,8 +125,8 @@
       <!-- Zone extensible. Sa HAUTEUR morphe (grid-template-rows 0fr → 1fr sur
            le panneau) et son `overflow: hidden` rogne ce qu'elle contient : le
            contenu est donc révélé par le bord qui descend, jamais par un fondu.
-           Sans ce wrapper la hauteur du panneau reste en `auto`, non animable —
-           c'était la raison d'être du fondu qu'on vient de supprimer. -->
+           Sans ce wrapper la hauteur du panneau reste en `auto`, non animable.
+           C'était la raison d'être du fondu qu'on vient de supprimer. -->
       <div class="ds-spotlight__body">
       @if (openPanel() === 'country' || closingPanel() === 'country') {
       <!-- Panneau bulle pays : morph depuis la bulle drapeau -->
@@ -237,7 +237,7 @@
     </div>
 
     <!-- Bulles de filtre : pays et champ recherché (ID / Name). Surface séparée
-         de la barre, façon Spotlight macOS — toujours visibles. Leur ORDRE doit
+         de la barre, façon Spotlight macOS. Toujours visibles. Leur ORDRE doit
          suivre celui des lobes de la couche liquide (--0 → --1) : chaque lobe
          atterrit sur la bulle de même rang, et --sp-bubbles-w compte le même
          nombre de bulles. Ajouter ou retirer une bulle ici = mettre les deux à

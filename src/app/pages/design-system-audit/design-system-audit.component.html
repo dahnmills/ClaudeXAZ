@@ -126,10 +126,10 @@
   </section>
 
   <section class="dsa__section">
-    <h2 class="dsa__section-title">Orphans — replacement candidates</h2>
+    <h2 class="dsa__section-title">Orphans and replacement candidates</h2>
     <p class="dsa__section-lead">
       For each component that's built but never adopted, is there a native pattern in the pages that could
-      adopt it? Checked CSS by CSS, not just by shape — a surface resemblance isn't enough
+      adopt it? Checked CSS by CSS, not just by shape, because a surface resemblance isn't enough
       (see Select Button / Tile).
     </p>
     <ul class="dsa__candidates">
@@ -149,7 +149,7 @@
                 <ds-button-icon type="plain" tone="default" ariaLabel="Remove"><ds-icon name="trash" [size]="16" /></ds-button-icon>
               </div>
             </div>
-            <span class="swap__caption">buyer-summary.component.html:96-126 — .bs-toolbar (native div)</span>
+            <span class="swap__caption">buyer-summary.component.html:96-126 · .bs-toolbar (native div)</span>
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
@@ -161,10 +161,10 @@
                 <ds-button-icon type="plain" tone="default" ariaLabel="Remove"><ds-icon name="trash" [size]="16" /></ds-button-icon>
               </ds-flyout>
             </div>
-            <span class="swap__caption">ds-flyout — Design System/Layout/Flyout</span>
+            <span class="swap__caption">ds-flyout · Design System/Layout/Flyout</span>
           </div>
         </div>
-        <p class="candidate__caveat">⚠ ds-flyout is a role="dialog" with a 290px min-width (visible above, wider than the compact toolbar) — built for a dropdown menu, not a hover toolbar. Needs adapting before a real swap.</p>
+        <p class="candidate__caveat">⚠ ds-flyout is a role="dialog" with a 290px min-width (visible above, wider than the compact toolbar), built for a dropdown menu, not a hover toolbar. Needs adapting before a real swap.</p>
       </li>
 
       <!-- ── Action Card: hub's .zone tile → ds-action-card ── -->
@@ -187,7 +187,7 @@
                 <span class="preview-zone__cta">Open the screens →</span>
               </a>
             </div>
-            <span class="swap__caption">hub.page.html:12-34 — .zone (native a)</span>
+            <span class="swap__caption">hub.page.html:12-34 · .zone (native a)</span>
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
@@ -199,10 +199,10 @@
                 </ds-action-card>
               </div>
             </div>
-            <span class="swap__caption">ds-action-card — Design System/Data Display/Action Card</span>
+            <span class="swap__caption">ds-action-card · Design System/Data Display/Action Card</span>
           </div>
         </div>
-        <p class="candidate__caveat">⚠ hub.page is deliberately off-DS (per-tile colors, Bricolage Grotesque font, hover-lift animation) — swapping would lose that theming unless the atom is extended.</p>
+        <p class="candidate__caveat">⚠ hub.page is deliberately off-DS (per-tile colors, Bricolage Grotesque font, hover-lift animation), so swapping would lose that theming unless the atom is extended.</p>
       </li>
 
       <!-- ── No honest candidate: the component exists, but nothing to swap it for ── -->
@@ -217,7 +217,7 @@
             <div class="swap__stage">
               <ds-toggle label="Enabled" [selected]="true" />
             </div>
-            <span class="swap__caption">ds-toggle — Design System/Data Entry/Toggle</span>
+            <span class="swap__caption">ds-toggle · Design System/Data Entry/Toggle</span>
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
@@ -244,7 +244,7 @@
                 Refine results by status, date and owner.
               </ds-popover>
             </div>
-            <span class="swap__caption">ds-popover — Design System/Feedback/Popover</span>
+            <span class="swap__caption">ds-popover · Design System/Feedback/Popover</span>
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
@@ -255,7 +255,7 @@
             <span class="swap__caption">&nbsp;</span>
           </div>
         </div>
-        <p class="candidate__desc">No panel with an arrow + header + close button found in pages/**. The closest near-miss (.nm-datefield__panel) has neither an arrow nor a header — it's a positioning wrapper for ds-date-range, not a popover.</p>
+        <p class="candidate__desc">No panel with an arrow + header + close button found in pages/**. The closest near-miss (.nm-datefield__panel) has neither an arrow nor a header. It's a positioning wrapper for ds-date-range, not a popover.</p>
       </li>
 
       <li class="candidate">
@@ -274,7 +274,7 @@
                 <ds-timeline-event title="Closed" status="neutral" [isLast]="true" />
               </ds-timeline>
             </div>
-            <span class="swap__caption">ds-timeline-event — Design System/Internals/Timeline Event</span>
+            <span class="swap__caption">ds-timeline-event · Design System/Internals/Timeline Event</span>
           </div>
           <svg class="swap__arrow" viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <div class="swap__side">
@@ -285,7 +285,7 @@
             <span class="swap__caption">&nbsp;</span>
           </div>
         </div>
-        <p class="candidate__desc">No chronological rail (dots + line + collapsible header) found. history-row.component (tag-configuration) is a flat table row, not a timeline — forcing the match would be artificial.</p>
+        <p class="candidate__desc">No chronological rail (dots + line + collapsible header) found. history-row.component (tag-configuration) is a flat table row, not a timeline, so forcing the match would be artificial.</p>
       </li>
     </ul>
   </section>

@@ -5,13 +5,13 @@ import { BURST_DURATION, CableRig, PEAK_OVERSHOOT_TIME } from './cable-rig';
 const HOLD_DURATION = 0.9; // seconds the plugs sit "connected" before unplugging
 
 /**
- * Full-screen "Qirin is down" state. No shell, no navigation, no links —
- * when the product is unavailable there is nowhere else to send the user.
+ * Full-screen "Qirin is down" state. No shell, no navigation, no links.
+ * When the product is unavailable there is nowhere else to send the user.
  *
  * The plug/cable illustration is a flat silhouette (the classic "unplugged"
  * icon language), drawn on one shared canvas so the male and female
  * connector can genuinely touch (and overlap, like a real insertion) when
- * "plugged in" — that's not achievable across two separately-laid-out
+ * "plugged in": that's not achievable across two separately-laid-out
  * elements with a real CSS gap between them.
  */
 @Component({
@@ -89,8 +89,8 @@ export class MaintenanceComponent implements AfterViewInit, OnDestroy {
     this.femaleRig.step(dt);
     this.render();
 
-    // Keep looping indefinitely (even once settled, the redraw is cheap) —
-    // stopping early risks the canvas going blank on any edge case that
+    // Keep looping indefinitely (even once settled, the redraw is cheap).
+    // Stopping early risks the canvas going blank on any edge case that
     // would otherwise have triggered a redraw (tab visibility changes,
     // zoom, etc).
     this.rafId = requestAnimationFrame((t) => this.loop(t));
@@ -102,11 +102,11 @@ export class MaintenanceComponent implements AfterViewInit, OnDestroy {
     if (!ctx || !this.maleRig || !this.femaleRig) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Male first, female second — a real inserted prong is hidden inside
+    // Male first, female second. A real inserted prong is hidden inside
     // the socket's housing, not floating on top of it. Drawing the female
     // body last covers whatever part of the male's prong falls inside her
     // footprint; only the short stretch bridging the gap stays visible.
-    // As they pull apart, more of the prong is uncovered on its own —
+    // As they pull apart, more of the prong is uncovered on its own, so
     // "emerging from the socket" falls out of the layering for free.
     this.maleRig.draw();
     this.femaleRig.draw();
@@ -132,7 +132,7 @@ export class MaintenanceComponent implements AfterViewInit, OnDestroy {
     this.render();
   }
 
-  /** Canvas can't resolve `var(--token)` on its own — read the computed value once. */
+  /** Canvas can't resolve `var(--token)` on its own. Read the computed value once. */
   private resolveCssColors(): { blueA400: string; blueA600: string; blueA800: string; background: string } {
     const probe = document.createElement('span');
     probe.style.position = 'absolute';

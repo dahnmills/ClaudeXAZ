@@ -1,13 +1,13 @@
 import { Component, computed, input } from '@angular/core';
 
 /**
- * Atome — représentation visuelle d'UNE touche du clavier.
+ * Atome : représentation visuelle d'UNE touche du clavier.
  *
  * Rendu en `<kbd>`, l'élément sémantique de la saisie clavier : un lecteur
  * d'écran annonce « touche M » et non la lettre isolée au milieu d'une phrase.
  *
  * Purement présentationnel : le composant ignore l'OS et le raccourci auquel il
- * appartient — l'appelant lui passe un libellé DÉJÀ résolu (« Alt » sur
+ * appartient : l'appelant lui passe un libellé DÉJÀ résolu (« Alt » sur
  * Windows, « ⌥ » sur macOS). Voir `keyLabel()` dans shortcuts.data.ts.
  *
  * `tone="accent"` porte l'état « déjà utilisé » du panneau de raccourcis : une

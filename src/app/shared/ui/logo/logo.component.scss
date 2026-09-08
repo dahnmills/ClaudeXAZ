@@ -3,11 +3,11 @@
 // Source : Figma > -Components--Layout > node 2290:9763
 //
 // Fidélité Figma :
-//   • Logo mark 32×32px — SVG Allianz exact (fill="currentColor")
+//   • Logo mark 32×32px: SVG Allianz exact (fill="currentColor")
 //   • Divider 1px × 40px
 //   • "Qirin" : Headline Small 24px / 400 / lh 32px / ls 0.2px
 //   • Default  : bleu brand (#003781)
-//   • Reversed : blanc (sur fond sombre — header)
+//   • Reversed : blanc (sur fond sombre, header)
 // =============================================================
 
 :host {
@@ -26,7 +26,7 @@
     }
   }
 
-  // ── Reversed (sur fond sombre — header) ───────────────────
+  // ── Reversed (sur fond sombre : header) ───────────────────
   &.ds-logo--reversed {
     color: var(--semantic-color-interactive-text-neutral-default); // white
 

@@ -2,13 +2,13 @@
 // SEMANTIC TOKENS
 // Source : Figma > Tokens > Collection "Semantic"
 // Tous les tokens sont des alias vers Foundation.
-// NE PAS ÉDITER MANUELLEMENT — source de vérité : Figma
+// NE PAS ÉDITER MANUELLEMENT : source de vérité : Figma
 // =============================================================
 
 :root {
 
   // ===========================================================
-  // COLOR — INTERACTIVE — BACKGROUND
+  // COLOR / INTERACTIVE / BACKGROUND
   // ===========================================================
 
   // Strong / Default
@@ -91,7 +91,7 @@
 
 
   // ===========================================================
-  // COLOR — INTERACTIVE — TEXT
+  // COLOR / INTERACTIVE / TEXT
   // ===========================================================
 
   // Strong
@@ -174,7 +174,7 @@
 
 
   // ===========================================================
-  // COLOR — INTERACTIVE — BORDER
+  // COLOR / INTERACTIVE / BORDER
   // ===========================================================
 
   // Strong
@@ -260,7 +260,7 @@
 
 
   // ===========================================================
-  // COLOR — INTERACTIVE — ICON
+  // COLOR / INTERACTIVE / ICON
   // ===========================================================
 
   // Strong
@@ -343,10 +343,10 @@
 
 
   // ===========================================================
-  // COLOR — STATIC — BACKGROUND
+  // COLOR / STATIC / BACKGROUND
   // ===========================================================
 
-  // Brand (BlueA/800 — non aliasé dans Figma)
+  // Brand (BlueA/800 : non aliasé dans Figma)
   --semantic-color-static-background-brand:                        var(--foundation-color-blue-a-800);
 
   // Main
@@ -404,7 +404,7 @@
 
 
   // ===========================================================
-  // COLOR — STATIC — TEXT
+  // COLOR / STATIC / TEXT
   // ===========================================================
 
   --semantic-color-static-text-brand:                              var(--foundation-color-blue-a-800);
@@ -439,7 +439,7 @@
 
 
   // ===========================================================
-  // COLOR — STATIC — BORDER
+  // COLOR / STATIC / BORDER
   // ===========================================================
 
   --semantic-color-static-border-brand:                            var(--foundation-color-blue-a-800);
@@ -468,7 +468,7 @@
 
 
   // ===========================================================
-  // COLOR — STATIC — ICON
+  // COLOR / STATIC / ICON
   // ===========================================================
 
   --semantic-color-static-icon-brand:                              var(--foundation-color-blue-a-800);
@@ -497,7 +497,7 @@
 
 
   // ===========================================================
-  // MEASUREMENT — OPACITY
+  // MEASUREMENT / OPACITY
   // ===========================================================
 
   --semantic-measurement-opacity-default:     var(--foundation-opacity-100);
@@ -507,7 +507,7 @@
 
 
   // ===========================================================
-  // MEASUREMENT — SIZING
+  // MEASUREMENT / SIZING
   // ===========================================================
 
   --semantic-measurement-sizing-none: var(--foundation-sizing-0);
@@ -522,7 +522,7 @@
 
 
   // ===========================================================
-  // MEASUREMENT — SPACING
+  // MEASUREMENT / SPACING
   // ===========================================================
 
   --semantic-measurement-spacing-none: var(--foundation-spacing-0);
@@ -538,7 +538,7 @@
 
 
   // ===========================================================
-  // BORDER — RADIUS
+  // BORDER / RADIUS
   // ===========================================================
 
   --semantic-border-radius-none:  var(--foundation-radius-0);
@@ -551,7 +551,7 @@
 
 
   // ===========================================================
-  // BORDER — SIZE
+  // BORDER / SIZE
   // ===========================================================
 
   --semantic-border-size-none: var(--foundation-sizing-0);
@@ -561,14 +561,14 @@
 
 
   // ===========================================================
-  // FONT — FAMILY
+  // FONT / FAMILY
   // ===========================================================
 
   --semantic-font-family: var(--foundation-font-family);
 
 
   // ===========================================================
-  // FONT — DISPLAY
+  // FONT / DISPLAY
   // ===========================================================
 
   --semantic-font-display-size-s:         var(--foundation-font-size-32);
@@ -588,7 +588,7 @@
 
 
   // ===========================================================
-  // FONT — TITLE
+  // FONT / TITLE
   // ===========================================================
 
   --semantic-font-title-size-xxs:         var(--foundation-font-size-16);
@@ -611,7 +611,7 @@
 
 
   // ===========================================================
-  // FONT — TEXT STYLE (body / UI)
+  // FONT / TEXT STYLE (body / UI)
   // ===========================================================
 
   --semantic-font-text-style-size-s:      var(--foundation-font-size-12);

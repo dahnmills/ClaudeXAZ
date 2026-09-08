@@ -3,7 +3,7 @@ import { Component, computed, input, output } from '@angular/core';
 export type ToggleState = 'Default' | 'Hover' | 'Active' | 'Disabled';
 
 /**
- * Toggle (switch) — track 40×20, knob 16×16.
+ * Toggle (switch): track 40×20, knob 16×16.
  *
  * États Figma : Default, Hover, Active, Disabled
  * Propriétés   : selected, error, disabled, label

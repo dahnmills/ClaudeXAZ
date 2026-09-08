@@ -52,7 +52,7 @@ export class ButtonSplitComponent {
 
   @HostListener('document:click', ['$event'])
   onDocClick(ev: MouseEvent): void {
-    // Use composedPath (captured at dispatch time), not ev.target — the
+    // Use composedPath (captured at dispatch time), not ev.target, the
     // toggle's own click flips menuOpen synchronously, which re-renders the
     // chevron icon's inner SVG ([innerHTML]) before this document-level
     // handler runs; ev.target can then point at an already-detached node,

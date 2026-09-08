@@ -72,7 +72,7 @@ export const SelectionAll: Story = {
 };
 
 export const SelectionIndeterminate: Story = {
-  name: 'Selection — indeterminate',
+  name: 'Selection: indeterminate',
   args: { type: 'selection', allSelected: false, allIndeterminate: true },
   render: (args) => ({
     props: args,

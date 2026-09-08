@@ -8,8 +8,8 @@ product
 
 Two B2B populations inside Allianz Trade, both expert and data-fluent:
 
-- **Credit analysts** — search companies, inspect risk / grade / exposure, read dense buyer dossiers. Their context is high-volume, time-pressured triage where scanning speed and information density matter.
-- **Country admins / configurators** — set up and maintain the automation rules (Task After Grading: per-country rule sets, freshness thresholds, status-exclusion lists). Their job is correctness and auditability, not speed: a misconfigured rule mis-grades real companies.
+- **Credit analysts**: search companies, inspect risk / grade / exposure, read dense buyer dossiers. Their context is high-volume, time-pressured triage where scanning speed and information density matter.
+- **Country admins / configurators**: set up and maintain the automation rules (Task After Grading: per-country rule sets, freshness thresholds, status-exclusion lists). Their job is correctness and auditability, not speed: a misconfigured rule mis-grades real companies.
 
 Most screens serve both: consultation (read a dossier, browse results) and configuration (shape the rules that drive auto-grading). The UI must stay legible under data density for analysts while staying unambiguous and reversible for admins.
 
@@ -19,14 +19,14 @@ Qirin is the credit-assessment workspace for Allianz Trade. It lets analysts fin
 
 ## Brand Personality
 
-Sober, reliable, dense. The voice of a serious financial tool: it earns confidence through rigor and clarity, not decoration. Three words: **trustworthy, precise, efficient.** Information density is a feature, not a flaw, but density never means clutter — hierarchy and whitespace do the heavy lifting so a dense screen still scans in one pass. Modern where it helps (clean spacing, crisp hierarchy, restrained micro-interactions), never flashy.
+Sober, reliable, dense. The voice of a serious financial tool: it earns confidence through rigor and clarity, not decoration. Three words: **trustworthy, precise, efficient.** Information density is a feature, not a flaw, but density never means clutter. Hierarchy and whitespace do the heavy lifting so a dense screen still scans in one pass. Modern where it helps (clean spacing, crisp hierarchy, restrained micro-interactions), never flashy.
 
 ## Anti-references
 
-- **Generic AI SaaS** — cream/sand body backgrounds, decorative gradients, gradient text, the hero-metric template, endless identical card grids, an uppercase tracked eyebrow above every section. None of it.
-- **Visual overload** — glassmorphism, heavy shadows, non-functional bright colors, gratuitous animation. Every visual choice must serve reading or action.
-- **Austere unreadable spreadsheets** — the opposite failure: gray-on-gray dense grids with no hierarchy, everything the same size, zero breathing room. Density without hierarchy is just noise.
-- **Consumer / playful** — pastels, mascot illustrations, casual tone, emoji. This is a professional B2B credit tool.
+- **Generic AI SaaS**: cream/sand body backgrounds, decorative gradients, gradient text, the hero-metric template, endless identical card grids, an uppercase tracked eyebrow above every section. None of it.
+- **Visual overload**: glassmorphism, heavy shadows, non-functional bright colors, gratuitous animation. Every visual choice must serve reading or action.
+- **Austere unreadable spreadsheets** : the opposite failure: gray-on-gray dense grids with no hierarchy, everything the same size, zero breathing room. Density without hierarchy is just noise.
+- **Consumer / playful**: pastels, mascot illustrations, casual tone, emoji. This is a professional B2B credit tool.
 
 ## Design Principles
 
@@ -34,7 +34,7 @@ Sober, reliable, dense. The voice of a serious financial tool: it earns confiden
 - **One view, one job.** Each page/tab serves a single objective; secondary actions live in modals or drawers, not crammed into the primary surface.
 - **Status is never color-only.** Grades, decisions, and risk always carry a label or icon alongside their color, so meaning survives color-blindness and grayscale.
 - **Configuration must be legible and reversible.** A country admin reads what a rule does at a glance and changes it without fear; nothing critical is hidden or one-click-irreversible.
-- **Tokens are the source of truth.** Every color, space, and size flows from the Figma-backed token system (Foundation → Semantic). No hardcoded values, no one-off styles — consistency cascades from the design system.
+- **Tokens are the source of truth.** Every color, space, and size flows from the Figma-backed token system (Foundation → Semantic). No hardcoded values, no one-off styles. Consistency cascades from the design system.
 
 ## Accessibility & Inclusion
 

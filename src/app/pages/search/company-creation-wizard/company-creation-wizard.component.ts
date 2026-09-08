@@ -64,7 +64,7 @@ export class CompanyCreationWizardComponent {
     this.completedSteps.update(c => c.includes(i) ? c : [...c, i]);
   }
 
-  /** Plus haute étape jamais atteinte — toute étape ≤ maxReached est navigable. */
+  /** Plus haute étape jamais atteinte : toute étape ≤ maxReached est navigable. */
   maxReached = signal<number>(0);
 
   // ── État de vérification / matching ───────────────────────────────────

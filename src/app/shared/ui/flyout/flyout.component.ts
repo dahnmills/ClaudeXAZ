@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 /**
- * Panneau Flyout — conteneur arrondi avec ombre.
+ * Panneau Flyout : conteneur arrondi avec ombre.
  * Le positionnement (ancre, top/left, etc.) est géré par le consommateur.
  * Le contenu se compose de <ds-flyout-section> + <ds-flyout-item>.
  */

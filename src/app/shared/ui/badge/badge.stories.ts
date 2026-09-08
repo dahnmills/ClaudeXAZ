@@ -25,7 +25,7 @@ export const Default: Story = {
 };
 
 export const LightStatuses: Story = {
-  name: 'Light — tous les statuts',
+  name: 'Light : tous les statuts',
   render: () => ({
     template: `
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
@@ -40,7 +40,7 @@ export const LightStatuses: Story = {
 };
 
 export const StrongStatuses: Story = {
-  name: 'Strong — tous les statuts',
+  name: 'Strong : tous les statuts',
   render: () => ({
     template: `
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">

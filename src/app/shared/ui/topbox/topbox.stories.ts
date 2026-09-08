@@ -27,7 +27,7 @@ export default meta;
 type Story = StoryObj<TopboxComponent>;
 
 export const BuyerFull: Story = {
-  name: 'Buyer — full',
+  name: 'Buyer: full',
   args: {
     dataType:    'buyer',
     icon:        'buyers',
@@ -60,7 +60,7 @@ export const BuyerFull: Story = {
 };
 
 export const PolicyMinimal: Story = {
-  name: 'Policy — minimal',
+  name: 'Policy: minimal',
   args: {
     dataType:    'policy',
     icon:        'shield',
@@ -89,7 +89,7 @@ export const PolicyMinimal: Story = {
 };
 
 export const ChevronCollapsed: Story = {
-  name: 'Chevron — collapsed',
+  name: 'Chevron: collapsed',
   args: {
     dataType:    'buyer',
     icon:        'buyers',
@@ -124,7 +124,7 @@ export const ChevronCollapsed: Story = {
 };
 
 export const ChevronExpanded: Story = {
-  name: 'Chevron — expanded',
+  name: 'Chevron: expanded',
   args: {
     dataType:    'buyer',
     icon:        'buyers',
@@ -159,7 +159,7 @@ export const ChevronExpanded: Story = {
 };
 
 export const NoFlags: Story = {
-  name: 'Buyer — no flags',
+  name: 'Buyer: no flags',
   args: {
     dataType:    'buyer',
     icon:        'buyers',
