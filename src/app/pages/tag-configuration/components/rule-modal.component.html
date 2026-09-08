@@ -4,17 +4,39 @@
   size="large"
   [showBack]="false"
   contentHeight="640px"
+  [suspended]="confirmCloseOpen()"
   (closed)="requestClose()">
 
-  <!-- Grey outer panel + white cards per group — same pattern as the company
+  <!-- Grey outer panel + white cards per group. Same pattern as the company
        creation/edit wizards (wizard__panel / __group / __card), so criteria
        groups read as distinct sections instead of blending into one page. -->
   <div class="rm-panel">
 
+    <!-- L'ordre d'évaluation fait partie de la règle : la première qui
+         correspond décide. Donc un champ, en tête, et pas seulement un
+         glisser-déposer dans la liste (inopérant dès qu'un filtre est posé). -->
+    <div class="rm-group">
+      <span class="rm-group__title">Evaluation order</span>
+      <div class="rm-card">
+        <div class="rm-grid">
+          <!-- `focusout` et pas `blur` : blur ne remonte pas depuis l'input
+               interne de ds-input-text. -->
+          <div class="rm-field rm-field--position" (focusout)="onPositionBlur()">
+            <ds-input-text
+              label="Position"
+              inputmode="numeric"
+              [value]="position()"
+              (valueChange)="onPositionInput($event)" />
+            <span class="rm-hint">{{ positionHint() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="rm-group">
       <span class="rm-group__title">Base criteria</span>
       <div class="rm-card">
-        <div class="rm-row rm-row--3">
+        <div class="rm-grid">
           <ds-tag-filter-chip variant="field" label="Sensitivity" [options]="SENSITIVITY_OPTIONS" [selected]="sensitivity()" (selectedChange)="sensitivity.set($event)" />
           <fieldset class="rm-field rm-fieldset">
             <legend class="rm-label">Exposure</legend>
@@ -32,17 +54,19 @@
     <div class="rm-group">
       <span class="rm-group__title">Current valid grade</span>
       <div class="rm-card">
-        <!-- One concept, 5 facets — kept on their own row instead of split
+        <!-- One concept, 5 facets. Kept on their own row instead of split
              across an unrelated 3-column grid. -->
-        <div class="rm-row rm-row--cvg">
+        <div class="rm-grid">
           <ds-tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="cvgValue()" (selectedChange)="cvgValue.set($event)" />
           <ds-tag-filter-chip variant="field" label="Type" [options]="GRADE_TYPE_OPTIONS" [selected]="cvgType()" (selectedChange)="cvgType.set($event)" />
           <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="cvgFreshness()" (selectionChange)="cvgFreshness.set($event)" />
-          <fieldset class="rm-field rm-fieldset">
-            <legend class="rm-label">Transferred</legend>
-            <ds-segmented-control [options]="TRANSFERRED_OPTIONS" [selected]="transferred()" (selectedChange)="transferred.set($event)" />
-          </fieldset>
-          <ds-select label="New autograde vs current valid grade" [options]="COMPARISON_OPTIONS" [value]="newVsCvg()" (selectionChange)="newVsCvg.set($event)" />
+          <!-- Valeur unique parmi trois, comme les autres listes de cette
+               rangée : même mécanique, même chrome. -->
+          <ds-select label="Transferred" [options]="TRANSFERRED_OPTIONS" [value]="transferred()" (selectionChange)="transferred.set($event)" />
+          <!-- Deux colonnes : le libellé complet tient alors sur une ligne. Le
+               raccourcir en « vs new AG » inverserait le sujet de la comparaison
+               (c'est le nouvel autograde qui monte ou descend, pas le CVG). -->
+          <ds-select class="rm-grid__wide" label="New autograde vs current valid grade" [options]="COMPARISON_OPTIONS" [value]="newVsCvg()" (selectionChange)="newVsCvg.set($event)" />
         </div>
       </div>
     </div>
@@ -50,10 +74,10 @@
     <div class="rm-group">
       <span class="rm-group__title">Last checked autograde</span>
       <div class="rm-card">
-        <div class="rm-row rm-row--3">
+        <div class="rm-grid">
           <ds-tag-filter-chip variant="field" label="Value" [options]="GRADE_OPTIONS" [selected]="lastAgValue()" (selectedChange)="lastAgValue.set($event)" />
           <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="lastAgFreshness()" (selectionChange)="lastAgFreshness.set($event)" />
-          <ds-select label="New autograde vs last checked autograde" [options]="COMPARISON_OPTIONS" [value]="newVsLastAg()" (selectionChange)="newVsLastAg.set($event)" />
+          <ds-select class="rm-grid__wide" label="New autograde vs last checked autograde" [options]="COMPARISON_OPTIONS" [value]="newVsLastAg()" (selectionChange)="newVsLastAg.set($event)" />
         </div>
       </div>
     </div>
@@ -61,9 +85,9 @@
     <div class="rm-group">
       <span class="rm-group__title">Company profile</span>
       <div class="rm-card">
-        <div class="rm-row rm-row--3">
+        <div class="rm-grid">
           <ds-tag-filter-chip variant="field" label="NACE" [options]="NACE_OPTIONS" [selected]="nace()" (selectedChange)="nace.set($event)" />
-          <ds-tag-filter-chip variant="field" label="Legal form" [options]="LEGAL_FORM_OPTIONS" [selected]="legalForm()" (selectedChange)="legalForm.set($event)" />
+          <ds-tag-filter-chip variant="field" label="Legal form" [options]="legalFormOptions()" [selected]="legalForm()" (selectedChange)="legalForm.set($event)" />
           <ds-tag-filter-chip variant="field" label="Company role" [options]="COMPANY_ROLE_OPTIONS" [selected]="companyRole()" (selectedChange)="companyRole.set($event)" />
         </div>
       </div>
@@ -93,6 +117,8 @@
   </div>
 </ds-modal>
 
+<!-- La modale au-dessus s'efface pendant cette question (`suspended`) et revient
+     telle quelle si on garde l'édition : deux couches empilées, jamais. -->
 <ds-confirm-dialog
   [open]="confirmCloseOpen()" tone="danger" title="Discard changes?"
   confirmLabel="Discard" cancelLabel="Keep editing"

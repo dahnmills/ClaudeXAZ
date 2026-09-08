@@ -30,6 +30,9 @@ export interface PropertyRow {
   labelFlag?: FlagCode;
   value:      PropertyValue;
   showEmptyPlaceholder?: boolean;
+  /** Valeur sans contrainte (« Any », « - ») : même poids visuel qu'un vide,
+   *  pour ne pas la faire lire comme une vraie valeur posée. */
+  muted?:     boolean;
 }
 
 export interface PropertySection {

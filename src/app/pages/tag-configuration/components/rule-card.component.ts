@@ -5,25 +5,25 @@ import { ButtonIconComponent } from '../../../shared/ui/button-icon/button-icon.
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import { FlyoutMenuComponent } from '../../../shared/ui/flyout-menu/flyout-menu.component';
 import { FlyoutMenuItemComponent } from '../../../shared/ui/flyout-menu/flyout-menu-item.component';
-import { PropertiesPanelComponent, PropertySection } from '../../../shared/ui/properties-panel/properties-panel.component';
+import { PropertiesPanelComponent, PropertyRow, PropertySection } from '../../../shared/ui/properties-panel/properties-panel.component';
 import { TagRule, DECISION_BADGE } from '../tag-configuration.models';
 import * as F from '../criteria-format';
 
 interface SummaryField { label: string; value: string; isAny: boolean; }
 
 /**
- * Rule card — collapsible row for one auto-grading rule (P4 list).
+ * Rule card: collapsible row for one auto-grading rule (P4 list).
  * Header always renders 7 fill-width columns (Sensitivity, Exposure, New
  * autograde, Last checked autograde, Current valid grade, Valid grade type,
- * Valid grade freshness) matching the BN's order-of-importance — label above
+ * Valid grade freshness) matching the BN's order-of-importance, label above
  * / bold value below. An "Any" value is muted (isAny flag) so it doesn't
  * compete with rules that actually constrain that criterion. Body (expanded)
  * adds the remaining criteria the same way.
  *
- * `mode="view"` (read-only, default page state): single "Valid"/"N/C" status
- * badge, chevron only — no drag handle, no 3-dot menu, nothing editable.
- * `mode="edit"` (after "Edit rules"): drag handle for reorder, both status +
- * decision affordances, 3-dot menu (Edit/Move/Delete).
+ * `mode="view"` (read-only, default page state): decision badge and chevron
+ * only: no drag handle, no 3-dot menu, nothing editable.
+ * `mode="edit"` (after "Edit rules"): drag handle for reorder, 3-dot menu
+ * (Edit/Move/Delete).
  */
 @Component({
   selector: 'tag-rule-card',
@@ -39,8 +39,10 @@ export class RuleCardComponent {
   currency = input<string>('EUR');
   expanded = input<boolean>(false);
   mode     = input<'view' | 'edit'>('view');
-  /** % of tested volume this rule matched — shown after a "Test rules" run (BN AZTQIRIN-56240). */
-  volume   = input<number | null>(null);
+  /** Formes juridiques du pays courant. Une forme absente de cette liste vient
+   *  d'un set copié d'un autre pays : on la garde (la retirer élargirait la
+   *  règle) mais on la signale. Liste vide = pas de contrôle. */
+  knownLegalForms = input<string[]>([]);
 
   edit     = output<void>();
   remove   = output<void>();
@@ -50,9 +52,6 @@ export class RuleCardComponent {
 
   menuOpen = signal(false);
 
-  statusBadge = computed(() => this.rule().status === 'Valid'
-    ? { label: 'Valid', status: 'info' as const }
-    : { label: 'N/C',   status: 'neutral' as const });
   decisionBadge = computed(() => DECISION_BADGE[this.rule().decision]);
   c = computed(() => this.rule().criteria);
 
@@ -70,36 +69,61 @@ export class RuleCardComponent {
     ];
   });
 
-  // An explicit aria-label on the row overrides its accessible name entirely —
-  // without this, screen-reader users would hear only "Rule N, button" and
+  // An explicit aria-label on the row overrides its accessible name entirely.
+  // Without this, screen-reader users would hear only "Rule N, button" and
   // none of the actual criteria/decision/status the row displays.
   ariaLabel = computed(() => {
     const rows = this.summaryRows().map(r => `${r.label}: ${r.value}`).join(', ');
-    return `Rule ${this.rule().position}. ${rows}. Decision: ${this.decisionBadge().label}. Status: ${this.statusBadge().label}.`;
+    return `Rule ${this.rule().position}. ${rows}. Decision: ${this.decisionBadge().label}.`;
+  });
+
+  /** Formes juridiques étrangères au pays : conservées, marquées. */
+  unknownLegalForms = computed<string[]>(() => {
+    const known = this.knownLegalForms();
+    const forms = this.c().legalForm;
+    if (!known.length || !forms?.length) return [];
+    return forms.filter(f => !known.includes(f));
+  });
+
+  private legalFormRow = computed<PropertyRow>(() => {
+    const forms = this.c().legalForm;
+    const unknown = this.unknownLegalForms();
+    if (!forms?.length) return { label: 'Legal form', value: 'Any', muted: true };
+    if (!unknown.length) return { label: 'Legal form', value: forms.join(', ') };
+    return {
+      label: 'Legal form',
+      labelIcon: 'warning-triangle',
+      value: {
+        kind: 'tags',
+        tags: forms.map(f => ({ label: f, tone: unknown.includes(f) ? 'warning' as const : 'neutral' as const })),
+      },
+    };
   });
 
   /**
    * ds-properties-panel maps each section to one grid column (see admin-data
-   * usage) — 3 sections side by side matching the create/edit modal's own
+   * usage): 3 sections side by side matching the create/edit modal's own
    * card groups (Current valid grade / Last checked autograde / Other). Type
    * and Freshness for the current valid grade now live in the header summary
    * (promoted there), so this section doesn't repeat them.
    */
   detailSections = computed<PropertySection[]>(() => {
     const c = this.c();
+    // `muted` reprend, en vue dépliée, l'atténuation déjà appliquée dans
+    // l'en-tête replié : un « Any » n'est pas une valeur posée.
     return [
       { title: 'Current valid grade', rows: [
-        { label: 'Transferred',                     value: F.fmtTransferred(c.transferred) },
-        { label: 'New autograde vs current valid grade', value: F.fmtComparison(c.newVsCvg) },
+        { label: 'Transferred',                          value: F.fmtTransferred(c.transferred), muted: F.isAny(c.transferred) },
+        { label: 'New autograde vs current valid grade', value: F.fmtComparison(c.newVsCvg),     muted: F.isAny(c.newVsCvg) },
       ] },
       { title: 'Last checked autograde', rows: [
-        { label: 'Freshness',                                value: F.fmtFreshness(c.lastAgFreshness) },
-        { label: 'New autograde vs last checked autograde',  value: F.fmtComparison(c.newVsLastAg) },
+        { label: 'Freshness',                                value: F.fmtFreshness(c.lastAgFreshness), muted: F.isAny(c.lastAgFreshness) },
+        { label: 'New autograde vs last checked autograde',  value: F.fmtComparison(c.newVsLastAg),    muted: F.isAny(c.newVsLastAg) },
       ] },
       { title: 'Other', rows: [
-        { label: 'NACE',         value: F.fmtList(c.nace) },
-        { label: 'Legal form',   value: F.fmtList(c.legalForm) },
-        { label: 'Company role', value: F.fmtList(c.companyRole) },
+        { label: 'NACE',         value: F.fmtList(c.nace),        muted: F.isAny(c.nace) },
+        this.legalFormRow(),
+        { label: 'Company role', value: F.fmtList(c.companyRole), muted: F.isAny(c.companyRole) },
       ] },
     ];
   });

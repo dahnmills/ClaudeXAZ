@@ -9,30 +9,29 @@
         <ds-crumb label="TAG Configuration" [currentPage]="true" />
       }
     </ds-breadcrumbs>
+
+    <!-- Titre nu, comme partout ailleurs : ni sous-titre, ni badge accroché au
+         titre. Ce qu'on regarde se dit dans la notice au-dessus de la liste. -->
     <ds-page-title slot="title" title="Task After Grading Configuration" />
+
     @if (mode() === 'view') {
       <div slot="tabs" class="tag-config__tabs">
-        <ds-tab [selected]="activeTab() === 'configuration'" (clicked)="activeTab.set('configuration')">Configuration</ds-tab>
-        <ds-tab [selected]="activeTab() === 'history'" (clicked)="activeTab.set('history')">History</ds-tab>
+        <ds-tab [selected]="activeTab() === 'configuration'" (clicked)="onTabChange('configuration')">Configuration</ds-tab>
+        <ds-tab [selected]="activeTab() === 'history'" (clicked)="onTabChange('history')">History</ds-tab>
       </div>
     }
   </ds-page-header>
 
-  <!-- Only one persistent snackbar can occupy this slot at a time — test
-       status takes priority over the generic draft-mode message since it's
-       the more specific, time-sensitive state. -->
-  @if (testState() === 'running') {
-    <ds-snackbar class="tag-config__draft-snackbar" text="Rules are being tested. Leaving will not stop the test">
-      <ds-link slot="action" tone="reversed" (click)="stopTest(); $event.preventDefault()">Stop</ds-link>
-      <ds-link slot="action" tone="reversed" (click)="$event.preventDefault()">Leave</ds-link>
-    </ds-snackbar>
-  } @else if (testState() === 'done') {
-    <ds-snackbar class="tag-config__draft-snackbar" text="Test have been done successfully">
-      <ds-link slot="action" tone="reversed" (click)="dismissTestDone(); $event.preventDefault()">Leave</ds-link>
-    </ds-snackbar>
-  } @else if (mode() === 'edit') {
-    <ds-snackbar class="tag-config__draft-snackbar" text="Draft mode: your work is automatically saved">
-      <ds-link slot="action" tone="reversed" (click)="exitEdit(); $event.preventDefault()">Leave</ds-link>
+  <!-- Le bandeau dit l'état du brouillon et porte ses sorties. « Save draft »
+       reste dans la barre d'actions : la même action à deux endroits, c'est un
+       de trop. « Delete draft » est ici parce qu'on édite ce brouillon, il n'a
+       rien à faire sur la page principale, qui montre la version active. -->
+  @if (mode() === 'edit') {
+    <ds-snackbar class="tag-config__draft-snackbar" [text]="draftBannerText()">
+      @if (hasDraft()) {
+        <ds-link slot="action" tone="reversed" (click)="requestDeleteDraft(); $event.preventDefault()">Delete draft</ds-link>
+      }
+      <ds-link slot="action" tone="reversed" (click)="leaveEdit(); $event.preventDefault()">Leave</ds-link>
     </ds-snackbar>
   }
 
@@ -40,36 +39,55 @@
     <div class="tag-config">
       <!-- Toolbar -->
       <div class="tag-config__toolbar">
-        <ds-select class="tag-config__country" [options]="countryOptions" [value]="country()" (selectionChange)="onCountryChange($event)" />
+        <!-- Changer de pays en cours d'édition passe par la même garde que
+             quitter : c'est quitter. -->
+        <ds-select class="tag-config__country" [options]="countryOptions" [(value)]="countryValue" (selectionChange)="onCountryChange($event)" />
 
+        <!-- Même échelle que le groupe de droite : le plus appuyé des deux ferme
+             le groupe, le tertiary le précède. Un secondary en tête de ligne
+             donnerait le poids au mauvais bout. -->
         @if (hasRules()) {
-          <ds-button type="secondary" (clicked)="openDrawer()">
-            Filter@if (activeFilterCount() > 0) { ({{ activeFilterCount() }}) }
-          </ds-button>
           <ds-button type="tertiary" (clicked)="toggleExpandAll()">
             {{ expandedAll() ? 'Collapse all' : 'Expand all' }}
             <ds-icon slot="icon-right" [name]="expandedAll() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+          </ds-button>
+          <ds-button type="secondary" (clicked)="openDrawer()">
+            Filter@if (activeFilterCount() > 0) { ({{ activeFilterCount() }}) }
           </ds-button>
         }
 
         <span class="tag-config__spacer"></span>
 
-        @if (mode() === 'view') {
-          <ds-button type="tertiary" [disabled]="testState() === 'running' || isReadOnly()" (clicked)="compareOpen.set(true)">Compare version</ds-button>
+        <!-- Les actions se lisent de droite à gauche, du primary au tertiary :
+             l'action qui fait avancer le travail ferme la ligne, et rien de plus
+             appuyé qu'un tertiary ne vient après (à gauche de) l'échelle. -->
 
+        <!-- Export : ni le mode ni le droit d'écrire n'y changent quelque chose.
+             En mot et pas en icône seule. Une icône orpheline en secondary était
+             aussi ce qui cassait l'ordre. -->
+        <ds-button type="tertiary" [disabled]="!hasRules()" (clicked)="exportCurrent()">
+          <ds-icon slot="icon-left" name="download" [size]="16" />
+          Export
+        </ds-button>
+
+        @if (mode() === 'view') {
+          <!-- On regarde la version active : la seule action d'édition possible
+               est de repartir d'elle. Si un brouillon existe, il est prioritaire.
+               Le bouton le dit au lieu de disparaître. -->
           @if (hasRules()) {
-            <ds-button type="secondary" [disabled]="isReadOnly()" (clicked)="enterEdit()">Edit rules</ds-button>
+            <span class="tag-config__guarded" [dsTooltip]="editBlockedReason()" [attr.tabindex]="editBlockedReason() ? 0 : null">
+              <ds-button type="secondary" [disabled]="!!editBlockedReason()" (clicked)="editRules()">Edit rules</ds-button>
+            </span>
           }
 
-          <ds-button type="primary" [disabled]="isReadOnly()" (clicked)="newSetChoiceOpen.set(true)">Create new set</ds-button>
+          <span class="tag-config__guarded" [dsTooltip]="newSetBlockedReason()" [attr.tabindex]="newSetBlockedReason() ? 0 : null">
+            <ds-button type="primary" [disabled]="!!newSetBlockedReason()" (clicked)="newSetChoiceOpen.set(true)">Create new set</ds-button>
+          </span>
         } @else {
-          <ds-button type="tertiary" [disabled]="testState() === 'running'" (clicked)="startTest()">
-            <ds-icon slot="icon-left" name="play" [size]="16" />
-            Test rules
-          </ds-button>
-
+          <!-- Fraîcheur et TRANS-NA-EXCL sont des valeurs du set, pas des
+               réglages de la page : le menu porte leur nom, pas « Settings ». -->
           <div class="tag-config__settings-menu">
-            <ds-standalone-dropdown icon="settings" label="Settings" tone="default" (clicked)="settingsMenuOpen.set(!settingsMenuOpen())" />
+            <ds-standalone-dropdown icon="settings" label="Set parameters" tone="default" (clicked)="settingsMenuOpen.set(!settingsMenuOpen())" />
             @if (settingsMenuOpen()) {
               <ds-flyout-menu class="tag-config__settings-flyout">
                 <ds-flyout-menu-item label="Edit freshness" (clicked)="settingsMenuOpen.set(false); freshnessOpen.set(true)" />
@@ -78,6 +96,10 @@
             }
           </div>
 
+          <ds-button type="tertiary" [disabled]="!isDirty()" (clicked)="saveDraft()">Save draft</ds-button>
+
+          <!-- Split gardé ici seulement : sa moitié gauche n'est jamais grisée en
+               édition, donc son menu reste toujours atteignable. -->
           <ds-button-split type="secondary" (primaryClicked)="openCreate()">
             Create rule
             <ds-flyout-menu slot="menu">
@@ -85,17 +107,20 @@
             </ds-flyout-menu>
           </ds-button-split>
 
-          <ds-button type="primary" [disabled]="testState() === 'running'" (clicked)="compareOpen.set(true)">Validate rules</ds-button>
+          <span class="tag-config__guarded" [dsTooltip]="validateBlockedReason()" [attr.tabindex]="validateBlockedReason() ? 0 : null">
+            <ds-button type="primary" [disabled]="!!validateBlockedReason()" (clicked)="validateOpen.set(true)">Validate rules</ds-button>
+          </span>
         }
       </div>
 
-      @if (isReadOnly()) {
-        <ds-functional-notice status="warning" emphasis="low" title="Read only"
-          message="You don't have the right to edit those rules. If it's an error, please contact your administrator." />
+      <!-- Quelle version on lit, de quand elle date, qui l'a validée, et s'il y a
+           un brouillon en cours. C'est ce que portait le sous-titre. -->
+      @if (versionNotice(); as notice) {
+        <ds-functional-notice status="info" emphasis="medium" [title]="notice.title" [message]="notice.message" />
       }
 
-      @if (testState() === 'running') {
-        <ds-functional-notice status="info" emphasis="low" title="Test in progress" message="A simulation of the rules are in progress." />
+      @if (copiedFromNotice(); as notice) {
+        <ds-functional-notice status="warning" emphasis="medium" [title]="notice.title" [message]="notice.message" />
       }
 
       @if (activeFilterCount() > 0) {
@@ -121,7 +146,7 @@
               }
               <tag-rule-card
                 [rule]="r" [currency]="currentCountry().currency" [expanded]="isExpanded(r)" [mode]="mode()"
-                [volume]="ruleVolumes()?.[r.id] ?? null"
+                [knownLegalForms]="knownLegalForms()"
                 (toggled)="toggleCard(r)"
                 (edit)="openEdit(r)"
                 (remove)="requestDelete(r)"
@@ -135,10 +160,30 @@
   } @else {
     @if (historyDetail(); as detail) {
       <div class="tag-config">
+        <!-- Mêmes actions qu'en tête de ligne : on n'a pas à ressortir du détail
+             pour reprendre, exporter ou repartir de cette version. Rangées comme
+             partout, la plus importante à droite. Ici l'action du statut. -->
+        <div class="tag-config__toolbar">
+          <span class="tag-config__spacer"></span>
+          @for (a of detailActions(); track a.key; let last = $last) {
+            <span class="tag-config__guarded" [dsTooltip]="a.reason ?? ''" [attr.tabindex]="a.disabled ? 0 : null">
+              <ds-button [type]="last ? 'secondary' : 'tertiary'" [disabled]="!!a.disabled" (clicked)="onHistoryAction(detail, a.key)">
+                <ds-icon slot="icon-left" [name]="a.icon" [size]="16" />
+                {{ a.label }}
+              </ds-button>
+            </span>
+          }
+        </div>
+
+        @if (versionNotice(); as notice) {
+          <ds-functional-notice status="info" emphasis="medium" [title]="notice.title" [message]="notice.message" />
+        }
+
         <div class="tag-config__list">
           @for (r of detail.rules; track r.id) {
             <tag-rule-card
               [rule]="r" [currency]="currentCountry().currency" [expanded]="isHistoryDetailExpanded(r)" mode="view"
+              [knownLegalForms]="knownLegalForms()"
               (toggled)="toggleHistoryDetailCard(r)" />
           }
         </div>
@@ -146,7 +191,7 @@
     } @else {
       <div class="tag-config">
         <div class="tag-config__toolbar">
-          <ds-select class="tag-config__country" [options]="countryOptions" [value]="country()" (selectionChange)="onCountryChange($event)" />
+          <ds-select class="tag-config__country" [options]="countryOptions" [(value)]="countryValue" (selectionChange)="onCountryChange($event)" />
         </div>
 
         @if (historyRows().length === 0) {
@@ -154,7 +199,8 @@
         } @else {
           <div class="tag-config__list">
             @for (h of historyRows(); track h.id) {
-              <tag-history-row [entry]="h" (opened)="openHistoryDetail(h)" />
+              <tag-history-row [entry]="h" [actions]="historyActions(h)"
+                (opened)="openHistoryDetail(h)" (action)="onHistoryAction(h, $event)" />
             }
           </div>
         }
@@ -162,15 +208,39 @@
     }
   }
 
-  <!-- delete confirm -->
+  <!-- delete rule confirm -->
   <ds-confirm-dialog
     [open]="confirmOpen()" tone="danger" title="Delete rule?" confirmLabel="Delete" cancelLabel="Cancel"
     (confirmed)="confirmDelete()" (cancelled)="cancelDelete()">
     This action cannot be undone.
   </ds-confirm-dialog>
 
+  <!-- Quitter un brouillon modifié a deux sorties valides, pas une : jeter, ou
+       enregistrer. « Annuler » n'en est aucune des deux. -->
+  <ds-confirm-dialog
+    [open]="leaveConfirmOpen()" tone="warning" title="Leave this draft?"
+    confirmLabel="Save draft and leave" secondaryLabel="Discard changes" cancelLabel="Keep editing"
+    (confirmed)="saveDraftAndLeave()" (secondary)="discardAndLeave()" (cancelled)="keepEditing()">
+    Nothing is saved automatically. Save the draft to pick it up later, or discard your changes and keep the active set as it is.
+  </ds-confirm-dialog>
+
+  <ds-confirm-dialog
+    [open]="deleteDraftOpen()" tone="danger" title="Delete this draft?"
+    confirmLabel="Delete draft" cancelLabel="Cancel"
+    (confirmed)="confirmDeleteDraft()" (cancelled)="deleteDraftOpen.set(false)">
+    The unvalidated changes of this draft will be lost. The active set is untouched.
+  </ds-confirm-dialog>
+
+  <ds-confirm-dialog
+    [open]="validateOpen()" tone="warning" title="Validate these rules?"
+    confirmLabel="Validate rules" cancelLabel="Cancel"
+    (confirmed)="onValidateVersion()" (cancelled)="validateOpen.set(false)">
+    {{ validateMessage() }}
+  </ds-confirm-dialog>
+
   <tag-rule-modal
     [open]="ruleModalOpen()" [rule]="editingRule()" [currency]="currentCountry().currency"
+    [legalFormOptions]="legalFormOptions()" [ruleCount]="rules().length"
     (save)="onRuleSave($event)" (closed)="ruleModalOpen.set(false)" />
 
   <tag-freshness-modal
@@ -181,15 +251,10 @@
     [open]="transExclOpen()" [codes]="exclusionCodes()" [countryName]="currentCountry().name"
     (save)="onCodesSave($event)" (closed)="transExclOpen.set(false)" />
 
-  <tag-compare-versions-modal
-    [open]="compareOpen()" [versions]="pastVersions()" [currentDraft]="currentDraftVersion()" [currency]="currentCountry().currency"
-    [allowValidate]="mode() === 'edit'"
-    (closed)="compareOpen.set(false)" (editRequested)="compareOpen.set(false); enterEdit()" (validateRequested)="onValidateVersion()" />
-
   <tag-import-rules-modal [open]="importOpen()" (imported)="onRulesImported($event)" (closed)="importOpen.set(false)" />
 
   <tag-new-set-choice-modal
-    [open]="newSetChoiceOpen()" [history]="history()"
+    [open]="newSetChoiceOpen()" [target]="currentCountry()" [sets]="allSets"
     (chosen)="onNewSetChosen($event)" (fromPrevious)="onNewSetFromPrevious($event)" (closed)="newSetChoiceOpen.set(false)" />
 
   <ds-toaster-container />

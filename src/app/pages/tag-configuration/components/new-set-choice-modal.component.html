@@ -19,16 +19,33 @@
     </div>
   } @else {
     <span class="nscm-intro">Select a previous set</span>
+    <span class="nscm-intro__sub">Sets from {{ target().name }} come first. A set from another country can be reused. Check what it brings with it.</span>
 
     <div class="nscm-previous">
-      @if (history().length === 0) {
-        <div class="nscm-previous__empty">No previous set available for this country.</div>
+      @if (orderedSets().length === 0) {
+        <div class="nscm-previous__empty">No previous set available.</div>
       } @else {
-        @for (entry of history(); track entry.id) {
-          <tag-history-row [entry]="entry" [selected]="selectedEntry()?.id === entry.id" (opened)="selectEntry(entry)" />
+        @for (s of orderedSets(); track s.country.code + '-' + s.entry.id) {
+          <tag-history-row
+            [entry]="s.entry"
+            [country]="s.country"
+            [selected]="isSelected(s)"
+            (opened)="selectSet(s)" />
         }
       }
     </div>
+
+    <!-- L'alerte est ici, avant la copie : c'est le seul moment où reculer ne
+         coûte rien. Elle est répétée sur le brouillon ensuite. -->
+    @if (divergence(); as d) {
+      <div class="nscm-warning">
+        <ds-functional-notice
+          status="warning"
+          emphasis="medium"
+          [title]="'This set comes from ' + d.source.name + ' (' + d.source.currency + ')'"
+          [message]="divergenceMessage()" />
+      </div>
+    }
   }
 
   <div slot="actions">

@@ -13,7 +13,7 @@ export type ModalSize = 'small' | 'medium' | 'large' | 'xlarge';
   styleUrl: './modal.component.scss',
   host: {
     '[class]':            'hostClasses()',
-    '[attr.aria-hidden]': '!open()',
+    '[attr.aria-hidden]': '!open() || suspended() ? true : null',
     '[attr.title]':       'null',
     'role':               'dialog',
     'aria-modal':         'true',
@@ -34,6 +34,12 @@ export class ModalComponent {
   closeOnBackdrop = input<boolean>(true);
   closeOnEscape   = input<boolean>(true);
 
+  /** On n'empile pas une popin d'alerte sur une modale : la modale s'efface le
+   *  temps de la question et revient intacte si on annule. Elle reste montée
+   *  (saisies, position de défilement conservées), mais devient invisible,
+   *  inatteignable au clavier et sourde à Échap. C'est la popin qui répond. */
+  suspended = input<boolean>(false);
+
   // Hauteur du contenu (passée au ds-modal-content)
   contentHeight = input<string>('460px');
 
@@ -44,17 +50,18 @@ export class ModalComponent {
     'ds-modal',
     `ds-modal--${this.size()}`,
     this.open() ? 'ds-modal--open' : '',
+    this.suspended() ? 'ds-modal--suspended' : '',
   ].filter(Boolean).join(' '));
 
   onBackdropClick(): void {
-    if (this.closeOnBackdrop()) {
+    if (this.closeOnBackdrop() && !this.suspended()) {
       this.closed.emit();
     }
   }
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
-    if (this.open() && this.closeOnEscape()) {
+    if (this.open() && this.closeOnEscape() && !this.suspended()) {
       this.closed.emit();
     }
   }

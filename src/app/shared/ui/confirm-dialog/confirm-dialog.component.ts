@@ -24,9 +24,13 @@ export class ConfirmDialogComponent {
   tone         = input<ConfirmDialogTone>('warning');
   confirmLabel = input<string>('Confirm');
   cancelLabel  = input<string>('Cancel');
+  /** Troisième issue, optionnelle : certains départs ont deux sorties valides
+   *  (« jeter » et « enregistrer ») et l'annulation n'en est aucune. */
+  secondaryLabel = input<string>('');
 
   confirmed = output<void>();
   cancelled = output<void>();
+  secondary = output<void>();
   closed    = output<void>();
 
   hostClasses = computed(() => [
@@ -50,6 +54,11 @@ export class ConfirmDialogComponent {
 
   onCancel(): void {
     this.cancelled.emit();
+    this.closed.emit();
+  }
+
+  onSecondary(): void {
+    this.secondary.emit();
     this.closed.emit();
   }
 

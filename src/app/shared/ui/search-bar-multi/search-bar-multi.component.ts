@@ -47,6 +47,8 @@ export const ID_TYPES: IdTypeOption[] = ['DUN', 'TVA', 'SIREN', 'SIRET'];
 export const DIAL_CODES: Record<FlagCode, string> = {
   fr: '+33',
   de: '+49',
+  no: '+47',
+  pt: '+351',
   kr: '+82',
   gb: '+44',
   us: '+1',

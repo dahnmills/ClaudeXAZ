@@ -1,4 +1,12 @@
 <ds-card [noPadding]="true" class="history-row" [class.history-row--selected]="selected()" role="button" tabindex="0" (click)="opened.emit()" (keydown.enter)="opened.emit()">
+  @if (country(); as ctry) {
+    <div class="history-row__country">
+      <ds-flag [code]="ctry.flag" />
+      <span class="history-row__value">{{ ctry.name }}</span>
+      <span class="history-row__label">{{ ctry.currency }}</span>
+    </div>
+  }
+
   <div class="history-row__field">
     <span class="history-row__label">ID</span>
     <span class="history-row__value">{{ entry().id }}</span>
@@ -26,6 +34,28 @@
         <ds-badge [status]="b.status" variant="light" [label]="b.label" />
       }
     </span>
+
+    <!-- La carte entière ouvre le détail ; le menu porte les raccourcis, donc
+         il doit retenir le clic pour lui. -->
+    @if (actions().length) {
+      <span class="history-row__menu-anchor" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+        <ds-button-icon type="plain" tone="default" ariaLabel="Rule set actions" (clicked)="toggleMenu()">
+          <ds-icon name="context-vertical" [size]="16" />
+        </ds-button-icon>
+        @if (menuOpen()) {
+          <ds-flyout-menu class="history-row__menu">
+            @for (a of actions(); track a.key) {
+              @if (a.disabled && a.reason) {
+                <ds-flyout-menu-item [label]="a.label" [icon]="a.icon" [disabled]="true" [dsTooltip]="a.reason" />
+              } @else {
+                <ds-flyout-menu-item [label]="a.label" [icon]="a.icon" [disabled]="!!a.disabled" (clicked)="onAction(a.key)" />
+              }
+            }
+          </ds-flyout-menu>
+        }
+      </span>
+    }
+
     <ds-icon name="chevron-right" [size]="16" />
   </div>
 </ds-card>

@@ -17,7 +17,8 @@
           </span>
 
           @if (isText(row.value)) {
-            <span class="ds-properties-panel__value">{{ textOf(row.value) }}</span>
+            <span class="ds-properties-panel__value"
+              [class.ds-properties-panel__value--muted]="row.muted">{{ textOf(row.value) }}</span>
           } @else if (isTags(row.value)) {
             <span class="ds-properties-panel__value ds-properties-panel__value--tags">
               @for (t of $any(row.value).tags; track t.label) {

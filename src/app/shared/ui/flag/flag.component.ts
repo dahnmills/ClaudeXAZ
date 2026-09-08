@@ -1,7 +1,7 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
-export type FlagCode = 'fr' | 'de' | 'kr' | 'gb' | 'us';
+export type FlagCode = 'fr' | 'de' | 'kr' | 'gb' | 'us' | 'no' | 'pt';
 
 const FLAGS: Record<FlagCode, string> = {
   fr: `
@@ -33,6 +33,17 @@ const FLAGS: Record<FlagCode, string> = {
       <rect y="11.08" width="18" height="0.92"/>
     </g>
     <rect width="7.2" height="6.46" fill="#3C3B6E"/>`,
+
+  no: `
+    <rect width="18" height="12" fill="#BA0C2F"/>
+    <path d="M5.6,0 V12 M0,6 H18" stroke="#FFFFFF" stroke-width="3.4"/>
+    <path d="M5.6,0 V12 M0,6 H18" stroke="#00205B" stroke-width="1.7"/>`,
+
+  pt: `
+    <rect width="18" height="12" fill="#DA291C"/>
+    <rect width="7.2" height="12" fill="#046A38"/>
+    <circle cx="7.2" cy="6" r="2.3" fill="none" stroke="#FFE900" stroke-width="0.7"/>
+    <rect x="6.15" y="4.65" width="2.1" height="2.7" rx="0.4" fill="#FFFFFF" stroke="#DA291C" stroke-width="0.5"/>`,
 
   kr: `
     <rect width="18" height="12" fill="#FFFFFF"/>

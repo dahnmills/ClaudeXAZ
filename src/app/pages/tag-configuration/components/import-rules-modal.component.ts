@@ -5,17 +5,17 @@ import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import { FunctionalNoticeComponent } from '../../../shared/ui/functional-notice/functional-notice.component';
 import { TagRule, EMPTY_CRITERIA } from '../tag-configuration.models';
 
-/** A plausible parsed rule set for the mock JSON import — no real file parsing, no real backend. */
+/** A plausible parsed rule set for the mock JSON import. No real file parsing, no real backend. */
 const MOCK_IMPORTED_RULES: TagRule[] = [
-  { id: 'imported-1', position: 1, decision: 'Accept', status: 'Valid',
+  { id: 'imported-1', position: 1, decision: 'Accept',
     criteria: { ...EMPTY_CRITERIA, sensitivity: ['S0'], newAutoGrade: ['08', '09', '10'] } },
-  { id: 'imported-2', position: 2, decision: 'Refuse', status: 'Valid',
+  { id: 'imported-2', position: 2, decision: 'Refuse',
     criteria: { ...EMPTY_CRITERIA, sensitivity: ['S3'] } },
 ];
 
 /**
  * Import rules (Figma split-button group, "A combiner dans 1 seul split
- * button": Compare/Test/Import/Create) — upload a JSON rule-set file. 3
+ * button": Compare/Test/Import/Create). Upload a JSON rule-set file. 3
  * states per the design: empty picker, file selected, validation error.
  * No real backend: "import" just validates the extension and hands back a
  * fixed mock rule set as a stand-in for a real parsed payload.

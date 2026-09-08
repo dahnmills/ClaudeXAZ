@@ -2,7 +2,6 @@ import { Component, computed, effect, input, output, signal, WritableSignal } fr
 import { ModalComponent } from '../../../shared/ui/modal/modal.component';
 import { SelectComponent } from '../../../shared/ui/select/select.component';
 import { InputTextComponent } from '../../../shared/ui/input-text/input-text.component';
-import { SegmentedControlComponent } from '../../../shared/ui/segmented-control/segmented-control.component';
 import { RadioCardComponent, RadioCardTone } from '../../../shared/ui/radio-card/radio-card.component';
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
 import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
@@ -12,7 +11,7 @@ import {
 } from '../tag-configuration.models';
 import {
   SENSITIVITY_OPTIONS, GRADE_OPTIONS, GRADE_TYPE_OPTIONS, FRESHNESS_OPTIONS,
-  COMPARISON_OPTIONS, COMPANY_ROLE_OPTIONS, NACE_OPTIONS, LEGAL_FORM_OPTIONS,
+  COMPARISON_OPTIONS, COMPANY_ROLE_OPTIONS, NACE_OPTIONS,
   EXPOSURE_OP_OPTIONS, TRANSFERRED_OPTIONS,
 } from '../tag-configuration.data';
 
@@ -23,7 +22,7 @@ const DECISION_CARDS: { value: Decision; label: string; sublabel: string; tone: 
 ];
 
 /**
- * Create/Edit rule modal — reuses the "grey panel + white card per group"
+ * Create/Edit rule modal: reuses the "grey panel + white card per group"
  * pattern from the company creation/edit wizards (rm-panel / rm-group /
  * rm-card) so each criteria group reads as a distinct section instead of
  * blending into one flat page. Groups: Base criteria, Current valid grade,
@@ -35,12 +34,16 @@ const DECISION_CARDS: { value: Decision; label: string; sublabel: string; tone: 
  * DECISION_CARDS. Local editable state is seeded from `rule()` on open via
  * an effect; multi-selects are held as Set<string>, single-selects as
  * string ('Any' means "no constraint" / null).
+ *
+ * La position d'évaluation est un champ du formulaire, en tête : l'ordre fait
+ * partie de la règle (la première qui correspond gagne), et c'est la seule
+ * façon de déplacer une règle quand un filtre désactive le glisser-déposer.
  */
 @Component({
   selector: 'tag-rule-modal',
   standalone: true,
   imports: [
-    ModalComponent, SelectComponent, InputTextComponent, SegmentedControlComponent,
+    ModalComponent, SelectComponent, InputTextComponent,
     RadioCardComponent, ButtonComponent, ConfirmDialogComponent, TagFilterChipComponent,
   ],
   templateUrl: './rule-modal.component.html',
@@ -50,6 +53,10 @@ export class RuleModalComponent {
   open     = input<boolean>(false);
   rule     = input<TagRule | null>(null);
   currency = input<string>('EUR');
+  /** Formes juridiques du pays courant : référentiel national, pas global. */
+  legalFormOptions = input<{ value: string; label: string }[]>([]);
+  /** Nombre de règles du jeu en cours, pour borner la position. */
+  ruleCount = input<number>(0);
 
   save   = output<TagRule>();
   closed = output<void>();
@@ -59,13 +66,19 @@ export class RuleModalComponent {
   GRADE_TYPE_OPTIONS = GRADE_TYPE_OPTIONS; FRESHNESS_OPTIONS = FRESHNESS_OPTIONS;
   COMPARISON_OPTIONS = COMPARISON_OPTIONS; DECISION_CARDS = DECISION_CARDS;
   COMPANY_ROLE_OPTIONS = COMPANY_ROLE_OPTIONS; NACE_OPTIONS = NACE_OPTIONS;
-  LEGAL_FORM_OPTIONS = LEGAL_FORM_OPTIONS; EXPOSURE_OP_OPTIONS = EXPOSURE_OP_OPTIONS;
+  EXPOSURE_OP_OPTIONS = EXPOSURE_OP_OPTIONS;
   TRANSFERRED_OPTIONS = TRANSFERRED_OPTIONS;
 
   isEdit = computed(() => this.rule() != null);
   title  = computed(() => this.isEdit() ? 'Edit rule' : 'Create a new rule');
 
+  /** Création : la règle peut se poser après la dernière (N+1). Modification :
+   *  elle se déplace parmi les N existantes. */
+  maxPosition = computed(() => this.isEdit() ? Math.max(1, this.ruleCount()) : this.ruleCount() + 1);
+  positionHint = computed(() => `of ${this.maxPosition()} · rule 1 is evaluated first`);
+
   // editable local state (multi as Set<string>, single as string; '' or 'Any' = null)
+  position        = signal<string>('1');
   sensitivity     = signal<Set<string>>(new Set());
   exposureOp      = signal<string>('');
   exposureAmt     = signal<string>('');
@@ -91,6 +104,7 @@ export class RuleModalComponent {
       if (!this.open()) return;
       const r = this.rule();
       const c = r?.criteria ?? EMPTY_CRITERIA;
+      this.position.set(String(r?.position ?? this.ruleCount() + 1));
       this.sensitivity.set(new Set(c.sensitivity ?? []));
       this.exposureOp.set(c.exposure?.op ?? '');
       this.exposureAmt.set(c.exposure ? String(c.exposure.amount) : '');
@@ -109,10 +123,10 @@ export class RuleModalComponent {
       this.decision.set(r?.decision ?? 'Accept');
 
       // Snapshot straight from the source data (c / r), never via buildCriteria()/
-      // the signals — reading those signals here would register them as effect
+      // the signals: reading those signals here would register them as effect
       // dependencies, turning every field edit into a re-run that resets the form
       // back to c (EMPTY_CRITERIA in create mode).
-      this.baseline = JSON.stringify(c) + (r?.decision ?? 'Accept');
+      this.baseline = JSON.stringify(c) + (r?.decision ?? 'Accept') + String(r?.position ?? this.ruleCount() + 1);
     });
   }
 
@@ -138,7 +152,7 @@ export class RuleModalComponent {
       companyRole: this.setToNull<string>(this.companyRole()),
     };
   }
-  private snapshot(): string { return JSON.stringify(this.buildCriteria()) + this.decision(); }
+  private snapshot(): string { return JSON.stringify(this.buildCriteria()) + this.decision() + String(this.resolvedPosition()); }
   private isDirty(): boolean { return this.snapshot() !== this.baseline; }
 
   // exposure amount required (and numeric) when an operator is chosen
@@ -150,13 +164,27 @@ export class RuleModalComponent {
 
   selectDecision(value: Decision): void { this.decision.set(value); }
 
+  /** Saisie hors bornes ramenée à la borne : une position invalide n'est pas une
+   *  erreur à corriger, c'est une intention (« tout en haut », « tout en bas »). */
+  onPositionInput(raw: string): void {
+    const digits = raw.replace(/[^0-9]/g, '');
+    this.position.set(digits);
+  }
+
+  private resolvedPosition(): number {
+    const n = parseInt(this.position(), 10);
+    if (isNaN(n)) return this.rule()?.position ?? this.maxPosition();
+    return Math.min(Math.max(n, 1), this.maxPosition());
+  }
+
+  onPositionBlur(): void { this.position.set(String(this.resolvedPosition())); }
+
   onSave(): void {
     if (!this.canSave()) return;
     const r = this.rule();
     this.save.emit({
       id: r?.id ?? `r-${Date.now()}`,
-      position: r?.position ?? 9999,
-      status: r?.status ?? 'Valid',
+      position: this.resolvedPosition(),
       decision: this.decision(),
       criteria: this.buildCriteria(),
     });

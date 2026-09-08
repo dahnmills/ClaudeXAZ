@@ -1,16 +1,14 @@
 // =============================================================
-// Rule create/edit modal — grey outer panel + white card per criteria
+// Rule create/edit modal: grey outer panel + white card per criteria
 // group, same vocabulary as the company creation/edit wizards
 // (wizard__panel / __group / __card): rm-panel is the grey background,
 // rm-group holds a small uppercase title, rm-card is the white surface
-// that actually contains the fields. Fields wrap at a content-sized
-// minimum instead of a blind N-column grid, so a 5-facet concept
-// (Current valid grade) stays on one visual line instead of being split
-// 3+2 by an arbitrary column count. Outcome is a 3-way ds-radio-card
-// picker, tone-coded per decision.
-// Composition: ds-modal + ds-radio-card + ds-select/-input-text/
-//              -segmented-control/-button + tag-filter-chip(field) +
-//              ds-confirm-dialog
+// that actually contains the fields. Every card lays its fields on the
+// same 3-column grid, and a field whose label is too long for one column
+// takes two: no field label is ever allowed to wrap onto a second line.
+// Outcome is a 3-way ds-radio-card picker, tone-coded per decision.
+// Composition: ds-modal + ds-radio-card + ds-select/-input-text/-button +
+//              ds-tag-filter-chip(field) + ds-confirm-dialog
 // =============================================================
 
 :host {
@@ -50,27 +48,27 @@
   border-radius:  var(--semantic-border-radius-s);
 }
 
-// Base row layout: wrap at a content-sized minimum, not a fixed column
-// count — a field only takes the 3-column width when 3 actually fit.
-// align-items: flex-end keeps every control (dropdown / input / segmented
-// control) level along the bottom even when one field's label wraps onto
-// 2 lines and others don't — the field itself never needs to be widened
-// just to fit a long label (that would make e.g. an "Upgrade/Downgrade"
-// dropdown pointlessly wide); the label is left to wrap in its own column.
 .rm-row {
   display:     flex;
   flex-wrap:   wrap;
   align-items: flex-end;
   gap:         var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-m);
+}
 
-  &--3 > * {
-    flex: 1 1 220px;
-  }
+// Une grille de 3 colonnes partagée par toutes les cartes : un champ a la même
+// largeur d'un groupe à l'autre, et surtout un libellé long occupe deux colonnes
+// au lieu de se replier : un libellé de champ sur deux lignes est interdit, et
+// le tronquer n'est pas une option (ce n'est pas une colonne de tableau).
+// `align-items: end` garde les contrôles alignés par le bas quand un champ
+// porte une aide sous lui (Position) ou une légende (Exposure).
+.rm-grid {
+  display:               grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items:           end;
+  gap:                   var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-m);
 
-  // Current valid grade: 5 facets of ONE concept — same row, each sized to
-  // its own control (segmented control and short selects don't need 220px).
-  &--cvg > * {
-    flex: 1 1 160px;
+  &__wide {
+    grid-column: span 2;
   }
 }
 
@@ -86,8 +84,21 @@
   gap:            var(--semantic-measurement-spacing-xxs);
 }
 
-// Reset native fieldset chrome — semantic grouping for a compound control
-// (Exposure, Transferred), visually identical to a plain labeled field.
+// Position : un nombre à deux chiffres n'a pas besoin de la largeur d'un
+// champ de critère, et son aide se lit sous lui.
+.rm-field--position {
+  flex: 0 0 auto;
+  max-width: calc(var(--semantic-measurement-sizing-3xl) * 3);
+}
+
+.rm-hint {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+// Reset native fieldset chrome: semantic grouping for a compound control
+// (Exposure), visually identical to a plain labeled field.
 .rm-fieldset {
   border: none;
   margin: 0;
@@ -95,10 +106,12 @@
   min-width: 0;
 }
 
+// Même graisse que les libellés des atomes de formulaire (semi-bold) : la
+// légende d'Exposure est un libellé de champ, pas un intertitre.
 .rm-label {
   font-family: var(--semantic-font-family);
   font-size:   var(--semantic-font-text-style-size-l);
-  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
   line-height: var(--semantic-font-text-style-line-height-l);
   color:       var(--semantic-color-static-text-main-primary);
 }
@@ -106,7 +119,7 @@
 .rm-exposure {
   display:               grid;
   // Operator select carries the long label ("> (greater than)"); amount is
-  // just digits — give the select the room, keep amount to a sane minimum.
+  // just digits: give the select the room, keep amount to a sane minimum.
   grid-template-columns: minmax(0, 3fr) minmax(var(--semantic-measurement-sizing-3xl), 2fr) auto;
   align-items:           center;
   gap:                   var(--semantic-measurement-spacing-xs);

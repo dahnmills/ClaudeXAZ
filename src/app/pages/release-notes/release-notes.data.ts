@@ -20,8 +20,55 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // Newest first. Prepend a new entry here at every push that changes a Qirin
 // screen or feature. Meta/harness work (hub, prototype listing, isolated
 // listing, the release notes system itself, dev inspector, Echo widget) is
-// out of scope for this changelog — it's about Qirin, not the test harness.
+// out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
+  {
+    id: 'no-em-dashes-in-the-copy',
+    date: '2026-09-08',
+    category: 'content',
+    screens: ['tag-configuration', 'search', 'buyer-summary/137381425', 'keyboard-shortcuts'],
+    title: 'Interface copy without em dashes',
+    description:
+      'The long dash is gone from every text the product shows. It read as machine-written, and a colon, a comma or a full stop says the same thing while sounding like someone wrote it. One use survives: the lone dash that marks an empty value in a table cell.',
+    changes: [
+      'Field hints, empty states, menu labels and toast messages read with ordinary punctuation: "No field yet. Pick from the catalogue below.", "Small (1x1)", "Draft (not validated)"',
+      'The card sizes of the buyer summary, the shortcut names of the reference panel and the copy notices of TAG configuration were rewritten the same way',
+      'A lone dash still means "no value" in a table cell or a date range: that one is a symbol, not prose',
+    ],
+  },
+  {
+    id: 'tag-configuration-drafts-and-history',
+    date: '2026-09-08',
+    category: 'feature',
+    screens: ['tag-configuration'],
+    title: 'TAG Configuration: a draft you own, a history you can act on',
+    description:
+      'A rule set in progress is now a draft that survives leaving the screen, and it is saved only when you say so. A notice above the rules says which version you are reading and since when, every version in the history carries its own actions, and the rule simulation, which simulated nothing, is gone.',
+    changes: [
+      'Drafts persist per country: leave the screen, come back, resume where you left off. Nothing is saved automatically: the banner says so, and Save draft sits in the toolbar',
+      'Leaving a modified draft asks the real question: keep editing, discard the changes, or save the draft and leave. Switching country while editing goes through the same question',
+      'A notice above the rule list says what you are reading: the active version with its number, the date it was validated and its author, plus a word on a draft in progress if there is one. Read-only countries say so there too, instead of in a banner. The page title stays bare, like everywhere else',
+      'The actions read from right to left, from the one that moves the work forward to the quiet ones. While editing: Export, Set parameters, Save draft, Create rule, Validate rules. While reading: Export, Edit rules, Create new set',
+      'Freshness and the TRANS-NA-EXCL codes are grouped under a Set parameters menu: they are values of the set, not settings of the page',
+      'On the page of the active set, Edit rules and Create new set are both greyed out while a draft exists, and both say why on hover, pointing to the same place: the draft is waiting in the History tab. Neither button moves elsewhere, they carry two different intentions: carry on with what exists, or start from something else',
+      'Delete draft sits where the draft is: in the banner while you edit it, and in the menu of its history row. The page of the active set no longer offers it',
+      'Validating a draft now asks for confirmation and states what it does: the draft becomes the active set, the previous version is archived and stays in the history',
+      'Export JSON is available in every state: in the toolbar while reading, while editing, and on each version of the history',
+      'Each history row carries its own actions behind a menu, per status: a draft can be resumed or deleted, the active version edited, an archived version reused as a new set. Opening one for edit brings you back to the Configuration tab',
+      'The rule creation and edit form opens on the evaluation position: a rule can be placed anywhere in the order, and it is inserted there instead of landing at the end. It is also the only way to move a rule while a filter is active',
+      'Legal forms became a national list: a SARL is not offered in Norway. A set copied from another country keeps its foreign legal forms, since dropping them would widen the rule, and flags them on the affected rules',
+      'Starting a new set from a previous one now lists the sets of every country, current country first, and warns before copying: what the amounts are denominated in, which legal forms do not exist here. No amount is converted for you',
+      'Norway replaces Northern Europe: a country has a currency (NOK) and a legal-form list, a region has neither',
+      'Removed the rule simulation and the version comparison modal, which produced random numbers; removed the per-rule Valid / N/C badge, which was decided by nothing; removed "(no role)" from Company role',
+      '"Any" now reads the same everywhere: greyed in the collapsed row and in the expanded one, and the exposure operator shows ≤ in both the list and the form',
+      'The rule columns hold their position from one row to the next: the decision badge has a reserved width, so a "Create task" no longer squeezes the seven criteria, and labels and values sit on two shared lines, never three',
+      'Each criterion column is now as wide as what it has to show: "Last checked autograde" gets the room it needs instead of the same share as "Sensitivity", so nothing is cut down to 1280px, in reading as in editing',
+      'Long option lists (grades, NACE, legal forms) scroll inside their own box instead of being cut off by the form around them',
+      'Opening one dropdown closes the one already open; the account menu no longer slides under the toolbar buttons while editing',
+      'Field labels are semi-bold across the whole design system, and a field label never wraps onto a second line: the two comparison fields of the rule form take the width of two columns instead',
+      'A confirmation no longer piles up on top of the rule form: the form steps aside while the question is asked, and comes back untouched, scroll position and typing included, if you keep editing',
+    ],
+  },
   {
     id: 'notification-module-search-footer',
     date: '2026-09-07',
@@ -31,7 +78,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     description:
       'The vertical rule and the column of actions beside the fields are gone. The eight criteria now take the full width of the card, and a rule running from edge to edge closes them off: under it, Include copies on the left, Reset and Search on the right.',
     changes: [
-      'The four filters and the four ID fields spread over the whole card — four equal columns instead of four narrowed by a right-hand column',
+      'The four filters and the four ID fields spread over the whole card: four equal columns instead of four narrowed by a right-hand column',
       'Replaced the vertical rule by a horizontal one that goes from one edge of the card to the other: what is under it applies to the eight criteria at once, and a rule stopping short of the edges would only have looked like a gap between two blocks',
       'Include copies, Reset and Search moved into that footer, on a single line',
       'Under 1180px the grid falls back to two columns; the footer already fits on one line at that width, so it does not move',
@@ -44,14 +91,14 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     screens: ['notification-module'],
     title: 'Notification Module: the criteria, then what you do with them',
     description:
-      'The eight criteria stay one grid — four filters above, four identifiers below, column against column — and a vertical rule now closes that grid on the right. What sits beyond the rule is not a ninth criterion: Include copies on the filters\' line, Reset and Search on the identifiers\' line.',
+      'The eight criteria stay one grid, four filters above and four identifiers below, column against column, and a vertical rule now closes that grid on the right. What sits beyond the rule is not a ninth criterion: Include copies on the filters\' line, Reset and Search on the identifiers\' line.',
     changes: [
       'The four filters and the four ID fields share one grid, so each field of the bottom row lines up with the one above it',
       'Added the vertical rule at the end of the grid, spanning both rows, and the column beyond it: the option on the first line, the actions on the second',
-      'The checkbox and the two buttons sit on the very axis of the field boxes of their row, whatever their own height — the column\'s cells take the height of a field, and centre what they hold',
+      'The checkbox and the two buttons sit on the very axis of the field boxes of their row, whatever their own height: the column\'s cells take the height of a field, and centre what they hold',
       'Added Reset, which clears the eight criteria, the date range and the checkbox. Disabled rather than hidden while there is nothing to clear, so the Search button never shifts',
       'The filters now read "All statuses" / "All" / "All types" as placeholders instead of pre-selected values: a filter that is not set looks like a filter that is not set',
-      'Under 1180px the grid falls back to two columns, the rule goes away and the option and the actions move under the fields — the actions staying flush right',
+      'Under 1180px the grid falls back to two columns, the rule goes away and the option and the actions move under the fields, the actions staying flush right',
     ],
   },
   {
@@ -61,14 +108,14 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     screens: ['keyboard-shortcuts'],
     title: 'Keyboard shortcuts and their reference panel',
     description:
-      'The product answers to the keyboard: Alt-based combinations jump between sections, open tools and drive the table. The « ? » button in the header now opens a help menu, and its "Keyboard shortcuts" entry docks a reference panel at the bottom of the page — read the combination, or click the line to run it on the spot.',
+      'The product answers to the keyboard: Alt-based combinations jump between sections, open tools and drive the table. The « ? » button in the header now opens a help menu, and its "Keyboard shortcuts" entry docks a reference panel at the bottom of the page: read the combination, or click the line to run it on the spot.',
     changes: [
       'Added the « ? » header menu (same mechanics as the account menu) with two entries: "Help with Qirin" and "Keyboard shortcuts", the latter showing its own `?` shortcut',
       'Added the reference panel docked at the bottom of the window: categories as full-width tabs, and `label ····· [Alt][M]` rows in three roomy columns',
       'The panel keeps the same height whatever the tab, so the page underneath never jumps when you browse categories',
-      'The panel does not trap focus and has no backdrop — it stays open while you try a shortcut, and the row you just fired reports back inside the panel rather than under it',
+      'The panel does not trap focus and has no backdrop, so it stays open while you try a shortcut, and the row you just fired reports back inside the panel rather than under it',
       'Clicking a row runs the shortcut, exactly as typing it would; a shortcut already tried is marked, so the panel doubles as a learning surface',
-      'Catalogued 65 shortcuts across 8 categories (essentials, go to, tools, table, buyer, view, filters, editing). The navigation ones are wired — Alt+M opens ManA, Alt+B buyers, and so on; the rest report that they are not wired in this prototype yet',
+      'Catalogued 65 shortcuts across 8 categories (essentials, go to, tools, table, buyer, view, filters, editing). The navigation ones are wired: Alt+M opens ManA, Alt+B buyers, and so on; the rest report that they are not wired in this prototype yet',
       'Shortcuts are matched on the letter printed on your key, not on its position: Alt+M is the key marked M whether the layout is QWERTY, AZERTY or QWERTZ. Digits stay position-based, since AZERTY prints symbols on its top row',
       'Shortcuts stay inert while typing in a field, apart from a small allow-list (Escape, the panel itself)',
       'New design-system atoms: `ds-keycap` and `ds-shortcut-keys` (a rendered key combination), `ds-shortcut-row`, `ds-shortcuts-panel`. `ds-tab` gained `fill` for evenly-spread tab strips, `ds-flyout-menu-item` gained `shortcut` so a menu entry can teach its own combination, and a `keyboard` icon joined the registry',
@@ -81,7 +128,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     screens: ['notification-module'],
     title: 'Notification Module: the whole search form, always open',
     description:
-      'The "More criteria" disclosure is gone — its second row of fields is now permanently visible and aligned with the first. Eight criteria on screen, in one grid, nothing to unfold before searching.',
+      'The "More criteria" disclosure is gone, and its second row of fields is now permanently visible and aligned with the first. Eight criteria on screen, in one grid, nothing to unfold before searching.',
     changes: [
       'Removed the "More criteria" toggle and the divider underneath it: Policy ID, Extension ID, Buyer ID and Notification ID are always shown',
       'Both rows now share one grid, so the second row\'s fields line up with the four above them instead of being offset',
@@ -95,11 +142,11 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     screens: ['spotlight'],
     title: 'Spotlight: filter bubbles and a liquid-glass morph',
     description:
-      'The quick-search palette gains two filter bubbles alongside the bar (country, and which field is searched — name or ID), in the manner of macOS Spotlight. Opening one makes the bar swallow the bubbles and grow into its panel; closing it makes the material split back into bubbles.',
+      'The quick-search palette gains two filter bubbles alongside the bar (country, and which field is searched, name or ID), in the manner of macOS Spotlight. Opening one makes the bar swallow the bubbles and grow into its panel; closing it makes the material split back into bubbles.',
     changes: [
       'Added two filter bubbles next to the search bar: country (flag) and searched field (Aa / ID). Filtering by country narrows the results; switching to ID searches the identifier instead of the name',
       'Opening a bubble morphs rather than fades: the bar absorbs the bubbles, widens, and its panel reveals the option list by growing downward. The magnifier is replaced by the category icon, which becomes a back chevron on hover',
-      'Closing a bubble plays a liquid fission: the bar\'s right edge stays stretched, a mass inflates out of it and detaches through a thinning neck, then splits into the bubbles — no fade anywhere in the sequence, and the icons only appear once the bubbles are stable',
+      'Closing a bubble plays a liquid fission: the bar\'s right edge stays stretched, a mass inflates out of it and detaches through a thinning neck, then splits into the bubbles, with no fade anywhere in the sequence, and the icons only appear once the bubbles are stable',
       'While a country panel is open the bar filters that list instead of the corpus, and the business query typed beforehand is restored on close',
       'Reworked the palette\'s glass material (translucency, specular edge, layered drop shadow) so the bar, the bubbles and the morphing material read as one surface',
       'The whole choreography collapses to instant state changes under prefers-reduced-motion',
@@ -129,8 +176,8 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     description:
       'The multi-select filter field used in the rule modal (Sensitivity, NACE, Legal form, etc.) was promoted from a page-local component into the shared design system, and a missing color token used by the stepper was defined.',
     changes: [
-      'Renamed the multi-select filter field component from `tag-filter-chip` to `ds-tag-filter-chip` and moved it into shared/ui — same markup, same styling, zero visible change',
-      'Defined the previously-missing `--semantic-color-static-text-main-reversed` token (was silently falling back to a hardcoded #fff in the stepper) — same resolved color, just no longer a silent gap',
+      'Renamed the multi-select filter field component from `tag-filter-chip` to `ds-tag-filter-chip` and moved it into shared/ui: same markup, same styling, zero visible change',
+      'Defined the previously-missing `--semantic-color-static-text-main-reversed` token (was silently falling back to a hardcoded #fff in the stepper): same resolved color, just no longer a silent gap',
     ],
   },
   {
@@ -140,10 +187,10 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     screens: ['maintenance'],
     title: 'Add a maintenance screen',
     description:
-      'A full-screen "Qirin is down" state for planned outages: no navigation, no shell — when the product is unavailable there is nowhere else to send the user.',
+      'A full-screen "Qirin is down" state for planned outages: no navigation, no shell. When the product is unavailable there is nowhere else to send the user.',
     changes: [
       'Added the maintenance screen with the product\'s brand blue, Allianz Neo type, and a bespoke abstract network illustration',
-      'No header, side-nav, links, or buttons — the page is intentionally a dead end',
+      'No header, side-nav, links, or buttons: the page is intentionally a dead end',
       'Added to the screen catalogue and the isolated-universe listing so it can be tested standalone',
     ],
   },

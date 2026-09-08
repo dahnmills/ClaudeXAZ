@@ -7,7 +7,7 @@
     <div class="rule-card__summary">
       @for (row of summaryRows(); track row.label) {
         <div class="rule-card__field">
-          <span class="rule-card__field-label">{{ row.label }}</span>
+          <span class="rule-card__field-label" [title]="row.label">{{ row.label }}</span>
           <span class="rule-card__field-value" [class.rule-card__field-value--any]="row.isAny" [title]="row.value">{{ row.value }}</span>
         </div>
       }
@@ -15,10 +15,9 @@
 
     <div class="rule-card__badges">
       <ds-badge [status]="decisionBadge().status" [variant]="decisionBadge().variant" [label]="decisionBadge().label" />
-      <ds-badge [status]="statusBadge().status" variant="light" [label]="statusBadge().label" />
-      @if (volume() !== null) {
-        <span class="rule-card__volume">
-          <ds-badge status="neutral" variant="light" [label]="volume()!.toFixed(2) + '%'" />
+      @if (unknownLegalForms().length) {
+        <span class="rule-card__foreign" [title]="'Legal form not used in this country: ' + unknownLegalForms().join(', ')">
+          <ds-icon name="warning-triangle" [size]="16" />
         </span>
       }
     </div>

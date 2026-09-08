@@ -1,5 +1,5 @@
 // =============================================================
-// Tag Filter Chip — chip type="select" + flyout de checkboxes
+// Tag Filter Chip: chip type="select" + flyout de checkboxes
 // Composition : ds-chip + ds-flyout-menu + ds-checkbox + ds-link
 // =============================================================
 
@@ -18,7 +18,7 @@
 .ds-tag-filter-chip__field-label {
   font-family: var(--semantic-font-family);
   font-size:   var(--semantic-font-text-style-size-l);
-  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
   line-height: var(--semantic-font-text-style-line-height-l);
   color:       var(--semantic-color-static-text-main-primary);
 }
@@ -102,15 +102,14 @@
   box-sizing: border-box;
 }
 
+// La liste est bornée et défile : un flyout de 13 grades faisait 420px et se
+// faisait couper par le conteneur de scroll d'une modale, sans rien qui dise
+// qu'il en restait. La barre de défilement, elle, le dit.
 .ds-tag-filter-chip__options {
   display:        flex;
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-xs);
   padding:        0 var(--semantic-measurement-spacing-s);
-}
-
-.ds-tag-filter-chip__footer {
-  margin-top:  var(--semantic-measurement-spacing-xs);
-  padding:     var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s) 0;
-  border-top:  1px solid var(--semantic-color-static-border-subtle-tertiary);
+  max-height:     calc(var(--semantic-measurement-sizing-3xl) * 4); // ~8 options visibles
+  overflow-y:     auto;
 }

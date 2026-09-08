@@ -10,7 +10,7 @@ export const GRADE_STORY_ENTRIES: GradeStoryEntry[] = [
       buyerRole: 'Insured', naceCode: '62.01', legalForm: 'SARL', lastAcceptedAutograde: '06',
     },
     tagRule: {
-      id: 'fr-1', position: 1, decision: 'Accept', status: 'Valid',
+      id: 'fr-1', position: 1, decision: 'Accept',
       criteria: { ...EMPTY_CRITERIA, sensitivity: ['S1'], newAutoGrade: ['06'], cvgValue: ['04', '05', '06'], cvgType: ['Automatic'], cvgFreshness: 'Fresh' },
     },
   },
@@ -22,7 +22,7 @@ export const GRADE_STORY_ENTRIES: GradeStoryEntry[] = [
       buyerRole: 'Prospect', naceCode: '41.20', legalForm: 'SA', lastAcceptedAutograde: '05',
     },
     tagRule: {
-      id: 'fr-2', position: 2, decision: 'Refuse', status: 'Valid',
+      id: 'fr-2', position: 2, decision: 'Refuse',
       criteria: { ...EMPTY_CRITERIA, sensitivity: ['S2'], cvgValue: ['04', '05'], transferred: true },
     },
   },
@@ -34,7 +34,7 @@ export const GRADE_STORY_ENTRIES: GradeStoryEntry[] = [
       buyerRole: 'Insured', naceCode: 'Any', legalForm: 'Any', lastAcceptedAutograde: 'NA',
     },
     tagRule: {
-      id: 'fr-3', position: 3, decision: 'Accept', status: 'Valid',
+      id: 'fr-3', position: 3, decision: 'Accept',
       criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['08', '09', '10'], cvgValue: ['04', '05', '06'], cvgType: ['Automatic'], cvgFreshness: 'Fresh' },
     },
   },

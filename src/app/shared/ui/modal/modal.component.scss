@@ -1,5 +1,5 @@
 // =============================================================
-// Modal — organism
+// Modal: organism
 // Source : Figma > -Components--Layout > Modal (node 2256:1556)
 //
 // Spec :
@@ -10,7 +10,7 @@
 // =============================================================
 
 :host {
-  // hôte invisible quand fermé — l'overlay n'existe que via @if dans le template
+  // hôte invisible quand fermé : l'overlay n'existe que via @if dans le template
   display: contents;
 }
 
@@ -35,6 +35,15 @@
   border-radius:  var(--semantic-border-radius-s);
   box-shadow:     var(--semantic-shadow-modal);
   overflow:       visible;
+}
+
+// ── Suspendue : une popin d'alerte a pris la parole ───────────
+// `visibility: hidden` et pas `display: none` ni `@if` : la boîte reste montée,
+// donc la position de défilement du contenu et les saisies en cours survivent,
+// et rien de ce qu'elle contient n'est focusable pendant ce temps.
+:host.ds-modal--suspended .ds-modal__backdrop {
+  visibility:     hidden;
+  pointer-events: none;
 }
 
 // ── Tailles ───────────────────────────────────────────────────

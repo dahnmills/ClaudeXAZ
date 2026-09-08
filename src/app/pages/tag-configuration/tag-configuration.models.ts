@@ -1,3 +1,5 @@
+import type { FlagCode } from '../../shared/ui/flag/flag.component';
+
 export type Sensitivity = 'S0' | 'S1' | 'S2' | 'S2+' | 'S3' | 'SN' | 'None';
 export type Grade =
   | '01' | '02' | '03' | '04' | '05' | '06' | '07' | '08' | '09' | '10'
@@ -6,8 +8,7 @@ export type GradeType  = 'Automatic' | 'Manual';
 export type Freshness  = 'Fresh' | 'Outdated' | 'Old';
 export type Comparison = 'Upgrade' | 'Same' | 'Downgrade';
 export type Decision   = 'Accept' | 'Refuse' | 'CreateTask';
-export type RuleStatus = 'Valid' | 'NC';
-export type CountryCode = 'FR' | 'DE' | 'NE' | 'PT';
+export type CountryCode = 'FR' | 'DE' | 'NO' | 'PT';
 
 /** null = "Any" (criterion inactive, ignored in matching). */
 export interface RuleCriteria {
@@ -34,26 +35,12 @@ export interface TagRule {
   id: string;
   position: number;
   decision: Decision;
-  status: RuleStatus;
   criteria: RuleCriteria;
-}
-
-export interface VolumeStat { pct: number; count: number; }
-
-/** A saved rule-set snapshot, comparable against another via Compare rule versions. */
-export interface RuleSetVersion {
-  id: string;
-  label: string;
-  date: string;
-  rules: TagRule[];
-  accepted: VolumeStat;
-  refused: VolumeStat;
-  jtd: VolumeStat;
 }
 
 export type RuleSetStatus = 'Draft' | 'Active' | 'Archived';
 
-/** One row of the History tab — a past rule-set publication. Dates are display-ready strings (mock, no live formatting). */
+/** One row of the History tab: a past rule-set publication. Dates are display-ready strings (mock, no live formatting). */
 export interface RuleSetHistoryEntry {
   id: string;
   createdLabel: string;
@@ -71,7 +58,22 @@ export interface FreshnessConfig {
 
 export interface StatusReasonCode { code: string; label: string; }
 
-export interface Country { code: CountryCode; name: string; currency: string; readOnly?: boolean; }
+export interface Country { code: CountryCode; name: string; currency: string; flag: FlagCode; readOnly?: boolean; }
+
+/**
+ * Brouillon d'un jeu de règles, un par pays. Persiste hors édition : on peut
+ * quitter l'écran, changer de pays et revenir le reprendre. Rien n'est
+ * enregistré tant que l'utilisateur ne l'enregistre pas explicitement.
+ */
+export interface RuleSetDraft {
+  country: CountryCode;
+  rules: TagRule[];
+  lastEditedLabel: string;
+  lastEditedBy: string;
+  /** Renseigné quand le brouillon est né d'un set d'un autre pays, devise et
+   *  formes juridiques peuvent alors ne plus correspondre. */
+  copiedFrom?: { country: CountryCode; countryName: string; currency: string; setId: string };
+}
 
 export const EMPTY_CRITERIA: RuleCriteria = {
   sensitivity: null, exposure: null, newAutoGrade: null,

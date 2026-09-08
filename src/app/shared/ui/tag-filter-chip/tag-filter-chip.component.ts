@@ -1,14 +1,14 @@
-import { Component, ElementRef, HostListener, computed, inject, input, model, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, computed, inject, input, model, signal } from '@angular/core';
 import { ChipComponent } from '../chip/chip.component';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
-import { ButtonComponent } from '../button/button.component';
+import { SingleOpenFlyout, claimFlyout, releaseFlyout } from '../flyout-menu/single-open-flyout';
 import { FlyoutMenuComponent } from '../flyout-menu/flyout-menu.component';
 import { IconComponent } from '../icon/icon.component';
 
 export interface TagFilterOption { value: string; label: string; }
 
 /**
- * Filter chip — opens a flyout of checkboxes for multi-select.
+ * Filter chip: opens a flyout of checkboxes for multi-select.
  * `variant="chip"` (default): ds-chip trigger, used in the P4 filter bar.
  * `variant="field"`: ds-select-styled bordered box + label, used as a
  * multi-value form field inside the rule modal (matches ds-select chrome
@@ -17,11 +17,11 @@ export interface TagFilterOption { value: string; label: string; }
 @Component({
   selector: 'ds-tag-filter-chip',
   standalone: true,
-  imports: [ChipComponent, CheckboxComponent, ButtonComponent, FlyoutMenuComponent, IconComponent],
+  imports: [ChipComponent, CheckboxComponent, FlyoutMenuComponent, IconComponent],
   templateUrl: './tag-filter-chip.component.html',
   styleUrl: './tag-filter-chip.component.scss',
 })
-export class TagFilterChipComponent {
+export class TagFilterChipComponent implements SingleOpenFlyout, OnDestroy {
   label       = input.required<string>();
   options     = input.required<TagFilterOption[]>();
   selected    = model<Set<string>>(new Set());
@@ -46,7 +46,21 @@ export class TagFilterChipComponent {
   });
 
   toggleOpen(): void {
-    this.open.update((o) => !o);
+    if (this.open()) {
+      this.closeFlyout();
+      return;
+    }
+    claimFlyout(this);
+    this.open.set(true);
+  }
+
+  closeFlyout(): void {
+    releaseFlyout(this);
+    this.open.set(false);
+  }
+
+  ngOnDestroy(): void {
+    releaseFlyout(this);
   }
 
   isChecked(value: string): boolean {
@@ -63,18 +77,14 @@ export class TagFilterChipComponent {
     this.selected.set(next);
   }
 
-  clear(): void {
-    this.selected.set(new Set());
-  }
-
   @HostListener('document:click', ['$event'])
   onDocClick(event: MouseEvent): void {
     if (!this.open()) return;
-    if (!this.elRef.nativeElement.contains(event.target as Node)) this.open.set(false);
+    if (!this.elRef.nativeElement.contains(event.target as Node)) this.closeFlyout();
   }
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
-    if (this.open()) this.open.set(false);
+    if (this.open()) this.closeFlyout();
   }
 }

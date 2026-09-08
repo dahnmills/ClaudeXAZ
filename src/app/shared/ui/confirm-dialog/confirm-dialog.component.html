@@ -26,6 +26,9 @@
 
       <div class="ds-confirm-dialog__footer">
         <ds-button type="tertiary" tone="accent" (clicked)="onCancel()">{{ cancelLabel() }}</ds-button>
+        @if (secondaryLabel()) {
+          <ds-button type="secondary" (clicked)="onSecondary()">{{ secondaryLabel() }}</ds-button>
+        }
         <ds-button type="primary" (clicked)="onConfirm()">{{ confirmLabel() }}</ds-button>
       </div>
     </div>

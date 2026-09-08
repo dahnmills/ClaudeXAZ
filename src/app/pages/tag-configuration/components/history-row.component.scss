@@ -1,6 +1,6 @@
 // `display`/`padding` repeated on `.history-row.ds-card--no-padding` (not
 // just `.history-row`) so they win deterministically over ds-card's own
-// `:host` rule for those same properties — both are 2-selector, same-
+// `:host` rule for those same properties. Both are 2-selector, same-
 // specificity rules on the same host element, otherwise the winner depends
 // on stylesheet injection order (flips across rebuilds/HMR).
 .history-row.ds-card--no-padding {
@@ -27,6 +27,14 @@
     &:hover { background: var(--semantic-color-static-background-subtle-informative); }
   }
 
+  // Colonne pays (listes multi-pays) : drapeau, nom, devise sur une ligne.
+  &__country {
+    flex:        0 0 auto;
+    display:     flex;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-xs);
+    min-width:   var(--semantic-measurement-sizing-3xl);
+  }
   &__field {
     flex:           1 0 0;
     display:        flex;
@@ -56,13 +64,24 @@
     justify-content: flex-end;
     gap:         var(--semantic-measurement-spacing-s);
     // Fixed width regardless of badge presence, so the chevron lands at the
-    // same x for every row — otherwise Draft/Active rows (with a badge) push
+    // same x for every row: otherwise Draft/Active rows (with a badge) push
     // the chevron left of where Archived rows (no badge) render it.
-    width:       120px;
+    width:       calc(var(--semantic-measurement-sizing-3xl) * 2.5); // 160px
   }
   &__badge-slot {
     flex:  1;
     display: flex;
     justify-content: flex-end;
+  }
+  &__menu-anchor {
+    position:    relative;
+    display:     inline-flex;
+    align-items: center;
+  }
+  &__menu {
+    position: absolute;
+    top:      calc(100% + var(--semantic-measurement-spacing-xs));
+    right:    0;
+    z-index:  10;
   }
 }

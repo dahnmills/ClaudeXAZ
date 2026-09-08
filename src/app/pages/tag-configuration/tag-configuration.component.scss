@@ -4,8 +4,8 @@
 .tag-config__draft-snackbar {
   top:    calc(var(--semantic-measurement-sizing-3xl) + var(--semantic-measurement-spacing-m));
   bottom: auto;
-  // ds-snackbar defaults to z-index 10001 (above everything, incl. modals) —
-  // this snackbar is persistent for the whole edit session, so it must sit
+  // ds-snackbar defaults to z-index 10001 (above everything, incl. modals).
+  // This snackbar is persistent for the whole edit session, so it must sit
   // below modal (1000) / confirm-dialog (1100) / toaster (2000) instead.
   z-index: 500;
 }
@@ -15,12 +15,18 @@
   gap:     var(--semantic-measurement-spacing-xl);
 }
 
+// `button:disabled { pointer-events: none }` : un bouton désactivé n'a plus de
+// survol. La raison s'accroche donc au conteneur, focusable pour le clavier.
+.tag-config__guarded {
+  display: inline-flex;
+}
+
 .tag-config {
   display: flex;
   flex-direction: column;
   gap: var(--semantic-measurement-spacing-m);
-  // 24px between the page-header's border-bottom and the toolbar below —
-  // per Figma (Content frame starts 24px after the header block).
+  // 24px between the page-header's border-bottom and the toolbar below.
+  // Per Figma (Content frame starts 24px after the header block).
   padding: var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl) 0;
 
   &__toolbar { display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s); }
@@ -46,7 +52,7 @@
     position: relative;
   }
   // Absolutely positioned in the row's own left margin so its presence never
-  // changes the card's box width/position between view and edit mode — the
+  // changes the card's box width/position between view and edit mode, the
   // card must render pixel-identical in both, per user report of boxes
   // "décalé[es] sur la droite" when the handle occupied a layout column.
   &__drag-handle {
