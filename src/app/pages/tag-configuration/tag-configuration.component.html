@@ -4,7 +4,9 @@
       <ds-crumb label="Home" href="#" />
       @if (activeTab() === 'history' && historyDetail(); as detail) {
         <ds-crumb label="TAG Configuration" (clicked)="closeHistoryDetail()" />
-        <ds-crumb [label]="detail.id" [currentPage]="true" />
+        <!-- Même règle que la colonne ID de l'historique : un brouillon se nomme
+             « Draft », il n'a pas encore de numéro. -->
+        <ds-crumb [label]="detail.status === 'Draft' ? 'Draft' : detail.id" [currentPage]="true" />
       } @else {
         <ds-crumb label="TAG Configuration" [currentPage]="true" />
       }

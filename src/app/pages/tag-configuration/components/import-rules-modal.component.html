@@ -9,17 +9,25 @@
     <div class="irm-file" [class.irm-file--error]="error()">
       <ds-icon name="file-text" [size]="20" />
       <span class="irm-file__name">{{ name }}</span>
-      <ds-icon name="close" [size]="16" class="irm-file__remove" (click)="removeFile()" />
+      <!-- Retirer le fichier est un bouton, pas une icône cliquable : une icône
+           nue n'a ni nom accessible, ni accès clavier, ni surface de clic. -->
+      <ds-button-icon type="tertiary" tone="negative" ariaLabel="Remove file" (clicked)="removeFile()">
+        <ds-icon name="close" [size]="16" />
+      </ds-button-icon>
     </div>
   } @else {
+    <!-- Secondary : le primary de la modale est « Import », dans le pied. Deux
+         primary visibles en même temps ne disent plus lequel termine. -->
     <div class="irm-drop">
       <ds-icon name="upload" [size]="40" />
       <p class="irm-drop__text">Select a JSON file to import</p>
-      <ds-button type="primary" (clicked)="browse()">Browse files</ds-button>
+      <ds-button type="secondary" (clicked)="browse()">Browse files</ds-button>
     </div>
   }
 
+  <!-- Sortie écrite dans le pied, comme les autres modales de l'écran. -->
   <div slot="actions">
+    <ds-button type="tertiary" (clicked)="onClose()">Cancel</ds-button>
     <ds-button type="primary" [disabled]="!fileName() || error()" (clicked)="onImport()">Import</ds-button>
   </div>
 </ds-modal>

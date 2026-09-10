@@ -28,7 +28,7 @@ import {
 } from './tag-configuration.models';
 import {
   COUNTRIES, countryByCode, rulesForCountry, freshnessForCountry, codesForCountry, historyForCountry,
-  legalFormsForCountry, seedDrafts, RULE_FILTERS,
+  legalFormsForCountry, seedDrafts, formatSetDate, RULE_FILTERS,
 } from './tag-configuration.data';
 import { HistoryRowComponent, HistoryAction } from './components/history-row.component';
 import { FunctionalNoticeComponent } from '../../shared/ui/functional-notice/functional-notice.component';
@@ -145,7 +145,10 @@ export class TagConfigurationComponent {
     const entry: RuleSetDraft = {
       country: this.country(),
       rules,
-      lastEditedLabel: 'Just now',
+      // Ce libellé remplit la colonne « Last update » de la ligne d'historique du
+      // brouillon, à côté de dates. « Just now » y était la seule écriture
+      // relative de la colonne.
+      lastEditedLabel: formatSetDate(new Date()),
       lastEditedBy: 'John Doe',
       copiedFrom: this.editCopiedFrom(),
     };
@@ -412,12 +415,18 @@ export class TagConfigurationComponent {
   onValidateVersion(): void {
     const validated = this.rules().map(r => ({ ...r, criteria: { ...r.criteria } }));
     this.activeRules.set(validated);
+    // Même écriture de date que les lignes déjà là, et la version qu'on archive
+    // voit sa période se fermer aujourd'hui : la laisser ouverte affichait un
+    // set archivé toujours en vigueur.
+    const today = formatSetDate(new Date());
     this.history.update(list => [{
       id: Math.floor(100000000 + Math.random() * 900000000).toString(),
-      createdLabel: 'Just now', lastUpdateLabel: 'Just now', lastUpdateBy: 'John Doe',
-      activePeriodLabel: 'Today → —', status: 'Active',
+      createdLabel: today, lastUpdateLabel: today, lastUpdateBy: 'John Doe',
+      activePeriodLabel: `${today} → —`, status: 'Active',
       rules: validated.map(r => ({ ...r, criteria: { ...r.criteria } })),
-    }, ...list.map(h => h.status === 'Active' ? { ...h, status: 'Archived' as const } : h)]);
+    }, ...list.map(h => h.status === 'Active'
+      ? { ...h, status: 'Archived' as const, activePeriodLabel: h.activePeriodLabel.replace('—', today) }
+      : h)]);
     // Le brouillon a été promu : le garder ferait croire à du travail en attente.
     const code = this.country();
     this.drafts.update(map => { const next = { ...map }; delete next[code]; return next; });
@@ -661,7 +670,7 @@ export class TagConfigurationComponent {
     if (this.isDirty()) return 'Draft mode: unsaved changes. Nothing is saved until you save or validate this draft.';
     const d = this.draft();
     return d
-      ? `Draft mode: draft saved ${d.lastEditedLabel.toLowerCase()} by ${d.lastEditedBy}. Nothing is saved automatically.`
+      ? `Draft mode: last saved ${d.lastEditedLabel} by ${d.lastEditedBy}. Nothing is saved automatically.`
       : 'Draft mode: nothing is saved until you save or validate this draft.';
   });
 

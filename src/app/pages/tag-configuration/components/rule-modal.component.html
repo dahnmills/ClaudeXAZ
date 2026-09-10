@@ -38,8 +38,13 @@
       <div class="rm-card">
         <div class="rm-grid">
           <ds-tag-filter-chip variant="field" label="Sensitivity" [options]="SENSITIVITY_OPTIONS" [selected]="sensitivity()" (selectedChange)="sensitivity.set($event)" />
-          <fieldset class="rm-field rm-fieldset">
-            <legend class="rm-label">Exposure</legend>
+          <!-- Groupe nommé, pas `fieldset` : la légende d'un fieldset est rendue
+               hors du flux flex, donc l'écart libellé/contrôle y tombait à 0 et
+               « Exposure » se posait 2px plus bas que les libellés voisins. Un
+               span référencé par `aria-labelledby` nomme le groupe pour un
+               lecteur d'écran et s'aligne comme les autres. -->
+          <div class="rm-field" role="group" aria-labelledby="rm-exposure-label">
+            <span class="rm-label" id="rm-exposure-label">Exposure</span>
             <div class="rm-exposure">
               <ds-select class="rm-exposure__op" [options]="EXPOSURE_OP_OPTIONS" [value]="exposureOp()" (selectionChange)="exposureOp.set($event)" placeholder="Any" />
               <ds-input-text class="rm-exposure__amt" inputmode="numeric" [value]="exposureAmt()" (valueChange)="onExposureAmtChange($event)" placeholder="Amount" />
@@ -48,7 +53,7 @@
             @if (exposureHint()) {
               <span class="rm-hint">{{ exposureHint() }}</span>
             }
-          </fieldset>
+          </div>
           <!-- Pas de « (no grade) » ici : un autograde absent est lu OLD par le
                moteur, ce que couvrent déjà les critères de fraîcheur. -->
           <ds-tag-filter-chip variant="field" label="New autograde" [options]="AUTOGRADE_OPTIONS" [selected]="newAutoGrade()" (selectedChange)="newAutoGrade.set($event)" />
@@ -89,7 +94,11 @@
         <div class="rm-grid">
           <ds-tag-filter-chip variant="field" label="Value" [options]="AUTOGRADE_OPTIONS" [selected]="lastAgValue()" (selectedChange)="lastAgValue.set($event)" />
           <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="lastAgFreshness()" (selectionChange)="lastAgFreshness.set($event)" />
-          <ds-select class="rm-grid__wide" label="New autograde vs last checked autograde" [options]="COMPARISON_OPTIONS" [value]="newVsLastAg()" (selectionChange)="newVsLastAg.set($event)" />
+          <!-- Trois champs, une rangée : ce bloc n'en a pas cinq comme le grade
+               valide courant, donc un libellé sur deux colonnes y laisserait une
+               rangée à moitié vide. « autograde » tombe, le titre du bloc le dit
+               déjà ; le sujet de la comparaison, lui, reste écrit. -->
+          <ds-select label="New autograde vs last checked" [options]="COMPARISON_OPTIONS" [value]="newVsLastAg()" (selectionChange)="newVsLastAg.set($event)" />
         </div>
       </div>
     </div>

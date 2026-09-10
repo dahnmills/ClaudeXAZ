@@ -105,14 +105,16 @@
   gap:            var(--semantic-measurement-spacing-xxs);
   flex:           0 0 auto;
 
-  // Même graisse que les libellés des atomes de saisie : ce texte nomme un
-  // champ. La taille reste celle du tableau (compact, deux paires de champs
-  // numériques par carte) et `nowrap` interdit le repli sur deux lignes.
+  // Même graisse et même couleur que les libellés des atomes de saisie : ce
+  // texte nomme un champ. En tertiaire il lisait plus pâle que tous les autres
+  // libellés de l'écran. Seule la taille reste celle du tableau (compact, deux
+  // paires de champs numériques par carte) et `nowrap` interdit le repli sur
+  // deux lignes.
   &__label {
     font-family: var(--semantic-font-family);
     font-size:   var(--semantic-font-text-style-size-m);
     font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-    color:       var(--semantic-color-static-text-main-tertiary);
+    color:       var(--semantic-color-static-text-main-primary);
     white-space: nowrap;
   }
 

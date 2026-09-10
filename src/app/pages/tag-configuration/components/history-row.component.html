@@ -9,7 +9,9 @@
 
   <div class="history-row__field">
     <span class="history-row__label">ID</span>
-    <span class="history-row__value">{{ entry().id }}</span>
+    <!-- Un brouillon n'a pas encore de numéro : il en reçoit un à la validation.
+         Case vide, comme ses dates, plutôt que sa clé interne. -->
+    <span class="history-row__value">{{ idLabel() }}</span>
   </div>
   <div class="history-row__field">
     <span class="history-row__label">Created</span>
@@ -23,7 +25,7 @@
     <span class="history-row__label">Last update by</span>
     <span class="history-row__value">{{ entry().lastUpdateBy }}</span>
   </div>
-  <div class="history-row__field">
+  <div class="history-row__field history-row__field--period">
     <span class="history-row__label">Active period</span>
     <span class="history-row__value">{{ entry().activePeriodLabel }}</span>
   </div>

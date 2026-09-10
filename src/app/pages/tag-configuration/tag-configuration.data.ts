@@ -259,23 +259,41 @@ const FR_RULES_V1: TagRule[] = [
     criteria: { ...EMPTY_CRITERIA, companyRole: ['Prospect'] } },
 ];
 
+// Une seule écriture de date par écran : « 14 Nov. 2025 », jamais « 14-11-25 »,
+// que le mois soit lu par un Français ou un Norvégien. Et une chronologie qui se
+// tient : un set devient actif le jour de sa validation (sa dernière mise à
+// jour) et le reste jusqu'à la validation du suivant.
 const HISTORY: Record<CountryCode, RuleSetHistoryEntry[]> = {
   FR: [
-    { id: '123456791', createdLabel: '11 Nov. 2025', lastUpdateLabel: '14 Nov. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '12-10-25 → —', status: 'Active', rules: FR_RULES },
-    { id: '123456790', createdLabel: '19 Aug. 2025', lastUpdateLabel: '11 Oct. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '19-08-25 → 12-10-25', status: 'Archived', rules: FR_RULES.slice(0, 3) },
-    { id: '123456789', createdLabel: '2 Jul. 2025',  lastUpdateLabel: '18 Aug. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '02-07-25 → 19-08-25', status: 'Archived', rules: FR_RULES_V1 },
+    { id: '123456791', createdLabel: '11 Nov. 2025', lastUpdateLabel: '14 Nov. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '14 Nov. 2025 → —', status: 'Active', rules: FR_RULES },
+    { id: '123456790', createdLabel: '19 Aug. 2025', lastUpdateLabel: '11 Oct. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '11 Oct. 2025 → 14 Nov. 2025', status: 'Archived', rules: FR_RULES.slice(0, 3) },
+    { id: '123456789', createdLabel: '2 Jul. 2025',  lastUpdateLabel: '18 Aug. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '18 Aug. 2025 → 11 Oct. 2025', status: 'Archived', rules: FR_RULES_V1 },
   ],
   DE: [],
   NO: [
-    { id: '980021099', createdLabel: '11 May 2025', lastUpdateLabel: '11 May 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '11-05-25 → —', status: 'Active', rules: noRules() },
+    { id: '980021099', createdLabel: '11 May 2025', lastUpdateLabel: '11 May 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '11 May 2025 → —', status: 'Active', rules: noRules() },
   ],
   PT: [
-    { id: '980531099', createdLabel: '30 Mar. 2025', lastUpdateLabel: '30 Mar. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '30-03-25 → —', status: 'Active', rules: FR_RULES_V1.slice(0, 3) },
+    { id: '980531099', createdLabel: '30 Mar. 2025', lastUpdateLabel: '30 Mar. 2025', lastUpdateBy: 'Alain Verse', activePeriodLabel: '30 Mar. 2025 → —', status: 'Active', rules: FR_RULES_V1.slice(0, 3) },
   ],
 };
 
 export function historyForCountry(code: CountryCode): RuleSetHistoryEntry[] {
   return HISTORY[code].map(h => ({ ...h, rules: h.rules.map(r => ({ ...r, criteria: { ...r.criteria } })) }));
+}
+
+/** Une date d'historique, dans l'écriture ci-dessus et pas une autre. Un set
+ *  validé pendant la session doit se lire comme les trois qui le précèdent :
+ *  « Just now » ou « Today » y ajoutaient une deuxième écriture dans la même
+ *  colonne. Trois lettres de mois, parce que le mois abrégé d'`Intl` en compte
+ *  quatre pour septembre (« Sept ») et trois pour les onze autres. Le point
+ *  d'abréviation tombe sur « May », qui n'est pas abrégé. */
+export function formatSetDate(d: Date): string {
+  const parts = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+    .formatToParts(d);
+  const get = (t: string) => parts.find(p => p.type === t)?.value ?? '';
+  const month = get('month').slice(0, 3);
+  return `${get('day')} ${month === 'May' ? month : month + '.'} ${get('year')}`;
 }
 
 // --- brouillons (un par pays au maximum) ---
@@ -301,14 +319,22 @@ const FR_DRAFT_RULES: TagRule[] = [
     criteria: { ...EMPTY_CRITERIA, sensitivity: ['S3'], exposure: { op: '>', amount: 500000 }, legalForm: ['SCI'] } },
 ];
 
-const SEED_DRAFTS: RuleSetDraft[] = [
-  { country: 'FR', rules: FR_DRAFT_RULES, lastEditedLabel: '2 days ago', lastEditedBy: 'John Doe' },
+const SEED_DRAFTS: Omit<RuleSetDraft, 'lastEditedLabel'>[] = [
+  { country: 'FR', rules: FR_DRAFT_RULES, lastEditedBy: 'John Doe' },
 ];
 
 export function seedDrafts(): Record<string, RuleSetDraft> {
+  // Le brouillon d'exemple a été touché avant-hier, et sa date s'écrit comme
+  // celles de l'historique : c'est la même colonne. Calculée plutôt qu'écrite
+  // en dur, sinon elle finit par précéder la version active du jeu de données.
+  const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
   const out: Record<string, RuleSetDraft> = {};
   for (const d of SEED_DRAFTS) {
-    out[d.country] = { ...d, rules: d.rules.map(r => ({ ...r, criteria: { ...r.criteria } })) };
+    out[d.country] = {
+      ...d,
+      lastEditedLabel: formatSetDate(twoDaysAgo),
+      rules: d.rules.map(r => ({ ...r, criteria: { ...r.criteria } })),
+    };
   }
   return out;
 }

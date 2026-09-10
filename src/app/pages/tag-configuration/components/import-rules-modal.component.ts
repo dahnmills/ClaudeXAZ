@@ -1,6 +1,7 @@
 import { Component, ElementRef, signal, viewChild, output, input } from '@angular/core';
 import { ModalComponent } from '../../../shared/ui/modal/modal.component';
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
+import { ButtonIconComponent } from '../../../shared/ui/button-icon/button-icon.component';
 import { IconComponent } from '../../../shared/ui/icon/icon.component';
 import { FunctionalNoticeComponent } from '../../../shared/ui/functional-notice/functional-notice.component';
 import { TagRule, EMPTY_CRITERIA } from '../tag-configuration.models';
@@ -23,7 +24,7 @@ const MOCK_IMPORTED_RULES: TagRule[] = [
 @Component({
   selector: 'tag-import-rules-modal',
   standalone: true,
-  imports: [ModalComponent, ButtonComponent, IconComponent, FunctionalNoticeComponent],
+  imports: [ModalComponent, ButtonComponent, ButtonIconComponent, IconComponent, FunctionalNoticeComponent],
   templateUrl: './import-rules-modal.component.html',
   styleUrl: './import-rules-modal.component.scss',
 })

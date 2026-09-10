@@ -25,7 +25,12 @@
               <div class="te-code">
                 <span class="te-key">{{ c.code }}</span>
                 <span class="te-desc">{{ c.label }}</span>
-                <ds-button-icon ariaLabel="Remove code" (clicked)="removeCode(c.code)">
+                <!-- Retirer une ligne se fait en tertiary : cinq boutons primary
+                     dans une même carte donnaient cinq pavés bleus au geste le
+                     moins engageant de la modale, devant son vrai primary. Le
+                     ton négatif dit que ça retire, la surface cliquable reste
+                     celle d'un bouton (32px), pas celle de l'icône. -->
+                <ds-button-icon type="tertiary" tone="negative" ariaLabel="Remove code" (clicked)="removeCode(c.code)">
                   <ds-icon name="close" [size]="14" />
                 </ds-button-icon>
               </div>

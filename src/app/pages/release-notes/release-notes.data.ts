@@ -23,6 +23,29 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'tag-configuration-detail-pass',
+    date: '2026-09-10',
+    category: 'design',
+    screens: ['tag-configuration'],
+    title: 'TAG Configuration: detail pass on rows, windows and dates',
+    description:
+      'Sweep for the small things: a comparison field that took two rows, buttons louder than the action they carry, a code coloured like a link, two ways of writing the same date, and columns that moved from one line to the next. Nothing changes in what the screen does, only in how steady it reads.',
+    changes: [
+      'In the rule window, the last checked autograde comparison holds one row of three fields instead of spilling onto a second one. The label reads "New autograde vs last checked"',
+      'In the TRANS-NA-EXCL window, removing a code is a light red cross instead of a filled blue square, so the five of them stop shouting over the button that saves the window',
+      'The excluded codes read in black: they are values, not links',
+      'The freshness window saves with "Save", like its twin. "Validate" is kept for publishing a set',
+      'Its field labels read at the weight and colour used by every other field label on the screen, instead of a paler grey',
+      'The import window offers "Cancel" in its footer, "Browse files" steps back to a plain outline so only "Import" reads as the finishing action, and removing the chosen file is a real button, reachable with the keyboard',
+      'The "Create new set" window also offers "Cancel". Its first step says what the three tiles do instead of repeating the window title, "JSON upload" is written in capitals like everywhere else, and the second step no longer prints its title twice',
+      'A draft saved during the session, and a set validated during the session, write their date the way the lines around them do, instead of "Just now" or "Today"',
+      'Validating a set closes the period of the version it replaces. An archived version no longer reads as still in force',
+      'A draft has no number yet, so the ID cell and the breadcrumb show an empty marker instead of an internal key',
+      'In the history lines, the country column has a fixed width: the five columns after it start at the same place whether the country is France or Portugal',
+      'The active period is never cut off, including in the narrower window used to pick a previous set',
+    ],
+  },
+  {
     id: 'tag-configuration-copy-currency',
     date: '2026-09-10',
     category: 'fix',

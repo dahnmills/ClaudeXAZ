@@ -123,7 +123,7 @@ export class RuleCardComponent {
       ] },
       { title: 'Last checked autograde', rows: [
         { label: 'Freshness',                                value: F.fmtFreshness(c.lastAgFreshness), muted: F.isAny(c.lastAgFreshness) },
-        { label: 'New autograde vs last checked autograde',  value: F.fmtComparison(c.newVsLastAg),    muted: F.isAny(c.newVsLastAg) },
+        { label: 'New autograde vs last checked',             value: F.fmtComparison(c.newVsLastAg),    muted: F.isAny(c.newVsLastAg) },
       ] },
       { title: 'Other', rows: [
         { label: 'NACE',         value: F.fmtList(c.nace),        muted: F.isAny(c.nace) },

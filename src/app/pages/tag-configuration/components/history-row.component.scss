@@ -28,12 +28,14 @@
   }
 
   // Colonne pays (listes multi-pays) : drapeau, nom, devise sur une ligne.
+  // Largeur fixe, comme `__end` : en largeur naturelle « Portugal » poussait les
+  // cinq colonnes suivantes 12px à droite de celles de « France », et la liste
+  // ne se lisait plus en colonnes.
   &__country {
-    flex:        0 0 auto;
+    flex:        0 0 calc(var(--semantic-measurement-sizing-3xl) * 2); // 128px
     display:     flex;
     align-items: center;
     gap:         var(--semantic-measurement-spacing-xs);
-    min-width:   var(--semantic-measurement-sizing-3xl);
   }
   &__field {
     flex:           1 0 0;
@@ -42,6 +44,13 @@
     gap:            var(--semantic-measurement-spacing-xxs);
     min-width:      0;
   }
+  // Une période fermée (« 11 Oct. 2025 → 14 Nov. 2025 ») demande 174px, la
+  // valeur la plus longue de la ligne : à poids égal avec les quatre autres
+  // colonnes elle se coupait dans la modale de choix d'un set, plus étroite que
+  // l'onglet History. Un plancher plutôt qu'un poids, comme `__end` : la
+  // colonne ne dépend alors pas de la largeur disponible, et elle reste au même
+  // x d'une ligne à l'autre, période fermée ou pas.
+  &__field--period { min-width: calc(var(--semantic-measurement-sizing-3xl) * 3); } // 192px
   &__label {
     font-size:     var(--semantic-font-text-style-size-m);
     color:         var(--semantic-color-static-text-main-tertiary);

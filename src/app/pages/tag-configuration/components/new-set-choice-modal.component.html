@@ -3,8 +3,11 @@
   contentHeight="auto" (closed)="closed.emit()" (backClicked)="back()">
 
   @if (step() === 'choice') {
-    <span class="nscm-intro">Choose an option:</span>
-    <span class="nscm-intro__sub">You can create a new set starting from different options</span>
+    <!-- Même forme que le titre de la seconde étape : une phrase à l'impératif,
+         sans deux-points, et une sous-ligne qui dit ce que font les trois
+         vignettes au lieu de répéter le titre de la modale. -->
+    <span class="nscm-intro">Choose a starting point</span>
+    <span class="nscm-intro__sub">Start from a set that already exists, from an empty list, or from a JSON file.</span>
 
     <div class="nscm-choices">
       <ds-visual-button title="Previous set" [selected]="selectedAction() === 'previous'" (clicked)="select('previous')">
@@ -13,12 +16,15 @@
       <ds-visual-button title="Blank" [selected]="selectedAction() === 'scratch'" (clicked)="select('scratch')">
         <ds-icon slot="icon" name="plus-circle" [size]="24" />
       </ds-visual-button>
-      <ds-visual-button title="Json upload" [selected]="selectedAction() === 'import'" (clicked)="select('import')">
+      <!-- « JSON » en capitales, comme partout ailleurs dans l'écran
+           (« Import from JSON », l'export). -->
+      <ds-visual-button title="JSON upload" [selected]="selectedAction() === 'import'" (clicked)="select('import')">
         <ds-icon slot="icon" name="upload" [size]="24" />
       </ds-visual-button>
     </div>
   } @else {
-    <span class="nscm-intro">Select a previous set</span>
+    <!-- Pas de titre répété ici : c'est déjà celui de la modale. Seule la
+         sous-ligne apprend quelque chose. -->
     <span class="nscm-intro__sub">Sets from {{ target().name }} come first. A set from another country can be reused. Check what it brings with it.</span>
 
     <div class="nscm-previous">
@@ -48,7 +54,11 @@
     }
   }
 
+  <!-- Une sortie écrite dans le pied, comme les autres modales de l'écran : la
+       croix du titre est la seule sortie qu'on ne trouve pas au clavier en
+       parcourant les actions. -->
   <div slot="actions">
+    <ds-button type="tertiary" (clicked)="closed.emit()">Cancel</ds-button>
     <ds-button type="primary" [disabled]="!canGoNext()" (clicked)="next()">Next</ds-button>
   </div>
 </ds-modal>

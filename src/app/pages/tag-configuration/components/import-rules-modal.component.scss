@@ -27,8 +27,9 @@
   border-radius: var(--semantic-border-radius-s);
   color:         var(--semantic-color-static-text-main-primary);
 
+  // Le bouton de retrait porte sa couleur et son curseur (ds-button-icon,
+  // tone negative) : rien à styler ici.
   &__name { flex: 1; font-size: var(--semantic-font-text-style-size-m); }
-  &__remove { cursor: pointer; color: var(--semantic-color-static-text-main-functional-negative); }
 
   &--error {
     border-color: var(--semantic-color-static-border-main-functional-negative);

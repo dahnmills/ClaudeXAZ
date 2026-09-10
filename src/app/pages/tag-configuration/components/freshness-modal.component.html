@@ -17,11 +17,11 @@
       <span class="rm-group__title">Last checked autograde</span>
       <div class="rm-card fm-rm-card" [class.fm-rm-card--error]="!lastValid()">
         <div class="fm-thresholds">
-          <div class="fm-field fm-field--readonly">
+          <div class="fm-field">
             <span class="fm-field__label">Current: fresh up to</span>
             <ds-input-text class="fm-field__input" [value]="curLastFresh() + ''" [readonly]="true" />
           </div>
-          <div class="fm-field fm-field--readonly">
+          <div class="fm-field">
             <span class="fm-field__label">Current: old after</span>
             <ds-input-text class="fm-field__input" [value]="curLastOld() + ''" [readonly]="true" />
           </div>
@@ -45,11 +45,11 @@
       <span class="rm-group__title">Valid manual grade <span class="fm-type__hint">(transferred or not)</span></span>
       <div class="rm-card fm-rm-card" [class.fm-rm-card--error]="!manValid()">
         <div class="fm-thresholds">
-          <div class="fm-field fm-field--readonly">
+          <div class="fm-field">
             <span class="fm-field__label">Current: fresh up to</span>
             <ds-input-text class="fm-field__input" [value]="curManFresh() + ''" [readonly]="true" />
           </div>
-          <div class="fm-field fm-field--readonly">
+          <div class="fm-field">
             <span class="fm-field__label">Current: old after</span>
             <ds-input-text class="fm-field__input" [value]="curManOld() + ''" [readonly]="true" />
           </div>
@@ -73,6 +73,9 @@
 
   <div slot="actions">
     <ds-button type="tertiary" (clicked)="closed.emit()">Cancel</ds-button>
-    <ds-button type="primary" [disabled]="!canSave()" (clicked)="onSave()">Validate</ds-button>
+    <!-- « Save », comme la modale TRANS-NA-EXCL : les deux enregistrent une
+         valeur du set dans le brouillon. « Validate » est réservé à la
+         publication du jeu de règles, qui archive la version en vigueur. -->
+    <ds-button type="primary" [disabled]="!canSave()" (clicked)="onSave()">Save</ds-button>
   </div>
 </ds-modal>

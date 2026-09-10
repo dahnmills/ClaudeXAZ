@@ -116,15 +116,6 @@
   white-space: nowrap;
 }
 
-// Reset native fieldset chrome: semantic grouping for a compound control
-// (Exposure), visually identical to a plain labeled field.
-.rm-fieldset {
-  border: none;
-  margin: 0;
-  padding: 0;
-  min-width: 0;
-}
-
 // Même graisse que les libellés des atomes de formulaire (semi-bold) : la
 // légende d'Exposure est un libellé de champ, pas un intertitre.
 .rm-label {

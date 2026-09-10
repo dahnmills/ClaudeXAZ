@@ -45,6 +45,10 @@ export class HistoryRowComponent {
 
   menuOpen = signal(false);
 
+  /** Le numéro de set est attribué à la validation : un brouillon n'en a pas,
+   *  et sa clé interne n'a rien à faire dans la colonne ID. */
+  idLabel = computed(() => this.entry().status === 'Draft' ? '—' : this.entry().id);
+
   // Chaque ligne porte un badge : « Archived » est un état, pas une absence.
   statusBadge = computed(() => {
     switch (this.entry().status) {
