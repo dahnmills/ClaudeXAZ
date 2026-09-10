@@ -94,16 +94,37 @@ export const BUYERS: Buyer[] = [
   { id: '634128005', name: 'HENKEL AG' },
   { id: '648290117', name: 'BRENNTAG SE' },
   { id: '659003428', name: 'BABCOCK INTERNATIONAL GROUP PLC' },
+  // Portefeuille de l'utilisateur connecté. Il lui faut son propre lot : un
+  // acheteur n'appartient qu'à un portefeuille à la fois, et les soixante-six
+  // premiers sont déjà pris ou réservés au fichier d'affectations.
+  { id: '920114837', name: 'AIR LIQUIDE SA' },
+  { id: '927300492', name: 'BOUYGUES SA' },
+  { id: '934028117', name: 'SAINT-GOBAIN SA' },
+  { id: '941183604', name: 'MICHELIN SCA' },
+  { id: '948220975', name: 'LEGRAND SA' },
+  { id: '955047118', name: 'SODEXO SA' },
+  { id: '962118340', name: 'VALEO SE' },
+  { id: '971004628', name: 'ALSTOM SA' },
+  { id: '983291057', name: 'DANONE SA' },
 ];
 
 /** Index par identifiant, pour retrouver un nom sans parcourir la liste. */
 export const BUYERS_BY_ID: Map<string, Buyer> = new Map(BUYERS.map(b => [b.id, b]));
 
 /**
- * Portefeuilles existants. `A.VERSE` reste le portefeuille de tête, celui de
- * l'écran legacy. Les sept autres couvrent plusieurs équipes et plusieurs pays :
- * sans eux, « Select another portfolio » proposerait treize titulaires dont un
- * seul aurait quelque chose à montrer.
+ * Login de l'utilisateur connecté. C'est le portefeuille qu'on regarde en
+ * arrivant : on gère le sien, consulter celui d'un collègue est le détour. Aligné
+ * sur le nom que porte le compte du harnais, sinon l'écran nommerait quelqu'un
+ * d'autre que la barre de navigation.
+ */
+export const CURRENT_USER = 'J.DOE';
+
+/**
+ * Portefeuilles existants. `J.DOE` en tête, c'est celui de l'utilisateur
+ * connecté. `A.VERSE` garde le portefeuille de l'écran legacy. Les sept autres
+ * couvrent plusieurs équipes et plusieurs pays : sans eux, « Select another
+ * portfolio » proposerait quatorze titulaires dont un seul aurait quelque chose à
+ * montrer.
  *
  * Invariant : un acheteur n'appartient qu'à un portefeuille à la fois. Les huit
  * acheteurs que `UPLOADED_ASSIGNMENTS` déclare `from: null` restent libres, sinon
@@ -112,6 +133,14 @@ export const BUYERS_BY_ID: Map<string, Buyer> = new Map(BUYERS.map(b => [b.id, b
  * `H.SILVA` aussi, pour que le périmètre vide reste démontrable.
  */
 export const PORTFOLIOS: Portfolio[] = [
+  {
+    id: 'PF-0001',
+    owner: CURRENT_USER,
+    buyerIds: [
+      '920114837', '927300492', '934028117', '941183604', '948220975',
+      '955047118', '962118340', '971004628', '983291057',
+    ],
+  },
   {
     id: 'PF-0002',
     owner: 'A.VERSE',
@@ -209,11 +238,14 @@ export const PORTFOLIO_TEAMS_BY_ID: Map<string, PortfolioTeam> =
   new Map(PORTFOLIO_TEAMS.map(t => [t.id, t]));
 
 /**
- * Annuaire des titulaires possibles. `A.VERSE`, `J.DAHAN` et `M.LEROY` doivent y
- * figurer : ce sont les trois logins que le tableau et le fichier d'affectations
- * emploient déjà.
+ * Annuaire des titulaires possibles. `J.DOE` y figure comme les autres : c'est
+ * l'utilisateur connecté, son portefeuille se consulte par le même chemin que
+ * celui d'un collègue. `A.VERSE`, `J.DAHAN` et `M.LEROY` doivent y figurer aussi :
+ * ce sont les trois logins que le tableau et le fichier d'affectations emploient
+ * déjà.
  */
 export const PORTFOLIO_USERS: PortfolioUser[] = [
+  { login: CURRENT_USER, fullName: 'John Doe',        teamId: 'TEAM-01' },
   { login: 'A.VERSE',   fullName: 'Alain Verse',      teamId: 'TEAM-01' },
   { login: 'E.DUBOIS',  fullName: 'Elise Dubois',     teamId: 'TEAM-01' },
   { login: 'P.MOREAU',  fullName: 'Paul Moreau',      teamId: 'TEAM-01' },

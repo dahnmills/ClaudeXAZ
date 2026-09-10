@@ -63,11 +63,16 @@
 
             <!-- Pastille posée dans le slot et pas sur l'entrée `badge` de
                  l'atome, qui rend une pastille pleine : « Current » se dit en
-                 clair sur tout l'écran, ici comme sur le tableau de la page. -->
+                 clair sur tout l'écran, ici comme sur le tableau de la page. Une
+                 seule des deux : sur sa propre carte déjà consultée, « Current »
+                 est ce qui compte, « You » ne se dit qu'ailleurs, là où il indique
+                 le chemin du retour. -->
             <div slot="meta" class="pms__meta">
               <span class="pms__stats">{{ statsText(entry) }}</span>
               @if (isCurrent(entry)) {
                 <ds-badge label="Current" status="info" variant="light" size="s" />
+              } @else if (isMe(entry)) {
+                <ds-badge label="You" status="neutral" variant="light" size="s" />
               }
             </div>
           </ds-radio-card>

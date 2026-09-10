@@ -31,7 +31,8 @@ const plural = (n: number, one: string, many = `${one}s`): string =>
   `${n} ${n === 1 ? one : many}`;
 
 /**
- * Select another portfolio : on va consulter le portefeuille de quelqu'un d'autre.
+ * Select another portfolio : on va consulter le portefeuille de quelqu'un d'autre,
+ * ou revenir au sien, sa carte étant marquée « You » comme les autres.
  *
  * Deux entrées dans le même écran, un titulaire ou une équipe, parce que c'est la
  * même question posée à deux échelles. Le pays filtre les deux : chercher un
@@ -70,8 +71,14 @@ export class SelectPortfolioModalComponent {
   users = input<PortfolioScope[]>([]);
   teams = input<PortfolioScope[]>([]);
 
-  /** Périmètre déjà consulté, `null` quand on regarde tous les portefeuilles. */
+  /** Périmètre déjà consulté. La carte qui le porte est marquée et ne se choisit pas. */
   current = input<PortfolioScope | null>(null);
+
+  /**
+   * Login de celui qui regarde. Sa carte est marquée « You » : c'est par là qu'on
+   * revient chez soi sans passer par le titre de la page.
+   */
+  myLogin = input<string>('');
 
   switched = output<PortfolioScope>();
   closed   = output<void>();
@@ -147,10 +154,13 @@ export class SelectPortfolioModalComponent {
   readonly confirmText = computed(() => {
     const pick = this.picked();
     if (!pick) return '';
+    if (this.isMe(pick)) {
+      return 'You are about to go back to your own portfolio. The list will show what you hold again.';
+    }
     const scope = pick.kind === 'user'
       ? `the portfolio of ${pick.label}`
       : `the ${pick.portfolioCount} portfolios of ${pick.label}`;
-    return `You are about to view ${scope}. The list will show that scope only, until you go back to all portfolios.`;
+    return `You are about to view ${scope}. The list will show that scope only, until you go back to your own portfolio.`;
   });
 
   setMode(value: string): void {
@@ -199,6 +209,11 @@ export class SelectPortfolioModalComponent {
   isCurrent(scope: PortfolioScope): boolean {
     const cur = this.current();
     return !!cur && cur.kind === scope.kind && cur.id === scope.id;
+  }
+
+  /** Sa propre carte. Une équipe n'est jamais « vous », même celle dont on est membre. */
+  isMe(scope: PortfolioScope): boolean {
+    return scope.kind === 'user' && !!this.myLogin() && scope.id === this.myLogin();
   }
 
   askConfirm(): void {

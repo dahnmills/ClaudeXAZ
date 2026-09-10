@@ -3,6 +3,13 @@
   font-family: var(--semantic-font-family);
 }
 
+// `button:disabled { pointer-events: none }` : un bouton désactivé n'a plus de
+// survol. La raison s'accroche donc au conteneur, focusable au clavier quand
+// elle existe. Même patron que `.tag-config__guarded`.
+.pm-guarded {
+  display: inline-flex;
+}
+
 // Corps : ds-page-header porte déjà ses 32px latéraux, on les répète ici pour
 // que le tableau s'aligne sur le titre.
 .pm-body {
@@ -34,13 +41,6 @@
     font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
     color:       var(--semantic-color-static-text-main-primary);
   }
-}
-
-// Bande de périmètre : la sortie est dans la bande, à la ligne sous le message,
-// parce que l'atome empile son contenu. Pas d'autre mise en forme, l'atome porte
-// le fond, l'icône et la couleur.
-.pm-scope ds-button {
-  align-self: flex-start;
 }
 
 // Conteneur du tableau : rangées collées, sans hériter du gap de .pm-body.

@@ -23,6 +23,24 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'portfolio-scope-is-mine',
+    date: '2026-09-10',
+    category: 'feature',
+    screens: ['portfolio-management'],
+    title: 'Portfolio Management opens on your own portfolio',
+    description:
+      'The screen opened on every portfolio at once, then used a blue band to say whose portfolio you were reading and how many were hidden. It now opens on yours, names in its title whose portfolio is on screen, and carries a button to come back to it. The band is gone: the title says it in three words.',
+    changes: [
+      'You land on your own portfolio. There is no longer a state where the screen lists every portfolio at once',
+      'The title names the scope being read: "Portfolio Management · John Doe", then the name of the colleague or of the team',
+      '"Show my portfolio" brings you back, next to "Select another portfolio". On your own portfolio it stays in place, switched off, and says why at hover',
+      'In the picker, your own card carries a "You" pill, so the way back is there too',
+      'Going back through the picker confirms with "You are about to go back to your own portfolio"',
+      'The band that read "Viewing the portfolio of A.VERSE. 7 other portfolios are hidden." is removed',
+      'The connected account holds a portfolio of its own, so the screen has something to show on arrival',
+    ],
+  },
+  {
     id: 'select-portfolio-cards',
     date: '2026-09-10',
     category: 'design',

@@ -6,10 +6,26 @@
       <ds-crumb label="Portfolio Management" [currentPage]="true" />
     </ds-breadcrumbs>
 
-    <!-- Le titre porte le périmètre consulté, comme Agenda : « Portfolio
-         Management · A.VERSE » quand on regarde le portefeuille d'un autre. La
-         bascule est à droite de la rangée du titre, là où Agenda la place. -->
-    <ds-page-title slot="title" title="Portfolio Management" [id]="scope()?.label ?? null">
+    <!-- Le titre nomme toujours le périmètre consulté, comme Agenda : « Portfolio
+         Management · John Doe » sur le sien, le nom du collègue ou de l'équipe
+         ensuite. C'est la seule phrase dont l'écran a besoin pour dire de qui il
+         parle. Les deux bascules sont à droite de la rangée, là où Agenda les
+         place. -->
+    <ds-page-title slot="title" title="Portfolio Management" [id]="scopeName()">
+      <!-- Sur son propre portefeuille le retour ne mène nulle part : il est
+           désactivé et dit pourquoi au survol, il ne disparaît pas. Une action
+           qui s'efface fait douter qu'elle existe, et sa place laissée vide
+           déplacerait le bouton voisin à chaque bascule de périmètre. La raison
+           s'accroche au conteneur, un bouton désactivé n'a plus de survol. -->
+      <span slot="actions" class="pm-guarded"
+        [dsTooltip]="myPortfolioReason()"
+        [attr.tabindex]="myPortfolioReason() ? 0 : null">
+        <ds-button type="plain" tone="accent" [disabled]="isMine()" (clicked)="showMyPortfolio()">
+          <ds-icon slot="icon-left" name="user" [size]="16" />
+          Show my portfolio
+        </ds-button>
+      </span>
+
       <ds-button slot="actions" type="plain" tone="accent" (clicked)="selectOpen.set(true)">
         <ds-icon slot="icon-left" name="switch" [size]="16" />
         Select another portfolio
@@ -18,17 +34,6 @@
   </ds-page-header>
 
   <div class="pm-body">
-    <!-- Sous périmètre, le tableau ne montre plus tout : on dit lequel, combien de
-         lignes sont écartées, et on rend la sortie sur place. -->
-    @if (scope()) {
-      <ds-functional-notice class="pm-scope" status="info" emphasis="low"
-        [message]="scopeMessage()">
-        <ds-button type="plain" tone="accent" (clicked)="showAllPortfolios()">
-          Show all portfolios
-        </ds-button>
-      </ds-functional-notice>
-    }
-
     <!-- Action de page, à droite au-dessus du tableau : c'est le tableau qu'elle
          alimente, pas le titre. La sélection s'annonce à gauche, sur la même
          rangée, pour qu'on sache toujours combien de lignes sont cochées. -->
@@ -98,6 +103,7 @@
     [users]="userScopes()"
     [teams]="teamScopes()"
     [current]="scope()"
+    [myLogin]="myLogin"
     (switched)="onSwitched($event)"
     (closed)="selectOpen.set(false)" />
 

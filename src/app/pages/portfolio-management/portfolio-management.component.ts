@@ -13,15 +13,16 @@ import {
   CellSelectionComponent,
   FlyoutMenuComponent,
   FlyoutMenuItemComponent,
-  FunctionalNoticeComponent,
   ToasterContainerComponent,
   ToasterService,
+  TooltipDirective,
 } from '../../shared/ui';
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
 import { UploadPortfoliosModalComponent } from './components/upload-portfolios-modal.component';
 import { UpdatePortfolioModalComponent } from './components/update-portfolio-modal.component';
 import { SelectPortfolioModalComponent } from './components/select-portfolio-modal.component';
 import {
+  CURRENT_USER,
   PORTFOLIOS,
   PORTFOLIO_TEAMS,
   PORTFOLIO_TEAMS_BY_ID,
@@ -39,6 +40,9 @@ interface ScopeRef {
   kind: 'user' | 'team';
   id: string;
 }
+
+/** Périmètre d'arrivée : le sien. */
+const MY_SCOPE: ScopeRef = { kind: 'user', id: CURRENT_USER };
 
 
 @Component({
@@ -59,8 +63,8 @@ interface ScopeRef {
     CellSelectionComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
-    FunctionalNoticeComponent,
     ToasterContainerComponent,
+    TooltipDirective,
     UploadPortfoliosModalComponent,
     UpdatePortfolioModalComponent,
     SelectPortfolioModalComponent,
@@ -97,11 +101,16 @@ export class PortfolioManagementComponent {
 
   readonly selectOpen = signal(false);
 
+  /** Passé à la modale, qui marque sa propre carte. */
+  readonly myLogin = CURRENT_USER;
+
   /**
-   * `null` = tous les portefeuilles. Sinon on regarde le portefeuille de quelqu'un
-   * d'autre, comme sur Agenda : le titre le nomme, le tableau s'y réduit.
+   * On arrive sur son propre portefeuille : c'est celui qu'on gère, celui d'un
+   * collègue ou d'une équipe est le détour. Le titre nomme toujours le périmètre
+   * consulté, le tableau s'y réduit toujours, et il n'existe donc pas d'état « tous
+   * les portefeuilles » où l'écran montrerait ceux de tout le monde.
    */
-  readonly scopeRef = signal<ScopeRef | null>(null);
+  readonly scopeRef = signal<ScopeRef>(MY_SCOPE);
 
   /** Périmètres proposés par utilisateur. Les compteurs viennent des portefeuilles réels. */
   readonly userScopes = computed<PortfolioScope[]>(() =>
@@ -147,12 +156,47 @@ export class PortfolioManagementComponent {
     }),
   );
 
-  /** Le périmètre est recalculé à chaque changement de données, jamais figé à la bascule. */
-  readonly scope = computed<PortfolioScope | null>(() => {
+  /**
+   * Le sien. `CURRENT_USER` fait partie de l'annuaire, donc le périmètre existe
+   * toujours : c'est ce qui permet à l'écran de n'avoir aucun état sans périmètre.
+   */
+  readonly myScope = computed<PortfolioScope>(
+    () => this.userScopes().find(s => s.id === CURRENT_USER)!,
+  );
+
+  /**
+   * Le périmètre est recalculé à chaque changement de données, jamais figé à la
+   * bascule. Une référence qui ne désigne plus rien ramène sur le sien plutôt que
+   * de vider l'écran.
+   */
+  readonly scope = computed<PortfolioScope>(() => {
     const ref = this.scopeRef();
-    if (!ref) return null;
     const pool = ref.kind === 'user' ? this.userScopes() : this.teamScopes();
-    return pool.find(s => s.id === ref.id) ?? null;
+    return pool.find(s => s.id === ref.id) ?? this.myScope();
+  });
+
+  /** Vrai quand on regarde son propre portefeuille : le retour n'a alors rien à faire. */
+  readonly isMine = computed(() => {
+    const scope = this.scope();
+    return scope.kind === 'user' && scope.id === CURRENT_USER;
+  });
+
+  /**
+   * Ce que dit le retour quand il ne mène nulle part. Vide ailleurs, et la
+   * directive ne monte alors aucune bulle. Le bouton reste affiché, désactivé :
+   * même arbitrage que sur TAG Configuration, on explique plutôt qu'on efface.
+   */
+  readonly myPortfolioReason = computed(() =>
+    this.isMine() ? 'You are already on your own portfolio.' : '');
+
+  /**
+   * Ce que le titre nomme après « Portfolio Management » : le nom de la personne
+   * dont on regarde le portefeuille, ou le nom de l'équipe. Le login sert de
+   * repli, un titulaire sans nom complet garde le sien.
+   */
+  readonly scopeName = computed(() => {
+    const scope = this.scope();
+    return scope.kind === 'user' ? scope.fullName || scope.label : scope.label;
   });
 
   /**
@@ -163,10 +207,8 @@ export class PortfolioManagementComponent {
   readonly rows = computed<Portfolio[]>(() => {
     const key = this.sortKey();
     const way = this.sortDir() === 'asc' ? 1 : -1;
-    const owners = this.scope()?.owners ?? null;
-    const list = owners
-      ? this.portfolios().filter(p => owners.includes(p.owner))
-      : this.portfolios();
+    const owners = this.scope().owners;
+    const list = this.portfolios().filter(p => owners.includes(p.owner));
     return [...list].sort((a, b) =>
       key === 'buyers'
         ? (a.buyerIds.length - b.buyerIds.length) * way
@@ -174,26 +216,10 @@ export class PortfolioManagementComponent {
     );
   });
 
-  /** Portefeuilles écartés par le périmètre : la bande le dit, l'écran ne ment pas. */
-  readonly hiddenCount = computed(() => this.portfolios().length - this.rows().length);
-
-  readonly scopeMessage = computed(() => {
-    const scope = this.scope();
-    if (!scope) return '';
-    const what = scope.kind === 'user'
-      ? `the portfolio of ${scope.label}`
-      : `the ${scope.portfolioCount} portfolios of ${scope.label}`;
-    const hidden = this.hiddenCount();
-    const rest = hidden
-      ? ` ${hidden} other portfolio${hidden > 1 ? 's are' : ' is'} hidden.`
-      : '';
-    return `Viewing ${what}.${rest}`;
-  });
-
   /** Un titulaire peut exister sans portefeuille : le tableau vide doit le dire. */
   readonly emptyMessage = computed(() => {
     const scope = this.scope();
-    if (!scope) return 'No portfolio yet.';
+    if (this.isMine()) return 'You hold no portfolio yet.';
     return scope.kind === 'user'
       ? `${scope.label} holds no portfolio yet.`
       : `No portfolio yet in ${scope.label}.`;
@@ -205,15 +231,28 @@ export class PortfolioManagementComponent {
     // Les lignes cochées n'appartiennent plus au tableau affiché : on repart d'une
     // sélection vide plutôt que d'agir plus tard sur des lignes invisibles.
     this.clearSelection();
-    const what = scope.kind === 'user'
-      ? `the portfolio of ${scope.label}`
-      : `the ${scope.portfolioCount} portfolios of ${scope.label}`;
-    this.toaster.show(`Now viewing ${what}`, { tone: 'info' });
+    this.toaster.show(`Now viewing ${this.scopeWording(scope)}`, { tone: 'info' });
   }
 
-  showAllPortfolios(): void {
-    this.scopeRef.set(null);
+  /** Retour au sien, depuis le titre ou depuis la modale : même chemin, même toast. */
+  showMyPortfolio(): void {
+    // Le bouton est désactivé chez soi, mais un clic ne doit pas non plus
+    // annoncer une bascule qui n'a pas lieu.
+    if (this.isMine()) return;
+    this.scopeRef.set(MY_SCOPE);
     this.clearSelection();
+    this.toaster.show('Now viewing your portfolio', { tone: 'info' });
+  }
+
+  /**
+   * Comment se dit un périmètre dans une phrase. Le sien se dit « your
+   * portfolio » : le nommer par son propre login sonnerait comme un tiers.
+   */
+  private scopeWording(scope: PortfolioScope): string {
+    if (scope.kind === 'user') {
+      return scope.id === CURRENT_USER ? 'your portfolio' : `the portfolio of ${scope.label}`;
+    }
+    return `the ${scope.portfolioCount} portfolios of ${scope.label}`;
   }
 
   /** `null` sur une colonne non triée : l'en-tête affiche alors la double flèche. */
