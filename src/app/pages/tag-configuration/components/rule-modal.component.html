@@ -42,9 +42,12 @@
             <legend class="rm-label">Exposure</legend>
             <div class="rm-exposure">
               <ds-select class="rm-exposure__op" [options]="EXPOSURE_OP_OPTIONS" [value]="exposureOp()" (selectionChange)="exposureOp.set($event)" placeholder="Any" />
-              <ds-input-text class="rm-exposure__amt" inputmode="numeric" [value]="exposureAmt()" (valueChange)="exposureAmt.set($event)" placeholder="Amount" />
-              <span class="rm-exposure__currency">{{ currency() }}</span>
+              <ds-input-text class="rm-exposure__amt" inputmode="numeric" [value]="exposureAmt()" (valueChange)="onExposureAmtChange($event)" placeholder="Amount" />
+              <span class="rm-exposure__currency">{{ exposureCurrency() ?? currency() }}</span>
             </div>
+            @if (exposureHint()) {
+              <span class="rm-hint">{{ exposureHint() }}</span>
+            }
           </fieldset>
           <!-- Pas de « (no grade) » ici : un autograde absent est lu OLD par le
                moteur, ce que couvrent déjà les critères de fraîcheur. -->

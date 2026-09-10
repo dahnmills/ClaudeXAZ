@@ -194,8 +194,11 @@ const FR_RULES: TagRule[] = [
     criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['04'], lastAgFreshness: 'Outdated' } },
   { id: 'fr-4', position: 4, decision: 'ACCEPT',
     criteria: { ...EMPTY_CRITERIA, exposure: { op: '<=', amount: 100000 }, nace: ['62.01'] } },
+  // Forme juridique française : copiée en Norvège, elle y est inconnue et se
+  // fait marquer sur la carte. C'est ce qui rend le sens France → Norvège aussi
+  // parlant que l'autre.
   { id: 'fr-5', position: 5, decision: 'CREATE_TASK',
-    criteria: { ...EMPTY_CRITERIA, companyRole: ['Prospect'] } },
+    criteria: { ...EMPTY_CRITERIA, companyRole: ['Prospect'], legalForm: ['SARL'] } },
 ];
 
 // Norvège : ~70 règles pour éprouver le filtrage P4. Montants en NOK et formes
@@ -278,7 +281,9 @@ export function historyForCountry(code: CountryCode): RuleSetHistoryEntry[] {
 // --- brouillons (un par pays au maximum) ---
 
 // Brouillon en dur sur la France : l'historique montre les quatre états dès
-// l'ouverture, et la toolbar propose Resume / Delete sans avoir à éditer.
+// l'ouverture, et la page d'accueil montre le cas « un brouillon est déjà en
+// cours » (Edit rules et Create new set grisés, reprise ou suppression depuis
+// l'onglet History).
 const FR_DRAFT_RULES: TagRule[] = [
   { id: 'fr-1', position: 1, decision: 'ACCEPT',
     criteria: { ...EMPTY_CRITERIA, newAutoGrade: ['08','09','10'], cvgValue: ['04','05','06'], cvgType: ['Automatic'] } },

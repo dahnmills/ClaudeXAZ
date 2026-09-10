@@ -13,10 +13,15 @@ export type Comparison = 'Upgrade' | 'Same' | 'Downgrade';
 export type Decision   = 'ACCEPT' | 'REFUSE' | 'CREATE_TASK';
 export type CountryCode = 'FR' | 'DE' | 'NO' | 'PT';
 
-/** null = "Any" (criterion inactive, ignored in matching). */
+/** null = "Any" (criterion inactive, ignored in matching).
+ *
+ *  `exposure.currency` n'est renseignée que sur un seuil venu du set d'un autre
+ *  pays et laissé tel quel : rien n'est converti, le montant garde donc la
+ *  devise dans laquelle il a été saisi et se lit avec elle. Absente, le montant
+ *  est dans la devise du pays courant. */
 export interface RuleCriteria {
   sensitivity:  Sensitivity[] | null;
-  exposure:     { op: '>' | '<='; amount: number } | null;
+  exposure:     { op: '>' | '<='; amount: number; currency?: string } | null;
   newAutoGrade: Grade[] | null;
 
   cvgValue:     Grade[] | null;

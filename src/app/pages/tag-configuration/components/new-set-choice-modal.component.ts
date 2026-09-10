@@ -91,10 +91,10 @@ export class NewSetChoiceModalComponent {
     if (!d) return '';
     const parts: string[] = [];
     if (d.currencyDiffers) {
-      parts.push(`${d.amountRules} rule${d.amountRules === 1 ? '' : 's'} carry exposure thresholds in ${d.source.currency}, and this country works in ${this.target().currency}. Amounts are copied as they are. Nothing is converted for you.`);
+      parts.push(`${d.amountRules} ${d.amountRules === 1 ? 'rule carries' : 'rules carry'} exposure thresholds in ${d.source.currency}, and this country works in ${this.target().currency}. Amounts are copied as they are. Nothing is converted for you.`);
     }
     if (d.foreignForms.length) {
-      parts.push(`${d.formRules} rule${d.formRules === 1 ? '' : 's'} filter on ${d.foreignForms.join(', ')}, which ${this.target().name} does not use. They are kept and flagged: dropping them would widen the rule instead of narrowing it.`);
+      parts.push(`${d.formRules} ${d.formRules === 1 ? 'rule filters' : 'rules filter'} on ${d.foreignForms.join(', ')}, which ${this.target().name} does not use. They are kept and flagged: dropping them would widen the rule instead of narrowing it.`);
     }
     if (!parts.length) {
       parts.push(`The set comes from ${d.source.name}. Review each rule before validating.`);

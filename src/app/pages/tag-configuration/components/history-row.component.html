@@ -38,7 +38,8 @@
     <!-- La carte entière ouvre le détail ; le menu porte les raccourcis, donc
          il doit retenir le clic pour lui. -->
     @if (actions().length) {
-      <span class="history-row__menu-anchor" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <span class="history-row__menu-anchor" (click)="$event.stopPropagation()"
+            (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()">
         <ds-button-icon type="plain" tone="default" ariaLabel="Rule set actions" (clicked)="toggleMenu()">
           <ds-icon name="context-vertical" [size]="16" />
         </ds-button-icon>

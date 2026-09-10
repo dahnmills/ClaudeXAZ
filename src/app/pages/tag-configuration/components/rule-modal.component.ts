@@ -85,6 +85,10 @@ export class RuleModalComponent {
   sensitivity     = signal<Set<string>>(new Set());
   exposureOp      = signal<string>('');
   exposureAmt     = signal<string>('');
+  /** Devise du seuil quand il vient du set d'un autre pays et n'a pas été
+   *  converti. Le champ affiche cette devise plutôt que celle du pays : sinon on
+   *  relirait un montant étranger comme s'il était local. */
+  exposureCurrency = signal<string | null>(null);
   newAutoGrade    = signal<Set<string>>(new Set());
   cvgValue        = signal<Set<string>>(new Set());
   cvgType         = signal<Set<string>>(new Set());
@@ -116,6 +120,19 @@ export class RuleModalComponent {
     if (!this.cvgFreshnessEnabled()) this.cvgFreshness.set('Any');
   }
 
+  /** Ce qu'on lit quand le seuil est resté dans la devise d'un autre pays. */
+  exposureHint = computed(() => {
+    const c = this.exposureCurrency();
+    return c && c !== this.currency() ? `Amount kept in ${c}, not converted` : '';
+  });
+
+  /** Retaper le montant, c'est le saisir dans la devise du pays : l'étiquette
+   *  d'origine tombe, et le décompte des seuils à relire baisse d'autant. */
+  onExposureAmtChange(v: string): void {
+    this.exposureAmt.set(v);
+    this.exposureCurrency.set(null);
+  }
+
   confirmCloseOpen = signal(false);
   private baseline = '';
 
@@ -128,6 +145,7 @@ export class RuleModalComponent {
       this.sensitivity.set(new Set(c.sensitivity ?? []));
       this.exposureOp.set(c.exposure?.op ?? '');
       this.exposureAmt.set(c.exposure ? String(c.exposure.amount) : '');
+      this.exposureCurrency.set(c.exposure?.currency ?? null);
       this.newAutoGrade.set(new Set(c.newAutoGrade ?? []));
       this.cvgValue.set(new Set(c.cvgValue ?? []));
       this.cvgType.set(new Set(c.cvgType ?? []));
@@ -157,7 +175,13 @@ export class RuleModalComponent {
     const amt = parseInt(this.exposureAmt(), 10);
     return {
       sensitivity: this.setToNull<Sensitivity>(this.sensitivity()),
-      exposure: this.exposureOp() && !isNaN(amt) ? { op: this.exposureOp() as '>' | '<=', amount: amt } : null,
+      exposure: this.exposureOp() && !isNaN(amt)
+        ? {
+          op: this.exposureOp() as '>' | '<=',
+          amount: amt,
+          ...(this.exposureCurrency() ? { currency: this.exposureCurrency()! } : {}),
+        }
+        : null,
       newAutoGrade: this.setToNull<Grade>(this.newAutoGrade()),
       cvgValue: this.setToNull<Grade>(this.cvgValue()),
       cvgType: this.setToNull<GradeType>(this.cvgType()),

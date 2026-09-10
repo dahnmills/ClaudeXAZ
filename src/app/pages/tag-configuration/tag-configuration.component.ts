@@ -543,10 +543,20 @@ export class TagConfigurationComponent {
 
   private startDraftFrom(entry: RuleSetHistoryEntry, from: Country): void {
     const target = this.currentCountry();
-    this.editCopiedFrom.set(from.code === target.code ? undefined : {
+    const foreign = from.code !== target.code;
+    this.editCopiedFrom.set(foreign ? {
       country: from.code, countryName: from.name, currency: from.currency, setId: entry.id,
-    });
-    this.beginEdit(entry.rules);
+    } : undefined);
+    // Aucune conversion de montant : un seuil copié garde sa devise d'origine et
+    // s'affiche avec elle. L'afficher dans la devise du pays ferait lire un seuil
+    // faux, ce qui est pire que de le signaler.
+    const keepCurrency = foreign && from.currency !== target.currency;
+    const rules = keepCurrency
+      ? entry.rules.map(r => r.criteria.exposure
+        ? { ...r, criteria: { ...r.criteria, exposure: { ...r.criteria.exposure, currency: from.currency } } }
+        : r)
+      : entry.rules;
+    this.beginEdit(rules);
     this.toaster.show('Rules loaded from a previous set (draft)', { tone: 'success' });
   }
 
@@ -559,16 +569,18 @@ export class TagConfigurationComponent {
     const target = this.currentCountry();
     const known = this.knownLegalForms();
     const list = this.rules();
-    const amountRules = list.filter(r => r.criteria.exposure).length;
+    // Un seuil repris tel quel porte sa devise d'origine ; corrigé dans la modale,
+    // il la perd. Le décompte suit donc ce qui reste vraiment à relire.
+    const amountRules = list.filter(r => r.criteria.exposure?.currency).length;
     const foreign = [...new Set(list.flatMap(r => r.criteria.legalForm ?? []).filter(f => !known.includes(f)))];
     const formRules = list.filter(r => (r.criteria.legalForm ?? []).some(f => foreign.includes(f))).length;
 
     const parts: string[] = [];
     if (src.currency !== target.currency && amountRules > 0) {
-      parts.push(`${amountRules} rule${amountRules === 1 ? '' : 's'} still carry exposure thresholds in ${src.currency}, and ${target.name} works in ${target.currency}. Nothing was converted.`);
+      parts.push(`${amountRules} ${amountRules === 1 ? 'rule still carries' : 'rules still carry'} exposure thresholds in ${src.currency}, and ${target.name} works in ${target.currency}. Nothing was converted.`);
     }
     if (foreign.length) {
-      parts.push(`${formRules} rule${formRules === 1 ? '' : 's'} filter on ${foreign.join(', ')}, not used in ${target.name}. They are kept and flagged in the list, because dropping them would widen the rule.`);
+      parts.push(`${formRules} ${formRules === 1 ? 'rule filters' : 'rules filter'} on ${foreign.join(', ')}, not used in ${target.name}. They are kept and flagged in the list, because dropping them would widen the rule.`);
     }
     if (!parts.length) parts.push('Review each rule before validating.');
 

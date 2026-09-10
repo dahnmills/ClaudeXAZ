@@ -65,7 +65,7 @@ export class RuleCardComponent {
     const row = (label: string, value: string, isAny: boolean): SummaryField => ({ label, value, isAny });
     return [
       row('Sensitivity',            F.fmtList(c.sensitivity),                              F.isAny(c.sensitivity)),
-      row('Exposure',               F.fmtExposure(c.exposure, this.currency()),             F.isAny(c.exposure)),
+      row('Exposure',               F.fmtExposure(c.exposure, c.exposure?.currency ?? this.currency()), F.isAny(c.exposure)),
       row('New autograde',          F.fmtList(c.newAutoGrade),                              F.isAny(c.newAutoGrade)),
       row('Last checked autograde', F.fmtList(c.lastAgValue),                               F.isAny(c.lastAgValue)),
       row('Current valid grade',    F.fmtList(c.cvgValue),                                  F.isAny(c.cvgValue)),

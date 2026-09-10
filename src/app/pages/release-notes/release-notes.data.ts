@@ -23,6 +23,23 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'tag-configuration-copy-currency',
+    date: '2026-09-10',
+    category: 'fix',
+    screens: ['tag-configuration'],
+    title: 'TAG Configuration: a copied threshold keeps its own currency',
+    description:
+      'Review pass over the whole screen. A set copied from another country was showing its exposure thresholds in the currency of the country it landed in, while the message above the list said the opposite: nothing had been converted. The amount now reads with the currency it was typed in, until someone types a new one.',
+    changes: [
+      'A threshold copied from another country reads with its original currency on the card and in the rule window, with a line saying it was not converted',
+      'Typing the amount again puts it back in the currency of the country, and the count of thresholds left to review drops by one',
+      'The message above a copied draft counts only the thresholds still in the other currency, so it stops asking for work already done',
+      'Escape now closes the menu of a history line, as it already did on a rule card',
+      'One French rule filters on a French legal form, so copying the French set into Norway shows the legal-form warning as well, not only the currency one',
+      'Wording with a single rule reads "1 rule carries" and "1 rule filters", instead of the plural verb',
+    ],
+  },
+  {
     id: 'portfolio-management',
     date: '2026-09-10',
     category: 'feature',
