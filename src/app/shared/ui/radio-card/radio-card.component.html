@@ -13,6 +13,11 @@
   }
 </div>
 
+<!-- Bord droit de la carte : un choix se compare souvent sur un chiffre ou un
+     état posé en face de son libellé (un volume, un périmètre déjà consulté).
+     Slot nommé, donc les appels qui ne projettent rien ne bougent pas. -->
+<ng-content select="[slot=meta]" />
+
 @if (badge()) {
   <ds-badge [label]="badge()" status="info" variant="strong" size="s" />
 }

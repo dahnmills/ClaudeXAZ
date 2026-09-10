@@ -23,6 +23,25 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'select-portfolio-cards',
+    date: '2026-09-10',
+    category: 'design',
+    screens: ['portfolio-management'],
+    title: 'Picking another portfolio: a search first, then cards',
+    description:
+      '"Select another portfolio" opened on the whole directory laid out as a table, which gave a start of the alphabet and little else. It now waits for a search or a country before listing anything, and each match reads as one horizontal card: the name in front, the volumes facing it, and a radio button for the one you keep.',
+    changes: [
+      'Nothing is listed when the window opens. It says what to search instead of showing rows nobody asked for',
+      'The count line appears once a search or a country is set, and reads "3 of 13 users"',
+      'A match is a card and no longer a table row: the full name in front, the login, the team and the country under it, and the volumes on the right',
+      'A scope with no portfolio reads "No portfolio yet" instead of an empty marker',
+      'The card being viewed already carries its "Current" pill and cannot be picked',
+      'The By user / By team switch is the height of the search and country fields next to it, and sits on the same line as them',
+      'The footer button reads "Switch portfolio" without an icon, and the window that follows confirms with "Confirm"',
+      'Design system: the choice card takes figures facing its label, the segmented control is 32px like every other field, and the component inventory records both',
+    ],
+  },
+  {
     id: 'tooltip-two-lines',
     date: '2026-09-10',
     category: 'fix',

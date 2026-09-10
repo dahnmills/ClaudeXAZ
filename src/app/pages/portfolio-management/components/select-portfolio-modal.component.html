@@ -32,68 +32,45 @@
         (selectedChange)="countries.set($event)" />
     </div>
 
-    <p class="pms__count">
-      <span>{{ countText() }}</span>
-      @if (picked(); as pick) {
-        <span class="pms__count-pick">{{ pick.label }} selected</span>
-      }
-    </p>
-
-    <!-- Un tableau et pas des cartes : treize titulaires se lisent en colonnes
-         alignées, et une ligne de 40 en laisse voir huit d'un coup. La ligne
-         cliquée passe en état sélectionné, l'atome de rangée porte déjà le fond,
-         le survol, le clavier et le focus. -->
-    <div class="pms__table">
-      <ds-table-row class="pms__head">
-        <ds-cell-header class="pms__col--mark" type="default" title="" />
-        @if (mode() === 'user') {
-          <ds-cell-header class="pms__col--label"   type="default" title="User" />
-          <ds-cell-header class="pms__col--name"    type="default" title="Name" />
-          <ds-cell-header class="pms__col--team"    type="default" title="Team" />
-          <ds-cell-header class="pms__col--country" type="default" title="Country" />
-          <ds-cell-header class="pms__col--num"     type="default" title="Buyers" align="right" />
-        } @else {
-          <ds-cell-header class="pms__col--label"   type="default" title="Team" />
-          <ds-cell-header class="pms__col--country" type="default" title="Country" />
-          <ds-cell-header class="pms__col--num"     type="default" title="Users" align="right" />
-          <ds-cell-header class="pms__col--num"     type="default" title="Portfolios" align="right" />
-          <ds-cell-header class="pms__col--num"     type="default" title="Buyers" align="right" />
+    <!-- Rien n'est listé tant qu'on n'a pas cherché ou filtré : l'annuaire compte
+         des centaines de titulaires, une liste ouverte d'entrée n'offrirait qu'un
+         début d'alphabet. On dit par quoi commencer au lieu de laisser un cadre
+         vide. -->
+    @if (!filtered()) {
+      <div class="pms__idle">
+        <ds-icon name="search" [size]="24" />
+        <span>{{ idleText() }}</span>
+      </div>
+    } @else {
+      <p class="pms__count">
+        <span>{{ countText() }}</span>
+        @if (picked(); as pick) {
+          <span class="pms__count-pick">{{ pick.label }} selected</span>
         }
-      </ds-table-row>
+      </p>
 
-      <div class="pms__rows">
+      <!-- Des cartes et pas un tableau : un périmètre se lit comme une fiche, son
+           nom en tête, ses volumes en face. L'atome de carte de choix porte le
+           bouton radio, le fond, le survol, le clavier et le focus. -->
+      <div class="pms__list" role="radiogroup" [attr.aria-label]="listLabel()">
         @for (entry of rows(); track entry.id) {
-          <ds-table-row
-            [interactive]="!isCurrent(entry)"
-            [state]="rowState(entry)"
-            [attr.aria-selected]="entry.id === pickedId()"
-            (clicked)="pick(entry)">
+          <ds-radio-card
+            [label]="cardLabel(entry)"
+            [sublabel]="cardSublabel(entry)"
+            [selected]="entry.id === pickedId()"
+            [disabled]="isCurrent(entry)"
+            (selectedChange)="pick(entry)">
 
-            <!-- Une seule colonne de marque, les deux états s'excluent : la ligne
-                 retenue porte la coche, celle qu'on consulte déjà porte « Current »
-                 et n'est pas un choix. -->
-            <ds-cell class="pms__col--mark" size="s">
-              @if (entry.id === pickedId()) {
-                <ds-icon name="check" [size]="16" />
-              } @else if (isCurrent(entry)) {
+            <!-- Pastille posée dans le slot et pas sur l'entrée `badge` de
+                 l'atome, qui rend une pastille pleine : « Current » se dit en
+                 clair sur tout l'écran, ici comme sur le tableau de la page. -->
+            <div slot="meta" class="pms__meta">
+              <span class="pms__stats">{{ statsText(entry) }}</span>
+              @if (isCurrent(entry)) {
                 <ds-badge label="Current" status="info" variant="light" size="s" />
               }
-            </ds-cell>
-
-            <ds-cell class="pms__col--label" size="s" [emphasized]="true">{{ entry.label }}</ds-cell>
-
-            @if (mode() === 'user') {
-              <ds-cell class="pms__col--name"    size="s">{{ entry.fullName }}</ds-cell>
-              <ds-cell class="pms__col--team"    size="s">{{ entry.teamName }}</ds-cell>
-              <ds-cell class="pms__col--country" size="s">{{ entry.country }}</ds-cell>
-              <ds-cell class="pms__col--num" size="s" align="right">{{ heldText(entry.buyerCount, entry.portfolioCount) }}</ds-cell>
-            } @else {
-              <ds-cell class="pms__col--country" size="s">{{ entry.country }}</ds-cell>
-              <ds-cell class="pms__col--num" size="s" align="right">{{ entry.userCount }}</ds-cell>
-              <ds-cell class="pms__col--num" size="s" align="right">{{ heldText(entry.portfolioCount, entry.portfolioCount) }}</ds-cell>
-              <ds-cell class="pms__col--num" size="s" align="right">{{ heldText(entry.buyerCount, entry.portfolioCount) }}</ds-cell>
-            }
-          </ds-table-row>
+            </div>
+          </ds-radio-card>
         } @empty {
           <div class="pms__empty">
             <span>{{ emptyText() }}</span>
@@ -103,13 +80,12 @@
           </div>
         }
       </div>
-    </div>
+    }
   </div>
 
   <div slot="actions" class="pms__actions">
     <ds-button type="tertiary" (clicked)="requestClose()">Cancel</ds-button>
     <ds-button type="primary" [disabled]="!picked()" (clicked)="askConfirm()">
-      <ds-icon slot="icon-left" name="switch" [size]="16" />
       Switch portfolio
     </ds-button>
   </div>
@@ -119,7 +95,7 @@
   [open]="confirmOpen()"
   title="Switch portfolio?"
   tone="info"
-  confirmLabel="Switch"
+  confirmLabel="Confirm"
   cancelLabel="Cancel"
   (confirmed)="onConfirmed()"
   (cancelled)="confirmOpen.set(false)"

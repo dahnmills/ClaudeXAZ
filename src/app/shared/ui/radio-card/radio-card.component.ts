@@ -1,5 +1,4 @@
 import { Component, computed, input, output } from '@angular/core';
-import { RadioComponent } from '../radio/radio.component';
 import { BadgeComponent } from '../badge/badge.component';
 
 export type RadioCardTone = 'default' | 'success' | 'warning' | 'error';
@@ -7,7 +6,7 @@ export type RadioCardTone = 'default' | 'success' | 'warning' | 'error';
 @Component({
   selector: 'ds-radio-card',
   standalone: true,
-  imports: [RadioComponent, BadgeComponent],
+  imports: [BadgeComponent],
   templateUrl: './radio-card.component.html',
   styleUrl: './radio-card.component.scss',
   host: {

@@ -7,13 +7,10 @@ import {
   SegmentedControlComponent,
   InputSearchComponent,
   TagFilterChipComponent,
-  TableRowComponent,
-  CellComponent,
-  CellHeaderComponent,
+  RadioCardComponent,
   ConfirmDialogComponent,
   type SegmentedOption,
   type TagFilterOption,
-  type TableRowState,
 } from '../../../shared/ui';
 import { PORTFOLIO_COUNTRIES, type PortfolioScope } from '../portfolio-management.data';
 
@@ -28,6 +25,11 @@ const MODES: SegmentedOption[] = [
 const COUNTRY_OPTIONS: TagFilterOption[] =
   PORTFOLIO_COUNTRIES.map(c => ({ value: c, label: c }));
 
+/** « 1 buyer », « 3 buyers ». Le pluriel se lit : une revue précédente avait déjà
+ *  relevé des décomptes au singulier fautif sur cet écran. */
+const plural = (n: number, one: string, many = `${one}s`): string =>
+  `${n} ${n === 1 ? one : many}`;
+
 /**
  * Select another portfolio : on va consulter le portefeuille de quelqu'un d'autre.
  *
@@ -35,6 +37,10 @@ const COUNTRY_OPTIONS: TagFilterOption[] =
  * même question posée à deux échelles. Le pays filtre les deux : chercher un
  * collègue dont on ne sait que le pays est le cas courant, et le réserver aux
  * équipes obligerait à passer par l'équipe pour retrouver une personne.
+ *
+ * Rien n'est listé à l'ouverture : l'annuaire est trop long pour qu'un début
+ * d'alphabet serve à quelque chose. On cherche, ou on filtre par pays, et alors
+ * les résultats arrivent en cartes.
  *
  * La bascule n'est pas appliquée au clic : une popin nomme le périmètre visé et
  * dit ce qui va changer à l'écran. La modale se suspend le temps de la question et
@@ -51,9 +57,7 @@ const COUNTRY_OPTIONS: TagFilterOption[] =
     SegmentedControlComponent,
     InputSearchComponent,
     TagFilterChipComponent,
-    TableRowComponent,
-    CellComponent,
-    CellHeaderComponent,
+    RadioCardComponent,
     ConfirmDialogComponent,
   ],
   templateUrl: './select-portfolio-modal.component.html',
@@ -96,6 +100,10 @@ export class SelectPortfolioModalComponent {
   });
 
   readonly rows = computed<PortfolioScope[]>(() => {
+    // Aucune recherche, aucun pays : aucune ligne. C'est la liste elle-même qui
+    // est vide, pas seulement son affichage, donc une sélection ne peut pas
+    // survivre à l'effacement de la recherche qui l'avait fait apparaître.
+    if (!this.filtered()) return [];
     const q = this.search().trim().toLowerCase();
     const countries = this.countries();
     return this.pool().filter(scope => {
@@ -113,13 +121,17 @@ export class SelectPortfolioModalComponent {
 
   readonly noun = computed(() => this.mode() === 'user' ? 'users' : 'teams');
 
-  readonly countText = computed(() => {
-    const shown = this.rows().length;
-    const total = this.pool().length;
-    return this.filtered()
-      ? `${shown} of ${total} ${this.noun()}`
-      : `${total} ${this.noun()}`;
-  });
+  // Le décompte ne s'affiche que sous recherche ou filtre : avant, il n'y a rien
+  // à compter et annoncer un total sans rien lister se contredirait.
+  readonly countText = computed(() =>
+    `${this.rows().length} of ${this.pool().length} ${this.noun()}`);
+
+  readonly listLabel = computed(() => this.mode() === 'user' ? 'Users' : 'Teams');
+
+  readonly idleText = computed(() =>
+    this.mode() === 'user'
+      ? 'Search a user by login or name, or filter by country.'
+      : 'Search a team by name, or filter by country.');
 
   readonly searchLabel = computed(() =>
     this.mode() === 'user' ? 'Search a user' : 'Search a team');
@@ -161,18 +173,27 @@ export class SelectPortfolioModalComponent {
     this.pickedId.set(scope.id);
   }
 
-  /** Le périmètre déjà consulté n'est pas un choix : il est marqué et inerte. */
-  rowState(scope: PortfolioScope): TableRowState {
-    if (this.isCurrent(scope)) return 'disabled';
-    return scope.id === this.pickedId() ? 'active' : 'default';
+  /** Le nom d'abord, l'identifiant ensuite : on cherche un collègue par son nom,
+   *  et une équipe n'a que le sien. */
+  cardLabel(scope: PortfolioScope): string {
+    return this.mode() === 'user' ? scope.fullName || scope.label : scope.label;
+  }
+
+  /** Ce qui situe le périmètre : de qui il s'agit, où, et à quelle échelle. */
+  cardSublabel(scope: PortfolioScope): string {
+    return this.mode() === 'user'
+      ? [scope.label, scope.teamName, scope.country].filter(Boolean).join(' · ')
+      : [scope.country, plural(scope.userCount, 'user')].join(' · ');
   }
 
   /**
-   * Valeur d'une colonne de volume. Un périmètre sans portefeuille n'a pas
-   * « 0 buyer », il n'a rien : la cellule porte le tiret des cellules vides.
+   * Volumes du périmètre, en face de son nom. Un périmètre sans portefeuille n'a
+   * pas « 0 buyer », il n'a rien à consulter : la carte le dit en mots, elle n'a
+   * pas de colonne où poser le tiret d'une cellule vide.
    */
-  heldText(value: number, portfolios: number): string {
-    return portfolios ? String(value) : '—';
+  statsText(scope: PortfolioScope): string {
+    if (!scope.portfolioCount) return 'No portfolio yet';
+    return `${plural(scope.portfolioCount, 'portfolio')} · ${plural(scope.buyerCount, 'buyer')}`;
   }
 
   isCurrent(scope: PortfolioScope): boolean {

@@ -9,7 +9,12 @@
   align-items:    center;
   justify-content: center;
   gap:            var(--semantic-measurement-spacing-xs);
-  padding:        var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-m);
+  // Hauteur des champs du design system (32px), portée et non déduite d'un
+  // padding : un segmented control voisine toujours une recherche ou un select,
+  // et les deux pixels d'écart se voyaient sur une rangée alignée en bas.
+  height:         var(--semantic-measurement-spacing-xl);
+  box-sizing:     border-box;
+  padding:        var(--semantic-measurement-spacing-none) var(--semantic-measurement-spacing-m);
   border:         1px solid var(--semantic-color-interactive-border-strong-alt-default);
   background:     var(--semantic-color-static-background-main-primary);
   color:          var(--semantic-color-static-text-main-primary);

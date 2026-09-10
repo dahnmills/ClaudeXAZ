@@ -10,7 +10,9 @@
 
 // Onglets à leur largeur naturelle, puis deux tiers pour la recherche et un tiers
 // pour le pays : en grille et pas en flex, pour éviter une largeur en dur. Les
-// champs portent un libellé, les onglets non : on aligne sur le bas de la rangée.
+// champs portent un libellé, les onglets non : on aligne sur le bas de la rangée,
+// et l'atome de segmented control fait désormais la hauteur des champs (32px),
+// donc les trois boîtes se posent sur la même ligne.
 .pms__bar {
   display:               grid;
   grid-template-columns: auto 2fr 1fr;
@@ -30,7 +32,7 @@
 
 // Ce que la liste montre, et le choix en cours. Le décompte sert de repère quand
 // un filtre réduit l'annuaire : sans lui, une liste courte ne dit pas si elle est
-// filtrée ou vide.
+// filtrée ou vide. Il n'apparaît qu'une fois une recherche ou un pays posé.
 .pms__count {
   display:         flex;
   align-items:     center;
@@ -47,35 +49,55 @@
   color:       var(--semantic-color-static-text-main-primary);
 }
 
-// Le tableau occupe la hauteur restante : l'en-tête tient en place, seules les
-// lignes défilent. Sinon l'en-tête sort de l'écran dès la quatrième ligne et on
-// ne sait plus quelle colonne on lit.
-.pms__table {
+// Écran d'attente : la liste ne s'ouvre pas d'elle-même, on dit par quoi
+// commencer plutôt que de laisser un cadre vide au milieu de la modale.
+.pms__idle {
+  display:         flex;
+  flex:            1;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-s);
+  text-align:      center;
+  font-size:       var(--semantic-font-text-style-size-m);
+  line-height:     var(--semantic-font-text-style-line-height-m);
+  color:           var(--semantic-color-static-text-main-tertiary);
+}
+
+// Une carte par périmètre, empilées, et seule la pile défile : la bascule
+// d'échelle, les filtres et le décompte restent en place.
+.pms__list {
   display:        flex;
   flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
   flex:           1;
   min-height:     0;
+  overflow-y:     auto;
+
+  // Le retrait de 4px laisse passer le liseré de focus des cartes, que le
+  // débordement rognerait ; la marge négative de même valeur le reprend sur les
+  // côtés, sinon les cartes rentreraient de 4px par rapport à la rangée de
+  // filtres au-dessus.
+  padding:      var(--semantic-measurement-spacing-xs);
+  margin-left:  calc(-1 * var(--semantic-measurement-spacing-xs));
+  margin-right: calc(-1 * var(--semantic-measurement-spacing-xs));
 }
 
-.pms__rows {
-  flex:       1;
-  min-height: 0;
-  overflow-y: auto;
+// Bord droit de la carte : les volumes, puis la pastille du périmètre déjà
+// consulté. À sa taille naturelle, le nom garde le reste de la largeur.
+.pms__meta {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+  flex-shrink: 0;
 }
 
-// Largeurs de colonnes portées par des classes, jamais par un style inline.
-// En-tête et cellule partagent la même classe : elles ne peuvent pas se
-// désaligner. La colonne de marque tient une pastille « Current » entière.
-.pms__col--mark {
-  flex:  0 0 auto;
-  width: calc(var(--semantic-measurement-sizing-3xl) + var(--semantic-measurement-sizing-2xl));
+.pms__stats {
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+  white-space: nowrap;
 }
-
-.pms__col--label   { flex: 1.1; min-width: 0; }
-.pms__col--name    { flex: 1.3; min-width: 0; }
-.pms__col--team    { flex: 1.2; min-width: 0; }
-.pms__col--country { flex: 1.1; min-width: 0; }
-.pms__col--num     { flex: 0.8; min-width: 0; }
 
 // Rien à montrer : on dit pourquoi et on rend la sortie, plutôt que de laisser
 // une zone vide où l'on ne sait pas si le filtre ou l'annuaire est en cause.
