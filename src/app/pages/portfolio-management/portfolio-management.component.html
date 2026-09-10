@@ -26,13 +26,13 @@
       <span slot="actions" class="pm-guarded"
         [dsTooltip]="myPortfolioReason()"
         [attr.tabindex]="myPortfolioReason() ? 0 : null">
-        <ds-button type="plain" tone="accent" [disabled]="isMine()" (clicked)="showMyPortfolio()">
+        <ds-button type="plain" [disabled]="isMine()" (clicked)="showMyPortfolio()">
           <ds-icon slot="icon-left" name="user" [size]="16" />
           Show my portfolio
         </ds-button>
       </span>
 
-      <ds-button slot="actions" type="plain" tone="accent" (clicked)="selectOpen.set(true)">
+      <ds-button slot="actions" type="plain" (clicked)="selectOpen.set(true)">
         <ds-icon slot="icon-left" name="switch" [size]="16" />
         Select another portfolio
       </ds-button>
