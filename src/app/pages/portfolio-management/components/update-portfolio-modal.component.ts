@@ -99,7 +99,9 @@ export class UpdatePortfolioModalComponent {
 
   readonly title = computed(() => {
     const owner = this.portfolio()?.owner;
-    return owner ? `Update portfolio · ${owner}` : 'Update portfolio';
+    // Trait d'union comme le titre de page : un nom qui suit un titre s'annonce
+    // au trait, pas au point médian.
+    return owner ? `Update portfolio - ${owner}` : 'Update portfolio';
   });
 
   constructor() {

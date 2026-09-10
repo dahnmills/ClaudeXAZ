@@ -2,7 +2,10 @@
   <ng-content select="[slot=icon]" />
   <h1 class="ds-page-title__heading">{{ title() }}</h1>
   @if (id()) {
-    <span class="ds-page-title__separator" aria-hidden="true">·</span>
+    <!-- Trait d'union et non le point médian de la maquette : entre un titre et
+         un nom, le point se lit comme une marque d'écriture automatique. Le
+         trait est plus proche de la façon dont on l'écrirait à la main. -->
+    <span class="ds-page-title__separator" aria-hidden="true">-</span>
     <span class="ds-page-title__id">{{ id() }}</span>
   }
   @if (badgeLabel()) {
