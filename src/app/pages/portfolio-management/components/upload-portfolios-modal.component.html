@@ -1,0 +1,57 @@
+<ds-modal [open]="open()" [title]="title()" [size]="size()" [showBack]="false"
+  [contentHeight]="step() === 'upload' ? 'auto' : '420px'" (closed)="onClose()">
+
+  @if (step() === 'upload') {
+    <h3 class="pum-heading">Upload your document</h3>
+    <p class="pum-label">Select files from your computer</p>
+
+    @if (rejectionMessage()) {
+      <ds-functional-notice status="error" emphasis="low" [message]="rejectionMessage()" />
+    }
+
+    <ds-file-upload
+      accept=".xlsx,.xls,.csv"
+      acceptLabel="XLSX, XLS or CSV"
+      [maxSizeMb]="5"
+      [maxFiles]="1"
+      [files]="files()"
+      (filesChange)="onFilesChange($event)"
+      (rejected)="onRejected($event)" />
+  } @else {
+    <ds-functional-notice status="error" emphasis="low" [message]="conflictSummary()" />
+
+    <!-- Liste au patron du rapport d'anomalies : une bande teintée par ligne,
+         les deux champs libellé/valeur. Pas de pastille de code et pas de motif
+         par ligne : une seule anomalie est remontée ici, la notice au-dessus la
+         nomme une fois pour toutes. Pas d'en-tête de colonnes non plus, chaque
+         ligne se dit elle-même. -->
+    <ul class="pum-list">
+      @for (row of conflicts(); track row.buyerId) {
+        <li class="pum-row">
+          <span class="pum-row__buyer">{{ row.buyerName }}</span>
+          <span class="pum-row__field">
+            <span class="pum-row__label">Current portfolio :</span>
+            <span class="pum-row__value">{{ row.from }}</span>
+          </span>
+          <span class="pum-row__field">
+            <span class="pum-row__label">New portfolio :</span>
+            <span class="pum-row__value">{{ row.to }}</span>
+          </span>
+        </li>
+      }
+    </ul>
+  }
+
+  <!-- Un seul conteneur d'actions, projeté statiquement : un `slot` posé dans un
+       bloc `@if` ne serait pas reconnu par le `ng-content select` de la modale. -->
+  <div slot="actions" class="pum-actions">
+    @if (step() === 'upload') {
+      <ds-button type="tertiary" (clicked)="onClose()">Cancel</ds-button>
+      <ds-button type="primary" [disabled]="!files().length" (clicked)="onSubmit()">Submit</ds-button>
+    } @else {
+      <!-- Pas de « Leave » : la croix de l'en-tête ferme déjà sans appliquer. -->
+      <ds-button type="secondary" (clicked)="onUploadNewFile()">Upload new file</ds-button>
+      <ds-button type="primary" (clicked)="onContinue()">Continue</ds-button>
+    }
+  </div>
+</ds-modal>

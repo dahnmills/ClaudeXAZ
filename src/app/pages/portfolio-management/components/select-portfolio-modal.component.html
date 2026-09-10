@@ -1,0 +1,128 @@
+<ds-modal
+  [open]="open()"
+  title="Select another portfolio"
+  size="large"
+  [suspended]="confirmOpen()"
+  contentHeight="560px"
+  (closed)="requestClose()">
+
+  <div class="pms">
+    <!-- Échelle et filtres sur une seule rangée : trois lignes empilées mangeaient
+         la hauteur de la liste, qui est le contenu utile de cette modale. -->
+    <div class="pms__bar">
+      <ds-segmented-control
+        [options]="MODES"
+        [selected]="mode()"
+        (selectedChange)="setMode($event)" />
+
+      <ds-input-search
+        class="pms__search"
+        [label]="searchLabel()"
+        [placeholder]="searchPlaceholder()"
+        [value]="search()"
+        (valueChange)="search.set($event)" />
+
+      <ds-tag-filter-chip
+        class="pms__country"
+        variant="field"
+        label="Country"
+        placeholder="All countries"
+        [options]="COUNTRY_OPTIONS"
+        [selected]="countries()"
+        (selectedChange)="countries.set($event)" />
+    </div>
+
+    <p class="pms__count">
+      <span>{{ countText() }}</span>
+      @if (picked(); as pick) {
+        <span class="pms__count-pick">{{ pick.label }} selected</span>
+      }
+    </p>
+
+    <!-- Un tableau et pas des cartes : treize titulaires se lisent en colonnes
+         alignées, et une ligne de 40 en laisse voir huit d'un coup. La ligne
+         cliquée passe en état sélectionné, l'atome de rangée porte déjà le fond,
+         le survol, le clavier et le focus. -->
+    <div class="pms__table">
+      <ds-table-row class="pms__head">
+        <ds-cell-header class="pms__col--mark" type="default" title="" />
+        @if (mode() === 'user') {
+          <ds-cell-header class="pms__col--label"   type="default" title="User" />
+          <ds-cell-header class="pms__col--name"    type="default" title="Name" />
+          <ds-cell-header class="pms__col--team"    type="default" title="Team" />
+          <ds-cell-header class="pms__col--country" type="default" title="Country" />
+          <ds-cell-header class="pms__col--num"     type="default" title="Buyers" align="right" />
+        } @else {
+          <ds-cell-header class="pms__col--label"   type="default" title="Team" />
+          <ds-cell-header class="pms__col--country" type="default" title="Country" />
+          <ds-cell-header class="pms__col--num"     type="default" title="Users" align="right" />
+          <ds-cell-header class="pms__col--num"     type="default" title="Portfolios" align="right" />
+          <ds-cell-header class="pms__col--num"     type="default" title="Buyers" align="right" />
+        }
+      </ds-table-row>
+
+      <div class="pms__rows">
+        @for (entry of rows(); track entry.id) {
+          <ds-table-row
+            [interactive]="!isCurrent(entry)"
+            [state]="rowState(entry)"
+            [attr.aria-selected]="entry.id === pickedId()"
+            (clicked)="pick(entry)">
+
+            <!-- Une seule colonne de marque, les deux états s'excluent : la ligne
+                 retenue porte la coche, celle qu'on consulte déjà porte « Current »
+                 et n'est pas un choix. -->
+            <ds-cell class="pms__col--mark" size="s">
+              @if (entry.id === pickedId()) {
+                <ds-icon name="check" [size]="16" />
+              } @else if (isCurrent(entry)) {
+                <ds-badge label="Current" status="info" variant="light" size="s" />
+              }
+            </ds-cell>
+
+            <ds-cell class="pms__col--label" size="s" [emphasized]="true">{{ entry.label }}</ds-cell>
+
+            @if (mode() === 'user') {
+              <ds-cell class="pms__col--name"    size="s">{{ entry.fullName }}</ds-cell>
+              <ds-cell class="pms__col--team"    size="s">{{ entry.teamName }}</ds-cell>
+              <ds-cell class="pms__col--country" size="s">{{ entry.country }}</ds-cell>
+              <ds-cell class="pms__col--num" size="s" align="right">{{ heldText(entry.buyerCount, entry.portfolioCount) }}</ds-cell>
+            } @else {
+              <ds-cell class="pms__col--country" size="s">{{ entry.country }}</ds-cell>
+              <ds-cell class="pms__col--num" size="s" align="right">{{ entry.userCount }}</ds-cell>
+              <ds-cell class="pms__col--num" size="s" align="right">{{ heldText(entry.portfolioCount, entry.portfolioCount) }}</ds-cell>
+              <ds-cell class="pms__col--num" size="s" align="right">{{ heldText(entry.buyerCount, entry.portfolioCount) }}</ds-cell>
+            }
+          </ds-table-row>
+        } @empty {
+          <div class="pms__empty">
+            <span>{{ emptyText() }}</span>
+            <ds-button type="plain" tone="accent" (clicked)="clearFilters()">
+              Clear filters
+            </ds-button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div slot="actions" class="pms__actions">
+    <ds-button type="tertiary" (clicked)="requestClose()">Cancel</ds-button>
+    <ds-button type="primary" [disabled]="!picked()" (clicked)="askConfirm()">
+      <ds-icon slot="icon-left" name="switch" [size]="16" />
+      Switch portfolio
+    </ds-button>
+  </div>
+</ds-modal>
+
+<ds-confirm-dialog
+  [open]="confirmOpen()"
+  title="Switch portfolio?"
+  tone="info"
+  confirmLabel="Switch"
+  cancelLabel="Cancel"
+  (confirmed)="onConfirmed()"
+  (cancelled)="confirmOpen.set(false)"
+  (closed)="confirmOpen.set(false)">
+  {{ confirmText() }}
+</ds-confirm-dialog>

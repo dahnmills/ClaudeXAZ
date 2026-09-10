@@ -1,0 +1,105 @@
+<app-topbox-test-shell>
+  <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="false">
+    <ds-breadcrumbs slot="breadcrumbs">
+      <ds-crumb label="Home" href="#" />
+      <ds-crumb label="Configuration" href="#" />
+      <ds-crumb label="Portfolio Management" [currentPage]="true" />
+    </ds-breadcrumbs>
+
+    <!-- Le titre porte le périmètre consulté, comme Agenda : « Portfolio
+         Management · A.VERSE » quand on regarde le portefeuille d'un autre. La
+         bascule est à droite de la rangée du titre, là où Agenda la place. -->
+    <ds-page-title slot="title" title="Portfolio Management" [id]="scope()?.label ?? null">
+      <ds-button slot="actions" type="plain" tone="accent" (clicked)="selectOpen.set(true)">
+        <ds-icon slot="icon-left" name="switch" [size]="16" />
+        Select another portfolio
+      </ds-button>
+    </ds-page-title>
+  </ds-page-header>
+
+  <div class="pm-body">
+    <!-- Sous périmètre, le tableau ne montre plus tout : on dit lequel, combien de
+         lignes sont écartées, et on rend la sortie sur place. -->
+    @if (scope()) {
+      <ds-functional-notice class="pm-scope" status="info" emphasis="low"
+        [message]="scopeMessage()">
+        <ds-button type="plain" tone="accent" (clicked)="showAllPortfolios()">
+          Show all portfolios
+        </ds-button>
+      </ds-functional-notice>
+    }
+
+    <!-- Action de page, à droite au-dessus du tableau : c'est le tableau qu'elle
+         alimente, pas le titre. La sélection s'annonce à gauche, sur la même
+         rangée, pour qu'on sache toujours combien de lignes sont cochées. -->
+    <div class="pm-toolbar">
+      <div class="pm-toolbar__selection">
+        @if (selectedIds().length) {
+          <span class="pm-toolbar__count">{{ selectedIds().length }} selected</span>
+          <ds-button type="plain" (clicked)="clearSelection()">Clear selection</ds-button>
+        }
+      </div>
+
+      <ds-button type="primary" (clicked)="uploadOpen.set(true)">
+        <ds-icon slot="icon-left" name="upload" [size]="16" />
+        Upload portfolios
+      </ds-button>
+    </div>
+
+    <!-- ── Tableau des portefeuilles ─────────────────────────────────────── -->
+    <div class="pm-table">
+      <ds-table-row>
+        <ds-cell-header type="selection"
+          [allSelected]="allSelected()" [allIndeterminate]="someSelected()"
+          (allSelectedChange)="toggleAll($event)" />
+        <ds-cell-header class="pm-col--owner" type="default" title="Portfolio of"
+          [sortable]="true" [sortDirection]="sortDirectionOf('owner')"
+          (sortClicked)="onSort('owner')" />
+        <ds-cell-header class="pm-col--buyers" type="default" title="Nb of buyers"
+          [sortable]="true" [sortDirection]="sortDirectionOf('buyers')"
+          (sortClicked)="onSort('buyers')" />
+        <ds-cell-header type="action" />
+      </ds-table-row>
+
+      @for (row of rows(); track row.id) {
+        <ds-table-row>
+          <ds-cell-selection control="check" [ariaLabel]="'Select ' + row.owner"
+            [checked]="isSelected(row.id)"
+            (checkedChange)="toggleRow(row.id, $event)" />
+          <ds-cell class="pm-col--owner">{{ row.owner }}</ds-cell>
+          <ds-cell class="pm-col--buyers">{{ row.buyerIds.length }}</ds-cell>
+          <ds-cell-action ariaLabel="Portfolio actions">
+            <ds-flyout-menu slot="menu">
+              <ds-flyout-menu-item label="View details" icon="eye" />
+              <ds-flyout-menu-item label="Update portfolio" icon="edit"
+                (clicked)="openUpdate(row.id)" />
+            </ds-flyout-menu>
+          </ds-cell-action>
+        </ds-table-row>
+      } @empty {
+        <p class="pm-table__empty">{{ emptyMessage() }}</p>
+      }
+    </div>
+  </div>
+
+  <pm-upload-portfolios-modal slot="modals"
+    [open]="uploadOpen()"
+    (applied)="onApplied($event)"
+    (closed)="uploadOpen.set(false)" />
+
+  <pm-update-portfolio-modal slot="modals"
+    [open]="updateTarget() !== null"
+    [portfolio]="updateTarget()"
+    (updated)="onUpdated($event)"
+    (closed)="updateTargetId.set(null)" />
+
+  <pm-select-portfolio-modal slot="modals"
+    [open]="selectOpen()"
+    [users]="userScopes()"
+    [teams]="teamScopes()"
+    [current]="scope()"
+    (switched)="onSwitched($event)"
+    (closed)="selectOpen.set(false)" />
+
+  <ds-toaster-container slot="modals" />
+</app-topbox-test-shell>

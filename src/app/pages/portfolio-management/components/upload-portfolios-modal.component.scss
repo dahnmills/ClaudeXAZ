@@ -1,0 +1,68 @@
+// Titre de section et libellé de champ, patron des formulaires du produit :
+// libellé en semi-bold, jamais sur deux lignes.
+.pum-heading {
+  margin:      var(--semantic-measurement-spacing-none) var(--semantic-measurement-spacing-none) var(--semantic-measurement-spacing-s);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.pum-label {
+  margin:      var(--semantic-measurement-spacing-none) var(--semantic-measurement-spacing-none) var(--semantic-measurement-spacing-s);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+// Liste de bandes teintées, séparées par un vide : pas un tableau (aucune
+// colonne à aligner d'une ligne à l'autre au-delà de la grille) et pas une
+// carte (ni bordure, ni élévation). C'est le motif du rapport d'anomalies.
+.pum-list {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+  margin:         var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-none) var(--semantic-measurement-spacing-none);
+  padding:        var(--semantic-measurement-spacing-none);
+  list-style:     none;
+}
+
+.pum-row {
+  display:               grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items:           start;
+  gap:                   var(--semantic-measurement-spacing-m);
+  padding:               var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  border-radius:         var(--semantic-border-radius-s);
+  background:            var(--semantic-color-static-background-functional-subtle-negative);
+  font-size:             var(--semantic-font-text-style-size-l);
+  color:                 var(--semantic-color-static-text-main-primary);
+
+  &__buyer {
+    align-self:  center;
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  }
+
+  // Champ libellé / valeur : libellé en gras, valeur en dessous, comme
+  // « Received : » et « Expected : » de la maquette.
+  &__field {
+    display:        flex;
+    flex-direction: column;
+    min-width:      0;
+  }
+
+  &__label {
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+  }
+
+  &__value {
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+  }
+}
+
+.pum-actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+}

@@ -1,0 +1,67 @@
+:host {
+  display: block;
+  font-family: var(--semantic-font-family);
+}
+
+// Corps : ds-page-header porte déjà ses 32px latéraux, on les répète ici pour
+// que le tableau s'aligne sur le titre.
+.pm-body {
+  padding:        var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-xl) var(--semantic-measurement-spacing-xl);
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+}
+
+// Barre d'action : le décompte de sélection à gauche, l'action de page à droite,
+// sur les deux bords du tableau. La zone de gauche existe même vide, sinon le
+// bouton sauterait d'un bord à l'autre selon qu'une ligne est cochée ou non.
+.pm-toolbar {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+
+  // Le bouton de droite est toujours là, c'est lui qui fixe la hauteur de la
+  // rangée : la zone de sélection n'a pas besoin de hauteur minimale.
+  &__selection {
+    display:     flex;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-s);
+  }
+
+  &__count {
+    font-size:   var(--semantic-font-text-style-size-l);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+}
+
+// Bande de périmètre : la sortie est dans la bande, à la ligne sous le message,
+// parce que l'atome empile son contenu. Pas d'autre mise en forme, l'atome porte
+// le fond, l'icône et la couleur.
+.pm-scope ds-button {
+  align-self: flex-start;
+}
+
+// Conteneur du tableau : rangées collées, sans hériter du gap de .pm-body.
+.pm-table {
+  display:        flex;
+  flex-direction: column;
+
+  // Un périmètre sans portefeuille reste un tableau : l'en-tête tient, et la
+  // ligne dit pourquoi il n'y a rien dessous.
+  &__empty {
+    margin:      var(--semantic-measurement-spacing-none);
+    padding:     var(--semantic-measurement-spacing-m);
+    text-align:  center;
+    font-size:   var(--semantic-font-text-style-size-m);
+    font-style:  italic;
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+// Largeurs de colonnes portées par des classes, jamais par un style inline.
+// Les deux cellules d'une colonne partagent la même classe : en-tête et donnée
+// ne peuvent pas se désaligner.
+.pm-col--owner  { flex: 1.4; }
+.pm-col--buyers { flex: 1; }

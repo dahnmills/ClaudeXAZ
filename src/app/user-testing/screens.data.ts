@@ -21,6 +21,7 @@ export const SCREENS: Screen[] = [
   { path: 'search', label: 'Search', hint: 'Company search', version: { major: 1, minor: 0, patch: 1 } },
   { path: 'admin-data', label: 'Admin Data', hint: 'Admin data editing', version: { major: 1, minor: 0, patch: 1 } },
   { path: 'tag-configuration', label: 'TAG Configuration', hint: 'Auto-grading rules', version: { major: 1, minor: 2, patch: 0 } },
+  { path: 'portfolio-management', label: 'Portfolio Management', hint: 'Buyer portfolios per owner', version: { ...V1 } },
   { path: 'grade-story', label: 'Grade Story', hint: 'Grading narrative', version: { ...V1 } },
   { path: 'spotlight', label: 'Spotlight', hint: 'Featured item', version: { major: 1, minor: 1, patch: 0 } },
   { path: 'notification-module', label: 'Notification Module', hint: 'Notification center', version: { major: 1, minor: 2, patch: 1 } },

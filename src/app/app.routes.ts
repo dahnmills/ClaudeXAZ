@@ -9,6 +9,7 @@ import { FiltersTestPageComponent } from './user-testing/filters/filters-test-pa
 import { AdminDataComponent } from './pages/admin-data/admin-data.component';
 import { BuyerSummaryComponent } from './pages/buyer-summary/buyer-summary.component';
 import { TagConfigurationComponent } from './pages/tag-configuration/tag-configuration.component';
+import { PortfolioManagementComponent } from './pages/portfolio-management/portfolio-management.component';
 import { GradeStoryComponent } from './pages/grade-story/grade-story.component';
 import { SpotlightPage } from './pages/spotlight/spotlight.page';
 import { NotificationModuleComponent } from './pages/notification-module/notification-module.component';
@@ -41,6 +42,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'admin-data', component: AdminDataComponent },
   { path: 'buyer-summary/:id', component: BuyerSummaryComponent },
   { path: 'tag-configuration', component: TagConfigurationComponent },
+  { path: 'portfolio-management', component: PortfolioManagementComponent },
   { path: 'grade-story', component: GradeStoryComponent },
   { path: 'spotlight', component: SpotlightPage },
   { path: 'notification-module', component: NotificationModuleComponent },

@@ -1,0 +1,167 @@
+// Toutes les dimensions de ce fichier viennent du node Figma 2852:16904
+// (Team Management > Modal Box), lu via get_design_context. Les valeurs sont
+// notées en commentaire quand le token porte un autre nom, pour que la
+// prochaine relecture se fasse contre la maquette et pas contre le rendu.
+
+// Deux colonnes de largeur égale, chacune avec son propre défilement : les
+// contrôles de colonne restent en place quand la liste défile. Le bloc occupe
+// exactement la hauteur de contenu de la modale, donc aucune seconde barre de
+// défilement ne se superpose à celles des listes.
+.pmu-columns {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--semantic-measurement-spacing-xl); // Figma 32
+  flex:                  1;
+  min-height:            0;
+}
+
+.pmu-col {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-l); // Figma 24, bloc de tête -> liste
+  min-height:     0;
+  min-width:      0;
+}
+
+// Titre et contrôles restent soudés, la liste s'en détache : c'est la
+// hiérarchie de la maquette, deux gaps distincts et pas un seul.
+.pmu-col__top {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s); // Figma 8
+}
+
+.pmu-col__head {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s); // Figma 8
+  height:      var(--semantic-measurement-sizing-l);  // Figma 24
+}
+
+// Titre de colonne : niveau titre, pas texte agrandi. C'est le plus gros
+// caractère de la modale après son propre titre.
+.pmu-col__title {
+  margin:      var(--semantic-measurement-spacing-none);
+  font-size:   var(--semantic-font-title-size-xs);        // Figma 18
+  line-height: var(--semantic-font-title-line-height-s);  // Figma 24
+  font-weight: var(--semantic-font-title-font-weight-m);  // Figma SemiBold
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+// Trois groupes : les pastilles de filtre, le séparateur, les outils. Le
+// `space-between` place le séparateur au milieu de l'espace libre, ce que fait
+// la maquette, et colle la recherche au bord droit de la colonne.
+.pmu-col__controls {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  height:          var(--semantic-measurement-sizing-xl); // Figma 32
+  gap:             var(--semantic-measurement-spacing-s);
+}
+
+.pmu-col__filters {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs); // Figma 4
+}
+
+.pmu-col__tools {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m); // Figma 16
+}
+
+// Le séparateur se dimensionne en `height: 100%`, qui vaut zéro dans une rangée
+// flex sans hauteur définie : on lui donne la hauteur d'un trait, pas celle de
+// la rangée entière. L'atome porte aussi `align-self: stretch`, qui avec une
+// hauteur explicite collait le trait en haut de la rangée : on le recentre.
+.pmu-col__controls ds-divider {
+  flex:       0 0 auto;
+  align-self: center;
+  height:     var(--semantic-measurement-sizing-l); // Figma 24,46
+}
+
+// L'hôte de ds-input-search est inline par défaut, et il s'étire à 100% dès
+// qu'on lui laisse la place : largeur fixe pour tenir la maquette et garder les
+// deux menus de tri alignés d'une colonne à l'autre.
+.pmu-col__search {
+  display:   block;
+  flex:      0 0 auto;
+  // Figma 135, hors échelle : 128 + 8, la valeur de l'échelle la plus proche.
+  width:     calc(var(--semantic-measurement-sizing-3xl) * 2 + var(--semantic-measurement-spacing-s));
+  min-width: 0;
+}
+
+.pmu-list {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s); // Figma 8
+  flex:           1;
+  min-height:     0;
+  overflow-y:     auto;
+  margin:         var(--semantic-measurement-spacing-none);
+  padding:        var(--semantic-measurement-spacing-none);
+  list-style:     none;
+}
+
+// Une ligne est un ds-card : fond, bordure et teinte viennent de l'atome. Deux
+// écarts assumés avec l'atome, tenus ici parce que la maquette les impose :
+// hauteur fixe 40 (aucun alias sémantique n'existe pour 40, on prend le token
+// Foundation) et rayon 8 (ds-card est à 4, la ligne de la maquette est un
+// composant distinct qui ne diffère que par là).
+// L'hôte passe en flex : ds-card est un bloc en hauteur automatique, et un
+// `height: 100%` sur son contenu ne résout donc rien du tout. Le contenu restait
+// haut de son texte, collé au bord supérieur, pendant que la carte s'étirait à 40.
+.pmu-row {
+  display:       flex;
+  align-items:  stretch;
+  min-height:    var(--foundation-sizing-40);      // Figma 40
+  border-radius: var(--semantic-border-radius-m);  // Figma 8
+}
+
+.pmu-row__inner {
+  display:     flex;
+  align-items: center;
+  flex:        1;
+  min-width:   0;
+  gap:         var(--semantic-measurement-spacing-s);
+  padding:     var(--semantic-measurement-spacing-none) var(--semantic-measurement-spacing-s); // Figma 10, hors échelle
+  font-size:   var(--semantic-font-text-style-size-m);        // Figma 14
+  line-height: var(--semantic-font-text-style-line-height-m); // Figma 20
+}
+
+.pmu-row__name {
+  flex:          1;
+  min-width:     0;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+  font-weight:   var(--semantic-font-text-style-font-weight-semi-bold); // Figma SemiBold
+  color:         var(--semantic-color-static-text-main-primary);
+}
+
+// L'identifiant est la clé de recherche, pas le sujet de la ligne : présent,
+// lisible, plus discret que le nom.
+.pmu-row__id {
+  flex-shrink: 0;
+  font-size:   var(--semantic-font-text-style-size-s);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+.pmu-row__action {
+  flex-shrink: 0;
+}
+
+.pmu-empty {
+  padding:     var(--semantic-measurement-spacing-s);
+  text-align:  center;
+  font-size:   var(--semantic-font-text-style-size-m);
+  font-style:  italic;
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+.pmu-actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m); // Figma 16
+}

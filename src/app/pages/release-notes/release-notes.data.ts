@@ -23,6 +23,32 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'portfolio-management',
+    date: '2026-09-10',
+    category: 'feature',
+    screens: ['portfolio-management'],
+    title: 'Portfolio Management: who holds which buyers',
+    description:
+      'New screen listing the buyer portfolios, one line per holder. A file can be dropped to reassign buyers in bulk, and a portfolio can be reworked buyer by buyer in a two-column window. The page can also be narrowed to a single portfolio, the way Agenda is switched from one agenda to another. A buyer belongs to one portfolio at a time, so every move says where the buyer came from.',
+    changes: [
+      'The list gives the holder and the number of buyers held, both sortable, with a per-line menu for "View details" and "Update portfolio"',
+      'Checkboxes down the left select lines, the header box selects or clears the whole list, and the count sits above the table',
+      '"Upload portfolios" takes an Excel file in two steps: drop the file, then confirm the buyers the file would take away from someone else. Nothing is applied before that confirmation',
+      'The confirmation only reports what needs a decision, one red band per buyer with its current and requested portfolio. The reason is written once above the list, not repeated on every line',
+      '"Update portfolio" opens the portfolio on the left and the rest of the buyer base on the right. Both columns search on name or on ID, sort three ways, and can be narrowed to what changed',
+      'Adding a buyer turns the line green and marks it "New", removing one turns it red and marks it "Removed". Put a buyer back where it started and the line goes plain again',
+      'Nothing is applied until "Update", which stays switched off while nothing has moved. Leaving with pending moves asks first',
+      'After an update, the message says what happened, including the buyers taken from another portfolio',
+      '"Select another portfolio" sits at the right of the page title, where Agenda offers the same move. It opens a directory of the thirteen users and the six teams, searched on login, name, team or country, and narrowed by country in both tabs',
+      'Picking a line and asking to switch opens a confirmation naming the holder and the size of the portfolio. Nothing changes before that answer, and cancelling leaves the directory open where it was',
+      'Once switched, the page title carries the holder, the table shows that portfolio alone, a band above it says how many portfolios are hidden, and one link brings the whole list back',
+      'The portfolio being viewed carries a "Current" badge in the directory and cannot be picked again. A holder with no portfolio yet says so instead of showing an empty table',
+      'Switching scope clears the selection, so the header checkbox never picks up lines that are no longer on screen',
+      'The two columns of "Update portfolio" drop the sort by buyer ID and gain a sort by status: what changed comes first, the additions on the left, the removals on the right, alphabetical inside each group',
+      'Eight portfolios instead of one, held across several teams and countries, so the directory has something to show and the dropped file has somewhere to take buyers from',
+    ],
+  },
+  {
     id: 'tag-configuration-second-review',
     date: '2026-09-08',
     category: 'design',

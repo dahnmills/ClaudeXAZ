@@ -1,0 +1,131 @@
+<ds-modal [open]="open()" [title]="title()" size="large" [showBack]="false"
+  [suspended]="leaveOpen()" contentHeight="460px" (closed)="requestClose()">
+
+  <div class="pmu-columns">
+    <!-- ── Colonne de gauche : la composition si on valide ─────────────────── -->
+    <section class="pmu-col">
+      <!-- Titre et contrôles forment un bloc soudé (8px), détaché de la liste (24px). -->
+      <div class="pmu-col__top">
+        <header class="pmu-col__head">
+          <h3 class="pmu-col__title">Current buyers</h3>
+          <ds-badge [label]="currentCount().toString()" status="neutral" variant="light" size="s" />
+        </header>
+
+        <div class="pmu-col__controls">
+          <!-- Les deux pastilles sont indépendantes : les décocher toutes les deux
+               vide la colonne, ce qui est un résultat de filtre, pas une erreur. -->
+          <div class="pmu-col__filters">
+            <ds-chip type="select" emphasis="strong" label="New"
+              [selected]="showNew()" (activated)="showNew.set(!showNew())" />
+            <ds-chip type="select" emphasis="strong" label="Unchanged"
+              [selected]="showKept()" (activated)="showKept.set(!showKept())" />
+          </div>
+
+          <ds-divider orientation="vertical" />
+
+          <div class="pmu-col__tools">
+            <!-- Le tri retenu se lit dans le déclencheur : la liste ne porte pas
+                 de coche, comme partout ailleurs dans le design system. -->
+            <ds-standalone-dropdown tone="accent" [options]="ORDER_OPTIONS"
+              [value]="currentOrder()" (selectionChange)="setCurrentOrder($event)" />
+
+            <ds-input-search class="pmu-col__search" placeholder="Name or ID"
+              [value]="currentSearch()" (valueChange)="currentSearch.set($event)" />
+          </div>
+        </div>
+      </div>
+
+      <ul class="pmu-list">
+        @for (row of currentRows(); track row.buyer.id) {
+          <li>
+            <ds-card class="pmu-row" [noPadding]="true"
+              [tone]="row.stage === 'new' ? 'positive' : 'default'">
+              <div class="pmu-row__inner">
+                <span class="pmu-row__name">{{ row.buyer.name }}</span>
+                <span class="pmu-row__id">{{ row.buyer.id }}</span>
+                <!-- La teinte ne porte jamais le sens seule : l'ajout est aussi écrit. -->
+                @if (row.stage === 'new') {
+                  <ds-badge label="New" status="success" variant="strong" size="s" />
+                }
+                <ds-button-icon class="pmu-row__action" type="plain" tone="default" size="m"
+                  [ariaLabel]="'Remove ' + row.buyer.name" (clicked)="remove(row.buyer.id)">
+                  <ds-icon name="minus" [size]="16" />
+                </ds-button-icon>
+              </div>
+            </ds-card>
+          </li>
+        } @empty {
+          <li class="pmu-empty">No buyers found</li>
+        }
+      </ul>
+    </section>
+
+    <!-- ── Colonne de droite : le reste du référentiel ─────────────────────── -->
+    <section class="pmu-col">
+      <div class="pmu-col__top">
+        <header class="pmu-col__head">
+          <h3 class="pmu-col__title">Available buyers</h3>
+          <ds-badge [label]="availableCount().toString()" status="neutral" variant="light" size="s" />
+        </header>
+
+        <div class="pmu-col__controls">
+          <div class="pmu-col__filters">
+            <ds-chip type="select" emphasis="strong" label="Removed"
+              [selected]="showRemoved()" (activated)="showRemoved.set(!showRemoved())" />
+            <ds-chip type="select" emphasis="strong" label="Unchanged"
+              [selected]="showNeverIn()" (activated)="showNeverIn.set(!showNeverIn())" />
+          </div>
+
+          <ds-divider orientation="vertical" />
+
+          <div class="pmu-col__tools">
+            <ds-standalone-dropdown tone="accent" [options]="ORDER_OPTIONS"
+              [value]="availableOrder()" (selectionChange)="setAvailableOrder($event)" />
+
+            <ds-input-search class="pmu-col__search" placeholder="Name or ID"
+              [value]="availableSearch()" (valueChange)="availableSearch.set($event)" />
+          </div>
+        </div>
+      </div>
+
+      <ul class="pmu-list">
+        @for (row of availableRows(); track row.buyer.id) {
+          <li>
+            <ds-card class="pmu-row" [noPadding]="true"
+              [tone]="row.stage === 'removed' ? 'negative' : 'default'">
+              <div class="pmu-row__inner">
+                <span class="pmu-row__name">{{ row.buyer.name }}</span>
+                <span class="pmu-row__id">{{ row.buyer.id }}</span>
+                @if (row.stage === 'removed') {
+                  <ds-badge label="Removed" status="error" variant="strong" size="s" />
+                }
+                <ds-button-icon class="pmu-row__action" type="plain" tone="default" size="m"
+                  [ariaLabel]="'Add ' + row.buyer.name" (clicked)="add(row.buyer.id)">
+                  <ds-icon name="plus" [size]="16" />
+                </ds-button-icon>
+              </div>
+            </ds-card>
+          </li>
+        } @empty {
+          <li class="pmu-empty">No buyers found</li>
+        }
+      </ul>
+    </section>
+  </div>
+
+  <div slot="actions" class="pmu-actions">
+    <ds-button type="tertiary" (clicked)="requestClose()">Cancel</ds-button>
+    <ds-button type="primary" [disabled]="!dirty()" (clicked)="onUpdate()">
+      <ds-icon slot="icon-left" name="check" [size]="16" />
+      Confirm changes
+    </ds-button>
+  </div>
+</ds-modal>
+
+<!-- Sortie avec des changements en attente : la modale se suspend, la popin
+     répond, et annuler la ramène intacte. -->
+<ds-confirm-dialog [open]="leaveOpen()" title="Warning" tone="warning"
+  confirmLabel="Confirm" cancelLabel="Cancel"
+  (confirmed)="onLeaveConfirmed()" (cancelled)="onLeaveCancelled()">
+  Are you sure you want to leave? All your changes will be lost.
+</ds-confirm-dialog>
