@@ -24,7 +24,14 @@
   font-size: var(--semantic-font-text-style-size-m);
   line-height: var(--semantic-font-text-style-line-height-m);
   letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
-  white-space: nowrap;
+  // Écart assumé à la spec, qui décrit une pastille d'une seule ligne : elle
+  // vaut pour un tooltip de quelques mots, pas pour une phrase (une raison de
+  // blocage en fait cent). En `nowrap` sans plafond, une phrase sortait en une
+  // ligne de ~780px, plus large que le bouton qui la porte et que l'écran.
+  // Le plafond ne se déclenche qu'au-delà : sur un tooltip court la boîte
+  // épouse toujours son texte, donc rien ne bouge pour les appels existants.
+  max-width: calc(var(--semantic-measurement-sizing-3xl) * 5); // 320px
+  text-align: left;
 }
 
 .ds-tooltip--reversed .ds-tooltip__content {

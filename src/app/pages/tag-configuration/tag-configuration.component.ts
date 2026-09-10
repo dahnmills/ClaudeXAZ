@@ -38,15 +38,14 @@ import { StandaloneDropdownComponent } from '../../shared/ui/standalone-dropdown
 import { NewSetChoiceModalComponent, NewSetAction, PreviousSet } from './components/new-set-choice-modal.component';
 
 /** Un bouton désactivé qui ne dit pas pourquoi n'apprend rien : chaque blocage
- *  porte sa raison, lisible au survol comme au clavier. */
-const READ_ONLY_REASON = 'You don\'t have the right to edit those rules. Contact your administrator if that\'s an error.';
-// Les deux boutons de la page principale se grisent ensemble quand un brouillon
-// existe : leurs deux raisons doivent envoyer au même endroit, l'historique, où
-// le brouillon a sa ligne.
-const DRAFT_EXISTS_REASON = 'A draft already exists for this country. Resume it or delete it from the History tab before starting another set.';
-/** Sur la page principale on regarde la version active : reprendre ou supprimer
- *  un brouillon se fait depuis l'historique, où il a sa ligne. */
-const DRAFT_BLOCKS_EDIT = 'A draft of this set is in progress. Resume it or delete it from the History tab.';
+ *  porte sa raison, lisible au survol comme au clavier. Une infobulle se lit en
+ *  passant, donc ces phrases restent courtes : la cause, puis où aller. */
+const READ_ONLY_REASON = 'You cannot edit these rules. Ask your administrator.';
+/** Une seule phrase pour les deux boutons de la page principale, qui se grisent
+ *  ensemble quand un brouillon existe : ils envoient au même endroit,
+ *  l'historique, où le brouillon a sa ligne. En avoir deux presque identiques
+ *  faisait deux textes à entretenir pour la même cause. */
+const DRAFT_REASON = 'A draft is in progress. Resume or delete it in History.';
 
 @Component({
   selector: 'app-tag-configuration',
@@ -477,7 +476,7 @@ export class TagConfigurationComponent {
   historyActions(entry: RuleSetHistoryEntry): HistoryAction[] {
     const ro = this.isReadOnly();
     const blocked = ro ? READ_ONLY_REASON : '';
-    const draftBlocked = ro ? READ_ONLY_REASON : this.hasDraft() ? DRAFT_EXISTS_REASON : '';
+    const draftBlocked = ro ? READ_ONLY_REASON : this.hasDraft() ? DRAFT_REASON : '';
     const view: HistoryAction = { key: 'view', label: 'View rules', icon: 'eye' };
     const exp: HistoryAction = { key: 'export', label: 'Export JSON', icon: 'download' };
     switch (entry.status) {
@@ -677,10 +676,10 @@ export class TagConfigurationComponent {
   // --- raisons de blocage ------------------------------------------------
 
   editBlockedReason = computed(() =>
-    this.isReadOnly() ? READ_ONLY_REASON : this.hasDraft() ? DRAFT_BLOCKS_EDIT : '');
+    this.isReadOnly() ? READ_ONLY_REASON : this.hasDraft() ? DRAFT_REASON : '');
   newSetBlockedReason = computed(() =>
-    this.isReadOnly() ? READ_ONLY_REASON : this.hasDraft() ? DRAFT_EXISTS_REASON : '');
-  validateBlockedReason = computed(() => this.hasRules() ? '' : 'Add at least one rule before validating this set.');
+    this.isReadOnly() ? READ_ONLY_REASON : this.hasDraft() ? DRAFT_REASON : '');
+  validateBlockedReason = computed(() => this.hasRules() ? '' : 'Add at least one rule first.');
 
   requestDelete(r: TagRule): void { this.pendingDelete.set(r); this.confirmOpen.set(true); }
   confirmDelete(): void {

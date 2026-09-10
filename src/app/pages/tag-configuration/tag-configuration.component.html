@@ -77,12 +77,16 @@
                est de repartir d'elle. Si un brouillon existe, il est prioritaire.
                Le bouton le dit au lieu de disparaître. -->
           @if (hasRules()) {
-            <span class="tag-config__guarded" [dsTooltip]="editBlockedReason()" [attr.tabindex]="editBlockedReason() ? 0 : null">
+            <!-- Ancrée à droite : ces boutons ferment la barre, donc la bulle
+                 grandit vers le centre de la page et sa flèche reste sous le
+                 bouton. Le bornage de la directive empêche de sortir de
+                 l'écran, mais il décrocherait la flèche en top-center. -->
+            <span class="tag-config__guarded" dsTooltipPosition="top-right" [dsTooltip]="editBlockedReason()" [attr.tabindex]="editBlockedReason() ? 0 : null">
               <ds-button type="secondary" [disabled]="!!editBlockedReason()" (clicked)="editRules()">Edit rules</ds-button>
             </span>
           }
 
-          <span class="tag-config__guarded" [dsTooltip]="newSetBlockedReason()" [attr.tabindex]="newSetBlockedReason() ? 0 : null">
+          <span class="tag-config__guarded" dsTooltipPosition="top-right" [dsTooltip]="newSetBlockedReason()" [attr.tabindex]="newSetBlockedReason() ? 0 : null">
             <ds-button type="primary" [disabled]="!!newSetBlockedReason()" (clicked)="newSetChoiceOpen.set(true)">Create new set</ds-button>
           </span>
         } @else {
@@ -109,7 +113,7 @@
             </ds-flyout-menu>
           </ds-button-split>
 
-          <span class="tag-config__guarded" [dsTooltip]="validateBlockedReason()" [attr.tabindex]="validateBlockedReason() ? 0 : null">
+          <span class="tag-config__guarded" dsTooltipPosition="top-right" [dsTooltip]="validateBlockedReason()" [attr.tabindex]="validateBlockedReason() ? 0 : null">
             <ds-button type="primary" [disabled]="!!validateBlockedReason()" (clicked)="validateOpen.set(true)">Validate rules</ds-button>
           </span>
         }
@@ -178,7 +182,7 @@
         <div class="tag-config__toolbar">
           <span class="tag-config__spacer"></span>
           @for (a of detailActions(); track a.key; let last = $last) {
-            <span class="tag-config__guarded" [dsTooltip]="a.reason ?? ''" [attr.tabindex]="a.disabled ? 0 : null">
+            <span class="tag-config__guarded" dsTooltipPosition="top-right" [dsTooltip]="a.reason ?? ''" [attr.tabindex]="a.disabled ? 0 : null">
               <ds-button [type]="last ? 'secondary' : 'tertiary'" [disabled]="!!a.disabled" (clicked)="onHistoryAction(detail, a.key)">
                 <ds-icon slot="icon-left" [name]="a.icon" [size]="16" />
                 {{ a.label }}

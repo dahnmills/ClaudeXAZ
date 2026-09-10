@@ -23,6 +23,21 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'tooltip-two-lines',
+    date: '2026-09-10',
+    category: 'fix',
+    screens: ['tag-configuration'],
+    title: 'A tooltip stays on screen and can hold two lines',
+    description:
+      'On TAG Configuration, hovering a button switched off by a draft in progress opened a bubble that ran off the right edge of the screen. A tooltip was built to hold a few words on one line, so a whole sentence stretched it to about 780 pixels and nothing stopped it at the edge. The bubble now wraps, is capped in width, and is always kept inside the window.',
+    changes: [
+      'A tooltip longer than 320 pixels wraps instead of running as one line. A short one is unchanged',
+      'A tooltip is always placed inside the window: it is pushed back from the edges, and it flips below the button when there is no room above',
+      'The reasons written on the switched-off buttons of TAG Configuration are shorter: "A draft is in progress. Resume or delete it in History." replaces two longer sentences that said the same thing, and read-only now says "You cannot edit these rules. Ask your administrator."',
+      'On those buttons, the bubble grows towards the middle of the page instead of past the right edge, and its arrow stays under the button',
+    ],
+  },
+  {
     id: 'tag-configuration-detail-pass',
     date: '2026-09-10',
     category: 'design',

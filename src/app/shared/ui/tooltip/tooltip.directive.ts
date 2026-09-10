@@ -93,6 +93,22 @@ export class TooltipDirective implements OnDestroy {
       case 'right':        top = trigger.top + trigger.height / 2 - tip.height / 2; left = trigger.right + gap; break;
     }
 
+    // La position demandée est un souhait, pas une garantie : un déclencheur
+    // qui ferme une barre d'outils à droite envoyait la moitié de la pastille
+    // hors écran, et un déclencheur en haut de page l'envoyait au-dessus du
+    // bord. La pastille est en `position: fixed`, donc le viewport est le bon
+    // repère. On borne en x et on bascule de l'autre côté en y quand la place
+    // manque, plutôt que de peindre hors champ.
+    const pos = this.dsTooltipPosition();
+    if (pos.startsWith('top') && top < gap) top = trigger.bottom + gap;
+    else if (pos.startsWith('bottom') && top + tip.height > window.innerHeight - gap) {
+      top = trigger.top - tip.height - gap;
+    }
+    // `left` et `right` restent de leur côté : les basculer verticalement les
+    // décrocherait de leur déclencheur. Un simple bornage suffit.
+    top  = Math.min(Math.max(top,  gap), window.innerHeight - tip.height - gap);
+    left = Math.min(Math.max(left, gap), window.innerWidth  - tip.width  - gap);
+
     el.style.top = `${Math.round(top)}px`;
     el.style.left = `${Math.round(left)}px`;
     el.style.visibility = 'visible';
