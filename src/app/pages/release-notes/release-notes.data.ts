@@ -37,6 +37,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       'Escape now closes the menu of a history line, as it already did on a rule card',
       'One French rule filters on a French legal form, so copying the French set into Norway shows the legal-form warning as well, not only the currency one',
       'Wording with a single rule reads "1 rule carries" and "1 rule filters", instead of the plural verb',
+      'In the rule window, a helper line sits under its field without pushing it out of line with the rest of the row, and the one under Freshness stays on once a manual grade is picked',
     ],
   },
   {

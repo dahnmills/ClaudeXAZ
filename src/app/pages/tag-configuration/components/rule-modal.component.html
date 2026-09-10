@@ -68,9 +68,9 @@
           <ds-tag-filter-chip variant="field" label="Type" [options]="GRADE_TYPE_OPTIONS" [selected]="cvgType()" (selectedChange)="onCvgTypeChange($event)" />
           <div class="rm-field">
             <ds-select label="Freshness" [options]="FRESHNESS_OPTIONS" [value]="cvgFreshness()" [disabled]="!cvgFreshnessEnabled()" (selectionChange)="cvgFreshness.set($event)" />
-            @if (cvgFreshnessHint()) {
-              <span class="rm-hint">{{ cvgFreshnessHint() }}</span>
-            }
+            <!-- Aide permanente : elle dit la portée du critère, pas seulement
+                 pourquoi il est grisé. Elle reste donc une fois Manual choisi. -->
+            <span class="rm-hint">{{ cvgFreshnessHint }}</span>
           </div>
           <!-- Valeur unique parmi trois, comme les autres listes de cette
                rangée : même mécanique, même chrome. -->

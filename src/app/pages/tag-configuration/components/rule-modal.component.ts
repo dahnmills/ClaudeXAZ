@@ -111,7 +111,9 @@ export class RuleModalComponent {
     const t = this.cvgType();
     return t.size === 1 && t.has('Manual');
   });
-  cvgFreshnessHint = computed(() => this.cvgFreshnessEnabled() ? '' : 'Only for a manual grade');
+  /** Affichée en permanence : c'est la portée du critère, pas le motif d'un
+   *  grisé. Elle ne bouge donc pas quand le champ s'active. */
+  readonly cvgFreshnessHint = 'Only for a manual grade';
 
   /** Le type change : une fraîcheur qui vient de se griser retombe à « Any ».
    *  La garder l'enregistrerait sans que personne ne puisse plus la lire. */

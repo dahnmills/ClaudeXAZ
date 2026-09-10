@@ -82,6 +82,9 @@
   display:        flex;
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-xxs);
+  // Ancre de l'aide, sortie du flux juste dessous : un champ qui porte une aide
+  // garde la hauteur des autres, donc la rangée reste alignée.
+  position:       relative;
 }
 
 // Position : un nombre à deux chiffres n'a pas besoin de la largeur d'un
@@ -89,12 +92,28 @@
 .rm-field--position {
   flex: 0 0 auto;
   max-width: calc(var(--semantic-measurement-sizing-3xl) * 3);
+  // Seul champ de son bloc : aucune rangée suivante ne prête sa gouttière à
+  // l'aide, sortie du flux. On réserve sa hauteur sous le champ pour qu'elle ne
+  // déborde pas de la carte blanche.
+  margin-bottom: calc(var(--semantic-font-text-style-line-height-m) + var(--semantic-measurement-spacing-xxs));
 }
 
+// Hors du flux : l'aide se lit sous son champ sans allonger la cellule de
+// grille, sinon la rangée s'aligne sur le champ le plus haut et les contrôles
+// se décalent (`align-items: end` sur .rm-grid). Elle tient dans la gouttière
+// de rangée : 20px de ligne + 2px de décalage sous 24px de gap.
 .rm-hint {
+  position:    absolute;
+  top:         calc(100% + var(--semantic-measurement-spacing-xxs));
+  left:        0;
   font-family: var(--semantic-font-family);
   font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
   color:       var(--semantic-color-static-text-main-tertiary);
+  // Pas de largeur imposée : l'aide de Position est plus large que son champ,
+  // volontairement étroit, et la tronquer perdrait le « rule 1 is evaluated
+  // first ».
+  white-space: nowrap;
 }
 
 // Reset native fieldset chrome: semantic grouping for a compound control
