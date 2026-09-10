@@ -1,0 +1,91 @@
+// =============================================================
+// File Upload : zone de dépôt en pointillés + liste des fichiers
+// =============================================================
+
+:host {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  font-family:    var(--semantic-font-family);
+}
+
+// Champ natif hors flux : le déclencheur visible est le bouton « browse ».
+.ds-file-upload__input {
+  display: none;
+}
+
+.ds-file-upload__drop {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-xxs);
+  padding:         var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-m);
+  border:          1px dashed var(--semantic-color-static-border-main-tertiary);
+  border-radius:   var(--semantic-border-radius-s);
+  color:           var(--semantic-color-static-text-main-tertiary);
+  text-align:      center;
+  transition:      background-color 0.15s ease, border-color 0.15s ease;
+
+  // Survol d'un fichier glissé : la cible se signale.
+  &--dragging {
+    border-color: var(--semantic-color-static-border-main-functional-informative);
+    background:   var(--semantic-color-static-background-main-alt-primary);
+  }
+
+  // Quota atteint : la zone s'éteint au lieu de disparaître, la contrainte
+  // reste lisible (« up to 1 file ») après le dépôt.
+  &--full {
+    opacity: 0.5;
+  }
+}
+
+.ds-file-upload__prompt {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xxs);
+  margin:      var(--semantic-measurement-spacing-none);
+  font-size:   var(--semantic-font-text-style-size-l);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.ds-file-upload__hint {
+  margin:    var(--semantic-measurement-spacing-none);
+  font-size: var(--semantic-font-text-style-size-m);
+  color:     var(--semantic-color-static-text-main-tertiary);
+}
+
+.ds-file-upload__list {
+  display:         flex;
+  flex-direction:  column;
+  margin:          var(--semantic-measurement-spacing-none);
+  padding:         var(--semantic-measurement-spacing-none);
+  list-style:      none;
+}
+
+// Une ligne par fichier, séparée par un filet : même lecture qu'une rangée de
+// tableau, sans en être une (pas de colonnes à aligner entre plusieurs lignes).
+.ds-file-upload__file {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s);
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-none);
+  border-bottom: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+  color:         var(--semantic-color-static-text-main-primary);
+
+  &:last-child { border-bottom: 0; }
+}
+
+.ds-file-upload__name {
+  flex:      1;
+  min-width: 0;
+  overflow:  hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+  font-size: var(--semantic-font-text-style-size-l);
+}
+
+.ds-file-upload__size {
+  font-size: var(--semantic-font-text-style-size-m);
+  color:     var(--semantic-color-static-text-main-secondary);
+}

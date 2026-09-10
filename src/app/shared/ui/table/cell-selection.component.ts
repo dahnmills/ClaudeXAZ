@@ -36,6 +36,11 @@ export class CellSelectionComponent {
   checked     = input<boolean>(false);
   toggleValue = input<boolean>(false);
   disabled    = input<boolean>(false);
+  /**
+   * Nom accessible du contrôle. Une case de ligne n'a pas de libellé visible :
+   * sans ça, le lecteur d'écran annonce autant de cases identiques que de lignes.
+   */
+  ariaLabel   = input<string>('');
 
   checkedChange = output<boolean>();
   toggleChange  = output<boolean>();

@@ -97,10 +97,9 @@ export class TagFilterChipComponent implements SingleOpenFlyout, OnDestroy {
     this.selected.set(next);
   }
 
-  @HostListener('document:click', ['$event'])
-  onDocClick(event: MouseEvent): void {
-    if (!this.open()) return;
-    if (!this.elRef.nativeElement.contains(event.target as Node)) this.closeFlyout();
+  /** Clic extérieur : traité par le registre, en phase de capture. */
+  flyoutHost(): HTMLElement {
+    return this.elRef.nativeElement;
   }
 
   @HostListener('document:keydown.escape')

@@ -2,7 +2,20 @@
 @if (icon(); as ic) {
   <ds-icon class="ds-standalone-dropdown__icon" [name]="ic" [size]="16" />
 }
-<span class="ds-standalone-dropdown__label">{{ label() }}</span>
+<span class="ds-standalone-dropdown__label">{{ triggerLabel() }}</span>
 <span class="ds-standalone-dropdown__chevron">
   <ds-icon name="chevron-down" [size]="16" />
 </span>
+
+@if (open()) {
+  <div class="ds-standalone-dropdown__flyout" role="listbox">
+    <ds-flyout-menu>
+      @for (option of options(); track option.value) {
+        <ds-flyout-menu-item
+          [label]="option.label"
+          [disabled]="!!option.disabled"
+          (clicked)="selectOption(option)" />
+      }
+    </ds-flyout-menu>
+  </div>
+}

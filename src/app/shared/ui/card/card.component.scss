@@ -30,4 +30,16 @@
   &.ds-card--elevated {
     box-shadow: var(--semantic-shadow-card);
   }
+
+  // Teintes fonctionnelles : fond subtil + bordure pleine, pour qu'un ajout ou un
+  // retrait en attente se voie aussi au contraste de bordure et pas seulement au fond.
+  &.ds-card--tone-positive {
+    background:   var(--semantic-color-static-background-functional-subtle-positive);
+    border-color: var(--semantic-color-static-border-main-functional-positive);
+  }
+
+  &.ds-card--tone-negative {
+    background:   var(--semantic-color-static-background-functional-subtle-negative);
+    border-color: var(--semantic-color-static-border-main-functional-negative);
+  }
 }

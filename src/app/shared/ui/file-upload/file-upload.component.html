@@ -1,0 +1,31 @@
+<!-- Champ natif masqué : c'est la primitive de l'atome, jamais touchée du dehors. -->
+<input #fileInput type="file" class="ds-file-upload__input"
+  [attr.accept]="accept() || null" [attr.multiple]="maxFiles() > 1 ? '' : null"
+  [disabled]="disabled()" (change)="onFilePicked($event)" />
+
+<div class="ds-file-upload__drop"
+  [class.ds-file-upload__drop--dragging]="dragging()"
+  [class.ds-file-upload__drop--full]="full() || disabled()"
+  (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+  <ds-icon name="file-text" [size]="24" />
+  <p class="ds-file-upload__prompt">
+    <span>Drag your file here or</span>
+    <ds-button type="plain" [disabled]="disabled() || full()" (clicked)="browse()">browse</ds-button>
+  </p>
+  <p class="ds-file-upload__hint">{{ hint() }}</p>
+</div>
+
+@if (files().length) {
+  <ul class="ds-file-upload__list">
+    @for (file of files(); track file.name; let i = $index) {
+      <li class="ds-file-upload__file">
+        <ds-icon name="file-text" [size]="20" />
+        <span class="ds-file-upload__name">{{ file.name }}</span>
+        <span class="ds-file-upload__size">{{ sizeLabel(file.size) }}</span>
+        <ds-button-icon type="plain" tone="default" ariaLabel="Remove file" (clicked)="remove(i)">
+          <ds-icon name="trash" [size]="16" />
+        </ds-button-icon>
+      </li>
+    }
+  </ul>
+}

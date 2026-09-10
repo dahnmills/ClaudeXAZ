@@ -21,6 +21,7 @@ export * from './radio/radio.component';
 export * from './checkbox/checkbox.component';
 export * from './toggle/toggle.component';
 export * from './search-bar/search-bar.component';
+export * from './file-upload/file-upload.component';
 export * from './side-nav/side-nav.component';
 export * from './side-nav/side-nav-item.component';
 export * from './header/header.component';

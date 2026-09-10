@@ -77,15 +77,13 @@ export class SelectComponent implements SingleOpenFlyout, OnDestroy {
     releaseFlyout(this);
   }
 
-  // Test THIS instance, not `closest('ds-select')`, the latter matches any
-  // select on the page, so clicking a sibling select's trigger left both
-  // flyouts open (5 of them sit side by side in the TAG rule modal).
-  @HostListener('document:click', ['$event'])
-  onDocClick(event: MouseEvent): void {
-    if (!this.open()) return;
-    const target = event.target as Node | null;
-    if (target && this.hostRef.nativeElement.contains(target)) return;
-    this.closeFlyout();
+  // Clic extérieur : traité par le registre, en phase de capture. Un écouteur
+  // par instance en phase de bulle ne voyait pas les clics faits dans une
+  // modale, `ds-modal` arrêtant la propagation sur sa boîte. Le registre teste
+  // cet hôte précis, pas `closest('ds-select')`, qui attraperait n'importe quel
+  // select de la page et laissait deux listes ouvertes côte à côte.
+  flyoutHost(): HTMLElement {
+    return this.hostRef.nativeElement;
   }
 
   @HostListener('document:keydown.escape')

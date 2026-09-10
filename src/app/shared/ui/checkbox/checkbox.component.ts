@@ -22,9 +22,13 @@ export type CheckboxState = 'Default' | 'Hover' | 'Active' | 'Disabled';
   styleUrl: './checkbox.component.scss',
   host: {
     '[class]':  'hostClasses()',
+    'role':     'checkbox',
     '[attr.tabindex]': 'isDisabled() ? null : 0',
     '[attr.aria-disabled]': 'isDisabled() || null',
-    '[attr.aria-checked]': 'checked()',
+    // Une sélection partielle s'annonce « mixed », pas « checked » : sinon une
+    // case qui affiche le tiret se lit comme une case pleine.
+    '[attr.aria-checked]': 'checked() && indeterminate() ? "mixed" : checked()',
+    '[attr.aria-label]': 'ariaLabel() || null',
     '(click)': 'onContainerClick()',
     '(keydown.enter)': 'onKeydown()',
     '(keydown.space)': '$event.preventDefault(); onKeydown()',
@@ -36,6 +40,8 @@ export class CheckboxComponent {
   error         = input<boolean>(false);
   disabled      = input<boolean>(false);
   label         = input<string>('');
+  /** Nom accessible quand la case n'a pas de libellé visible (case d'en-tête). */
+  ariaLabel     = input<string>('');
 
   checkedChange         = output<boolean>();
   indeterminateChange   = output<boolean>();

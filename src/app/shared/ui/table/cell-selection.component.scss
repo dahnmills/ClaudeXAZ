@@ -17,6 +17,12 @@
   flex-shrink:     0;
   background-color: inherit;
   box-sizing:      border-box;
+  // L'en-tête de la colonne de sélection est fixé à 56px
+  // (cell-header.component.scss). Une case seule ne fait que 52px avec ses
+  // paddings : sans ce plancher, la colonne cochée et son en-tête se décalent de
+  // 4px sur toute la hauteur du tableau. Les variantes avec drag dépassent déjà
+  // 56px, le plancher ne les touche pas.
+  min-width:       56px;
 }
 
 :host.ds-cell-selection--size-m { padding: var(--semantic-measurement-spacing-m); }

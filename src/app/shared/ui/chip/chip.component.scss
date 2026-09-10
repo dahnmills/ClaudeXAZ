@@ -24,8 +24,15 @@
   transition:     background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-:host.ds-chip--size-s { height: 24px; }
-:host.ds-chip--size-m { height: 32px; }
+:host.ds-chip--size-s { height: var(--semantic-measurement-sizing-l); }  // 24
+
+// Taille M : 32 de haut, 16 de padding horizontal (Figma Team Management
+// 2852:16918, `px-16 py-8` sur un texte de line-height 16). La taille S garde
+// 8 : sur 24 de haut, 16 de chaque côté déséquilibre la pastille.
+:host.ds-chip--size-m {
+  height:  var(--semantic-measurement-sizing-xl); // 32
+  padding: 0 var(--semantic-measurement-spacing-m);
+}
 
 :host.ds-chip--type-filter,
 :host.ds-chip--type-select {
@@ -45,6 +52,27 @@
   background:   var(--semantic-color-static-background-subtle-informative);
   border-color: var(--semantic-color-interactive-border-strong-default);
   color:        var(--semantic-color-interactive-text-strong-default);
+}
+
+// Emphase forte : la pastille allumée est un aplat bleu à texte blanc. Le fond
+// pâle suffit quand une seule pastille porte un filtre ; sur une rangée de
+// filtres de colonne il ne dit pas assez vite ce qui est allumé.
+:host.ds-chip--emphasis-strong.ds-chip--selected {
+  background:   var(--semantic-color-interactive-background-strong-default);
+  border-color: var(--semantic-color-interactive-background-strong-default);
+  color:        var(--semantic-color-interactive-text-neutral-default);
+  font-weight:  var(--semantic-font-text-style-font-weight-semi-bold);
+
+  &:hover:not(.ds-chip--disabled) {
+    background:   var(--semantic-color-interactive-background-strong-hover);
+    border-color: var(--semantic-color-interactive-background-strong-hover);
+    color:        var(--semantic-color-interactive-text-neutral-default);
+  }
+
+  &:active:not(.ds-chip--disabled) {
+    background:   var(--semantic-color-interactive-background-strong-active);
+    border-color: var(--semantic-color-interactive-background-strong-active);
+  }
 }
 
 :host.ds-chip--disabled {

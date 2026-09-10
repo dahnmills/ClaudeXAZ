@@ -2,6 +2,7 @@ import { Component, computed, HostListener, input, output } from '@angular/core'
 import { ModalHeaderComponent } from './modal-header.component';
 import { ModalContentComponent } from './modal-content.component';
 import { ModalFooterComponent } from './modal-footer.component';
+import { hasOpenFlyout } from '../flyout-menu/single-open-flyout';
 
 export type ModalSize = 'small' | 'medium' | 'large' | 'xlarge';
 
@@ -59,8 +60,15 @@ export class ModalComponent {
     }
   }
 
+  /**
+   * Échap ferme une seule couche par appui, la plus haute d'abord. Une liste
+   * ouverte dans la modale se ferme donc seule, et il faut un second Échap pour
+   * quitter la modale : sinon un tri déroulé fermait tout l'écran de saisie, et
+   * sur un brouillon modifié réveillait en plus la popin de sortie.
+   */
   @HostListener('document:keydown.escape')
   onEscape(): void {
+    if (hasOpenFlyout()) return;
     if (this.open() && this.closeOnEscape() && !this.suspended()) {
       this.closed.emit();
     }

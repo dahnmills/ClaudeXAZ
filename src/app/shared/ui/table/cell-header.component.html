@@ -19,6 +19,7 @@
   }
   @case ('selection') {
     <ds-checkbox
+      ariaLabel="Select all rows"
       [checked]="allSelected() || allIndeterminate()"
       [indeterminate]="allIndeterminate()"
       (checkedChange)="allSelectedChange.emit($event)"

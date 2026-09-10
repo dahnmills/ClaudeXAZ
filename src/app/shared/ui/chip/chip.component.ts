@@ -2,6 +2,7 @@ import { Component, computed, input, output } from '@angular/core';
 
 export type ChipType = 'static' | 'filter' | 'select';
 export type ChipSize = 's' | 'm';
+export type ChipEmphasis = 'light' | 'strong';
 
 @Component({
   selector: 'ds-chip',
@@ -25,6 +26,13 @@ export class ChipComponent {
   size     = input<ChipSize>('m');
   selected = input<boolean>(false);
   disabled = input<boolean>(false);
+  /**
+   * Poids de l'état sélectionné. `light` : fond bleu pâle, texte bleu, celui du
+   * filtre de recherche. `strong` : pastille bleue pleine à texte blanc, celle
+   * des filtres de colonne d'un transfert (Figma Team Management 2852:16904),
+   * où deux pastilles allumées doivent se lire d'un coup d'oeil.
+   */
+  emphasis = input<ChipEmphasis>('light');
 
   activated = output<void>();
   removed   = output<void>();
@@ -35,6 +43,7 @@ export class ChipComponent {
     'ds-chip',
     `ds-chip--type-${this.type()}`,
     `ds-chip--size-${this.size()}`,
+    `ds-chip--emphasis-${this.emphasis()}`,
     this.selected() ? 'ds-chip--selected' : '',
     this.disabled() ? 'ds-chip--disabled' : '',
   ].filter(Boolean).join(' '));

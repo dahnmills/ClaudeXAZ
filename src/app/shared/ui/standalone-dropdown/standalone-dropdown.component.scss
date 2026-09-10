@@ -1,5 +1,7 @@
 :host {
   display: inline-flex;
+  // Ancre du flyout quand le composant porte ses propres options.
+  position: relative;
   align-items: center;
   gap: var(--semantic-measurement-spacing-s);
   height: var(--semantic-measurement-spacing-xl);
@@ -55,6 +57,18 @@
   white-space: nowrap;
 }
 
+// Liste de choix, alignée sur le bord gauche du déclencheur comme celle de
+// ds-select. Elle se dimensionne sur son contenu (min 196px porté par
+// ds-flyout-menu) et non sur la largeur du déclencheur, qui varie avec le choix
+// retenu.
+.ds-standalone-dropdown__flyout {
+  position: absolute;
+  top:      calc(100% + var(--semantic-measurement-spacing-xs));
+  left:     0;
+  z-index:  9999;
+  cursor:   default;
+}
+
 .ds-standalone-dropdown__chevron {
   display: inline-flex;
   align-items: center;
@@ -64,4 +78,9 @@
   border-radius: var(--semantic-border-radius-s);
   flex-shrink: 0;
   color: currentColor;
+}
+
+// Liste ouverte : le chevron se retourne, comme sur ds-select.
+:host(.ds-standalone-dropdown--open) .ds-standalone-dropdown__chevron {
+  transform: rotate(180deg);
 }
