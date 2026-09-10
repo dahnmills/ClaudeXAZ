@@ -6,12 +6,18 @@
       <ds-crumb label="Portfolio Management" [currentPage]="true" />
     </ds-breadcrumbs>
 
-    <!-- Le titre nomme toujours le périmètre consulté, comme Agenda : « Portfolio
-         Management - John Doe » sur le sien, le nom du collègue ou de l'équipe
-         ensuite. C'est la seule phrase dont l'écran a besoin pour dire de qui il
-         parle. Les deux bascules sont à droite de la rangée, là où Agenda les
-         place. -->
-    <ds-page-title slot="title" title="Portfolio Management" [id]="scopeName()">
+    <!-- Sur son propre portefeuille, le titre est nu : nommer le titulaire quand
+         c'est soi n'apprend rien. Ailleurs, une pastille dit qu'on est chez
+         quelqu'un d'autre et de qui il s'agit, l'icône distinguant une personne
+         d'une équipe. Les deux bascules sont à droite de la rangée, là où Agenda
+         les place. -->
+    <ds-page-title slot="title" title="Portfolio Management">
+      @if (!isMine()) {
+        <ds-badge slot="badge" [label]="scopeBadge()" status="info" variant="light" size="m">
+          <ds-icon slot="icon" [name]="scopeIcon()" [size]="14" />
+        </ds-badge>
+      }
+
       <!-- Sur son propre portefeuille le retour ne mène nulle part : il est
            désactivé et dit pourquoi au survol, il ne disparaît pas. Une action
            qui s'efface fait douter qu'elle existe, et sa place laissée vide

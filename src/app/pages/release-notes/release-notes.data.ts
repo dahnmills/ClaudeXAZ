@@ -32,8 +32,9 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       'The screen opened on every portfolio at once, then used a blue band to say whose portfolio you were reading and how many were hidden. It now opens on yours, names in its title whose portfolio is on screen, and carries a button to come back to it. The band is gone: the title says it in three words.',
     changes: [
       'You land on your own portfolio. There is no longer a state where the screen lists every portfolio at once',
-      'The title names the scope being read: "Portfolio Management - John Doe", then the name of the colleague or of the team',
-      'A title followed by a name is joined by a hyphen, in the page title as in the "Update portfolio - A.VERSE" window',
+      'On your own portfolio the title stays bare: naming yourself teaches nothing',
+      'On someone else, a pill sits next to the title and reads "Viewing Alain Verse", or the name of the team. Its icon says whether it is a person or a team',
+      'A title followed by a name is joined by a hyphen, as in the "Update portfolio - A.VERSE" window',
       '"Show my portfolio" brings you back, next to "Select another portfolio". On your own portfolio it stays in place, switched off, and says why at hover',
       'In the picker, your own card carries a "You" pill, so the way back is there too',
       'Going back through the picker confirms with "You are about to go back to your own portfolio"',

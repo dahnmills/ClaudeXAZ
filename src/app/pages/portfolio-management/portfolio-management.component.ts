@@ -4,6 +4,7 @@ import {
   BreadcrumbsComponent,
   CrumbComponent,
   PageTitleComponent,
+  BadgeComponent,
   ButtonComponent,
   IconComponent,
   TableRowComponent,
@@ -54,6 +55,7 @@ const MY_SCOPE: ScopeRef = { kind: 'user', id: CURRENT_USER };
     BreadcrumbsComponent,
     CrumbComponent,
     PageTitleComponent,
+    BadgeComponent,
     ButtonComponent,
     IconComponent,
     TableRowComponent,
@@ -190,14 +192,20 @@ export class PortfolioManagementComponent {
     this.isMine() ? 'You are already on your own portfolio.' : '');
 
   /**
-   * Ce que le titre nomme après « Portfolio Management » : le nom de la personne
-   * dont on regarde le portefeuille, ou le nom de l'équipe. Le login sert de
-   * repli, un titulaire sans nom complet garde le sien.
+   * Pastille posée à côté du titre quand on est chez quelqu'un d'autre. Elle dit
+   * les deux choses à la fois : qu'on regarde un périmètre qui n'est pas le sien,
+   * et lequel. Le login sert de repli, un titulaire sans nom complet garde le
+   * sien. Vide chez soi, où la pastille n'est pas rendue.
    */
-  readonly scopeName = computed(() => {
+  readonly scopeBadge = computed(() => {
     const scope = this.scope();
-    return scope.kind === 'user' ? scope.fullName || scope.label : scope.label;
+    if (this.isMine()) return '';
+    const name = scope.kind === 'user' ? scope.fullName || scope.label : scope.label;
+    return `Viewing ${name}`;
   });
+
+  /** Une personne ou une équipe : l'icône de la pastille le dit sans un mot de plus. */
+  readonly scopeIcon = computed(() => (this.scope().kind === 'team' ? 'users' : 'user'));
 
   /**
    * Tri local : le titulaire se compare en texte (insensible à la casse), le
