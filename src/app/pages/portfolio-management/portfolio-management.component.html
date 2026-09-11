@@ -7,13 +7,14 @@
     </ds-breadcrumbs>
 
     <!-- Sur son propre portefeuille, le titre est nu : nommer le titulaire quand
-         c'est soi n'apprend rien. Ailleurs, une pastille dit qu'on est chez
-         quelqu'un d'autre et de qui il s'agit, l'icône distinguant une personne
-         d'une équipe. Les deux bascules sont à droite de la rangée, là où Agenda
-         les place. -->
+         c'est soi n'apprend rien. Ailleurs, une pastille porte le nom du
+         titulaire, l'icône distinguant une personne d'une équipe. Pleine et non
+         claire : c'est le seul endroit de l'écran qui dit qu'on n'est pas chez
+         soi, il doit s'attraper du premier coup d'œil. Les deux bascules sont à
+         droite de la rangée, là où Agenda les place. -->
     <ds-page-title slot="title" title="Portfolio Management">
       @if (!isMine()) {
-        <ds-badge slot="badge" [label]="scopeBadge()" status="info" variant="light" size="m">
+        <ds-badge slot="badge" [label]="scopeBadge()" status="info" variant="strong" size="m">
           <ds-icon slot="icon" [name]="scopeIcon()" [size]="14" />
         </ds-badge>
       }

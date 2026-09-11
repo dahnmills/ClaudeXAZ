@@ -192,16 +192,16 @@ export class PortfolioManagementComponent {
     this.isMine() ? 'You are already on your own portfolio.' : '');
 
   /**
-   * Pastille posée à côté du titre quand on est chez quelqu'un d'autre. Elle dit
-   * les deux choses à la fois : qu'on regarde un périmètre qui n'est pas le sien,
-   * et lequel. Le login sert de repli, un titulaire sans nom complet garde le
-   * sien. Vide chez soi, où la pastille n'est pas rendue.
+   * Pastille posée à côté du titre quand on est chez quelqu'un d'autre : le nom
+   * seul, sans verbe. La pastille n'apparaît que hors de son propre périmètre,
+   * donc sa seule présence dit déjà qu'on regarde ailleurs, et son icône dit
+   * personne ou équipe. Le login sert de repli, un titulaire sans nom complet
+   * garde le sien. Vide chez soi, où la pastille n'est pas rendue.
    */
   readonly scopeBadge = computed(() => {
     const scope = this.scope();
     if (this.isMine()) return '';
-    const name = scope.kind === 'user' ? scope.fullName || scope.label : scope.label;
-    return `Viewing ${name}`;
+    return scope.kind === 'user' ? scope.fullName || scope.label : scope.label;
   });
 
   /** Une personne ou une équipe : l'icône de la pastille le dit sans un mot de plus. */

@@ -33,7 +33,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     changes: [
       'You land on your own portfolio. There is no longer a state where the screen lists every portfolio at once',
       'On your own portfolio the title stays bare: naming yourself teaches nothing',
-      'On someone else, a pill sits next to the title and reads "Viewing Alain Verse", or the name of the team. Its icon says whether it is a person or a team',
+      'On someone else, a solid blue pill sits next to the title and carries the name: "Alain Verse", or the name of the team. Its icon says whether it is a person or a team, and the pill only ever shows when the portfolio is not yours',
       'A title followed by a name is joined by a hyphen, as in the "Update portfolio - A.VERSE" window',
       '"Show my portfolio" brings you back, next to "Select another portfolio". On your own portfolio it stays in place, switched off, and says why at hover',
       'In the picker, your own card carries a "You" pill, so the way back is there too',
