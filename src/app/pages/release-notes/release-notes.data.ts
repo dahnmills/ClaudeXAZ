@@ -38,6 +38,8 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       '"Show my portfolio" brings you back, next to "Select another portfolio". On your own portfolio it stays in place, switched off, and says why at hover',
       'In the picker, your own card carries a "You" pill, so the way back is there too',
       'Going back through the picker confirms with "You are about to go back to your own portfolio"',
+      'In the picker, the name of the portfolio you just picked is no longer repeated above the list: the selected card already shows it',
+      'Also in the picker, the country list now opens as a proper design system menu, with full-width rows that light up under the pointer. Every multi-choice list in the product follows, the seven of them in the auto-grading rule window included',
       'The band that read "Viewing the portfolio of A.VERSE. 7 other portfolios are hidden." is removed',
       'The connected account holds a portfolio of its own, so the screen has something to show on arrival',
     ],

@@ -42,12 +42,7 @@
         <span>{{ idleText() }}</span>
       </div>
     } @else {
-      <p class="pms__count">
-        <span>{{ countText() }}</span>
-        @if (picked(); as pick) {
-          <span class="pms__count-pick">{{ pick.label }} selected</span>
-        }
-      </p>
+      <p class="pms__count">{{ countText() }}</p>
 
       <!-- Des cartes et pas un tableau : un périmètre se lit comme une fiche, son
            nom en tête, ses volumes en face. L'atome de carte de choix porte le
