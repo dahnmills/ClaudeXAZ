@@ -14,7 +14,6 @@ import {
   CellSelectionComponent,
   FlyoutMenuComponent,
   FlyoutMenuItemComponent,
-  ToasterContainerComponent,
   ToasterService,
   TooltipDirective,
 } from '../../shared/ui';
@@ -65,7 +64,6 @@ const MY_SCOPE: ScopeRef = { kind: 'user', id: CURRENT_USER };
     CellSelectionComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
-    ToasterContainerComponent,
     TooltipDirective,
     UploadPortfoliosModalComponent,
     UpdatePortfolioModalComponent,

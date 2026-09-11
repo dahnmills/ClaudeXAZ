@@ -13,7 +13,6 @@ import { FlyoutMenuComponent }      from '../../shared/ui/flyout-menu/flyout-men
 import { FlyoutMenuItemComponent }  from '../../shared/ui/flyout-menu/flyout-menu-item.component';
 import { SnackbarComponent }        from '../../shared/ui/snackbar/snackbar.component';
 import { ConfirmDialogComponent }   from '../../shared/ui/confirm-dialog/confirm-dialog.component';
-import { ToasterContainerComponent } from '../../shared/ui/toaster/toaster-container.component';
 import { ToasterService }           from '../../shared/ui/toaster/toaster.service';
 import { TooltipDirective }         from '../../shared/ui/tooltip/tooltip.directive';
 import { FilterDrawerComponent, FilterDefinition, FilterValue } from '../../shared/ui/filter-drawer/filter-drawer.component';
@@ -53,7 +52,7 @@ const DRAFT_REASON = 'A draft is in progress. Resume or delete it in History.';
   imports: [
     TopboxTestShellComponent, PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, PageTitleComponent,
     SelectComponent, ButtonComponent, LinkComponent, FlyoutMenuComponent, FlyoutMenuItemComponent,
-    SnackbarComponent, ConfirmDialogComponent, ToasterContainerComponent, TooltipDirective,
+    SnackbarComponent, ConfirmDialogComponent, TooltipDirective,
     RuleCardComponent, RuleModalComponent, FreshnessModalComponent,
     TransExclModalComponent, FilterDrawerComponent, CdkDropList, CdkDrag, CdkDragHandle, IconComponent,
     TabComponent, HistoryRowComponent,

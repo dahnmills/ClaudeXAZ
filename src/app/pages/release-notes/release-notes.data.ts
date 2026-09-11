@@ -23,6 +23,21 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'toast-painted-once',
+    date: '2026-09-11',
+    category: 'fix',
+    screens: ['portfolio-management', 'tag-configuration', 'admin-data'],
+    title: 'A notification is painted once, not twice',
+    description:
+      'Every notification was drawn twice, one copy exactly on top of the other. Two identical toasts stacked at the same spot read as a thicker border, a heavier shadow and spacing that looked off, which is what was reported. The toast is the design system component and always was: what was wrong is that four screens carried their own notification host on top of the one the application already provides.',
+    changes: [
+      'A notification appears once. The border, the shadow and the spacing are the ones the design system specifies, they only looked doubled because the toast was',
+      'Portfolio Management, TAG Configuration, Admin Data and the component inventory now use the shared host the application carries, instead of adding a second one of their own',
+      'Measured after the fix: 352 wide, 16 and 24 of padding, 16 between the icon and the text, the icon aligned with the first line of text, a 4 pixel progress bar, and 8 between two stacked notifications',
+      'Design system: the toast no longer writes its border thickness, its progress bar height or its margins as raw numbers, it reads them from the tokens, and its width is declared once for the stack and the card',
+    ],
+  },
+  {
     id: 'portfolio-scope-is-mine',
     date: '2026-09-10',
     category: 'feature',

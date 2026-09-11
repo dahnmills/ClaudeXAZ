@@ -19,7 +19,7 @@ export const SCREENS: Screen[] = [
   { path: 'modal', label: 'With Modal', hint: 'Modal variant', version: { ...V1 } },
   { path: 'filters', label: 'Filters', hint: 'Search filters', version: { ...V1 } },
   { path: 'search', label: 'Search', hint: 'Company search', version: { major: 1, minor: 0, patch: 1 } },
-  { path: 'admin-data', label: 'Admin Data', hint: 'Admin data editing', version: { major: 1, minor: 0, patch: 1 } },
+  { path: 'admin-data', label: 'Admin Data', hint: 'Admin data editing', version: { major: 1, minor: 0, patch: 2 } },
   { path: 'tag-configuration', label: 'TAG Configuration', hint: 'Auto-grading rules', version: { major: 1, minor: 2, patch: 3 } },
   { path: 'portfolio-management', label: 'Portfolio Management', hint: 'Buyer portfolios per owner', version: { major: 1, minor: 2, patch: 0 } },
   { path: 'grade-story', label: 'Grade Story', hint: 'Grading narrative', version: { ...V1 } },

@@ -10,8 +10,13 @@
 //   • Title 16/24 SemiBold + Text 16/24 Regular
 //   • Action link right-aligned
 //   • Loader 4px bottom bar (auto-dismiss progress)
-//   • Shadow bottom 400 (0 4 4 rgba(0,0,0,0.25))
+//   • Shadow bottom 400
 // =============================================================
+
+// Largeur du toast, tenue par la spec Figma et par aucun palier de l'échelle de
+// sizing (le plus grand est 64px). Déclarée une fois : le conteneur la plafonne,
+// la carte la fixe, et les deux ne peuvent plus se désaccorder.
+$toast-width: 352px;
 
 :host {
   position:       fixed;
@@ -22,7 +27,7 @@
   flex-direction: column-reverse;
   gap:            var(--semantic-measurement-spacing-s);
   pointer-events: none;
-  max-width:      352px;
+  max-width:      $toast-width;
 }
 
 .ds-toaster {
@@ -30,10 +35,10 @@
   display:        flex;
   align-items:    flex-start;
   gap:            var(--semantic-measurement-spacing-m);
-  width:          352px;
+  width:          $toast-width;
   padding:        var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-l);
   border-radius:  var(--semantic-border-radius-s);
-  border:         1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border:         var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
   background:     var(--semantic-color-static-background-main-primary);
   font-family:    var(--semantic-font-family);
   color:          var(--semantic-color-static-text-main-primary);
@@ -84,7 +89,7 @@
 }
 
 .ds-toaster__title {
-  margin:      0;
+  margin:      var(--semantic-measurement-spacing-none);
   font-size:   var(--semantic-font-text-style-size-l);
   line-height: var(--semantic-font-text-style-line-height-l);
   font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
@@ -92,7 +97,7 @@
 }
 
 .ds-toaster__text {
-  margin:      0;
+  margin:      var(--semantic-measurement-spacing-none);
   font-size:   var(--semantic-font-text-style-size-l);
   line-height: var(--semantic-font-text-style-line-height-l);
   font-weight: var(--semantic-font-text-style-font-weight-regular);
@@ -105,11 +110,13 @@
 }
 
 // ── Loader bar (auto-dismiss progress) ───────────────────────
+// La barre déborde de l'épaisseur du liseré pour venir mordre le bord arrondi :
+// posée à l'intérieur, elle laissait voir un filet de fond sous elle.
 .ds-toaster__loader {
   position: absolute;
-  bottom:   -1px;
-  left:     -1px;
-  height:   4px;
+  bottom:   calc(var(--semantic-border-size-s) * -1);
+  left:     calc(var(--semantic-border-size-s) * -1);
+  height:   var(--semantic-measurement-sizing-xs);
   width:    100%;
   transform-origin: left center;
   animation-name:     ds-toaster-loader;
