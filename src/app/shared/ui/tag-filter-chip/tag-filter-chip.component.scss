@@ -104,22 +104,41 @@
 
 // La liste est bornée et défile : un flyout de 13 grades faisait 420px et se
 // faisait couper par le conteneur de scroll d'une modale, sans rien qui dise
-// qu'il en restait. La barre de défilement, elle, le dit.
+// qu'il en restait. La barre de défilement, elle, le dit. Les rangées sont
+// jointives et pleine largeur, comme dans ds-flyout-menu : ni gap ni retrait
+// ici, le retrait vit dans la rangée.
 .ds-tag-filter-chip__options {
   display:        flex;
   flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-xs);
-  padding:        0 var(--semantic-measurement-spacing-s);
-  max-height:     calc(var(--semantic-measurement-sizing-3xl) * 4); // ~8 options visibles
+  max-height:     calc(var(--semantic-measurement-sizing-3xl) * 4); // ~6 rangées visibles
   overflow-y:     auto;
 }
 
+// Une option est une rangée de flyout, pas une case posée dans une boîte : mêmes
+// métriques que ds-flyout-menu-item, 8px en hauteur et un retrait latéral pris
+// sur l'échelle. 16px et non 32 : la case occupe la place que l'item réserve à
+// son icône. Le survol teinte la rangée entière, c'est ce qui rend la cible
+// lisible ; le libellé ne passe pas au bleu comme dans un menu d'actions, il
+// n'est pas un lien mais l'étiquette d'une case, qui porte déjà ses états.
+.ds-tag-filter-chip__options ds-checkbox {
+  padding:    var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--semantic-color-interactive-background-light-alt-hover);
+  }
+  &:active {
+    background-color: var(--semantic-color-interactive-background-light-alt-active);
+  }
+}
+
 // La recherche reste au-dessus de la liste qui défile : elle ne doit pas
-// disparaître quand on descend dans les résultats.
+// disparaître quand on descend dans les résultats. Alignée sur le retrait des
+// rangées, pour que le champ et les cases partent du même bord.
 .ds-tag-filter-chip__search {
-  padding:       0 var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-xs);
+  padding:       0 var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-s);
   border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
-  margin-bottom: var(--semantic-measurement-spacing-xs);
+  margin-bottom: var(--semantic-measurement-spacing-s);
 }
 
 .ds-tag-filter-chip__empty {
@@ -127,5 +146,5 @@
   font-size:   var(--semantic-font-text-style-size-m);
   line-height: var(--semantic-font-text-style-line-height-m);
   color:       var(--semantic-color-static-text-main-secondary);
-  padding:     var(--semantic-measurement-spacing-xxs) 0;
+  padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
 }
