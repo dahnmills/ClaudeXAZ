@@ -16,11 +16,11 @@
   <div class="ds-more-criteria__row">
     <span class="ds-more-criteria__label">Status</span>
     <div class="ds-more-criteria__chips">
-      @for (chip of statusChips(); track chip.id) {
+      @for (chip of statusCriteria; track chip.id) {
         <ds-tag
           type="select"
           [label]="chip.label"
-          [selected]="chip.selected"
+          [selected]="isSelected(chip.id)"
           (toggled)="toggleChip(chip.id)"
         />
       }
@@ -31,8 +31,8 @@
     <span class="ds-more-criteria__label">Options</span>
     <ds-checkbox
       label="Extend country search"
-      [checked]="extendCountry()"
-      (checkedChange)="extendCountry.set($event)"
+      [checked]="value().extendCountry"
+      (checkedChange)="patch({ extendCountry: $event })"
     />
   </div>
 
@@ -44,15 +44,19 @@
           label="Street address"
           placeholder="Placeholder"
           [rows]="4"
-          [value]="street()"
-          (valueChange)="street.set($event)"
+          [value]="value().street"
+          (valueChange)="patch({ street: $event })"
         />
       </div>
       <div class="ds-more-criteria__grid">
-        <ds-input-text label="City" placeholder="Placeholder" [(value)]="city" />
-        <ds-input-text label="Region / State" placeholder="Placeholder" [(value)]="region" />
-        <ds-input-text label="Postal code / ZIP" placeholder="Placeholder" [(value)]="zip" />
-        <ds-input-text label="Phone number" placeholder="Placeholder" [(value)]="phone" />
+        <ds-input-text label="City" placeholder="Placeholder"
+          [value]="value().city" (valueChange)="patch({ city: $event })" />
+        <ds-input-text label="Region / State" placeholder="Placeholder"
+          [value]="value().region" (valueChange)="patch({ region: $event })" />
+        <ds-input-text label="Postal code / ZIP" placeholder="Placeholder"
+          [value]="value().zip" (valueChange)="patch({ zip: $event })" />
+        <ds-input-text label="Phone number" placeholder="Placeholder"
+          [value]="value().phone" (valueChange)="patch({ phone: $event })" />
       </div>
     </div>
   </div>

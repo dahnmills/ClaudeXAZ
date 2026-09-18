@@ -23,6 +23,30 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'search-recently-searched-and-viewed',
+    date: '2026-09-18',
+    category: 'feature',
+    screens: ['search'],
+    title: 'Search keeps two histories: what you searched, what you opened',
+    description:
+      'The "Recent" tab kept a list of words with nothing to tell two searches apart: the same name searched by company and by ID read as the same line twice. It is now named "Recent search", and a past search is a card that carries every criterion it was run with, each in its own column so two cards are read the same way. Next to it, a new "Recently viewed" tab lists the buyers you actually opened, filled by the search results themselves, so getting back to a buyer takes a click instead of a new search.',
+    changes: [
+      '"Recent" is now "Recent search", and a second tab, "Recently viewed", sits next to it',
+      'A past search is one line of criteria on fixed columns, opening on what was typed: it is what you reread to recognise your search. Come next the criteria that qualify it, in the order the search bar is filled: the type, the country with its flag, the ID type, then the complementary criteria. Label above value, the metrics of a TAG rule line, its height too. No header strip, no icon, nothing to fold or unfold',
+      'A criterion that was not used keeps its column and stays blank. A criterion is therefore always at the same place from one card to the next, so two searches are compared by going down the list instead of being read one by one. All the cards of the list have the same height',
+      'A value too long for its column is cut with an ellipsis and read in full by hovering it. A card never takes a third line, and no column ever moves',
+      'Clicking a card replays the search. The whole card is the target, there is no button to aim at',
+      'The name of a search result opens the buyer summary. Looking for a company and then opening it is the normal route, and it was the one thing the result card could not do. In the isolated user testing universe the screen stays closed, as every screen there does',
+      'The two new tabs carry their own icons, a magnifier over a clock for the searches and a clock turning back for the buyers',
+      'Replaying a search restores all of it, complementary criteria included, and not only the word, and moves it back to the top of the list: it is the last one you ran. Running the same search twice keeps one card',
+      'Both histories survive leaving the screen. The recent searches were wiped the moment you opened a buyer, which is exactly when you need them on the way back',
+      '"Recently viewed" records a buyer the moment its page opens, whichever way you got there: a search result, a creation, the spotlight, or a direct link. Ten buyers are kept, the most recent first, and opening the same one twice moves it up instead of listing it twice',
+      'A viewed buyer reads in the search result card, the same one exactly: the name that opens the summary, the company ID to copy, the score, and the same actions, the favorite and the details to fold out included',
+      'Both tabs carry a counter, and their "Clear all" sits above the list on the right, where the actions of a list belong on every other screen',
+      'The "More criteria" panel keeps its selection when you close it. It used to forget everything, and the counter on the search bar went back to zero',
+    ],
+  },
+  {
     id: 'toast-painted-once',
     date: '2026-09-11',
     category: 'fix',

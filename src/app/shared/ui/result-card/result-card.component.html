@@ -5,7 +5,18 @@
     </ds-icon-tile>
     <div class="ds-result-card__info">
       <div class="ds-result-card__name-row">
-        <span class="ds-result-card__name">{{ data().name }}</span>
+        @if (canOpen()) {
+          <ds-link
+            class="ds-result-card__name-link"
+            [href]="'#/buyer-summary/' + data().companyId"
+            weight="semi-bold"
+            dsTooltip="Open the buyer summary"
+            dsTooltipPosition="top-center"
+            (click)="openBuyer($event)"
+          >{{ data().name }}</ds-link>
+        } @else {
+          <span class="ds-result-card__name">{{ data().name }}</span>
+        }
         @if (data().city) {
           <span class="ds-result-card__sep">-</span>
           <span class="ds-result-card__city">{{ data().city }}</span>

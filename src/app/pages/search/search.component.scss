@@ -69,11 +69,21 @@ ds-page-header {
 // Compteur de résultats, aligné à gauche au-dessus de la liste. Dégage aussi
 // l'espace sous la barre pour que le helper text d'erreur ne chevauche plus
 // la 1re carte.
-.search-page__results-header {
+.search-page__results-header,
+.search-page__list-header {
   font-family: var(--semantic-font-family);
   font-size: var(--semantic-font-text-style-size-m);
   line-height: var(--semantic-font-text-style-line-height-m);
   color: var(--semantic-color-static-text-main-secondary);
+}
+
+// En-tête d'une liste d'historique : ce qu'elle contient à gauche, ce qu'on
+// peut lui faire à droite. Les actions d'une liste se rangent au-dessus d'elle.
+.search-page__list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--semantic-measurement-spacing-s);
 }
 
 .search-page__results {
@@ -129,43 +139,6 @@ ds-page-header {
   gap: var(--semantic-measurement-spacing-s);
 }
 
-.search-page__recent {
-  display: flex;
-  align-items: center;
-  gap: var(--semantic-measurement-spacing-m);
-  padding: var(--semantic-measurement-spacing-m);
-  background: var(--semantic-color-interactive-background-neutral-default);
-  border: 1px solid var(--semantic-color-static-border-subtle-tertiary);
-  border-radius: var(--semantic-border-radius-s);
-  cursor: pointer;
-  text-align: left;
-  font-family: var(--semantic-font-family);
-  font-size: var(--semantic-font-text-style-size-l);
-
-  &:hover { background: var(--semantic-color-interactive-background-muted-hover); }
-}
-
-.search-page__recent-type {
-  text-transform: uppercase;
-  font-weight: var(--semantic-font-text-style-font-weight-bold);
-  font-size: var(--semantic-font-text-style-size-s);
-  color: var(--semantic-color-static-text-main-tertiary);
-  letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
-  width: 100px;
-  flex-shrink: 0;
-}
-
-.search-page__recent-query {
-  flex: 1 0 0;
-  color: var(--semantic-color-static-text-main-primary);
-  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-}
-
-.search-page__recent-time {
-  color: var(--semantic-color-static-text-main-tertiary);
-  font-size: var(--semantic-font-text-style-size-s);
-}
-
 .search-page__account {
   position: relative;
   display: inline-flex;
@@ -218,21 +191,4 @@ ds-page-header {
   font-family: var(--semantic-font-family);
   font-size: var(--semantic-font-text-style-size-l);
   color: var(--semantic-color-static-text-main-secondary);
-}
-
-.search-page__clear {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--semantic-measurement-spacing-s);
-  padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  color: var(--semantic-color-interactive-text-strong-default);
-  font-family: var(--semantic-font-family);
-  font-size: var(--semantic-font-text-style-size-m);
-  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-
-  &:hover { color: var(--semantic-color-interactive-text-strong-hover); }
 }

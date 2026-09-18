@@ -1,5 +1,6 @@
 import { Component, computed, inject, input, output } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
+import { LinkComponent } from '../link/link.component';
 import { ButtonIconComponent } from '../button-icon/button-icon.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { SnackbarService } from '../snackbar/snackbar.service';
@@ -26,7 +27,7 @@ export interface ResultCardData {
 @Component({
   selector: 'ds-result-card',
   standalone: true,
-  imports: [IconComponent, ButtonIconComponent, TooltipDirective, PropertiesPanelComponent, DividerComponent, IconTileComponent, ProgressBarComponent],
+  imports: [IconComponent, LinkComponent, ButtonIconComponent, TooltipDirective, PropertiesPanelComponent, DividerComponent, IconTileComponent, ProgressBarComponent],
   templateUrl: './result-card.component.html',
   styleUrl: './result-card.component.scss',
   host: {
@@ -46,8 +47,21 @@ export class ResultCardComponent {
   toggled = output<void>();
   added = output<void>();
   starred = output<void>();
+  /** Ouvrir la fiche du buyer. La page décide où elle mène. */
+  opened = output<void>();
 
   exists = computed(() => this.data().exists ?? true);
+
+  /** Une company qui n'existe pas encore n'a pas de fiche à ouvrir, et sans
+   *  Company ID il n'y a pas d'adresse où aller. */
+  canOpen = computed(() => this.exists() && !!this.data().companyId);
+
+  /** Le nom reste un vrai lien (focus clavier, aperçu de la cible au survol),
+   *  mais c'est la page qui navigue : elle a la company à transmettre. */
+  openBuyer(event: Event) {
+    event.preventDefault();
+    this.opened.emit();
+  }
 
   private snackbar = inject(SnackbarService);
 

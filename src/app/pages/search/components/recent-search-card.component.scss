@@ -1,0 +1,100 @@
+// =============================================================
+// Recent Search Card
+// Composition : ds-card (noPadding) + ds-flag, rien d'autre.
+// Une ligne de critères sur le modèle de la ligne de règle TAG : mêmes
+// typographies, mêmes gouttières, même hauteur de rangée. Libellé au-dessus de
+// valeur, colonnes fixes, troncature tôt et texte entier au survol. Aucun
+// en-tête, aucune icône, rien à déplier.
+// =============================================================
+
+:host {
+  display: block;
+}
+
+.recent-card {
+  // Onze colonnes. D'abord ce qu'on a tapé, c'est ce qu'on relit pour retrouver
+  // sa recherche ; viennent ensuite les critères qui la qualifient, dans l'ordre
+  // où la barre de recherche se remplit : le type, le pays, le type d'ID, puis
+  // les critères complémentaires. Les poids suivent la longueur attendue des
+  // valeurs, pas un découpage égal, et aucune piste n'est en `auto` : une
+  // colonne dimensionnée par son contenu serait large ici et étroite là, et
+  // décalerait toutes les autres d'une carte à la suivante.
+  display:               grid;
+  grid-template-columns:
+    minmax(0, 1.5fr)    // Searched
+    minmax(0, 1fr)      // Type
+    minmax(0, 1.15fr)   // Country (drapeau + libellé)
+    minmax(0, 0.85fr)   // ID type
+    minmax(0, 1.2fr)    // Status
+    minmax(0, 1.6fr)    // Street
+    minmax(0, 1fr)      // City
+    minmax(0, 1fr)      // Region
+    minmax(0, 0.8fr)    // ZIP
+    minmax(0, 1.1fr)    // Phone
+    minmax(0, 1.15fr);  // Extended search
+  // Deux pistes partagées par toutes les colonnes : les libellés sur la
+  // première, les valeurs sur la seconde. Une carte fait donc toujours
+  // exactement deux lignes de texte.
+  grid-template-rows:    auto auto;
+  // Mêmes gouttières que la rangée de règle TAG : 16 px entre colonnes, 2 px
+  // entre le libellé et sa valeur. Avec 8 px en haut et en bas et deux lignes de
+  // 20 px, la carte tombe à la même hauteur que là-bas.
+  column-gap:            var(--semantic-measurement-spacing-m);
+  row-gap:               var(--semantic-measurement-spacing-xxs);
+  padding:               var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  cursor:                pointer;
+  text-align:            left;
+  font-family:           var(--semantic-font-family);
+  transition:            background 0.15s ease;
+
+  &:hover {
+    background: var(--semantic-color-interactive-background-light-alt-hover);
+  }
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: -2px;
+  }
+
+  &__field {
+    // `subgrid` : la colonne reprend les deux pistes de la carte au lieu de
+    // créer les siennes, donc les libellés partagent leur ligne de base entre
+    // eux, et les valeurs aussi.
+    display:            grid;
+    grid-row:           span 2;
+    grid-template-rows: subgrid;
+    min-width:          0;
+  }
+
+  // Une colonne = deux lignes de texte, jamais trois : libellé et valeur se
+  // coupent au lieu de se replier. Texte entier au survol.
+  &__field-label {
+    font-size:     var(--semantic-font-text-style-size-m);
+    line-height:   var(--semantic-font-text-style-line-height-m);
+    color:         var(--semantic-color-static-text-main-tertiary);
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+  }
+
+  // Critère non posé : valeur vide. La colonne garde sa place, et la hauteur de
+  // la rangée tient à la frappe, toujours renseignée.
+  &__field-value {
+    // Rangée : le drapeau du pays d'abord, sa valeur ensuite. La troncature
+    // porte sur le texte, pas sur la rangée, sinon le drapeau serait coupé
+    // avant la première lettre.
+    display:     flex;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-xs);
+    min-width:   0;
+    font-size:   var(--semantic-font-text-style-size-m);
+    line-height: var(--semantic-font-text-style-line-height-m);
+    font-weight: var(--semantic-font-text-style-font-weight-bold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__field-text {
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+  }
+}

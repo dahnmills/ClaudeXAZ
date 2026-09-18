@@ -40,6 +40,7 @@ import { type ListWidgetItem } from '../../shared/ui/list-widget/list-widget.com
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
 import { ToasterService } from '../../shared/ui/toaster/toaster.service';
 import { BuyerSummaryStore } from './buyer-summary.store';
+import { ViewedBuyersStore } from './viewed-buyers.store';
 
 const PROVIDER_DELAY_MS = 2500;
 const MONTHS = ['May 23', 'Jul 23', 'Sep 23', 'Nov 23', 'Jan 24', 'Mar 24', 'May 24', 'Jul 24'];
@@ -296,6 +297,7 @@ const WIDGET_LABELS: Record<string, string> = Object.fromEntries(WIDGET_TYPE_OPT
 export class BuyerSummaryComponent implements OnInit, OnDestroy {
   private route   = inject(ActivatedRoute);
   private store   = inject(BuyerSummaryStore);
+  private viewed  = inject(ViewedBuyersStore);
   private toaster = inject(ToasterService);
 
   // Pending timers: cleared on destroy to avoid callbacks on a dead component
@@ -1235,7 +1237,14 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.routeId.set(this.route.snapshot.paramMap.get('id') ?? '');
+    const id = this.route.snapshot.paramMap.get('id') ?? '';
+    this.routeId.set(id);
+    // Une visite ne compte que sur la route du buyer. Spotlight et Keyboard
+    // shortcuts affichent cette même page en fond de décor : personne n'y a
+    // ouvert un buyer, l'onglet « Recently viewed » n'a rien à enregistrer.
+    if (id) {
+      this.viewed.record({ ...this.view(), companyId: this.companyId() });
+    }
     if (this.store.consumeJustCreated()) {
       this.toaster.show('Company created', { tone: 'success', title: 'Success' });
     }

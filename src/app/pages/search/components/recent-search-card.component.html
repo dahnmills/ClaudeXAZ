@@ -1,0 +1,24 @@
+<ds-card [noPadding]="true">
+  <!-- Une ligne de critères, comme une règle TAG : libellé au-dessus de valeur,
+       colonnes fixes, texte entier au survol. Cliquable en entier, le clic
+       relance la recherche : c'est la seule chose qu'on vient faire depuis cet
+       historique. -->
+  <div class="recent-card" role="button" tabindex="0"
+       [attr.aria-label]="'Search again for ' + entry().query"
+       (click)="replayed.emit()"
+       (keydown.enter)="replayed.emit()"
+       (keydown.space)="$event.preventDefault(); replayed.emit()">
+
+    @for (f of fields(); track f.label) {
+      <div class="recent-card__field">
+        <span class="recent-card__field-label" [title]="f.label">{{ f.label }}</span>
+        <span class="recent-card__field-value" [title]="f.value">
+          @if (f.flag) {
+            <ds-flag [code]="f.flag" />
+          }
+          <span class="recent-card__field-text">{{ f.value }}</span>
+        </span>
+      </div>
+    }
+  </div>
+</ds-card>
