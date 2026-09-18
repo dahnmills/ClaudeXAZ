@@ -134,9 +134,10 @@
             </div>
           } @else {
             <!-- Les actions d'une liste se lisent au-dessus d'elle, à droite,
-                 comme partout ailleurs sur les écrans du produit. -->
+                 comme partout ailleurs sur les écrans du produit. Pas de phrase
+                 de comptage : le compteur de l'onglet le dit déjà, et l'ordre se
+                 voit dans la liste. -->
             <div class="search-page__list-header">
-              <span>{{ recentsCount() }} {{ recentsCount() === 1 ? 'search' : 'searches' }}, most recent first</span>
               <ds-button type="plain" tone="default" (clicked)="clearRecents()">
                 <ds-icon slot="icon-left" name="trash" [size]="16" />
                 Clear all
@@ -158,7 +159,6 @@
             </div>
           } @else {
             <div class="search-page__list-header">
-              <span>{{ viewedCount() }} {{ viewedCount() === 1 ? 'buyer' : 'buyers' }}, most recently opened first</span>
               <ds-button type="plain" tone="default" (clicked)="clearViewed()">
                 <ds-icon slot="icon-left" name="trash" [size]="16" />
                 Clear all

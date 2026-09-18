@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CardComponent } from '../../../shared/ui/card/card.component';
 import { FlagComponent, type FlagCode } from '../../../shared/ui/flag/flag.component';
-import { SEARCH_TYPES, COUNTRIES } from '../../../shared/ui/search-bar-multi/search-bar-multi.component';
+import { SEARCH_TYPES, COUNTRIES, DIAL_CODES } from '../../../shared/ui/search-bar-multi/search-bar-multi.component';
 import { moreCriteriaSlots } from '../../../shared/ui/more-criteria/more-criteria.component';
 import type { RecentEntry } from '../recent-searches.store';
 
@@ -27,6 +27,17 @@ export class RecentSearchCardComponent {
   replayed = output<void>();
 
   /**
+   * Ce qui a été tapé, tel qu'il se lisait dans la barre. Sur une recherche par
+   * téléphone, la barre préfixe le champ de l'indicatif du pays et ne le stocke
+   * pas avec le numéro : sans lui, la colonne rend « 612345678 », qui n'est le
+   * numéro de personne. On le remet devant.
+   */
+  searchedValue = computed(() => {
+    const e = this.entry();
+    return e.type === 'phone' && e.country ? `${DIAL_CODES[e.country]} ${e.query}` : e.query;
+  });
+
+  /**
    * Ce qu'on a tapé d'abord, c'est ce qu'on cherche dans la liste. Viennent
    * ensuite les critères qui le qualifient, dans l'ordre de la barre de
    * recherche : le type, le pays, le type d'ID, puis les critères
@@ -39,7 +50,7 @@ export class RecentSearchCardComponent {
       ? COUNTRIES.find(c => c.code === e.country)?.label ?? e.country.toUpperCase()
       : '';
     return [
-      { label: 'Searched', value: e.query },
+      { label: 'Searched', value: this.searchedValue() },
       { label: 'Type',     value: SEARCH_TYPES.find(t => t.id === e.type)?.label ?? e.type },
       { label: 'Country',  value: country, flag: e.country ?? undefined },
       { label: 'ID type',  value: e.idType ?? '' },

@@ -10,6 +10,11 @@
 // =============================================================
 
 :host {
+  // Gouttière latérale des slots. 32px par défaut, comme la spec Figma, mais
+  // réglable par la page : un écran dont le corps est à 24px doit pouvoir
+  // aligner son breadcrumb et ses onglets dessus au lieu de décrocher de 8px.
+  --ds-page-header-gutter: var(--semantic-measurement-spacing-xl);
+
   display:        flex;
   flex-direction: column;
   align-items:    stretch;
@@ -31,7 +36,7 @@
 .ds-page-header__tabs {
   display:     flex;
   align-items: center;
-  padding:     0 var(--semantic-measurement-spacing-xl); // 32px latéral
+  padding:     0 var(--ds-page-header-gutter); // 32px latéral par défaut
   width:       100%;
 }
 

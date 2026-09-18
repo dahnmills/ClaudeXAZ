@@ -4,7 +4,7 @@
        relance la recherche : c'est la seule chose qu'on vient faire depuis cet
        historique. -->
   <div class="recent-card" role="button" tabindex="0"
-       [attr.aria-label]="'Search again for ' + entry().query"
+       [attr.aria-label]="'Search again for ' + searchedValue()"
        (click)="replayed.emit()"
        (keydown.enter)="replayed.emit()"
        (keydown.space)="$event.preventDefault(); replayed.emit()">
