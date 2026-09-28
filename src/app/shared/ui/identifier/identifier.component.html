@@ -1,0 +1,22 @@
+@if (copyable()) {
+  <button
+    type="button"
+    class="ds-identifier ds-identifier--copyable"
+    dsTooltip="Copy"
+    dsTooltipPosition="top-center"
+    (click)="copy()"
+  >
+    @if (icon()) {
+      <ds-icon [name]="icon()!" [size]="16" />
+    }
+    <span class="ds-identifier__value">{{ value() }}</span>
+    <ds-icon name="copy" [size]="16" />
+  </button>
+} @else {
+  <span class="ds-identifier">
+    @if (icon()) {
+      <ds-icon [name]="icon()!" [size]="16" />
+    }
+    <span class="ds-identifier__value">{{ value() }}</span>
+  </span>
+}

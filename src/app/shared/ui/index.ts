@@ -53,6 +53,7 @@ export * from './select/select.component';
 export * from './search-bar-multi/search-bar-multi.component';
 export * from './more-criteria/more-criteria.component';
 export * from './result-card/result-card.component';
+export * from './identifier/identifier.component';
 export * from './tag/tag.component';
 export * from './flag/flag.component';
 export * from './tooltip/tooltip.component';

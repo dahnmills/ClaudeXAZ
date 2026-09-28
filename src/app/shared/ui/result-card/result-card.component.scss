@@ -59,36 +59,6 @@
   color: var(--semantic-color-static-text-main-tertiary);
 }
 
-.ds-result-card__id-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--semantic-measurement-spacing-s);
-  background: var(--semantic-color-interactive-background-neutral-default);
-  border: 1px solid var(--semantic-color-static-border-subtle-tertiary);
-  border-radius: var(--semantic-border-radius-s);
-  padding: 0 var(--semantic-measurement-spacing-s);
-  height: var(--semantic-measurement-spacing-l);
-  color: var(--semantic-color-static-text-main-secondary);
-  cursor: pointer;
-  font-family: var(--semantic-font-family);
-
-  &:hover {
-    background: var(--semantic-color-static-background-main-alt-primary);
-    color: var(--semantic-color-interactive-text-strong-default);
-    border-color: var(--semantic-color-interactive-border-strong-default);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--semantic-color-interactive-border-focus);
-    outline-offset: 2px;
-  }
-}
-
-.ds-result-card__id-value {
-  font-family: var(--semantic-font-family);
-  font-size: var(--semantic-font-text-style-size-s);
-  line-height: var(--semantic-font-text-style-line-height-l);
-}
-
 .ds-result-card__address {
   color: var(--semantic-color-static-text-main-secondary);
   font-family: var(--semantic-font-family);

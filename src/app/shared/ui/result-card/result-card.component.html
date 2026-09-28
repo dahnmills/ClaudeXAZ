@@ -22,17 +22,7 @@
           <span class="ds-result-card__city">{{ data().city }}</span>
         }
         @if (exists() && data().companyId) {
-          <button
-            type="button"
-            class="ds-result-card__id-badge"
-            dsTooltip="Copy ID"
-            dsTooltipPosition="top-center"
-            (click)="copyId()"
-          >
-            <ds-icon name="hash" [size]="16" />
-            <span class="ds-result-card__id-value">{{ data().companyId }}</span>
-            <ds-icon name="copy" [size]="16" />
-          </button>
+          <ds-identifier [value]="data().companyId!" icon="hash" [copyable]="true" />
         }
       </div>
       <span class="ds-result-card__address">{{ data().address }}</span>

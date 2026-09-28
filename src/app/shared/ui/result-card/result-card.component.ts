@@ -1,9 +1,9 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
 import { LinkComponent } from '../link/link.component';
 import { ButtonIconComponent } from '../button-icon/button-icon.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
-import { SnackbarService } from '../snackbar/snackbar.service';
+import { IdentifierComponent } from '../identifier/identifier.component';
 import { PropertiesPanelComponent, type PropertySection } from '../properties-panel/properties-panel.component';
 import { DividerComponent } from '../divider/divider.component';
 import { IconTileComponent } from '../icon-tile/icon-tile.component';
@@ -27,7 +27,7 @@ export interface ResultCardData {
 @Component({
   selector: 'ds-result-card',
   standalone: true,
-  imports: [IconComponent, LinkComponent, ButtonIconComponent, TooltipDirective, PropertiesPanelComponent, DividerComponent, IconTileComponent, ProgressBarComponent],
+  imports: [IconComponent, LinkComponent, ButtonIconComponent, TooltipDirective, IdentifierComponent, PropertiesPanelComponent, DividerComponent, IconTileComponent, ProgressBarComponent],
   templateUrl: './result-card.component.html',
   styleUrl: './result-card.component.scss',
   host: {
@@ -61,17 +61,6 @@ export class ResultCardComponent {
   openBuyer(event: Event) {
     event.preventDefault();
     this.opened.emit();
-  }
-
-  private snackbar = inject(SnackbarService);
-
-  copyId() {
-    const id = this.data().companyId;
-    if (!id) return;
-    navigator.clipboard?.writeText(id).then(
-      () => this.snackbar.show(`Company ID ${id} copied`, { tone: 'success', icon: 'check' }),
-      () => this.snackbar.show('Copy failed', { tone: 'error' }),
-    );
   }
 
   hostClasses = computed(() => [
