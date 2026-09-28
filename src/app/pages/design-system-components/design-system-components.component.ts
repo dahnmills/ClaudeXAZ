@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, computed, inject, isDevMode, signal } from '@angular/core';
+import { afterNextRender, Component, computed, inject, isDevMode, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   DS_COMPONENTS,
@@ -297,6 +297,16 @@ const SPOTLIGHT_ITEMS: SpotlightItem[] = [
 export class DesignSystemComponentsComponent {
   private readonly toaster = inject(ToasterService);
   private readonly document = inject(DOCUMENT);
+
+  constructor() {
+    // The Spotlight preview stays permanently [open]="true" for the demo, and
+    // Spotlight locks document.body scroll while open (see its own effect).
+    // Nothing ever closes it here, so the lock would never lift: force it
+    // back open right after this page's first render.
+    afterNextRender(() => {
+      this.document.body.style.overflow = '';
+    });
+  }
 
   readonly query = signal('');
   readonly viewMode = signal<'grid' | 'list'>('grid');
