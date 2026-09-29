@@ -6,6 +6,7 @@ const meta: Meta<IdentifierComponent> = {
   component: IdentifierComponent,
   tags: ['autodocs'],
   argTypes: {
+    icon: { control: 'select', options: [null, 'hash', 'aa', 'globe', 'phone', 'user'] },
     copyable: { control: 'boolean' },
   },
 };
@@ -22,5 +23,5 @@ export const Copyable: Story = {
 };
 
 export const NoIcon: Story = {
-  args: { value: '137381425', copyable: true },
+  args: { value: '137381425', icon: null, copyable: true },
 };

@@ -12,7 +12,7 @@ import { SnackbarService } from '../snackbar/snackbar.service';
 })
 export class IdentifierComponent {
   value = input.required<string>();
-  icon = input<IconName>();
+  icon = input<IconName | null>(null);
   copyable = input<boolean>(false);
 
   private snackbar = inject(SnackbarService);
