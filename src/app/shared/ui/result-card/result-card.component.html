@@ -55,9 +55,10 @@
         [ariaLabel]="favorited() ? 'Unfavorite' : 'Favorite'"
         class="ds-result-card__star"
         [class.ds-result-card__star--on]="favorited()"
-        dsTooltip="Add to favorite"
+        [disabled]="!exists()"
+        [dsTooltip]="exists() ? 'Add to favorite' : 'Create the company first to add it to favorites'"
         dsTooltipPosition="top-center"
-        (clicked)="starred.emit()"
+        (clicked)="exists() && starred.emit()"
       >
         <ds-icon [name]="favorited() ? 'star-filled' : 'star'" [size]="20" />
       </ds-button-icon>
