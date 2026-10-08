@@ -16,6 +16,7 @@ import { NotificationModuleComponent } from './pages/notification-module/notific
 import { MaintenanceComponent } from './pages/maintenance/maintenance.component';
 import { LoadingComponent } from './pages/loading/loading.component';
 import { KeyboardShortcutsPage } from './pages/keyboard-shortcuts/keyboard-shortcuts.page';
+import { CardBuilderLabPage } from './pages/card-builder-lab/card-builder-lab.page';
 import { ReviewShellComponent } from './shared/feedback/review-shell.component';
 import { ResultsComponent } from './pages/results/results.component';
 import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
@@ -49,6 +50,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'maintenance', component: MaintenanceComponent },
   { path: 'loading', component: LoadingComponent },
   { path: 'keyboard-shortcuts', component: KeyboardShortcutsPage },
+  { path: 'card-builder-lab', component: CardBuilderLabPage },
 ];
 
 export const appRoutes: Routes = [

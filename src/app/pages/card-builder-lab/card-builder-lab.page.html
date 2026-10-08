@@ -1,0 +1,322 @@
+<div class="lab">
+
+  <header class="lab__header">
+    <div class="lab__heading">
+      <p class="lab__eyebrow">Prototype: card builder</p>
+      <h1 class="lab__title">Buyer Summary</h1>
+    </div>
+    <ds-button type="primary" (clicked)="openNew()">
+      <ds-icon slot="icon-left" name="plus" [size]="16" />
+      Create a custom card
+    </ds-button>
+  </header>
+
+  <!-- ═══ Board ═══ -->
+  <main class="lab__board" aria-label="Board">
+    <div class="lab-grid">
+      @for (card of customCards(); track card.id) {
+        <div class="lab-grid__cell lab-grid__cell--{{ card.size }}"
+          [class.lab-grid__cell--flash]="flashId() === card.id">
+          <ng-container [ngTemplateOutlet]="cardTpl" [ngTemplateOutletContext]="{ $implicit: card }" />
+          <div class="lab-grid__edit">
+            <ds-button-icon type="secondary" [ariaLabel]="'Edit ' + card.name" (clicked)="openEdit(card.id)">
+              <ds-icon name="edit" [size]="16" />
+            </ds-button-icon>
+          </div>
+        </div>
+      }
+
+      @for (b of BOARD; track b.id) {
+        <div class="lab-grid__cell lab-grid__cell--{{ b.size }}">
+          <ds-widget-card [title]="b.title" [externalLink]="false">
+            <ds-properties-panel [sections]="[{ rows: b.rows }]" [columns]="1" variant="flat" layout="stacked" />
+          </ds-widget-card>
+        </div>
+      }
+    </div>
+  </main>
+
+  <div class="lab__live" aria-live="polite" role="status">{{ announcement() }}</div>
+</div>
+
+<!-- ═══ Builder modal: two steps, 1. the format, 2. the content.
+     Each step shows the whole card at its board size, never cut. ═══ -->
+<ds-modal [title]="builderTitle()" size="xlarge" [open]="builderOpen()" contentHeight="560px"
+  [closeOnBackdrop]="false" [suspended]="discardOpen()"
+  [showBack]="step() === 2" backLabel="Back to format" (backClicked)="goToStep(1)"
+  (closed)="requestCancel()">
+
+  <p class="lab-step">Step {{ step() }} of 2: {{ step() === 1 ? 'Format' : 'Content' }}</p>
+
+  @if (editingId()) {
+    <ds-functional-notice status="info" emphasis="low"
+      [message]="'Used on ' + usedOnBoards() + ' boards. Your changes apply to all of them.'" />
+  }
+
+  @if (step() === 1) {
+    <!-- Step 1: the settings on the left, the card they shape on the right.
+         Fixed columns: a wider card grows to the right, nothing else moves. -->
+    <div class="lab-format-step">
+      <div class="lab-format-step__form">
+        <ds-input-text label="Card name" placeholder="Named after its content"
+          [value]="draft().name" (valueChange)="setName($event)" />
+
+        <div class="lab-format">
+          <section class="lab-field">
+            <h3 class="lab-field__label">Size</h3>
+            <ds-segmented-control [options]="sizeOptions()" [selected]="draft().size"
+              (selectedChange)="setSize($event)" />
+          </section>
+          <section class="lab-field">
+            <h3 class="lab-field__label">Columns</h3>
+            <ds-segmented-control [options]="columnOptions()" [selected]="'' + draft().columnCount"
+              (selectedChange)="setColumns($event)" />
+          </section>
+        </div>
+
+        <!-- How figures read, shown rather than named: each choice draws itself -->
+        <section class="lab-field">
+          <h3 class="lab-field__label">Figures display</h3>
+          <div class="lab-look" role="radiogroup" aria-label="Figures display">
+            @for (o of densityOptions(); track o.value) {
+              <button type="button" class="lab-look__opt" role="radio"
+                [class.lab-look__opt--on]="draft().density === o.value"
+                [attr.aria-checked]="draft().density === o.value"
+                [disabled]="o.disabled"
+                (click)="setDensity(o.value)">
+                <span class="lab-look__sample lab-look__sample--{{ o.value }}" aria-hidden="true">
+                  <span class="lab-look__label">Exposure</span>
+                  <span class="lab-look__value">1 548 000</span>
+                </span>
+                <span class="lab-look__name">{{ o.label }}</span>
+              </button>
+            }
+          </div>
+          <!-- Why an option is off. Always rendered, hidden when empty: nothing moves -->
+          <p class="lab-field__hint" [class.lab-field__hint--off]="!densityHint() && !formatHint()">
+            {{ densityHint() || formatHint() || '-' }}
+          </p>
+        </section>
+      </div>
+
+      <div class="lab-format-step__preview">
+        <h3 class="lab-field__label">On the board</h3>
+        <div class="lab-preview__cell lab-preview__cell--{{ draft().size }}">
+          <ng-container [ngTemplateOutlet]="cardTpl" [ngTemplateOutletContext]="{ $implicit: draft(), preview: true }" />
+        </div>
+        <p class="lab-field__hint">{{ capacityHint() }}</p>
+      </div>
+    </div>
+  } @else {
+    <!-- Step 2: the whole card on the left, the list beside it scrolls on its
+         own, so the card never leaves the view. -->
+    <div class="lab-builder">
+      <div class="lab-builder__card">
+        <div class="lab-preview__cell lab-preview__cell--{{ draft().size }}">
+          <ng-container [ngTemplateOutlet]="cardTpl" [ngTemplateOutletContext]="{ $implicit: draft(), preview: true }" />
+        </div>
+        <p class="lab-field__hint">{{ placesHint() }}</p>
+      </div>
+
+      <!-- Right: what can go in the selected place -->
+      <aside class="lab-pick" aria-label="Content for the selected place">
+        @if (sel(); as s) {
+          <div class="lab-pick__head">
+            <p class="lab-pick__eyebrow">{{ selKey() ? 'Selected item' : 'Fill this place' }}</p>
+            <h3 class="lab-pick__title">{{ selTitle() }}</h3>
+
+            @if (selKey(); as key) {
+              <div class="lab-pick__actions">
+                <ds-button type="secondary" [disabled]="!canMoveBy(-1)" (clicked)="moveBy(-1)">
+                  <ds-icon slot="icon-left" name="arrow-up" [size]="16" />
+                  Up
+                </ds-button>
+                <ds-button type="secondary" [disabled]="!canMoveBy(1)" (clicked)="moveBy(1)">
+                  <ds-icon slot="icon-left" name="arrow-down" [size]="16" />
+                  Down
+                </ds-button>
+                @if (draft().columnCount === 2) {
+                  <ds-button type="secondary" [disabled]="!canMoveAcross()" (clicked)="moveAcross()">
+                    <ds-icon slot="icon-left" [name]="s.column === 0 ? 'arrow-right' : 'arrow-left'" [size]="16" />
+                    To the {{ s.column === 0 ? 'right' : 'left' }} column
+                  </ds-button>
+                }
+                <ds-button type="tertiary" (clicked)="remove(key)">
+                  <ds-icon slot="icon-left" name="trash" [size]="16" />
+                  Remove
+                </ds-button>
+              </div>
+              <p class="lab-pick__lead">Or replace it with:</p>
+            }
+          </div>
+
+          <!-- Figures or charts: one kind at a time, one item per row -->
+          <div class="lab-pick__tools">
+            <ds-segmented-control [options]="kindOptions" [selected]="kind()" (selectedChange)="setKind($event)" />
+            <ds-input-search class="lab-pick__search"
+              [placeholder]="kind() === 'chart' ? 'Search a chart…' : 'Search a figure…'"
+              [value]="query()" (valueChange)="query.set($event)" (cleared)="query.set('')" />
+          </div>
+
+          @if (chartsBlocked()) {
+            <ds-functional-notice status="info" emphasis="low"
+              [message]="'A chart takes ' + span('chart:') + ' places. Remove a few items to make room, or select another place.'" />
+          }
+
+          <div class="lab-pick__groups">
+            @for (g of groups(); track g.group) {
+              <section class="lab-pick__group">
+                <h4 class="lab-pick__group-title">{{ g.group }}</h4>
+                <ul class="lab-pick__list">
+                  @for (f of g.figures; track f.id) {
+                    <li class="lab-pick__row">
+                      @if (kind() === 'fig') {
+                        <!-- The whole row is the hit area, with the buyer's real value -->
+                        <button type="button" class="lab-opt"
+                          [class.lab-opt--here]="selKey() === 'fig:' + f.id"
+                          [class.lab-opt--used]="!!where('fig:' + f.id)"
+                          [disabled]="!canPick('fig:' + f.id)"
+                          (click)="pick('fig:' + f.id)">
+                          <span class="lab-opt__text">
+                            <span class="lab-opt__label">{{ f.label }}</span>
+                          </span>
+                          <!-- Already on the card: greyed out and tagged on the same line, never hidden -->
+                          <span class="lab-opt__end">
+                            @if (where('fig:' + f.id); as w) {
+                              <ds-badge [label]="w" [status]="selKey() === 'fig:' + f.id ? 'info' : 'neutral'">
+                                <ds-icon slot="icon" name="check" [size]="12" />
+                              </ds-badge>
+                            }
+                            <span class="lab-opt__value">{{ f.value }}</span>
+                          </span>
+                        </button>
+                      } @else {
+                        <button type="button" class="lab-opt"
+                          [class.lab-opt--here]="selKey() === 'chart:' + f.id"
+                          [class.lab-opt--used]="!!where('chart:' + f.id)"
+                          [disabled]="!canPick('chart:' + f.id)"
+                          (click)="pick('chart:' + f.id)">
+                          <span class="lab-opt__text">
+                            <span class="lab-opt__label">{{ f.chart!.label }}</span>
+                            <span class="lab-opt__where">{{ chartNote(f) }}</span>
+                          </span>
+                          @if (where('chart:' + f.id); as w) {
+                            <ds-badge [label]="w" [status]="selKey() === 'chart:' + f.id ? 'info' : 'neutral'">
+                              <ds-icon slot="icon" name="check" [size]="12" />
+                            </ds-badge>
+                          }
+                          <span class="lab-opt__spark" aria-hidden="true">
+                            <ds-chart [data]="f.chart!.data" [invertY]="!!f.chart!.invertY" [tone]="f.chart!.tone"
+                              [height]="32" [showGrid]="false" [showDots]="false" />
+                          </span>
+                        </button>
+                      }
+                    </li>
+                  }
+                </ul>
+              </section>
+            } @empty {
+              <p class="lab-field__hint">Nothing matches “{{ query() }}”.</p>
+            }
+          </div>
+        } @else {
+          <div class="lab-pick__idle">
+            <ds-icon name="check" [size]="32" />
+            <p>The card is full.</p>
+            <p class="lab-field__hint">Click an item on the card to replace, move or remove it.</p>
+          </div>
+        }
+      </aside>
+    </div>
+  }
+
+  <div slot="actions" class="lab-actions">
+    <ds-button type="tertiary" (clicked)="requestCancel()">Cancel</ds-button>
+    @if (step() === 1) {
+      <ds-button type="primary" (clicked)="goToStep(2)">Next: content</ds-button>
+    } @else {
+      <ds-button type="primary" [disabled]="!hasContent()" (clicked)="save()">
+        {{ editingId() ? 'Save changes' : 'Add to board' }}
+      </ds-button>
+    }
+  </div>
+</ds-modal>
+
+<ds-confirm-dialog [open]="discardOpen()" title="Discard this card?" tone="warning"
+  confirmLabel="Discard card" cancelLabel="Keep editing"
+  (confirmed)="confirmDiscard()" (cancelled)="discardOpen.set(false)">
+  Your changes to this card will not be saved.
+</ds-confirm-dialog>
+
+<!-- What an item shows: same markup on the card, in the builder and on the board -->
+<ng-template #itemTpl let-key let-card="card">
+  @if (isChart(key)) {
+    <div class="lab-item__chart">
+      <span class="lab-item__caption">{{ labelOf(key) }}</span>
+      <ds-chart [data]="figureOf(key).chart!.data" [xLabels]="axisMonths" [yLabels]="figureOf(key).chart!.yLabels || []"
+        [min]="figureOf(key).chart!.min ?? null" [max]="figureOf(key).chart!.max ?? null"
+        [invertY]="!!figureOf(key).chart!.invertY" [tone]="figureOf(key).chart!.tone" [height]="CHART_HEIGHT" />
+    </div>
+  } @else {
+    <ds-properties-panel [sections]="sectionsOf(key)" [columns]="1" variant="flat"
+      [layout]="card.density" density="compact" />
+  }
+</ng-template>
+
+<!-- Card renderer: each column is a fixed grid of places -->
+<ng-template #cardTpl let-card let-preview="preview">
+  <ds-widget-card class="lab-shell" [title]="card.name || 'Untitled card'" [externalLink]="false">
+    <div class="lab-card lab-card--cols-{{ card.columnCount }}" [class.lab-card--live]="preview">
+      @for (c of cardColumns(card); track c) {
+        <div class="lab-card__col lab-card__col--places-{{ places(card) }}">
+          @for (cell of card.cells[c]; track $index; let i = $index) {
+            @if (cell) {
+              <div class="lab-cell lab-cell--span-{{ span(cell, card.density) }}"
+                [class.lab-cell--on]="preview && isSelected(c, i)"
+                [class.lab-cell--dragging]="preview && dragKey() === cell"
+                [class.lab-cell--drop]="preview && isDropTarget(c, i)"
+                [attr.draggable]="preview ? 'true' : null"
+                (dragstart)="preview && onDragStart($event, cell)"
+                (dragend)="preview && onDragEnd()"
+                (dragover)="preview && onCellDragOver($event, c, i)"
+                (drop)="preview && onCellDrop($event)">
+                @if (preview) {
+                  <div class="lab-cell__hit" role="button" tabindex="0"
+                    [attr.aria-pressed]="isSelected(c, i)"
+                    [attr.aria-label]="'Change ' + labelOf(cell)"
+                    (click)="select(c, i)"
+                    (keydown.enter)="select(c, i)"
+                    (keydown.space)="$event.preventDefault(); select(c, i)">
+                    <ng-container [ngTemplateOutlet]="itemTpl" [ngTemplateOutletContext]="{ $implicit: cell, card }" />
+                  </div>
+                  <!-- Small on purpose: it sits in the gutter, beside the item, not over its value -->
+                  <button type="button" class="lab-cell__remove" draggable="false"
+                    [attr.aria-label]="'Remove ' + labelOf(cell)" (click)="remove(cell)">
+                    <ds-icon name="close" [size]="12" />
+                  </button>
+                } @else {
+                  <ng-container [ngTemplateOutlet]="itemTpl" [ngTemplateOutletContext]="{ $implicit: cell, card }" />
+                }
+              </div>
+            } @else if (preview) {
+              <!-- An empty place: click to fill it, or drop an item on it -->
+              <button type="button" class="lab-cell lab-cell--empty"
+                [class.lab-cell--on]="isSelected(c, i)"
+                [class.lab-cell--drop]="isDropTarget(c, i)"
+                [attr.aria-pressed]="isSelected(c, i)"
+                [attr.aria-label]="'Fill place ' + (i + 1) + (card.columnCount === 2 ? ' of the ' + columnLabel(c) : '')"
+                (click)="select(c, i)"
+                (dragover)="onCellDragOver($event, c, i)"
+                (drop)="onCellDrop($event)">
+                <ds-icon name="plus" [size]="12" />
+                {{ dragKey() ? 'Drop here' : isSelected(c, i) ? 'Pick on the right' : 'Add' }}
+              </button>
+            } @else {
+              <div class="lab-cell" aria-hidden="true"></div>
+            }
+          }
+        </div>
+      }
+    </div>
+  </ds-widget-card>
+</ng-template>

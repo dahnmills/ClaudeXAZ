@@ -29,6 +29,7 @@ export const SCREENS: Screen[] = [
   { path: 'maintenance', label: 'Maintenance', hint: 'Product downtime state', version: { ...V1 } },
   { path: 'loading', label: 'Loading', hint: 'Initial app loading state', version: { ...V1 } },
   { path: 'keyboard-shortcuts', label: 'Keyboard Shortcuts', hint: 'Shortcut reference panel', version: { ...V1 } },
+  { path: 'card-builder-lab', label: 'Card Builder Lab', hint: 'Custom card builder redesign', version: { ...V1 } },
 ];
 
 export function versionLabel(v: ScreenVersion): string {

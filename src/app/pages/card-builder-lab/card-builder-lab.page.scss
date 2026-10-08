@@ -1,0 +1,584 @@
+// Card builder lab: board + builder modal. Board rows have a fixed height, and
+// the preview cell uses the same slot dimensions, so it clips like the board.
+
+:host {
+  display:    block;
+  min-height: 100vh;
+  background: var(--semantic-color-static-background-main-secondary);
+  font-family: var(--semantic-font-family);
+}
+
+.lab {
+
+  &__header {
+    display:         flex;
+    align-items:     flex-end;
+    justify-content: space-between;
+    gap:             var(--semantic-measurement-spacing-m);
+    padding:         var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl);
+  }
+
+  &__eyebrow {
+    margin:    0;
+    font-size: var(--semantic-font-text-style-size-s);
+    color:     var(--semantic-color-static-text-main-tertiary);
+  }
+
+  &__title {
+    margin:      0;
+    font-size:   var(--semantic-font-title-size-m);
+    font-weight: var(--semantic-font-title-font-weight-m);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__board {
+    padding:    0 var(--semantic-measurement-spacing-xl) var(--semantic-measurement-spacing-xl);
+  }
+
+  // Visually hidden live region
+  &__live {
+    position: absolute;
+    width:    var(--semantic-border-size-s);
+    height:   var(--semantic-border-size-s);
+    overflow: hidden;
+    clip:     rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+// ── Board grid: same 4 columns as Buyer Summary ─────────────────────────────
+.lab-grid {
+  display:               grid;
+  grid-template-columns: repeat(4, calc(var(--semantic-measurement-sizing-3xl) * 4)); // same slot as the preview
+  grid-auto-rows:        calc(var(--semantic-measurement-sizing-3xl) * 4);
+  grid-auto-flow:        dense;
+  gap:                   var(--semantic-measurement-spacing-m);
+
+  &__cell {
+    position:  relative;
+    min-width: 0;
+    overflow:  hidden;          // a real slot does not grow: overflow is clipped
+    border-radius: var(--semantic-border-radius-m);
+    transition: opacity 160ms ease;
+
+    &--M { grid-column: span 2; }
+
+    &--flash { animation: lab-flash 1200ms ease-out; }
+  }
+
+  &__edit {
+    position: absolute;
+    right:    var(--semantic-measurement-spacing-s);
+    bottom:   var(--semantic-measurement-spacing-s);
+  }
+}
+
+@keyframes lab-flash {
+  0%   { box-shadow: 0 0 0 var(--semantic-border-size-l) var(--semantic-color-interactive-border-strong-default); }
+  100% { box-shadow: 0 0 0 var(--semantic-border-size-none) transparent; }
+}
+
+// ── Card content (shared by builder and board) ──────────────────────────────
+// Each column is a fixed grid of places: 6 on one line, 3 with labels above
+// values. Nothing can overflow, an item spans the places it takes.
+.lab-card {
+  display:  grid;
+  gap:      var(--semantic-measurement-spacing-m);
+  height:   100%;
+  overflow: hidden;
+
+  &--cols-1 { grid-template-columns: minmax(0, 1fr); }
+  &--cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  // Builder: nothing is clipped, so the remove button can sit in the gutter
+  &--live { overflow: visible; }
+
+  &__col {
+    display:   grid;
+    min-width: 0;
+    min-height: 0;
+
+    &--places-6 { grid-template-rows: repeat(6, minmax(0, 1fr)); }
+    &--places-3 { grid-template-rows: repeat(3, minmax(0, 1fr)); }
+  }
+}
+
+.lab-cell {
+  position:      relative;
+  display:       flex;
+  align-items:   center;
+  min-width:     0;
+  min-height:    0;
+  border-radius: var(--semantic-border-radius-s);
+  transition:    box-shadow 120ms ease, background 120ms ease, opacity 120ms ease;
+
+  @for $n from 1 through 6 {
+    &--span-#{$n} { grid-row: span $n; }
+  }
+
+  // The whole item is the hit area: a click selects it, the list then acts on it
+  &__hit {
+    display:       flex;
+    flex:          1;
+    align-items:   center;
+    align-self:    stretch;
+    min-width:     0;
+    border-radius: inherit;
+    cursor:        pointer;
+
+    &:hover { background: var(--semantic-color-interactive-background-light-default); }
+
+    &:focus-visible {
+      outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+      outline-offset: var(--semantic-border-size-s);
+    }
+  }
+
+  // Selected: the place the list on the right fills or replaces
+  &--on {
+    background: var(--semantic-color-interactive-background-light-default);
+    box-shadow: inset 0 0 0 var(--semantic-border-size-m) var(--semantic-color-interactive-border-strong-default);
+  }
+
+  &--dragging { opacity: var(--semantic-measurement-opacity-disabled); }
+
+  &--drop {
+    box-shadow: inset 0 0 0 var(--semantic-border-size-m) var(--semantic-color-interactive-border-strong-default);
+  }
+
+  // An empty place, drawn at its real height
+  &--empty {
+    justify-content: center;
+    gap:             var(--semantic-measurement-spacing-xxs);
+    margin-block:    var(--semantic-measurement-spacing-xxs);
+    padding:         var(--semantic-measurement-spacing-none);
+    border:          var(--semantic-border-size-s) dashed var(--semantic-color-static-border-subtle-tertiary);
+    background:      transparent;
+    font-family:     inherit;
+    font-size:       var(--semantic-font-text-style-size-s);
+    color:           var(--semantic-color-interactive-text-strong-default);
+    cursor:          pointer;
+
+    &:hover { border-color: var(--semantic-color-interactive-border-strong-default); }
+
+    &.lab-cell--on,
+    &.lab-cell--drop {
+      border-style: solid;
+      border-color: var(--semantic-color-interactive-border-strong-default);
+      box-shadow:   none;
+    }
+
+    &:focus-visible {
+      outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+      outline-offset: var(--semantic-border-size-s);
+    }
+  }
+
+  // Sits in the gutter at the right of its item, so it never covers a value
+  &__remove {
+    position:        absolute;
+    top:             50%;
+    right:           calc(-1 * var(--semantic-measurement-sizing-m));
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    width:           var(--semantic-measurement-sizing-m);
+    height:          var(--semantic-measurement-sizing-m);
+    padding:         var(--semantic-measurement-spacing-none);
+    border:          var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+    border-radius:   var(--semantic-border-radius-round);
+    background:      var(--semantic-color-static-background-main-primary);
+    color:           var(--semantic-color-static-text-main-secondary);
+    cursor:          pointer;
+    opacity:         0;
+    transform:       translateY(-50%);
+    transition:      opacity 120ms ease, background 120ms ease, color 120ms ease;
+
+    &:hover {
+      border-color: var(--semantic-color-interactive-background-strong-default);
+      background:   var(--semantic-color-interactive-background-strong-default);
+      color:        var(--semantic-color-static-text-main-reversed);
+    }
+
+    &:focus-visible {
+      opacity:        1;
+      outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+      outline-offset: var(--semantic-border-size-s);
+    }
+  }
+
+  &:hover &__remove { opacity: 1; }
+
+  &[draggable='true'] { cursor: grab; }
+}
+
+// Item content fills its place
+.lab-cell ds-properties-panel { flex: 1; min-width: 0; }
+
+.lab-item {
+  &__chart {
+    display:        flex;
+    flex:           1;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-xxs);
+    min-width:      0;
+  }
+
+  &__caption {
+    font-size:   var(--semantic-font-text-style-size-s);
+    line-height: var(--semantic-font-text-style-line-height-s);
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+// ── Builder modal ───────────────────────────────────────────────────────────
+// Where the analyst is, above both steps
+.lab-step {
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-s);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+// Wide card width whatever the size, in both steps: changing it moves nothing
+$card-slot: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-measurement-spacing-m));
+
+// Step 1: settings | card
+.lab-format-step {
+  display:               grid;
+  grid-template-columns: minmax(0, 1fr) $card-slot;
+  align-items:           start;
+  gap:                   var(--semantic-measurement-spacing-3xl);
+
+  &__form {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-l);
+  }
+
+  &__preview {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-s);
+  }
+}
+
+// Step 2: card | list. The step fills the modal, the list scrolls on its own
+// and the card never moves.
+.lab-builder {
+  display:               grid;
+  flex:                  1 1 0;
+  min-height:            0;
+  grid-template-columns: $card-slot minmax(0, 1fr);
+  gap:                   var(--semantic-measurement-spacing-xl);
+
+  &__card {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-s);
+  }
+}
+
+.lab-format {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-l);
+}
+
+// ── List of what can go in the selected place ──────────────────────────────
+.lab-pick {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  min-width:      0;
+  min-height:     0;
+  padding-left:   var(--semantic-measurement-spacing-xl);
+  border-left:    var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+
+  &__head {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-xs);
+  }
+
+  &__eyebrow {
+    margin:      0;
+    font-size:   var(--semantic-font-text-style-size-s);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
+
+  &__title {
+    margin:      0;
+    font-size:   var(--semantic-font-title-size-xs);
+    font-weight: var(--semantic-font-title-font-weight-m);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__actions {
+    display:    flex;
+    flex-wrap:  wrap;
+    gap:        var(--semantic-measurement-spacing-s);
+    margin-top: var(--semantic-measurement-spacing-xs);
+  }
+
+  &__lead {
+    margin:     var(--semantic-measurement-spacing-s) 0 0;
+    font-size:  var(--semantic-font-text-style-size-m);
+    color:      var(--semantic-color-static-text-main-secondary);
+  }
+
+  &__tools {
+    display:     flex;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-m);
+  }
+
+  &__search { flex: 1; min-width: 0; }
+
+  // Only the list scrolls: what it acts on and its tools stay in view
+  &__groups {
+    display:        flex;
+    flex:           1 1 0;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-l);
+    min-height:     0;
+    overflow-y:     auto;
+  }
+
+  &__group-title {
+    margin:         0 0 var(--semantic-measurement-spacing-xs);
+    font-size:      var(--semantic-font-text-style-size-s);
+    font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+    color:          var(--semantic-color-static-text-main-tertiary);
+    text-transform: uppercase;
+  }
+
+  &__list {
+    display:        flex;
+    flex-direction: column;
+    margin:         0;
+    padding:        0;
+    list-style:     none;
+  }
+
+  &__row {
+    display:       flex;
+    gap:           var(--semantic-measurement-spacing-xs);
+    border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  }
+
+  &__idle {
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    gap:            var(--semantic-measurement-spacing-s);
+    padding:        var(--semantic-measurement-spacing-3xl) var(--semantic-measurement-spacing-l);
+    color:          var(--semantic-color-static-text-main-tertiary);
+    text-align:     center;
+
+    p { margin: 0; font-size: var(--semantic-font-text-style-size-l); color: var(--semantic-color-static-text-main-secondary); }
+  }
+}
+
+// One option of the list: the whole row is the hit area, one click places it
+.lab-opt {
+  display:         flex;
+  flex:            1;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+  min-width:       0;
+  margin-block:    var(--semantic-measurement-spacing-xxs);
+  padding:         var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border:          none;
+  border-radius:   var(--semantic-border-radius-s);
+  background:      transparent;
+  font-family:     inherit;
+  text-align:      left;
+  cursor:          pointer;
+  transition:      background 120ms ease;
+
+  &:hover:not(:disabled) { background: var(--semantic-color-interactive-background-light-default); }
+
+  &:disabled { cursor: not-allowed; }
+  // Off because it does not fit: faded. Off because it is on the card: its
+  // text goes grey, its tag stays crisp
+  &:disabled:not(&--used) { opacity: var(--semantic-measurement-opacity-disabled); }
+
+  &--used &__label,
+  &--used &__value { color: var(--semantic-color-static-text-main-tertiary); }
+
+  &:focus-visible {
+    outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+    outline-offset: var(--semantic-border-size-none);
+  }
+
+  // What the selected place holds now
+  &--here {
+    background: var(--semantic-color-interactive-background-light-default);
+    box-shadow: inset 0 0 0 var(--semantic-border-size-s) var(--semantic-color-interactive-border-strong-default);
+  }
+
+  &__text {
+    display:        flex;
+    flex-direction: column;
+    min-width:      0;
+  }
+
+  &__label {
+    font-size:   var(--semantic-font-text-style-size-m);
+    line-height: var(--semantic-font-text-style-line-height-m);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__where {
+    font-size:   var(--semantic-font-text-style-size-s);
+    line-height: var(--semantic-font-text-style-line-height-s);
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
+
+  &__end {
+    display:     flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-s);
+  }
+
+  &__value {
+    flex-shrink:          0;
+    font-size:            var(--semantic-font-text-style-size-m);
+    font-weight:          var(--semantic-font-text-style-font-weight-bold);
+    color:                var(--semantic-color-static-text-main-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Chart row: the curve stands where a figure shows its value
+  &__spark {
+    display:        block;
+    flex-shrink:    0;
+    width:          calc(var(--semantic-measurement-sizing-3xl) * 2);
+    pointer-events: none;
+  }
+}
+
+// ── Figures display: two choices that draw themselves ──────────────────────
+.lab-look {
+  display:               grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:                   var(--semantic-measurement-spacing-s);
+
+  &__opt {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-xxs);
+    padding:        var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-s);
+    border:         var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+    border-radius:  var(--semantic-border-radius-s);
+    background:     var(--semantic-color-static-background-main-primary);
+    font-family:    inherit;
+    text-align:     left;
+    cursor:         pointer;
+    transition:     border-color 120ms ease, background 120ms ease;
+
+    &:hover:not(:disabled) { border-color: var(--semantic-color-interactive-border-strong-default); }
+
+    &:disabled {
+      cursor:  not-allowed;
+      opacity: var(--semantic-measurement-opacity-disabled);
+    }
+
+    &:focus-visible {
+      outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+      outline-offset: var(--semantic-border-size-s);
+    }
+
+    &--on {
+      border-color: var(--semantic-color-interactive-border-strong-default);
+      background:   var(--semantic-color-interactive-background-light-default);
+      box-shadow:   inset 0 0 0 var(--semantic-border-size-s) var(--semantic-color-interactive-border-strong-default);
+    }
+  }
+
+  // A real figure in the chosen layout, so the choice reads at a glance
+  &__sample {
+    display:       flex;
+    gap:           var(--semantic-measurement-spacing-xxs);
+    padding-block: var(--semantic-measurement-spacing-xs);
+    margin-bottom: var(--semantic-measurement-spacing-xxs);
+    border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+
+    &--stacked { flex-direction: column; }
+    &--inline  { justify-content: space-between; align-items: baseline; }
+  }
+
+  &__label {
+    font-size: var(--semantic-font-text-style-size-s);
+    color:     var(--semantic-color-static-text-main-tertiary);
+  }
+
+  &__value {
+    font-size:            var(--semantic-font-text-style-size-s);
+    font-weight:          var(--semantic-font-text-style-font-weight-bold);
+    color:                var(--semantic-color-static-text-main-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__name {
+    font-size:   var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-cell, .lab-opt { transition: none; }
+}
+
+// Same slot as the board: 1 column = 4 × sizing-3xl wide, 1 row = 4 × sizing-3xl tall
+.lab-preview__cell {
+  overflow:      hidden;
+  border-radius: var(--semantic-border-radius-m);
+  width:         calc(var(--semantic-measurement-sizing-3xl) * 4);
+  height:        calc(var(--semantic-measurement-sizing-3xl) * 4);
+
+  &--M { width: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-measurement-spacing-m)); }
+}
+
+
+.lab-actions {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-s);
+}
+
+
+.lab-field {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+
+  &__label {
+    margin:      0;
+    font-size:   var(--semantic-font-text-style-size-l);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__hint {
+    margin:    0;
+    font-size: var(--semantic-font-text-style-size-s);
+    color:     var(--semantic-color-static-text-main-tertiary);
+
+    // Hidden, not removed: the line keeps its height and nothing below moves
+    &--off { visibility: hidden; }
+  }
+}
+
+// Custom card title on one line: a wrapped title takes a whole figure row
+// from a 1 × 1 card
+.lab-shell ::ng-deep .ds-widget-card__title {
+  min-width:     0;
+  overflow:      hidden;
+  white-space:   nowrap;
+  text-overflow: ellipsis;
+}
