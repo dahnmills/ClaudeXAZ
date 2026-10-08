@@ -81,6 +81,26 @@
     0 0 0 4px var(--semantic-color-interactive-background-strong-default);
 }
 
+// 5. error / warning : l'icône du statut remplace le marqueur (pas de fond plein).
+//    Si l'étape est aussi la courante, même double ring que "current-completed"
+//    dans la couleur du statut.
+.ds-stepper__step--error .ds-stepper__marker {
+  color: var(--semantic-color-static-icon-main-functional-negative);
+}
+.ds-stepper__step--warning .ds-stepper__marker {
+  color: var(--semantic-color-static-icon-main-functional-warning);
+}
+.ds-stepper__step--error.ds-stepper__step--is-current .ds-stepper__marker {
+  box-shadow:
+    0 0 0 2px var(--semantic-color-static-background-main-primary),
+    0 0 0 4px var(--semantic-color-static-border-main-functional-negative);
+}
+.ds-stepper__step--warning.ds-stepper__step--is-current .ds-stepper__marker {
+  box-shadow:
+    0 0 0 2px var(--semantic-color-static-background-main-primary),
+    0 0 0 4px var(--semantic-color-static-border-main-functional-warning);
+}
+
 .ds-stepper__text {
   display: flex;
   flex-direction: column;
@@ -105,6 +125,10 @@
 .ds-stepper__step--unlocked .ds-stepper__label {
   color: var(--semantic-color-static-text-main-primary);
 }
+.ds-stepper__step--error .ds-stepper__label,
+.ds-stepper__step--warning .ds-stepper__label {
+  color: var(--semantic-color-static-text-main-primary);
+}
 
 .ds-stepper__step--clickable {
   cursor: pointer;
@@ -117,4 +141,10 @@
   line-height: 16px;
   font-size: var(--semantic-font-text-style-size-s);
   color: var(--semantic-color-static-background-functional-positive);
+}
+.ds-stepper__step--error .ds-stepper__status {
+  color: var(--semantic-color-static-text-main-functional-negative);
+}
+.ds-stepper__step--warning .ds-stepper__status {
+  color: var(--semantic-color-static-text-main-functional-warning);
 }

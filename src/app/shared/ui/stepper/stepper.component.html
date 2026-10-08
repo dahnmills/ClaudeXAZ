@@ -1,11 +1,14 @@
 @for (s of steps(); track $index) {
   <div
     class="ds-stepper__step ds-stepper__step--{{ statusOf($index) }}"
+    [class.ds-stepper__step--is-current]="$index === current()"
     [class.ds-stepper__step--clickable]="isNavigable($index)"
     (click)="isNavigable($index) && stepChange.emit($index)"
   >
     <div class="ds-stepper__marker">
-      @if (statusOf($index) === 'completed' || statusOf($index) === 'current-completed') {
+      @if (signalIcon($index); as icon) {
+        <ds-icon [name]="icon" [size]="24" />
+      } @else if (statusOf($index) === 'completed' || statusOf($index) === 'current-completed') {
         <ds-icon name="check" [size]="14" />
       }
     </div>
@@ -13,8 +16,12 @@
       <span class="ds-stepper__index">Step {{ $index + 1 }}/{{ total() }}</span>
       <span class="ds-stepper__label">{{ s.label }}</span>
       <span class="ds-stepper__status">
-        @if (statusOf($index) === 'completed') { Completed }
-      @if (statusOf($index) === 'current-completed') { Completed }
+        @switch (statusOf($index)) {
+          @case ('completed') { Completed }
+          @case ('current-completed') { Completed }
+          @case ('error') { Error }
+          @case ('warning') { Warning }
+        }
       </span>
     </div>
   </div>

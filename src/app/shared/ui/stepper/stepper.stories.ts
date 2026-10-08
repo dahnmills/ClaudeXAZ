@@ -28,3 +28,24 @@ export const Default: Story = {
     template: `<div style="width:240px;"><ds-stepper [steps]="steps" [current]="current" /></div>`,
   }),
 };
+
+export const WithErrorAndWarning: Story = {
+  args: {
+    current: 2,
+    completedSteps: [0],
+    errorSteps: [1],
+    warningSteps: [3],
+    navigableUpTo: 3,
+    steps: [
+      { label: 'Identity' },
+      { label: 'Address' },
+      { label: 'Information & Contacts' },
+      { label: 'Financial information' },
+      { label: 'Activities' },
+    ],
+  },
+  render: (args) => ({
+    props: args,
+    template: `<div style="width:240px;"><ds-stepper [steps]="steps" [current]="current" [completedSteps]="completedSteps" [errorSteps]="errorSteps" [warningSteps]="warningSteps" [navigableUpTo]="navigableUpTo" /></div>`,
+  }),
+};
