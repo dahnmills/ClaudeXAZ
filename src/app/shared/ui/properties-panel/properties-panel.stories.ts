@@ -93,3 +93,17 @@ export const SingleColumn: Story = {
     `,
   }),
 };
+
+export const CompactStacked: Story = {
+  name: '1 column: stacked, compact density (small widget cards)',
+  args: { sections, columns: 1, variant: 'flat' },
+  render: (args) => ({
+    props: args,
+    template: `
+      <div style="width:256px;">
+        <ds-properties-panel [sections]="sections" [columns]="columns" [variant]="variant"
+          layout="stacked" density="compact" />
+      </div>
+    `,
+  }),
+};

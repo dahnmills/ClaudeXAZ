@@ -47,7 +47,7 @@ export interface PropertySection {
   templateUrl: './properties-panel.component.html',
   styleUrl: './properties-panel.component.scss',
   host: {
-    '[class]': '"ds-properties-panel ds-properties-panel--cols-" + columns() + " ds-properties-panel--layout-" + layout()',
+    '[class]': '"ds-properties-panel ds-properties-panel--cols-" + columns() + " ds-properties-panel--layout-" + layout() + " ds-properties-panel--density-" + density()',
   },
 })
 export class PropertiesPanelComponent {
@@ -55,6 +55,8 @@ export class PropertiesPanelComponent {
   columns  = input<1 | 2 | 3 | 4>(2);
   variant  = input<'card' | 'flat'>('card');
   layout   = input<'inline' | 'stacked'>('inline');
+  /** compact : rows plus serrées, pour les widget cards où chaque ligne compte. */
+  density  = input<'default' | 'compact'>('default');
 
   isText(v: PropertyValue): v is string | null | { kind: 'text'; value: string | null } {
     return v === null || typeof v === 'string' || (typeof v === 'object' && v?.kind === 'text');

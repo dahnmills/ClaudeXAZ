@@ -10,6 +10,7 @@
 //   • Variant card : section bordée ; flat : sans border (accordéon / dans card parent)
 //   • Layout inline : label gauche / value droite (modal Full properties)
 //   • Layout stacked : label gris au-dessus / value bold dessous (Admin Data)
+//   • Density compact : padding vertical réduit des rows (widget cards)
 // =============================================================
 
 :host {
@@ -78,6 +79,15 @@
   align-items:    flex-start;
   gap:            var(--semantic-measurement-spacing-xxs);
   padding:        var(--semantic-measurement-spacing-s) 0;
+}
+
+// Density compact : rows plus serrées (widget cards 1 × 1, où chaque ligne compte)
+:host.ds-properties-panel--density-compact .ds-properties-panel__row {
+  padding: var(--semantic-measurement-spacing-xxs) 0;
+}
+
+:host.ds-properties-panel--density-compact.ds-properties-panel--layout-stacked .ds-properties-panel__row {
+  padding: var(--semantic-measurement-spacing-xs) 0;
 }
 
 // ── Label ─────────────────────────────────────────────────────
