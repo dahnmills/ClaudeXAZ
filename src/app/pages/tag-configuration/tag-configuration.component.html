@@ -129,18 +129,14 @@
         <ds-functional-notice status="warning" emphasis="medium" [title]="notice.title" [message]="notice.message" />
       }
 
-      <!-- L'ordre fait partie du jeu de règles : il se dit là où on lit la liste,
-           pas seulement dans l'aide du champ Position. Ligne permanente, en
-           lecture comme en édition ; sa droite ne se remplit que sous filtre, et
-           dit alors combien de règles sont hors de vue. -->
+      <!-- Compteur permanent en tête de liste, aligné à gauche comme celui de la
+           recherche : le total sans filtre, ce qui est affiché sur le total sous
+           filtre. -->
       @if (hasRules()) {
         <div class="tag-config__filters-result">
-          <span>Rules are evaluated top to bottom, the first match decides.</span>
+          <span>{{ ruleCountLabel() }}</span>
           @if (activeFilterCount() > 0) {
-            <span class="tag-config__filters-count">
-              <span>{{ filteredRules().length }} of {{ rules().length }} rules · {{ hiddenRuleCount() }} hidden</span>
-              <ds-button type="plain" (clicked)="clearFilters()">Clear filters</ds-button>
-            </span>
+            <ds-button type="plain" (clicked)="clearFilters()">Clear filters</ds-button>
           }
         </div>
       }

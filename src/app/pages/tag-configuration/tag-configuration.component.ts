@@ -303,9 +303,14 @@ export class TagConfigurationComponent {
     return this.rules().filter(r => RULE_FILTERS.every(f => this.matches(r, f, this.toSet(v[f.id]))));
   });
 
-  /** Ce que le filtre cache : la barre en tête de liste le dit, parce que l'ordre
-   *  s'applique au jeu entier, pas à ce qu'on voit. */
-  hiddenRuleCount = computed(() => this.rules().length - this.filteredRules().length);
+  /** Compteur permanent en tête de liste, aligné à gauche comme celui de la
+   *  recherche : le total sans filtre, "N displayed rules of total" sous filtre. */
+  ruleCountLabel = computed(() => {
+    const total = this.rules().length;
+    if (this.activeFilterCount() === 0) return `${total} ${total === 1 ? 'rule' : 'rules'}`;
+    const shown = this.filteredRules().length;
+    return `${shown} displayed ${shown === 1 ? 'rule' : 'rules'} of ${total}`;
+  });
 
   private toSet(v: FilterValue | undefined): Set<string> {
     return new Set(Array.isArray(v) ? v.map(String) : []);

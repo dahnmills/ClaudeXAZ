@@ -43,16 +43,13 @@
     min-width: var(--semantic-measurement-sizing-none);
   }
   &__spacer  { flex: 1; }
-  // Ligne permanente en tête de liste : à gauche l'ordre d'évaluation, à droite
-  // le décompte du filtre quand il y en a un. Les deux zones se tiennent aux
-  // extrémités, la droite peut donc rester vide sans décaler la gauche.
+  // Compteur permanent en tête de liste, aligné à gauche comme celui de la
+  // recherche (search-page__results-header) : même taille, même couleur.
+  // "Clear filters" vient juste après, seulement quand un filtre est actif.
   &__filters-result {
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; align-items: center;
     gap: var(--semantic-measurement-spacing-s);
-    font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary);
-  }
-  &__filters-count {
-    display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s);
+    font-size: var(--semantic-font-text-style-size-m); color: var(--semantic-color-static-text-main-secondary);
   }
   &__list  { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-s); }
   &__drag-row {
