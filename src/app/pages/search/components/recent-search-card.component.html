@@ -2,7 +2,8 @@
   <!-- Une ligne de critères, comme une règle TAG : libellé au-dessus de valeur,
        colonnes fixes, texte entier au survol. Cliquable en entier, le clic
        relance la recherche : c'est la seule chose qu'on vient faire depuis cet
-       historique. -->
+       historique. La dernière colonne (Searched at) suit le même traitement que
+       les autres : c'est une donnée de la carte, pas une note à part. -->
   <div class="recent-card" role="button" tabindex="0"
        [attr.aria-label]="'Search again for ' + searchedValue()"
        (click)="replayed.emit()"

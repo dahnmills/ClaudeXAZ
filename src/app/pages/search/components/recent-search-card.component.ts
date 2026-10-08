@@ -5,6 +5,8 @@ import { SEARCH_TYPES, COUNTRIES, DIAL_CODES } from '../../../shared/ui/search-b
 import { moreCriteriaSlots } from '../../../shared/ui/more-criteria/more-criteria.component';
 import type { RecentEntry } from '../recent-searches.store';
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 /** Un critère de la carte : son libellé, sa valeur, et son drapeau pour le pays.
  *  Valeur vide = critère non posé ; sa colonne reste en place, elle ne dit rien
  *  de plus. */
@@ -37,6 +39,14 @@ export class RecentSearchCardComponent {
     return e.type === 'phone' && e.country ? `${DIAL_CODES[e.country]} ${e.query}` : e.query;
   });
 
+  /** Quand la recherche a été lancée (ou rejouée), en clair : "29 Sep 2026, 14:32". */
+  timestamp = computed(() => {
+    const d = new Date(this.entry().ts);
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${hh}:${mm}`;
+  });
+
   /**
    * Ce qu'on a tapé d'abord, c'est ce qu'on cherche dans la liste. Viennent
    * ensuite les critères qui le qualifient, dans l'ordre de la barre de
@@ -61,6 +71,7 @@ export class RecentSearchCardComponent {
       { label: s.zip.key,            value: s.zip.value ?? '' },
       { label: s.phone.key,          value: s.phone.value ?? '' },
       { label: s.extendedSearch.key, value: s.extendedSearch.value ?? '' },
+      { label: 'Searched at', value: this.timestamp() },
     ];
   });
 }
