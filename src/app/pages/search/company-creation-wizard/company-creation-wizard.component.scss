@@ -85,12 +85,17 @@
   color: var(--semantic-color-static-text-main-tertiary);
 }
 
+/* Place d'une ligne d'erreur sous chaque champ. Le message est en absolute :
+   la place est réservée d'avance, une erreur qui apparaît ne décale rien. */
+$error-line: calc(var(--semantic-font-text-style-line-height-m) + var(--semantic-measurement-spacing-xxs));
+
 /* Carte blanche qui contient les champs */
 .wizard__card {
   display: flex;
   flex-direction: column;
-  gap: var(--semantic-measurement-spacing-m);
+  gap: calc(var(--semantic-measurement-spacing-s) + #{$error-line});
   padding: var(--semantic-measurement-spacing-m);
+  padding-bottom: calc(var(--semantic-measurement-spacing-xs) + #{$error-line});
   background: var(--semantic-color-static-background-main-primary);
   border-radius: var(--semantic-border-radius-s);
 }
@@ -102,9 +107,28 @@
 
   ds-input-text,
   ds-select {
+    position: relative;
     flex: 1 1 0;
     min-width: 0;
   }
+
+  // Sous le champ, hors du flux : une ligne, tronquée si le champ est étroit
+  ::ng-deep .ds-input-text__error-msg,
+  ::ng-deep .ds-select__error-msg {
+    position: absolute;
+    top: calc(100% + var(--semantic-measurement-spacing-xxs));
+    left: 0;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Ajout d'une ligne, en bas du bloc. Le gap de la carte garde la place
+   d'erreur de la ligne au-dessus : un message ne chevauche jamais le bouton. */
+.wizard__row-add {
+  display: flex;
 }
 
 .wizard__row--removable ds-button-icon {

@@ -10,11 +10,20 @@ import {
   ButtonIconComponent,
   IconComponent,
   SpinnerComponent,
+  ConfirmDialogComponent,
   TooltipDirective,
   type SelectOption,
 } from '../../../shared/ui';
 import { BuyerSummaryStore, type BuyerCompany } from '../../buyer-summary/buyer-summary.store';
 
+/** Champs du bloc adresse non latine. */
+const NON_LATIN_FIELDS = ['nlStreetNumber', 'nlStreetName', 'nlAdditionalLine', 'nlTown'];
+
+const DATE_RE  = /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+interface IdentifierRow    { type: string; value: string; }
+interface SecondaryNameRow { name: string; nonLatin: string; }
 interface ContactRow  { name: string; email: string; }
 interface ActivityRow { type: string; code: string; meaning: string; }
 
@@ -42,7 +51,7 @@ const MATCH_COMPANY: BuyerCompany = {
   standalone: true,
   imports: [
     ModalComponent, StepperComponent, InputTextComponent, SelectComponent,
-    CheckboxComponent, ButtonComponent, ButtonIconComponent, IconComponent, SpinnerComponent, TooltipDirective,
+    CheckboxComponent, ButtonComponent, ButtonIconComponent, IconComponent, SpinnerComponent, ConfirmDialogComponent, TooltipDirective,
   ],
   templateUrl: './company-creation-wizard.component.html',
   styleUrl: './company-creation-wizard.component.scss',
@@ -78,7 +87,83 @@ export class CompanyCreationWizardComponent {
   setField(key: string, val: string) { this.form.update(f => ({ ...f, [key]: val })); }
 
   publicBuyer    = signal<boolean>(false);
+
+  /** Adresse non latine : repliée par défaut, ouverte par le bouton sous l'adresse. */
   nonLatinAddr   = signal<boolean>(false);
+  addNonLatinAddr() { this.nonLatinAddr.set(true); }
+  /** Retirer le bloc efface aussi ses valeurs : rien de caché n'est envoyé. */
+  removeNonLatinAddr() {
+    this.nonLatinAddr.set(false);
+    this.form.update(f => {
+      const next = { ...f };
+      NON_LATIN_FIELDS.forEach(k => delete next[k]);
+      return next;
+    });
+  }
+
+  // ── Validation ────────────────────────────────────────────────────────
+  /** Étapes où l'on a tenté Next : les erreurs n'apparaissent qu'après, puis suivent la frappe. */
+  private attempted = signal<number[]>([]);
+
+  /** Erreurs de l'étape courante. Messages courts : une ligne sous un champ étroit. */
+  private stepErrors = computed<Record<string, string>>(() => {
+    const f = this.form();
+    const e: Record<string, string> = {};
+    const required = (k: string) => { if (!f[k]?.trim()) e[k] = 'Required'; };
+    const date = (k: string) => { if (f[k] && !DATE_RE.test(f[k])) e[k] = 'Use DD/MM/YYYY'; };
+    const num  = (k: string) => { if (f[k] && !/^\d+$/.test(f[k])) e[k] = 'Numbers only'; };
+    switch (this.currentStep()) {
+      case 0:
+        ['companyStatus', 'legalForm', 'companyName'].forEach(required);
+        ['workforceMin', 'workforceMax'].forEach(num);
+        if (!e['workforceMin'] && !e['workforceMax'] && f['workforceMin'] && f['workforceMax']
+          && +f['workforceMax'] < +f['workforceMin']) e['workforceMax'] = 'Below the minimum';
+        ['creationDate', 'businessStartDate'].forEach(date);
+        // Un identifiant entamé doit être complet : type et valeur vont ensemble
+        this.identifiers().forEach((id, i) => {
+          if (id.value.trim() && !id.type) e['idType' + i] = 'Required';
+          if (id.type && !id.value.trim()) e['idValue' + i] = 'Required';
+        });
+        break;
+      case 1:
+        ['streetName', 'postCode', 'town'].forEach(required);
+        break;
+      case 2:
+        if (f['website'] && !/^https?:\/\/\S+\.\S+/.test(f['website'])) e['website'] = 'Start with https://';
+        this.contacts().forEach((c, i) => {
+          if (c.email && !EMAIL_RE.test(c.email)) e['contactEmail' + i] = 'Invalid email';
+        });
+        break;
+      case 3:
+        date('shareCapitalDate');
+        if (f['turnoverYear'] && !/^\d{4}$/.test(f['turnoverYear'])) e['turnoverYear'] = 'Use YYYY';
+        break;
+    }
+    return e;
+  });
+
+  /** Message d'erreur d'un champ, vide tant que l'étape n'a pas été soumise. */
+  errorOf(key: string): string {
+    return this.attempted().includes(this.currentStep()) ? this.stepErrors()[key] ?? '' : '';
+  }
+
+  /** Identifiants et noms secondaires : blocs fermés tant que la liste est vide.
+      Le premier ajout ouvre le bloc, removeX() le referme en vidant la liste. */
+  identifiers = signal<IdentifierRow[]>([]);
+  addIdentifier()    { this.identifiers.update(l => [...l, { type: '', value: '' }]); }
+  removeIdentifiers() { this.identifiers.set([]); }
+  removeIdentifier(i: number) { this.identifiers.update(l => l.filter((_, idx) => idx !== i)); }
+  setIdentifier(i: number, key: keyof IdentifierRow, val: string) {
+    this.identifiers.update(l => l.map((row, idx) => idx === i ? { ...row, [key]: val } : row));
+  }
+
+  secondaryNames = signal<SecondaryNameRow[]>([]);
+  addSecondaryName()    { this.secondaryNames.update(l => [...l, { name: '', nonLatin: '' }]); }
+  removeSecondaryNames() { this.secondaryNames.set([]); }
+  removeSecondaryName(i: number) { this.secondaryNames.update(l => l.filter((_, idx) => idx !== i)); }
+  setSecondaryName(i: number, key: keyof SecondaryNameRow, val: string) {
+    this.secondaryNames.update(l => l.map((row, idx) => idx === i ? { ...row, [key]: val } : row));
+  }
 
   contacts = signal<ContactRow[]>([{ name: '', email: '' }, { name: '', email: '' }]);
   addContact()    { this.contacts.update(c => [...c, { name: '', email: '' }]); }
@@ -129,6 +214,11 @@ export class CompanyCreationWizardComponent {
 
   next() {
     const cur = this.currentStep();
+    // Une étape en erreur ne passe pas : on montre les erreurs et on reste.
+    if (Object.keys(this.stepErrors()).length) {
+      this.attempted.update(a => a.includes(cur) ? a : [...a, cur]);
+      return;
+    }
     if (this.isLast()) { this.markCompleted(cur); this.finish(); return; }
 
     // Étape déjà complétée (revenue via Back) → pas de re-vérification, on avance.
@@ -192,7 +282,37 @@ export class CompanyCreationWizardComponent {
     this.router.navigate(['/buyer-summary', id]);
   }
 
+  // ── Sortie avec confirmation ──────────────────────────────────────────
+  /** Vrai dès qu'une saisie existe : sans elle, quitter ne coûte rien. */
+  private isDirty = computed(() =>
+    Object.values(this.form()).some(v => v.trim())
+    || this.publicBuyer()
+    || this.identifiers().some(r => r.type || r.value.trim())
+    || this.secondaryNames().some(r => r.name.trim() || r.nonLatin.trim())
+    || this.contacts().some(r => r.name.trim() || r.email.trim())
+    || this.mainActivity().code.trim() || this.mainActivity().meaning.trim()
+    || this.secondaryActivities().some(r => r.code.trim() || r.meaning.trim()));
+
+  leaveOpen = signal(false);
+
+  /** Croix, Échap, fond : si on a saisi quelque chose, la modale s'efface derrière la popin. */
+  requestClose() {
+    if (this.isDirty()) { this.leaveOpen.set(true); return; }
+    this.close();
+  }
+  confirmLeave() { this.leaveOpen.set(false); this.close(); }
+  keepEditing()  { this.leaveOpen.set(false); }
+
   close() {
+    this.leaveOpen.set(false);
+    this.form.set({});
+    this.publicBuyer.set(false);
+    this.nonLatinAddr.set(false);
+    this.identifiers.set([]);
+    this.secondaryNames.set([]);
+    this.contacts.set([{ name: '', email: '' }, { name: '', email: '' }]);
+    this.mainActivity.set({ type: 'NAF', code: '', meaning: '' });
+    this.secondaryActivities.set([{ type: 'NAF', code: '', meaning: '' }]);
     this.closed.emit();
     // reset pour la prochaine ouverture
     this.currentStep.set(0);
@@ -201,5 +321,6 @@ export class CompanyCreationWizardComponent {
     this.matchSuggestion.set(null);
     this.matchResolved = false;
     this.verifying.set(false);
+    this.attempted.set([]);
   }
 }

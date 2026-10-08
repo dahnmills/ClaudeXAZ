@@ -4,7 +4,8 @@
   [open]="open()"
   [footer]="false"
   contentHeight="520px"
-  (closed)="close()"
+  [suspended]="leaveOpen()"
+  (closed)="requestClose()"
 >
   <div class="wizard">
     <div class="wizard__cols">
@@ -46,9 +47,6 @@
               @if (currentStep() === 0) {
                 <ds-checkbox label="Public buyer" [checked]="publicBuyer()" (checkedChange)="publicBuyer.set($event)" />
               }
-              @if (currentStep() === 1) {
-                <ds-checkbox label="Non latin address" [checked]="nonLatinAddr()" (checkedChange)="nonLatinAddr.set($event)" />
-              }
             </div>
 
             @switch (currentStep()) {
@@ -57,34 +55,117 @@
                 <div class="wizard__card">
                   <div class="wizard__row">
                     <ds-select label="Company status *" placeholder="" [options]="companyStatusOptions"
-                      [value]="fieldVal('companyStatus')" (valueChange)="setField('companyStatus', $event)" />
+                      [value]="fieldVal('companyStatus')" (valueChange)="setField('companyStatus', $event)"
+                      [error]="!!errorOf('companyStatus')" [errorMessage]="errorOf('companyStatus')" />
                     <ds-select label="Legal form *" placeholder="" [options]="legalFormOptions"
-                      [value]="fieldVal('legalForm')" (valueChange)="setField('legalForm', $event)" />
+                      [value]="fieldVal('legalForm')" (valueChange)="setField('legalForm', $event)"
+                      [error]="!!errorOf('legalForm')" [errorMessage]="errorOf('legalForm')" />
                     <ds-select label="Protected Buyer" placeholder="" [options]="yesNoOptions"
                       [value]="fieldVal('protectedBuyer')" (valueChange)="setField('protectedBuyer', $event)" />
                   </div>
                   <div class="wizard__row">
                     <ds-input-text label="Company name *" placeholder=""
-                      [value]="fieldVal('companyName')" (valueChange)="setField('companyName', $event)" />
+                      [value]="fieldVal('companyName')" (valueChange)="setField('companyName', $event)"
+                      [error]="!!errorOf('companyName')" [errorMessage]="errorOf('companyName')" />
                     <ds-input-text label="Non latin company name" placeholder=""
                       [value]="fieldVal('nonLatinName')" (valueChange)="setField('nonLatinName', $event)" />
                   </div>
                   <div class="wizard__row">
-                    <ds-select label="Identifier type" placeholder="" [options]="identifierTypeOptions"
-                      [value]="fieldVal('identifierType')" (valueChange)="setField('identifierType', $event)" />
-                    <ds-input-text label="Identifier type (if not in the list)" placeholder="A"
-                      [value]="fieldVal('identifierOther')" (valueChange)="setField('identifierOther', $event)" />
-                  </div>
-                  <div class="wizard__row">
                     <ds-input-text label="Workforce effective min" placeholder="1"
-                      [value]="fieldVal('workforceMin')" (valueChange)="setField('workforceMin', $event)" />
+                      [value]="fieldVal('workforceMin')" (valueChange)="setField('workforceMin', $event)"
+                      [error]="!!errorOf('workforceMin')" [errorMessage]="errorOf('workforceMin')" />
                     <ds-input-text label="Workforce effective max" placeholder="5000"
-                      [value]="fieldVal('workforceMax')" (valueChange)="setField('workforceMax', $event)" />
+                      [value]="fieldVal('workforceMax')" (valueChange)="setField('workforceMax', $event)"
+                      [error]="!!errorOf('workforceMax')" [errorMessage]="errorOf('workforceMax')" />
                     <ds-input-text label="Creation date" placeholder="DD/MM/YYYY"
-                      [value]="fieldVal('creationDate')" (valueChange)="setField('creationDate', $event)" />
+                      [value]="fieldVal('creationDate')" (valueChange)="setField('creationDate', $event)"
+                      [error]="!!errorOf('creationDate')" [errorMessage]="errorOf('creationDate')" />
                     <ds-input-text label="Business start date" placeholder="DD/MM/YYYY"
-                      [value]="fieldVal('businessStartDate')" (valueChange)="setField('businessStartDate', $event)" />
+                      [value]="fieldVal('businessStartDate')" (valueChange)="setField('businessStartDate', $event)"
+                      [error]="!!errorOf('businessStartDate')" [errorMessage]="errorOf('businessStartDate')" />
                   </div>
+                </div>
+
+                <!-- Sections facultatives. En tête : Add ouvre le bloc, Remove le retire en entier.
+                     Dans le bloc : on ajoute et on supprime des lignes. -->
+                <div class="wizard__group">
+                  <div class="wizard__group-head">
+                    <span class="wizard__group-title">Identifiers</span>
+                    @if (identifiers().length) {
+                      <ds-button type="plain" tone="default" (clicked)="removeIdentifiers()">
+                        <ds-icon slot="icon-left" name="trash" [size]="16" />
+                        Remove
+                      </ds-button>
+                    } @else {
+                      <ds-button type="plain" tone="default" (clicked)="addIdentifier()">
+                        <ds-icon slot="icon-left" name="plus" [size]="16" />
+                        Add identifiers
+                      </ds-button>
+                    }
+                  </div>
+                  @if (identifiers().length) {
+                    <div class="wizard__card">
+                      @for (id of identifiers(); track $index) {
+                        <div class="wizard__row wizard__row--removable">
+                          <ds-select label="Identifier type" placeholder="" [options]="identifierTypeOptions"
+                            [value]="id.type" (valueChange)="setIdentifier($index, 'type', $event)"
+                            [error]="!!errorOf('idType' + $index)" [errorMessage]="errorOf('idType' + $index)" />
+                          <ds-input-text label="Identifier" placeholder=""
+                            [value]="id.value" (valueChange)="setIdentifier($index, 'value', $event)"
+                            [error]="!!errorOf('idValue' + $index)" [errorMessage]="errorOf('idValue' + $index)" />
+                          <ds-button-icon type="secondary" tone="default" ariaLabel="Remove identifier"
+                            [disabled]="identifiers().length <= 1" (clicked)="removeIdentifier($index)">
+                            <ds-icon name="trash" [size]="16" />
+                          </ds-button-icon>
+                        </div>
+                      }
+                      <div class="wizard__row-add">
+                        <ds-button type="plain" tone="default" (clicked)="addIdentifier()">
+                          <ds-icon slot="icon-left" name="plus" [size]="16" />
+                          Add identifier
+                        </ds-button>
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <div class="wizard__group">
+                  <div class="wizard__group-head">
+                    <span class="wizard__group-title">Secondary names</span>
+                    @if (secondaryNames().length) {
+                      <ds-button type="plain" tone="default" (clicked)="removeSecondaryNames()">
+                        <ds-icon slot="icon-left" name="trash" [size]="16" />
+                        Remove
+                      </ds-button>
+                    } @else {
+                      <ds-button type="plain" tone="default" (clicked)="addSecondaryName()">
+                        <ds-icon slot="icon-left" name="plus" [size]="16" />
+                        Add secondary names
+                      </ds-button>
+                    }
+                  </div>
+                  @if (secondaryNames().length) {
+                    <div class="wizard__card">
+                      @for (n of secondaryNames(); track $index) {
+                        <div class="wizard__row wizard__row--removable">
+                          <ds-input-text label="Company name" placeholder=""
+                            [value]="n.name" (valueChange)="setSecondaryName($index, 'name', $event)" />
+                          <ds-input-text label="Non latin company name" placeholder=""
+                            [value]="n.nonLatin" (valueChange)="setSecondaryName($index, 'nonLatin', $event)" />
+                          <ds-button-icon type="secondary" tone="default" ariaLabel="Remove secondary name"
+                            [disabled]="secondaryNames().length <= 1" (clicked)="removeSecondaryName($index)">
+                            <ds-icon name="trash" [size]="16" />
+                          </ds-button-icon>
+                        </div>
+                      }
+                      <div class="wizard__row-add">
+                        <ds-button type="plain" tone="default" (clicked)="addSecondaryName()">
+                          <ds-icon slot="icon-left" name="plus" [size]="16" />
+                          Add secondary name
+                        </ds-button>
+                      </div>
+                    </div>
+                  }
                 </div>
               }
 
@@ -94,8 +175,9 @@
                   <div class="wizard__row">
                     <ds-input-text label="Street number" placeholder=""
                       [value]="fieldVal('streetNumber')" (valueChange)="setField('streetNumber', $event)" />
-                    <ds-input-text label="Street name" placeholder=""
-                      [value]="fieldVal('streetName')" (valueChange)="setField('streetName', $event)" />
+                    <ds-input-text label="Street name *" placeholder=""
+                      [value]="fieldVal('streetName')" (valueChange)="setField('streetName', $event)"
+                      [error]="!!errorOf('streetName')" [errorMessage]="errorOf('streetName')" />
                   </div>
                   <div class="wizard__row">
                     <ds-input-text label="Additional line" placeholder=""
@@ -108,10 +190,12 @@
                       [value]="fieldVal('pbCode')" (valueChange)="setField('pbCode', $event)" />
                   </div>
                   <div class="wizard__row">
-                    <ds-input-text label="Post code" placeholder=""
-                      [value]="fieldVal('postCode')" (valueChange)="setField('postCode', $event)" />
-                    <ds-input-text label="Town" placeholder=""
-                      [value]="fieldVal('town')" (valueChange)="setField('town', $event)" />
+                    <ds-input-text label="Post code *" placeholder=""
+                      [value]="fieldVal('postCode')" (valueChange)="setField('postCode', $event)"
+                      [error]="!!errorOf('postCode')" [errorMessage]="errorOf('postCode')" />
+                    <ds-input-text label="Town *" placeholder=""
+                      [value]="fieldVal('town')" (valueChange)="setField('town', $event)"
+                      [error]="!!errorOf('town')" [errorMessage]="errorOf('town')" />
                   </div>
                   <div class="wizard__row">
                     <ds-select label="Administrative area" placeholder="Placeholder" [options]="areaOptions"
@@ -119,6 +203,42 @@
                     <ds-input-text label="Country" placeholder="FRANCE"
                       [value]="fieldVal('country')" (valueChange)="setField('country', $event)" />
                   </div>
+                </div>
+
+                <!-- Adresse non latine : même tête que les sections facultatives, l'action bascule Add / Remove -->
+                <div class="wizard__group">
+                  <div class="wizard__group-head">
+                    <span class="wizard__group-title">Non latin address</span>
+                    @if (nonLatinAddr()) {
+                      <ds-button type="plain" tone="default" (clicked)="removeNonLatinAddr()">
+                        <ds-icon slot="icon-left" name="trash" [size]="16" />
+                        Remove
+                      </ds-button>
+                    } @else {
+                      <ds-button type="plain" tone="default" (clicked)="addNonLatinAddr()">
+                        <ds-icon slot="icon-left" name="plus" [size]="16" />
+                        Add non latin address
+                      </ds-button>
+                    }
+                  </div>
+                  @if (nonLatinAddr()) {
+                    <div class="wizard__card">
+                      <div class="wizard__row">
+                        <ds-input-text label="Street number" placeholder=""
+                          [value]="fieldVal('nlStreetNumber')" (valueChange)="setField('nlStreetNumber', $event)" />
+                        <ds-input-text label="Street name" placeholder=""
+                          [value]="fieldVal('nlStreetName')" (valueChange)="setField('nlStreetName', $event)" />
+                      </div>
+                      <div class="wizard__row">
+                        <ds-input-text label="Additional line" placeholder=""
+                          [value]="fieldVal('nlAdditionalLine')" (valueChange)="setField('nlAdditionalLine', $event)" />
+                      </div>
+                      <div class="wizard__row">
+                        <ds-input-text label="Town" placeholder=""
+                          [value]="fieldVal('nlTown')" (valueChange)="setField('nlTown', $event)" />
+                      </div>
+                    </div>
+                  }
                 </div>
               }
 
@@ -135,7 +255,8 @@
                     </div>
                     <div class="wizard__row">
                       <ds-input-text label="Website" placeholder="https://"
-                        [value]="fieldVal('website')" (valueChange)="setField('website', $event)" />
+                        [value]="fieldVal('website')" (valueChange)="setField('website', $event)"
+                      [error]="!!errorOf('website')" [errorMessage]="errorOf('website')" />
                     </div>
                   </div>
                 </div>
@@ -154,7 +275,8 @@
                         <ds-input-text [label]="'Contact Name #0' + ($index + 1)" placeholder=""
                           [value]="c.name" (valueChange)="setContact($index, 'name', $event)" />
                         <ds-input-text label="Email" placeholder=""
-                          [value]="c.email" (valueChange)="setContact($index, 'email', $event)" />
+                          [value]="c.email" (valueChange)="setContact($index, 'email', $event)"
+                          [error]="!!errorOf('contactEmail' + $index)" [errorMessage]="errorOf('contactEmail' + $index)" />
                         <ds-button-icon type="secondary" tone="default" ariaLabel="Remove contact"
                           [disabled]="contacts().length <= 1" (clicked)="removeContact($index)">
                           <ds-icon name="trash" [size]="16" />
@@ -174,7 +296,8 @@
                     <ds-input-text label="Share capital" placeholder=""
                       [value]="fieldVal('shareCapital')" (valueChange)="setField('shareCapital', $event)" />
                     <ds-input-text label="Share capital date" placeholder="DD/MM/YYYY"
-                      [value]="fieldVal('shareCapitalDate')" (valueChange)="setField('shareCapitalDate', $event)" />
+                      [value]="fieldVal('shareCapitalDate')" (valueChange)="setField('shareCapitalDate', $event)"
+                      [error]="!!errorOf('shareCapitalDate')" [errorMessage]="errorOf('shareCapitalDate')" />
                     <ds-input-text label="Issued capital" placeholder=""
                       [value]="fieldVal('issuedCapital')" (valueChange)="setField('issuedCapital', $event)" />
                   </div>
@@ -188,7 +311,8 @@
                     <ds-input-text label="Turnover" placeholder=""
                       [value]="fieldVal('turnover')" (valueChange)="setField('turnover', $event)" />
                     <ds-input-text label="Turnover year" placeholder=""
-                      [value]="fieldVal('turnoverYear')" (valueChange)="setField('turnoverYear', $event)" />
+                      [value]="fieldVal('turnoverYear')" (valueChange)="setField('turnoverYear', $event)"
+                      [error]="!!errorOf('turnoverYear')" [errorMessage]="errorOf('turnoverYear')" />
                     <ds-select label="Turnover type" placeholder="" [options]="turnoverTypeOptions"
                       [value]="fieldVal('turnoverType')" (valueChange)="setField('turnoverType', $event)" />
                   </div>
@@ -276,3 +400,10 @@
     }
   </div>
 </ds-modal>
+
+<!-- La modale s'efface derrière cette question (`suspended`) et revient intacte si on annule. -->
+<ds-confirm-dialog [open]="leaveOpen()" title="Warning" tone="warning"
+  confirmLabel="Confirm" cancelLabel="Cancel"
+  (confirmed)="confirmLeave()" (cancelled)="keepEditing()">
+  Are you sure you want to leave? All your changes will be lost.
+</ds-confirm-dialog>
