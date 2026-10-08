@@ -23,6 +23,22 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'search-company-creation-leave-confirm',
+    date: '2026-10-08',
+    category: 'feature',
+    screens: ['search'],
+    title: 'Leaving the manual company creation asks first once you have typed something',
+    description:
+      'Closing the "Create a company manually" modal threw away everything typed, without a word. As soon as a field holds something, the cross, Escape and a click outside now bring up a warning that all changes will be lost: confirm to leave, or cancel to come back to the modal exactly as it was.',
+    changes: [
+      'The modal steps behind a warning popin, the same one as the TAG draft and the portfolio edit, and comes back intact on Cancel',
+      'An untouched form still closes at once, with no question asked',
+      'Creating the company or opening an existing one found by the match never triggers the warning',
+      'Reopening the modal now starts from an empty form: the typed values used to survive a close',
+    ],
+  },
+
+  {
     id: 'search-recently-searched-and-viewed',
     date: '2026-09-18',
     category: 'feature',
