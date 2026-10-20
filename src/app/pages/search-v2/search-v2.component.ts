@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, signal, viewChild, type ElementRef } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import {
   PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, TabComponent, IconComponent,
@@ -28,6 +29,11 @@ import { SearchV2FavoritesStore } from './search-v2-favorites.store';
 import { searchPolicies, type PolicyQuery } from './policy-search';
 import { POLICIES } from './policies.mock';
 import { BUYERS } from './buyers.mock';
+import type { SegmentedOption } from '../../shared/ui/segmented-control/segmented-control.component';
+import {
+  filterHistory, groupByKind, countByKind, clearLabel, emptyLabel,
+  type HistoryFilter, type HistoryTab, type HistoryKind,
+} from './search-v2-history';
 
 type TabId = 'search' | 'searched' | 'viewed' | 'favorites';
 
@@ -39,6 +45,7 @@ type TabId = 'search' | 'searched' | 'viewed' | 'favorites';
     IconComponent, ButtonComponent, SpinnerComponent, ConfirmDialogComponent, SegmentedControlComponent,
     SearchBarScopedComponent, MoreCriteriaComponent, PolicyCriteriaComponent,
     ResultCardComponent, PolicyResultCardComponent, RecentSearchV2CardComponent, CompanyCreationWizardComponent,
+    NgTemplateOutlet,
   ],
   templateUrl: './search-v2.component.html',
   styleUrl: './search-v2.component.scss',
@@ -261,4 +268,75 @@ export class SearchV2Component {
   recentsCount = computed(() => this.recentsStore.entries().length);
   viewedCount = computed(() => this.viewedBuyers.entries().length + this.viewedPolicies.entries().length);
   favoritesCount = computed(() => this.favorites.entries().length);
+
+  // ── Historiques : filtre partagé All / Buyers / Policies ───────────────
+  historyFilter = signal<HistoryFilter>('all');
+  setHistoryFilter(v: string) {
+    this.historyFilter.set(v === 'buyer' || v === 'policy' ? v : 'all');
+    this.expandedKey.set(null);
+  }
+
+  /** Un buyer consulté se lit dans sa carte de résultat (copie de la règle V1). */
+  private buyerCard(companyId: string, fallback: ResultCardData): ResultCardData {
+    return this.results().find(r => r.companyId === companyId) ?? fallback;
+  }
+
+  viewedItems = computed(() => [
+    ...this.viewedBuyers.entries().map(b => ({
+      kind: 'buyer' as const, ts: b.ts, id: b.companyId ?? '',
+      buyer: this.buyerCard(b.companyId ?? '', { name: b.name, city: b.city, address: b.address ?? '', companyId: b.companyId, exists: true }),
+    })),
+    ...this.viewedPolicies.entries().map(v => ({ kind: 'policy' as const, ts: v.ts, id: v.id, policy: v.policy })),
+  ]);
+
+  private tabItems = computed<{ kind: HistoryKind; ts: number }[]>(() => {
+    switch (this.activeTab()) {
+      case 'searched':  return this.recentsStore.entries();
+      case 'viewed':    return this.viewedItems();
+      case 'favorites': return this.favorites.entries();
+      default:          return [];
+    }
+  });
+
+  historyCounts = computed(() => countByKind(this.tabItems()));
+
+  historyOptions = computed<SegmentedOption[]>(() => {
+    const c = this.historyCounts();
+    return [
+      { value: 'all',    label: `All (${c.all})` },
+      { value: 'buyer',  label: `Buyers (${c.buyer})` },
+      { value: 'policy', label: `Policies (${c.policy})` },
+    ];
+  });
+
+  shownRecents   = computed(() => filterHistory(this.recentsStore.entries(), this.historyFilter()));
+  shownViewed    = computed(() => filterHistory(this.viewedItems(), this.historyFilter()));
+  shownFavorites = computed(() => filterHistory(this.favorites.entries(), this.historyFilter()));
+  /** Favorites en All : sections Buyers puis Policies. */
+  favoriteGroups = computed(() => groupByKind(this.favorites.entries()));
+
+  /** Repère d'objet au-dessus de chaque carte, seulement en All. */
+  showKindMarker = computed(() => this.historyFilter() === 'all');
+
+  historyClearLabel = computed(() => clearLabel(this.historyFilter()));
+  historyEmpty(tab: HistoryTab) { return emptyLabel(tab, this.historyFilter()); }
+  historyShownCount = computed(() => this.historyCounts()[this.historyFilter()]);
+
+  /** Clear n'efface que ce qui est affiché. */
+  clearHistory() {
+    const f = this.historyFilter();
+    const kind = f === 'all' ? undefined : f;
+    switch (this.activeTab()) {
+      case 'searched':
+        this.recentsStore.clear(kind);
+        break;
+      case 'viewed':
+        if (kind !== 'policy') this.viewedBuyers.clear();
+        if (kind !== 'buyer') this.viewedPolicies.clear();
+        break;
+      case 'favorites':
+        this.favorites.clear(kind);
+        break;
+    }
+  }
 }
