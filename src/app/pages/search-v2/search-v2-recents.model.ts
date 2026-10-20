@@ -36,5 +36,5 @@ export function recentKey(e: RecentV2Input): string {
     ]);
   }
   const c = e.criteria;
-  return JSON.stringify(['policy', e.buCode, e.query, c.searchIn, [...c.statuses].sort(), c.extension]);
+  return JSON.stringify(['policy', e.buCode, e.query, c.searchIn, c.searchIn === 'drafts' ? [] : [...c.statuses].sort(), c.extension]);
 }

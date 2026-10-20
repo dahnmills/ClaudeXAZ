@@ -13,7 +13,9 @@
           (click)="onOpen($event)"
         >{{ title() }}</ds-link>
         <ds-badge [label]="badge().label" [status]="badge().status" />
-        <ds-identifier [value]="data().id" icon="hash" [copyable]="true" />
+        @if (data().kind === 'policy') {
+          <ds-identifier [value]="data().id" icon="hash" [copyable]="true" />
+        }
       </div>
       <span class="ds-policy-result-card__holder">{{ data().policyholder }} · {{ data().buCode }}</span>
       <span class="ds-policy-result-card__period">{{ period() }}</span>

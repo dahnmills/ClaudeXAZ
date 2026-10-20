@@ -36,13 +36,13 @@ export function searchPolicies(pool: PolicyResultData[], q: PolicyQuery): Policy
   if (!text) return { items: filtered, exactHit: false };
 
   if (q.buCode) {
-    const exact = filtered.filter(p => p.policyNumber.toLowerCase() === text);
+    const exact = filtered.filter(p => p.policyNumber.toLowerCase() === text || p.id.toLowerCase() === text);
     if (exact.length === 1) return { items: exact, exactHit: true };
   }
 
   return {
     items: filtered.filter(p =>
-      p.policyNumber.toLowerCase().includes(text) || p.policyholder.toLowerCase().includes(text),
+      p.policyNumber.toLowerCase().includes(text) || p.id.toLowerCase().includes(text) || p.policyholder.toLowerCase().includes(text),
     ),
     exactHit: false,
   };

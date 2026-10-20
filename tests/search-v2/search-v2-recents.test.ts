@@ -20,3 +20,9 @@ test('recentKey ignores status order', () => {
   const b = recentKey({ kind: 'policy', buCode: null, query: 'x', criteria: { ...policyCrit, statuses: ['expired', 'issued'] } });
   assert.equal(a, b);
 });
+
+test('drafts searches ignore stale statuses in the key', () => {
+  const d = (statuses: ('issued' | 'expired')[]) =>
+    recentKey({ kind: 'policy', buCode: null, query: 'x', criteria: { ...policyCrit, searchIn: 'drafts', statuses } });
+  assert.equal(d(['issued']), d(['expired']));
+});

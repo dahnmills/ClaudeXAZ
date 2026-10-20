@@ -72,3 +72,9 @@ test('criteria count: default is 1, drafts counts as 1, extension adds 1', () =>
   assert.equal(policyCriteriaCount(crit({ statuses: ['issued', 'expired'], extension: '01' })), 3);
   assert.equal(policyCriteriaCount(crit({ statuses: [] })), 0);
 });
+
+test('number-extension as displayed is a direct hit', () => {
+  const r = searchPolicies(POLICIES, { buCode: 'AT USA', query: '5012346-01', criteria: crit({ statuses: [] }) });
+  assert.equal(r.exactHit, true);
+  assert.deepEqual(r.items.map(p => p.id), ['5012346-01']);
+});

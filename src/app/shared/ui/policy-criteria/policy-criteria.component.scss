@@ -48,13 +48,12 @@
   align-items: center;
   gap: var(--semantic-measurement-spacing-xl);
   flex-wrap: wrap;
-
-  &--top { align-items: flex-start; }
 }
 
 .ds-policy-criteria__label {
   width: 80px;
   flex-shrink: 0;
+  white-space: nowrap;
   font-family: var(--semantic-font-family);
   font-weight: var(--semantic-font-text-style-font-weight-bold);
   font-size: var(--semantic-font-text-style-size-m);
@@ -69,34 +68,6 @@
   gap: var(--semantic-measurement-spacing-s);
   flex-wrap: wrap;
 }
-
-.ds-policy-criteria__address {
-  display: flex;
-  flex: 1 1 0;
-  gap: var(--semantic-measurement-spacing-m);
-  align-items: flex-start;
-  flex-wrap: wrap;
-  min-width: 0;
-}
-
-.ds-policy-criteria__street {
-  display: flex;
-  flex-direction: column;
-  gap: var(--semantic-measurement-spacing-xxs);
-  flex: 1 1 240px;
-  min-width: 0;
-}
-
-// Street address utilise <ds-textarea>
-
-.ds-policy-criteria__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--semantic-measurement-spacing-m);
-  flex: 1 1 320px;
-  min-width: 0;
-}
-
 
 // Raison d'un contrôle désactivé : toujours lisible, jamais seulement grisée
 .ds-policy-criteria__hint {

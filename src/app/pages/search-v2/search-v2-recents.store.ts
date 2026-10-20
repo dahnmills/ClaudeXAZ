@@ -13,9 +13,9 @@ const MAX_RECENTS = 20;
 export class SearchV2RecentsStore {
   readonly entries = signal<RecentV2Entry[]>([]);
 
-  /** Une recherche sans saisie n'est pas retenue, comme en V1. */
+  /** Une recherche buyer sans saisie n'est pas retenue, comme en V1 ; une recherche policy vide l'est (BU, statuts). */
   record(entry: RecentV2Input): void {
-    if (!entry.query.trim()) return;
+    if (entry.kind === 'buyer' && !entry.query.trim()) return;
     const next = { ...entry, ts: Date.now() } as RecentV2Entry;
     this.entries.update(list => upsertFront(list, next, recentKey, MAX_RECENTS));
   }

@@ -26,6 +26,7 @@ export class RecentSearchV2CardComponent {
 
   searchedValue = computed(() => {
     const e = this.entry();
+    if (e.kind === 'policy' && !e.query.trim()) return 'Any number or keyword';
     return e.kind === 'buyer' && e.type === 'phone' && e.country ? `${DIAL_CODES[e.country]} ${e.query}` : e.query;
   });
 
