@@ -1,0 +1,195 @@
+:host {
+  display: block;
+}
+
+.search-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--semantic-color-static-background-main-primary);
+}
+
+.search-page__main {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+ds-side-nav {
+  flex-shrink: 0;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.search-page__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+ds-page-header {
+  flex-shrink: 0;
+  // Même gouttière que le corps de la page : breadcrumb et onglets tombent sur
+  // le bord gauche des cartes, pas 8px à côté.
+  --ds-page-header-gutter: var(--semantic-measurement-spacing-l);
+}
+
+.search-page__bar-wrap {
+  position: relative;
+  padding: var(--semantic-measurement-spacing-xl) var(--semantic-measurement-spacing-l) 0;
+  flex-shrink: 0;
+}
+
+.search-page__criteria-overlay {
+  position:      absolute;
+  top:           calc(100% + var(--semantic-measurement-spacing-s));
+  left:          var(--semantic-measurement-spacing-l);
+  right:         var(--semantic-measurement-spacing-l);
+  z-index:       40;
+  max-height:    calc(100vh - 240px);
+  overflow-y:    auto;
+  border-radius: var(--semantic-border-radius-m);
+  box-shadow:    var(--semantic-shadow-modal);
+}
+
+.search-page__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl);
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+// Compteur de résultats, aligné à gauche au-dessus de la liste. Dégage aussi
+// l'espace sous la barre pour que le helper text d'erreur ne chevauche plus
+// la 1re carte.
+.search-page__results-header {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+// En-tête d'une liste d'historique : rien que son action, à droite, au-dessus
+// d'elle. Le nombre d'entrées se lit sur le compteur de l'onglet.
+.search-page__list-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.search-page__results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+}
+
+.search-page__loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-l);
+  color: var(--semantic-color-static-text-main-tertiary);
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+}
+
+.search-page__end {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-xl) 0;
+  text-align: center;
+}
+
+.search-page__end-text {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+.search-page__empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  align-items: center;
+  justify-content: center;
+  padding: var(--semantic-measurement-spacing-3xl);
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.search-page__empty-text {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+}
+
+.search-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-s);
+}
+
+.search-page__account {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
+
+.search-page__account-menu {
+  position:      absolute;
+  top:           calc(100% + var(--semantic-measurement-spacing-xs));
+  right:         0;
+  min-width:     280px;
+  background:    var(--semantic-color-static-background-main-primary);
+  border-radius: var(--semantic-border-radius-s);
+  box-shadow:    var(--semantic-shadow-flyout);
+  z-index:       100;
+  color:         var(--semantic-color-static-text-main-primary);
+}
+
+.search-page__account-header {
+  padding: var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-xl);
+}
+
+.search-page__account-name {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color: var(--semantic-color-static-text-main-primary);
+}
+
+.search-page__account-mail {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.search-page__account-sep {
+  height: 1px;
+  margin: var(--semantic-measurement-spacing-s) 0;
+  background: var(--semantic-color-static-border-subtle-tertiary);
+}
+
+.search-page__wip {
+  margin: 0;
+  padding: var(--semantic-measurement-spacing-m) 0;
+  text-align: center;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  color: var(--semantic-color-static-text-main-secondary);
+}

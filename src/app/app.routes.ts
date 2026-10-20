@@ -5,6 +5,7 @@ import { IndexPage } from './user-testing/pages/index.page';
 import { WithAccordionPage } from './user-testing/pages/with-accordion.page';
 import { WithModalPage } from './user-testing/pages/with-modal.page';
 import { SearchComponent } from './pages/search/search.component';
+import { SearchV2Component } from './pages/search-v2/search-v2.component';
 import { FiltersTestPageComponent } from './user-testing/filters/filters-test-page.component';
 import { AdminDataComponent } from './pages/admin-data/admin-data.component';
 import { BuyerSummaryComponent } from './pages/buyer-summary/buyer-summary.component';
@@ -40,6 +41,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'modal', component: WithModalPage },
   { path: 'filters', component: FiltersTestPageComponent },
   { path: 'search', component: SearchComponent },
+  { path: 'search-v2', component: SearchV2Component },
   { path: 'admin-data', component: AdminDataComponent },
   { path: 'buyer-summary/:id', component: BuyerSummaryComponent },
   { path: 'tag-configuration', component: TagConfigurationComponent },

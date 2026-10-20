@@ -1,0 +1,136 @@
+<div class="search-page">
+  <app-topbox-test-shell [showSidenav]="false">
+    <div class="search-page__content">
+      <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="true">
+        <ds-breadcrumbs slot="breadcrumbs">
+          <ds-crumb label="Home" />
+          <ds-crumb label="Search" [currentPage]="true" />
+        </ds-breadcrumbs>
+
+        <ng-container slot="tabs">
+          <ds-tab [selected]="activeTab() === 'search'" [icon]="true" (clicked)="setTab('search')">
+            <ds-icon slot="icon" name="search" [size]="20" /> Search
+          </ds-tab>
+          <ds-tab [selected]="activeTab() === 'searched'" [icon]="true" [counter]="recentsCount() || null" (clicked)="setTab('searched')">
+            <ds-icon slot="icon" name="search-recent" [size]="20" /> Recent search
+          </ds-tab>
+          <ds-tab [selected]="activeTab() === 'viewed'" [icon]="true" [counter]="viewedCount() || null" (clicked)="setTab('viewed')">
+            <ds-icon slot="icon" name="history" [size]="20" /> Recently viewed
+          </ds-tab>
+          <ds-tab [selected]="activeTab() === 'favorites'" [icon]="true" [counter]="favoritesCount() || null" (clicked)="setTab('favorites')">
+            <ds-icon slot="icon" name="star" [size]="20" /> Favorites
+          </ds-tab>
+        </ng-container>
+      </ds-page-header>
+
+      @if (activeTab() === 'search') {
+        <div class="search-page__bar-wrap">
+          <ds-search-bar-scoped
+            [scope]="scope()"
+            (scopeChange)="onScopeChange($event)"
+            [(type)]="searchType"
+            [(country)]="searchCountry"
+            [(idType)]="searchIdType"
+            [(buCode)]="buCode"
+            [(query)]="searchQuery"
+            [criteriaCount]="criteriaCount()"
+            (moreCriteriaClicked)="toggleMoreCriteria()"
+            (searchClicked)="runSearch()"
+          />
+
+          @if (showMoreCriteria()) {
+            <div class="search-page__criteria-overlay">
+              @if (scope() === 'buyers') {
+                <ds-more-criteria [(value)]="criteria" (closed)="toggleMoreCriteria()" />
+              } @else {
+                <ds-policy-criteria [(value)]="policyCriteria" (closed)="toggleMoreCriteria()" />
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <div class="search-page__inner" #scrollHost (scroll)="onScroll($event)">
+        @if (activeTab() === 'search') {
+          @if (isResults()) {
+            @if (noResults()) {
+              <div class="search-page__empty">
+                <ds-icon name="search" [size]="48" />
+                @if (scope() === 'buyers') {
+                  <span class="search-page__empty-text">No company found for your search</span>
+                  <ds-button type="primary" (clicked)="openManualCreate()">
+                    <ds-icon slot="icon-left" name="plus" [size]="16" /> Create a company manually
+                  </ds-button>
+                } @else {
+                  <span class="search-page__empty-text">No policy found for your search</span>
+                }
+              </div>
+            } @else {
+              <div class="search-page__results-header">
+                {{ totalCount() }} {{ totalCount() === 1 ? 'result' : 'results' }}
+              </div>
+              <div class="search-page__results">
+                @if (scope() === 'buyers') {
+                  @for (r of visibleBuyers(); track $index) {
+                    <ds-result-card
+                      [data]="r"
+                      [open]="expandedKey() === buyerKey(r, $index)"
+                      [favorited]="isBuyerFavorite(r)"
+                      [internal]="isInternalSearch()"
+                      (toggled)="toggleExpanded(buyerKey(r, $index))"
+                      (starred)="toggleBuyerFavorite(r)"
+                      (added)="addCompany(r)"
+                      (opened)="openResult(r)"
+                    />
+                  }
+                } @else {
+                  @for (p of visiblePolicies(); track p.id) {
+                    <ds-policy-result-card
+                      [data]="p"
+                      [open]="expandedKey() === policyKey(p)"
+                      [favorited]="isPolicyFavorite(p)"
+                      (toggled)="toggleExpanded(policyKey(p))"
+                      (starred)="togglePolicyFavorite(p)"
+                      (opened)="openPolicy(p)"
+                    />
+                  }
+                }
+              </div>
+
+              @if (loadingMore()) {
+                <div class="search-page__loading-more">
+                  <ds-spinner size="s" /> <span>Loading more results…</span>
+                </div>
+              }
+
+              @if (allLoaded() && scope() === 'buyers') {
+                <div class="search-page__end">
+                  <span class="search-page__end-text">Can’t find the company you’re looking for?</span>
+                  <ds-button type="primary" (clicked)="openManualCreate()">
+                    <ds-icon slot="icon-left" name="plus" [size]="16" /> Create a company manually
+                  </ds-button>
+                </div>
+              }
+            }
+          } @else {
+            <div class="search-page__empty">
+              <ds-icon name="search" [size]="48" />
+              <span class="search-page__empty-text">Start your search above</span>
+            </div>
+          }
+        }
+
+        <!-- HISTORY_TABS : remplacé en Task 9 -->
+      </div>
+    </div>
+  </app-topbox-test-shell>
+
+  <ds-confirm-dialog
+    title="Create company" tone="info" confirmLabel="Create" cancelLabel="Cancel"
+    [open]="pendingCreateIdx() !== null"
+    (confirmed)="confirmCreate()" (cancelled)="cancelCreate()">
+    Do you really want to create the company "{{ pendingCompanyName() }}"?
+  </ds-confirm-dialog>
+
+  <app-company-creation-wizard [open]="showCreateWizard()" (closed)="closeManualCreate()" />
+</div>
