@@ -8,7 +8,6 @@ import { FlyoutMenuItemComponent } from '../flyout-menu/flyout-menu-item.compone
 import { FlagComponent, type FlagCode } from '../flag/flag.component';
 import { DividerComponent } from '../divider/divider.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
-import { InputTextComponent } from '../input-text/input-text.component';
 import { InputSearchComponent } from '../input-search/input-search.component';
 import {
   SEARCH_TYPES, COUNTRIES, ID_TYPES, DIAL_CODES,
@@ -40,7 +39,7 @@ const BUYER_PLACEHOLDERS: Record<SearchType, string> = {
 @Component({
   selector: 'ds-search-bar-scoped',
   standalone: true,
-  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent, DividerComponent, TooltipDirective, InputTextComponent, InputSearchComponent],
+  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent, DividerComponent, TooltipDirective, InputSearchComponent],
   templateUrl: './search-bar-scoped.component.html',
   styleUrl: './search-bar-scoped.component.scss',
   host: { class: 'ds-search-bar-scoped' },
@@ -148,6 +147,7 @@ export class SearchBarScopedComponent {
   pickBu(b: string | null) { this.buCode.set(b); this.close(); }
 
   markTouched() { this.attempted.set(true); }
+  onInput(ev: Event) { this.query.set((ev.target as HTMLInputElement).value); }
   clearQuery() { this.query.set(''); }
 
   submit() {

@@ -150,14 +150,23 @@
   &--disabled {
     cursor: not-allowed;
 
-    .ds-search-bar-scoped__field-icon {
+    .ds-search-bar-scoped__field-icon,
+    .ds-search-bar-scoped__input,
+    .ds-search-bar-scoped__input::placeholder {
       color: var(--semantic-color-static-text-main-tertiary);
     }
+    .ds-search-bar-scoped__input { cursor: not-allowed; }
   }
 
   &--error {
     .ds-search-bar-scoped__field-icon {
       color: var(--semantic-color-static-icon-main-functional-negative);
+    }
+    .ds-search-bar-scoped__input {
+      color: var(--semantic-color-static-text-main-functional-negative);
+    }
+    .ds-search-bar-scoped__input::placeholder {
+      color: var(--semantic-color-static-text-main-functional-negative);
     }
   }
 }
@@ -178,16 +187,22 @@
 // Clear utilise <ds-button-icon size="s" type="plain">
 
 .ds-search-bar-scoped__input {
-  flex:      1 1 auto;
+  flex: 1 0 0;
   min-width: 0;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color: var(--semantic-color-static-text-main-primary);
 
-  // La variante inline souligne le champ et teinte le texte en secondaire ;
-  // la barre V1 n'a ni trait ni cette teinte : on s'aligne sur elle.
-  ::ng-deep .ds-input-text__container {
-    box-shadow: none;
+  &::placeholder {
+    color: var(--semantic-color-static-text-main-tertiary);
   }
-  ::ng-deep .ds-input-text__input {
-    color: var(--semantic-color-static-text-main-primary);
+
+  &:focus-visible {
+    outline: none;
   }
 }
 

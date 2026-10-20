@@ -102,16 +102,25 @@
   }
 
   <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__field-slot" [class.ds-search-bar-scoped__slot--error]="queryError()">
+    <!-- Champ repris tel quel de ds-search-bar-multi (V1) : même markup, mêmes
+         styles, pour que les deux barres se lisent à l'identique. -->
     <div class="ds-search-bar-scoped__field"
       [class.ds-search-bar-scoped__field--disabled]="inputDisabled()"
-      (focusout)="markTouched()"
-      (keydown.enter)="submit()">
+      [class.ds-search-bar-scoped__field--error]="queryError()">
       <ds-icon name="search" [size]="24" class="ds-search-bar-scoped__field-icon" />
       @if (phonePrefix(); as p) {
         <span class="ds-search-bar-scoped__phone-prefix">{{ p }}</span>
       }
-      <ds-input-text class="ds-search-bar-scoped__input" variant="inline"
-        [placeholder]="placeholder()" [disabled]="inputDisabled()" [(value)]="query" />
+      <input
+        type="text"
+        class="ds-search-bar-scoped__input"
+        [placeholder]="placeholder()"
+        [value]="query()"
+        [attr.disabled]="inputDisabled() ? '' : null"
+        (input)="onInput($event)"
+        (blur)="markTouched()"
+        (keydown.enter)="submit()"
+      />
       @if (query() && !inputDisabled()) {
         <ds-button-icon class="ds-search-bar-scoped__clear" type="plain" size="s" ariaLabel="Clear" (clicked)="clearQuery()">
           <ds-icon name="close" [size]="16" />
