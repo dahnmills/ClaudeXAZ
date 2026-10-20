@@ -32,7 +32,7 @@ Référence métier : l'écran Policies du Qirin actuel, avec deux modes.
 | More criteria Policies | Search in, Status, Extension |
 | Deux modes Qirin | Fusionnés : un n° exact + BU donne directement la police, sinon recherche globale |
 | Résultat Policy | Carte dédiée calquée sur `ds-result-card` ; Open = toast (pas de page Police) |
-| Onglets Recent / Viewed / Favorites | Communs aux deux objets, filtre All / Buyers / Policies, All groupé par objet, chaque carte garde son rendu |
+| Onglets Recent / Viewed / Favorites | Communs aux deux objets, filtre All / Buyers / Policies ; All = fil chronologique (Recent, Viewed) ou groupé par objet (Favorites) ; repère d'objet sur chaque carte en All |
 | Construction de la barre | Nouvelle molécule `ds-search-bar-scoped`, composée des mêmes atomes que `ds-search-bar-multi` |
 
 ## Architecture
@@ -198,8 +198,19 @@ Dans Recent search, Recently viewed et Favorites, l'en-tête de liste porte à g
 et à droite le bouton Clear.
 
 - Tri : toujours du plus récent au plus ancien.
-- **All** : deux sections groupées, « Buyers » puis « Policies », chacune avec en-tête et
-  compteur, triées par date à l'intérieur. Une section vide n'est pas affichée.
+- **All**, forme selon l'usage de l'onglet :
+  - **Recent search** et **Recently viewed** : un seul fil chronologique mélangé. On y revient
+    pour retrouver ce qu'on vient de faire : le haut de la liste doit rester « le plus récent »,
+    quel que soit l'objet.
+  - **Favorites** : deux sections groupées, « Buyers » puis « Policies », chacune avec en-tête
+    et compteur, triées par date d'ajout à l'intérieur. Collection stable, sans logique de
+    temps. Une section vide n'est pas affichée.
+- Repère d'objet : en mode All, chaque carte porte en tête une icône + libellé « Buyer » ou
+  « Policy » (texte secondaire, pas un `ds-badge` : le badge reste réservé au statut). Il
+  disparaît en mode filtré, où il serait redondant. Posé par la page juste au-dessus de la
+  carte (pas dans la carte) : `ds-result-card` est un composant V1 et n'est pas modifié.
+- Favorites stocke une date d'ajout par entrée (store V2 `SearchV2FavoritesStore`, clé
+  `kind` + identifiant) pour pouvoir trier.
 - **Buyers** / **Policies** : la seule liste de l'objet, sans en-tête de section.
 - Un seul filtre, partagé par les trois onglets (signal de page `historyFilter`), défaut All.
 - Clear suit le filtre : « Clear all » en All, « Clear buyers » / « Clear policies » sinon. On
