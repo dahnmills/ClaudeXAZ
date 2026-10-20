@@ -32,7 +32,7 @@ Référence métier : l'écran Policies du Qirin actuel, avec deux modes.
 | More criteria Policies | Search in, Status, Extension |
 | Deux modes Qirin | Fusionnés : un n° exact + BU donne directement la police, sinon recherche globale |
 | Résultat Policy | Carte dédiée calquée sur `ds-result-card` ; Open = toast (pas de page Police) |
-| Onglets Recent / Viewed / Favorites | Communs, buyers et policies mêlés par date, chaque carte garde son rendu |
+| Onglets Recent / Viewed / Favorites | Communs aux deux objets, filtre All / Buyers / Policies, All groupé par objet, chaque carte garde son rendu |
 | Construction de la barre | Nouvelle molécule `ds-search-bar-scoped`, composée des mêmes atomes que `ds-search-bar-multi` |
 
 ## Architecture
@@ -190,6 +190,25 @@ Compteur « N results », pagination au scroll identique aux buyers.
   `SearchV2ViewedStore`) fusionnés par date de consultation, du plus récent au plus ancien.
 - **Favorites** : buyers et policies, chaque carte avec son composant.
 - Compteurs d'onglet : total buyers + policies.
+
+### Filtre par objet dans les historiques
+
+Dans Recent search, Recently viewed et Favorites, l'en-tête de liste porte à gauche un
+`ds-segmented-control` `mode="tabs"` (bascule de vue) : **All (n) · Buyers (n) · Policies (n)**,
+et à droite le bouton Clear.
+
+- Tri : toujours du plus récent au plus ancien.
+- **All** : deux sections groupées, « Buyers » puis « Policies », chacune avec en-tête et
+  compteur, triées par date à l'intérieur. Une section vide n'est pas affichée.
+- **Buyers** / **Policies** : la seule liste de l'objet, sans en-tête de section.
+- Un seul filtre, partagé par les trois onglets (signal de page `historyFilter`), défaut All.
+- Clear suit le filtre : « Clear all » en All, « Clear buyers » / « Clear policies » sinon. On
+  n'efface jamais ce qui n'est pas affiché.
+- Catégorie à 0 : l'option reste sélectionnable et affiche un état vide dédié (« No policy
+  search yet », « No policy viewed yet », « No favorite policy yet », et leurs équivalents
+  buyers).
+- Les stores exposent `clear(kind?: 'buyer' | 'policy')`. Pour Recently viewed côté buyers,
+  `ViewedBuyersStore.clear()` existe déjà et n'est pas modifié : « Clear buyers » l'appelle.
 
 ### Buyers
 
