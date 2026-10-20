@@ -98,3 +98,4 @@ export * from './keycap/keycap.component';
 export * from './keycap/shortcut-keys.component';
 export * from './shortcuts-panel/shortcut-row.component';
 export * from './shortcuts-panel/shortcuts-panel.component';
+export * from './policy-criteria/policy-criteria.component';
