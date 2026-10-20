@@ -1,6 +1,6 @@
 <div class="ds-search-bar-scoped__content">
   <!-- Slot 1 : l'objet cherché -->
-  <div class="ds-search-bar-scoped__slot">
+  <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__type">
     <ds-standalone-dropdown [icon]="scopeMeta().icon" [label]="scopeMeta().label" (clicked)="toggle('scope')" />
     @if (openFlyout() === 'scope') {
       <div class="ds-search-bar-scoped__flyout">
@@ -15,7 +15,7 @@
   <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
 
   @if (isBuyers()) {
-    <div class="ds-search-bar-scoped__slot">
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__type">
       <ds-standalone-dropdown [icon]="typeMeta().icon" [label]="typeMeta().label" (clicked)="toggle('type')" />
       @if (openFlyout() === 'type') {
         <div class="ds-search-bar-scoped__flyout">
@@ -31,7 +31,7 @@
       [class.ds-search-bar-scoped__divider--error-adjacent]="countryError()" orientation="vertical" />
 
     @if (countryVisible()) {
-      <div class="ds-search-bar-scoped__slot" [class.ds-search-bar-scoped__slot--error]="countryError()">
+      <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country" [class.ds-search-bar-scoped__slot--error]="countryError()">
         @if (country(); as c) {
           <ds-standalone-dropdown [icon]="null" [label]="countryLabel()" [disabled]="!countryEnabled()" (clicked)="toggle('country')">
             <ds-flag slot="icon" [code]="c" />
@@ -61,7 +61,7 @@
     }
 
     @if (idTypeVisible()) {
-      <div class="ds-search-bar-scoped__slot" [class.ds-search-bar-scoped__slot--error]="idTypeError()"
+      <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__id-type" [class.ds-search-bar-scoped__slot--error]="idTypeError()"
         [dsTooltip]="idTypeTooltip()" dsTooltipPosition="top-center">
         <ds-standalone-dropdown icon="hash" [label]="idTypeLabel()" [disabled]="!idTypeEnabled()" (clicked)="toggle('id-type')" />
         @if (openFlyout() === 'id-type') {
@@ -84,7 +84,7 @@
     }
   } @else {
     <!-- Policies : BU optionnelle, flyout filtrable -->
-    <div class="ds-search-bar-scoped__slot">
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country">
       <ds-standalone-dropdown icon="tenant" [label]="buLabel()" (clicked)="toggle('bu')" />
       @if (openFlyout() === 'bu') {
         <div class="ds-search-bar-scoped__flyout ds-search-bar-scoped__flyout--bu">
