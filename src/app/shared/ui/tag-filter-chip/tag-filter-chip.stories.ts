@@ -51,16 +51,3 @@ export const Field: Story = {
     `,
   }),
 };
-
-/** Champ de barre d'outils, sans libellé visible : le libellé devient le nom accessible. */
-export const FieldHiddenLabel: Story = {
-  args: { label: 'Filters', options: OPTIONS, variant: 'field', placeholder: 'Select your filters', hideLabel: true },
-  render: (args) => ({
-    props: args,
-    template: `
-      <div style="padding:32px;width:356px;">
-        <ds-tag-filter-chip [label]="label" [options]="options" [variant]="variant" [placeholder]="placeholder" [hideLabel]="hideLabel" />
-      </div>
-    `,
-  }),
-};

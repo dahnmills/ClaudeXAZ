@@ -1,13 +1,10 @@
 @if (variant() === 'field') {
-  @if (!hideLabel()) {
-    <label class="ds-tag-filter-chip__field-label" [for]="fieldId">{{ label() }}</label>
-  }
+  <label class="ds-tag-filter-chip__field-label" [for]="fieldId">{{ label() }}</label>
   <div class="ds-tag-filter-chip__field-container">
     <button
       type="button"
       [id]="fieldId"
       class="ds-tag-filter-chip__field"
-      [attr.aria-label]="hideLabel() ? label() : null"
       [attr.aria-haspopup]="'listbox'"
       [attr.aria-expanded]="open()"
       (click)="toggleOpen()"

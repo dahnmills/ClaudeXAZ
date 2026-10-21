@@ -21,15 +21,21 @@
   </ds-page-header>
 
   <div class="rm-body">
-    <!-- Barre d'actions : le champ prépare les filtres, Filter les applique ;
-         à droite, les actions sur le tableau -->
+    <!-- Barre d'actions, mécanique de la page Filters : le select applique un
+         filtre enregistré, Filter ouvre le drawer ; à droite, les actions sur
+         le tableau -->
     <div class="rm-actions">
-      <ds-tag-filter-chip variant="field" label="Filters" [hideLabel]="true"
-        placeholder="Select your filters" [options]="buOptions"
-        [selected]="pendingBus()" (selectedChange)="pendingBus.set($event)" />
+      <ds-select
+        placeholder="Select your filters"
+        [options]="savedFilterOptions()"
+        [value]="activeSavedFilterId() ?? ''"
+        (selectionChange)="onSavedSelectChange($event)"
+      />
 
       <div class="rm-actions__buttons">
-        <ds-button type="secondary" (clicked)="applyFilters()">Filter</ds-button>
+        <ds-button type="secondary" tone="default" (clicked)="openDrawer()">
+          Filter@if (activeFiltersCount() > 0) { ({{ activeFiltersCount() }}) }
+        </ds-button>
         <span class="rm-actions__spacer"></span>
         <div class="rm-columns">
           <ds-button type="tertiary" (clicked)="columnsOpen.set(!columnsOpen())">
@@ -87,3 +93,20 @@
     </div>
   </div>
 </app-topbox-test-shell>
+
+<ds-filter-drawer
+  [open]="drawerOpen()"
+  title="Filters"
+  [filters]="filters"
+  [savedFilters]="savedFilters()"
+  [currentFilters]="currentFilters()"
+  [activeSavedFilterId]="activeSavedFilterId()"
+  (currentFiltersChange)="currentFilters.set($event)"
+  [currentTab]="currentTab()"
+  (currentTabChange)="currentTab.set($event)"
+  (savedFiltersChange)="savedFilters.set($event)"
+  (savedFilterApplied)="onSavedFilterApplied($event)"
+  (savedFilterCreated)="onSavedFilterCreated($event)"
+  (closed)="drawerOpen.set(false)"
+  (applied)="onApplied($event)"
+/>

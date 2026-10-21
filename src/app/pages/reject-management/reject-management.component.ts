@@ -9,7 +9,7 @@ import {
   ButtonComponent,
   IconComponent,
   CheckboxComponent,
-  TagFilterChipComponent,
+  SelectComponent,
   TableRowComponent,
   CellComponent,
   CellHeaderComponent,
@@ -18,6 +18,14 @@ import {
   FlyoutMenuComponent,
   FlyoutMenuItemComponent,
 } from '../../shared/ui';
+import type { SelectOption } from '../../shared/ui/select/select.component';
+import {
+  FilterDrawerComponent,
+  type FilterDefinition,
+  type FilterDrawerTab,
+  type FilterValue,
+  type SavedFilter,
+} from '../../shared/ui/filter-drawer/filter-drawer.component';
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
 import {
   REJECTS,
@@ -29,6 +37,21 @@ import {
 } from './reject-management.data';
 
 type RejectTab = 'all' | RejectCategory;
+
+/** Valeurs distinctes d'une colonne, pour les cases du drawer. */
+function optionsOf(key: 'bu' | 'idType' | 'country') {
+  return [...new Set(REJECTS.map(r => r[key]))].sort().map(v => ({ value: v, label: v }));
+}
+
+/** Filtre texte : contient, sans casse ; vide = pas de filtre. */
+function matchesText(value: string, filter: FilterValue | undefined): boolean {
+  return typeof filter !== 'string' || !filter.trim() || value.toLowerCase().includes(filter.trim().toLowerCase());
+}
+
+/** Filtre à cases : une des valeurs cochées ; aucune case = pas de filtre. */
+function inList(value: string, filter: FilterValue | undefined): boolean {
+  return !Array.isArray(filter) || filter.length === 0 || (filter as string[]).includes(value);
+}
 
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
@@ -51,7 +74,8 @@ const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', '
     ButtonComponent,
     IconComponent,
     CheckboxComponent,
-    TagFilterChipComponent,
+    SelectComponent,
+    FilterDrawerComponent,
     TableRowComponent,
     CellComponent,
     CellHeaderComponent,
@@ -75,13 +99,61 @@ export class RejectManagementComponent {
   ];
   readonly activeTab = signal<RejectTab>('all');
 
-  // ── Filtres : le champ prépare, le bouton Filter applique ───────────────────
-  readonly buOptions = [...new Set(REJECTS.map(r => r.bu))].sort().map(bu => ({ value: bu, label: bu }));
-  readonly pendingBus = signal<Set<string>>(new Set());
-  private readonly appliedBus = signal<Set<string>>(new Set());
+  // ── Filtres : mécanique de la page Filters (filtres enregistrés dans le
+  //    select, Filter ouvre le drawer) ──────────────────────────────────────────
+  readonly drawerOpen = signal(false);
+  readonly currentTab = signal<FilterDrawerTab>('current');
+  readonly activeSavedFilterId = signal<string | null>(null);
+  readonly appliedFilters = signal<Record<string, FilterValue>>({});
+  readonly currentFilters = signal<Record<string, FilterValue>>({});
 
-  applyFilters(): void {
-    this.appliedBus.set(new Set(this.pendingBus()));
+  readonly savedFilters = signal<SavedFilter[]>([
+    { id: 'saved-cbnl', name: 'CBNL rejects', filters: { bu: ['CBNL'] }, createdAt: new Date('2026-07-20T09:00:00') },
+    { id: 'saved-fr', name: 'French buyers', filters: { country: ['FR'] }, createdAt: new Date('2026-07-22T14:30:00') },
+  ]);
+  readonly savedFilterOptions = computed<SelectOption[]>(() =>
+    this.savedFilters().map(f => ({ value: f.id, label: f.name })));
+
+  readonly filters: FilterDefinition[] = [
+    { id: 'type', label: 'Type', type: 'text', defaultOpen: true, placeholder: 'Search a reject type' },
+    { id: 'buyerId', label: 'Buyer ID', type: 'text', defaultOpen: true, placeholder: 'Search a buyer ID' },
+    { id: 'bu', label: 'BU', type: 'checkbox-list', defaultOpen: true, columns: 2, options: optionsOf('bu') },
+    { id: 'idType', label: 'ID Type', type: 'checkbox-list', defaultOpen: true, columns: 2, options: optionsOf('idType') },
+    { id: 'country', label: 'Country', type: 'checkbox-list', defaultOpen: true, columns: 2, options: optionsOf('country') },
+  ];
+
+  /** Nombre de filtres renseignés, affiché sur le bouton : « Filter (2) ». */
+  readonly activeFiltersCount = computed(() =>
+    Object.values(this.appliedFilters()).filter(v => Array.isArray(v) ? v.length > 0 : !!v).length);
+
+  openDrawer(): void {
+    this.currentFilters.set({ ...this.appliedFilters() });
+    this.drawerOpen.set(true);
+  }
+
+  onApplied(filters: Record<string, FilterValue>): void {
+    this.applyFilters(filters, null);
+    this.drawerOpen.set(false);
+  }
+
+  onSavedFilterApplied(filter: SavedFilter): void {
+    this.applyFilters(filter.filters, filter.id);
+    this.drawerOpen.set(false);
+  }
+
+  onSavedFilterCreated(filter: SavedFilter): void {
+    this.applyFilters(filter.filters, filter.id);
+  }
+
+  onSavedSelectChange(filterId: string): void {
+    const filter = this.savedFilters().find(f => f.id === filterId);
+    if (filter) this.applyFilters(filter.filters, filter.id);
+  }
+
+  private applyFilters(filters: Record<string, FilterValue>, savedId: string | null): void {
+    this.currentFilters.set({ ...filters });
+    this.appliedFilters.set({ ...filters });
+    this.activeSavedFilterId.set(savedId);
     this.selectedIds.set([]);
   }
 
@@ -117,12 +189,13 @@ export class RejectManagementComponent {
 
   readonly rows = computed<Reject[]>(() => {
     const tab = this.activeTab();
-    const bus = this.appliedBus();
+    const f = this.appliedFilters();
     const key = this.sortKey();
     const way = this.sortDir() === 'asc' ? 1 : -1;
     const list = REJECTS
       .filter(r => tab === 'all' || r.category === tab)
-      .filter(r => bus.size === 0 || bus.has(r.bu));
+      .filter(r => matchesText(r.type, f['type']) && matchesText(r.buyerId, f['buyerId']))
+      .filter(r => inList(r.bu, f['bu']) && inList(r.idType, f['idType']) && inList(r.country, f['country']));
     if (!key) return list;
     return list.sort((a, b) => a[key].localeCompare(b[key], undefined, { numeric: true }) * way);
   });

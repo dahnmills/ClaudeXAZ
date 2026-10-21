@@ -35,8 +35,6 @@ export class TagFilterChipComponent implements SingleOpenFlyout, OnDestroy {
   variant     = input<'chip' | 'field'>('chip');
   placeholder = input<string>('Any');
   searchable  = input<boolean>(false);
-  /** Champ sans libellé visible (barre d'outils) : le libellé reste le nom accessible du champ. */
-  hideLabel   = input<boolean>(false);
 
   open   = signal(false);
   search = signal('');
