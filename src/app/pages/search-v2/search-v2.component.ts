@@ -3,7 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import {
   PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, TabComponent, IconComponent,
-  ConfirmDialogComponent, ButtonComponent, SpinnerComponent, SegmentedControlComponent,
+  ConfirmDialogComponent, ButtonComponent, SpinnerComponent, ChipComponent,
 } from '../../shared/ui';
 import { SearchBarScopedComponent, type SearchScope } from '../../shared/ui/search-bar-scoped/search-bar-scoped.component';
 import type { SearchType, IdTypeOption } from '../../shared/ui/search-bar-multi/search-bar-multi.component';
@@ -28,7 +28,6 @@ import { SearchV2FavoritesStore } from './search-v2-favorites.store';
 import { searchPolicies, type PolicyQuery } from './policy-search';
 import { POLICIES } from './policies.mock';
 import { BUYERS } from './buyers.mock';
-import type { SegmentedOption } from '../../shared/ui/segmented-control/segmented-control.component';
 import {
   filterHistory, countByKind, clearLabel, emptyLabel, historyDate, fullDate,
   type HistoryFilter, type HistoryTab, type HistoryKind,
@@ -41,7 +40,7 @@ type TabId = 'search' | 'searched' | 'viewed' | 'favorites';
   standalone: true,
   imports: [
     TopboxTestShellComponent, PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, TabComponent,
-    IconComponent, ButtonComponent, SpinnerComponent, ConfirmDialogComponent, SegmentedControlComponent,
+    IconComponent, ButtonComponent, SpinnerComponent, ConfirmDialogComponent, ChipComponent,
     SearchBarScopedComponent, MoreCriteriaComponent,
     ResultCardComponent, PolicyResultCardComponent, RecentSearchV2CardComponent, CompanyCreationWizardComponent,
     NgTemplateOutlet,
@@ -312,7 +311,7 @@ export class SearchV2Component {
 
   historyCounts = computed(() => countByKind(this.tabItems()));
 
-  historyOptions = computed<SegmentedOption[]>(() => {
+  historyOptions = computed<{ value: HistoryFilter; label: string }[]>(() => {
     const c = this.historyCounts();
     return [
       { value: 'all',    label: `All (${c.all})` },

@@ -152,3 +152,11 @@ ds-page-header {
   color:       var(--semantic-color-static-text-main-tertiary);
   white-space: nowrap;
 }
+
+// Chips de filtre de l'historique : même écart que les chips du modal portfolio (Figma 4)
+.search-page__filters {
+  display:     flex;
+  flex-wrap:   wrap;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+}

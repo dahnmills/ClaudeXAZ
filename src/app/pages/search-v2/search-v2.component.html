@@ -122,11 +122,14 @@
 
         @if (activeTab() !== 'search') {
           <div class="search-page__list-header search-page__list-header--split">
-            <ds-segmented-control
-              [options]="historyOptions()"
-              [selected]="historyFilter()"
-              (selectedChange)="setHistoryFilter($event)"
-            />
+            <!-- Chips de filtre : un seul objet affiché à la fois, All pour tout voir -->
+            <div class="search-page__filters" role="group" aria-label="Filter by object">
+              @for (o of historyOptions(); track o.value) {
+                <ds-chip type="select" [label]="o.label"
+                  [selected]="historyFilter() === o.value"
+                  (activated)="setHistoryFilter(o.value)" />
+              }
+            </div>
             @if (historyShownCount() > 0) {
               <ds-button type="plain" tone="default" (clicked)="clearHistory()">
                 <ds-icon slot="icon-left" name="trash" [size]="16" /> {{ historyClearLabel() }}
