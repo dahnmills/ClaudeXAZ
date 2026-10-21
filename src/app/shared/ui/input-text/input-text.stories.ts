@@ -1,5 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { InputTextComponent } from './input-text.component';
+import { IconComponent } from '../icon/icon.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 const meta: Meta<InputTextComponent> = {
   title: 'Design System/Data Entry/Input Text',
