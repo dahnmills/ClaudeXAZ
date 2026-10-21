@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, computed, inject, input, model, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, afterRenderEffect, computed, inject, input, model, signal, viewChild } from '@angular/core';
 import { IconComponent, type IconName } from '../icon/icon.component';
 import { TagComponent } from '../tag/tag.component';
 import { CheckboxComponent } from '../checkbox/checkbox.component';
@@ -35,7 +35,9 @@ export class MultiSelectComponent {
   placeholder  = input<string>('');
   /** Icône en tête du champ, pour la variante inline d'une barre. */
   icon         = input<IconName | null>(null);
-  maxVisible   = input<number>(3);
+  /** Plafond optionnel. Sans lui, le champ montre tous les tags qui tiennent
+   *  et passe à « (+x more) » seulement quand la place manque. */
+  maxVisible   = input<number | null>(null);
   variant      = input<'default' | 'inline'>('default');
   disabled     = input<boolean>(false);
   error        = input<boolean>(false);
@@ -59,8 +61,55 @@ export class MultiSelectComponent {
     const v = this.value();
     return this.options().filter(o => v.includes(o.value));
   });
-  visibleTags = computed(() => this.selectedOptions().slice(0, this.maxVisible()));
-  hiddenCount = computed(() => Math.max(0, this.selectedOptions().length - this.maxVisible()));
+  /** Nombre de tags qui tiennent dans la largeur réelle du champ (mesuré). */
+  private fitCount = signal<number>(Number.POSITIVE_INFINITY);
+  private limit = computed(() => Math.min(this.fitCount(), this.maxVisible() ?? Number.POSITIVE_INFINITY));
+  visibleTags = computed(() => this.selectedOptions().slice(0, this.limit()));
+  hiddenCount = computed(() => Math.max(0, this.selectedOptions().length - this.limit()));
+
+  private valueEl = viewChild<ElementRef<HTMLElement>>('valueEl');
+  private measureEl = viewChild<ElementRef<HTMLElement>>('measureEl');
+  private observer?: ResizeObserver;
+
+  constructor() {
+    // La rangée de mesure (invisible) porte tous les tags choisis : leurs
+    // largeurs réelles disent combien en tiennent dans la place disponible.
+    afterRenderEffect(() => {
+      const value = this.valueEl()?.nativeElement;
+      const measure = this.measureEl()?.nativeElement;
+      this.selectedOptions();
+      if (!value || !measure) return;
+      if (!this.observer) {
+        this.observer = new ResizeObserver(() => this.fit());
+        this.observer.observe(value);
+        this.observer.observe(measure);
+      }
+      this.fit();
+    });
+    inject(DestroyRef).onDestroy(() => this.observer?.disconnect());
+  }
+
+  private fit() {
+    const value = this.valueEl()?.nativeElement;
+    const measure = this.measureEl()?.nativeElement;
+    if (!value || !measure) return;
+    const tags = Array.from(measure.querySelectorAll<HTMLElement>('ds-tag'));
+    const more = measure.querySelector<HTMLElement>('.ds-multi-select__more');
+    const available = value.clientWidth;
+    const moreGap = parseFloat(getComputedStyle(value).columnGap) || 0;
+    // Bord droit du k-ième tag, gaps compris, mesuré depuis le début de la rangée
+    const rightEdge = (k: number) => k === 0 ? 0 : tags[k - 1].offsetLeft + tags[k - 1].offsetWidth - tags[0].offsetLeft;
+
+    let count = tags.length;
+    if (rightEdge(tags.length) > available) {
+      const moreWidth = more?.offsetWidth ?? 0;
+      count = 0;
+      for (let k = tags.length - 1; k >= 1; k--) {
+        if (rightEdge(k) + moreGap + moreWidth <= available) { count = k; break; }
+      }
+    }
+    if (count !== this.fitCount()) this.fitCount.set(count);
+  }
 
   private host = inject(ElementRef<HTMLElement>);
 

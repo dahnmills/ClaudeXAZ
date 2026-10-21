@@ -73,6 +73,8 @@
   display:     flex;
   align-items: center;
   gap:         var(--semantic-measurement-spacing-s); // 8px
+
+  ds-tag { flex-shrink: 0; }
   min-width:   0;
 }
 
@@ -84,6 +86,17 @@
   line-height:    var(--semantic-font-text-style-line-height-s);
   letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
   color:          var(--semantic-color-static-text-main-primary);
+  white-space:    nowrap;
+}
+
+// Rangée de mesure : hors flux, invisible, mêmes styles que les vrais tags
+.ds-multi-select__measure {
+  position:       absolute;
+  top:            0;
+  left:           0;
+  display:        flex;
+  visibility:     hidden;
+  pointer-events: none;
   white-space:    nowrap;
 }
 

@@ -213,9 +213,8 @@
       <ds-multi-select
         variant="inline"
         icon="check-circle"
-        placeholder="No status selected"
+        placeholder="No status"
         [options]="statusOptions"
-        [maxVisible]="2"
         [disabled]="statusDisabled()"
         [error]="statusError()"
         [value]="policyCriteria().statuses"

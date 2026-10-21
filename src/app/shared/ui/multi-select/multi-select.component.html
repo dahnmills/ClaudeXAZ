@@ -20,7 +20,7 @@
       <ds-icon class="ds-multi-select__icon" [name]="i" [size]="24" />
     }
 
-    <div class="ds-multi-select__value">
+    <div class="ds-multi-select__value" #valueEl>
       @if (selectedOptions().length) {
         <div class="ds-multi-select__tags">
           @for (o of visibleTags(); track o.value) {
@@ -43,6 +43,16 @@
     </div>
 
     <ds-icon class="ds-multi-select__chevron" [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+  </div>
+
+  <!-- Rangée de mesure, invisible : tous les tags choisis, pour savoir combien tiennent -->
+  <div class="ds-multi-select__measure" #measureEl aria-hidden="true">
+    <div class="ds-multi-select__tags">
+      @for (o of selectedOptions(); track o.value) {
+        <ds-tag type="filter" [label]="o.label" tabindex="-1" />
+      }
+    </div>
+    <span class="ds-multi-select__more">(+{{ selectedOptions().length }} more)</span>
   </div>
 
   @if (open()) {

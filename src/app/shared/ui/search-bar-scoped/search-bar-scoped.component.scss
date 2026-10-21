@@ -239,8 +239,9 @@
   padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
 }
 
-// Status : les tags des statuts choisis tiennent dans le slot (2 visibles + « (+x more) »)
+// Status : assez large pour les trois tags d'office ; le composant passe à
+// « (+x more) » tout seul quand la barre rétrécit.
 .ds-search-bar-scoped__status-slot {
-  width:     calc(var(--foundation-spacing-104) * 3);
-  min-width: 0;
+  flex:      0 1 calc(var(--foundation-spacing-104) * 3 + var(--semantic-measurement-spacing-l));
+  min-width: calc(var(--foundation-spacing-104) * 1.5); // rétrécit avec la barre, jamais sous un tag + « (+x more) »
 }
