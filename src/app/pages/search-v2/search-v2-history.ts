@@ -8,12 +8,6 @@ export type HistoryTab = 'searched' | 'viewed' | 'favorites';
 
 export interface Stamped { kind: HistoryKind; ts: number; }
 
-export interface HistoryGroup<T> {
-  kind: HistoryKind;
-  label: 'Buyers' | 'Policies';
-  items: T[];
-}
-
 /** Du plus récent au plus ancien, sur une copie. */
 export function byRecent<T extends { ts: number }>(items: T[]): T[] {
   return [...items].sort((a, b) => b.ts - a.ts);
@@ -22,21 +16,6 @@ export function byRecent<T extends { ts: number }>(items: T[]): T[] {
 /** All = un seul fil chronologique ; sinon le seul objet demandé. */
 export function filterHistory<T extends Stamped>(items: T[], f: HistoryFilter): T[] {
   return byRecent(f === 'all' ? items : items.filter(i => i.kind === f));
-}
-
-/**
- * Une section par objet, chaque section triée du plus récent au plus ancien,
- * section vide omise. `fixed` : Buyers puis Policies (Favorites).
- * `recent` : la section qui porte l'entrée la plus récente d'abord (Recent
- * search, Recently viewed : le haut de la page reste « ce que je viens de faire »).
- */
-export function groupByKind<T extends Stamped>(items: T[], order: 'fixed' | 'recent' = 'fixed'): HistoryGroup<T>[] {
-  const groups: HistoryGroup<T>[] = [
-    { kind: 'buyer',  label: 'Buyers',   items: filterHistory(items, 'buyer') },
-    { kind: 'policy', label: 'Policies', items: filterHistory(items, 'policy') },
-  ];
-  const kept = groups.filter(g => g.items.length > 0);
-  return order === 'recent' ? kept.sort((a, b) => b.items[0].ts - a.items[0].ts) : kept;
 }
 
 export function countByKind(items: Stamped[]): Record<HistoryFilter, number> {

@@ -30,7 +30,7 @@ import { POLICIES } from './policies.mock';
 import { BUYERS } from './buyers.mock';
 import type { SegmentedOption } from '../../shared/ui/segmented-control/segmented-control.component';
 import {
-  filterHistory, groupByKind, countByKind, clearLabel, emptyLabel,
+  filterHistory, countByKind, clearLabel, emptyLabel,
   type HistoryFilter, type HistoryTab, type HistoryKind,
 } from './search-v2-history';
 
@@ -322,12 +322,8 @@ export class SearchV2Component {
   });
 
   shownRecents   = computed(() => filterHistory(this.recentsStore.entries(), this.historyFilter()));
-  /** Recent search : un bloc par objet (colonnes propres à chacun), le plus récent d'abord. */
-  recentGroups   = computed(() => groupByKind(this.shownRecents(), 'recent'));
   shownViewed    = computed(() => filterHistory(this.viewedItems(), this.historyFilter()));
   shownFavorites = computed(() => filterHistory(this.favorites.entries(), this.historyFilter()));
-  /** Favorites en All : sections Buyers puis Policies. */
-  favoriteGroups = computed(() => groupByKind(this.favorites.entries()));
 
 
   historyClearLabel = computed(() => clearLabel(this.historyFilter()));

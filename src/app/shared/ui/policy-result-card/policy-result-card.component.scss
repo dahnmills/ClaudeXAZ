@@ -51,6 +51,9 @@
 }
 
 .ds-policy-result-card__holder {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--semantic-color-static-text-main-secondary);
   font-family: var(--semantic-font-family);
   font-size: var(--semantic-font-text-style-size-l);
@@ -58,11 +61,9 @@
   line-height: var(--semantic-font-text-style-line-height-l);
 }
 
+// La période suit le policyholder sur la même ligne, en retrait de ton
 .ds-policy-result-card__period {
-  color:       var(--semantic-color-static-text-main-tertiary);
-  font-family: var(--semantic-font-family);
-  font-size:   var(--semantic-font-text-style-size-m);
-  line-height: var(--semantic-font-text-style-line-height-m);
+  color: var(--semantic-color-static-text-main-tertiary);
 }
 
 .ds-policy-result-card__actions {

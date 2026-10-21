@@ -17,8 +17,10 @@
           <ds-identifier [value]="data().id" icon="hash" [copyable]="true" />
         }
       </div>
-      <span class="ds-policy-result-card__holder">{{ data().policyholder }} · {{ data().buCode }}</span>
-      <span class="ds-policy-result-card__period">{{ period() }}</span>
+      <!-- Deux lignes, comme ds-result-card (nom, puis adresse) : même hauteur de carte -->
+      <span class="ds-policy-result-card__holder">
+        {{ data().policyholder }} · {{ data().buCode }} · <span class="ds-policy-result-card__period">{{ period() }}</span>
+      </span>
     </div>
   </div>
 

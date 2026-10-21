@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  byRecent, filterHistory, groupByKind, countByKind, clearLabel, emptyLabel, upsertFront, removeKind,
+  byRecent, filterHistory, countByKind, clearLabel, emptyLabel, upsertFront, removeKind,
 } from '../../src/app/pages/search-v2/search-v2-history.ts';
 
 type E = { kind: 'buyer' | 'policy'; ts: number; id: string };
@@ -26,17 +26,7 @@ test('filterHistory by kind keeps only that kind, newest first', () => {
   assert.deepEqual(filterHistory(items, 'buyer').map(e => e.id), ['b2', 'b1']);
 });
 
-test('groupByKind puts Buyers then Policies, each newest first', () => {
-  const g = groupByKind(items);
-  assert.deepEqual(g.map(x => x.label), ['Buyers', 'Policies']);
-  assert.deepEqual(g[0].items.map(e => e.id), ['b2', 'b1']);
-  assert.deepEqual(g[1].items.map(e => e.id), ['p1', 'p2']);
-});
 
-test('groupByKind drops an empty group', () => {
-  const g = groupByKind(items.filter(e => e.kind === 'policy'));
-  assert.deepEqual(g.map(x => x.label), ['Policies']);
-});
 
 test('countByKind', () => {
   assert.deepEqual(countByKind(items), { all: 4, buyer: 2, policy: 2 });
@@ -68,9 +58,3 @@ test('clearKind keeps the other kind', () => {
   assert.deepEqual(removeKind(items), []);
 });
 
-test('groupByKind recent order puts the block holding the newest entry first', () => {
-  // items : p1 (ts 4) est le plus récent → Policies d'abord
-  assert.deepEqual(groupByKind(items, 'recent').map(x => x.label), ['Policies', 'Buyers']);
-  const buyerNewest = [...items, { kind: 'buyer' as const, ts: 9, id: 'b3' }];
-  assert.deepEqual(groupByKind(buyerNewest, 'recent').map(x => x.label), ['Buyers', 'Policies']);
-});

@@ -143,23 +143,13 @@
               <span class="search-page__empty-text">{{ historyEmpty('searched') }}</span>
             </div>
           } @else {
-            <!-- Un bloc par objet : les cartes d'un bloc partagent leurs colonnes,
-                 la lecture reste stable. En All, le bloc qui porte la recherche la
-                 plus récente passe en premier. -->
-            @for (g of recentGroups(); track g.kind) {
-              <section class="search-page__group" [attr.aria-labelledby]="'recent-' + g.kind">
-                @if (historyFilter() === 'all') {
-                  <h3 class="search-page__group-title" [id]="'recent-' + g.kind">
-                    {{ g.kind === 'buyer' ? 'Buyer searches' : 'Policy searches' }} ({{ g.items.length }})
-                  </h3>
-                }
-                <div class="search-page__list">
-                  @for (r of g.items; track r.ts) {
-                    <app-recent-search-v2-card [entry]="r" (replayed)="pickRecent(r)" />
-                  }
-                </div>
-              </section>
-            }
+            <!-- Un seul fil, du plus récent au plus ancien : la carte a la même
+                 forme pour tous les objets, le filtre isole un objet au besoin. -->
+            <div class="search-page__results">
+              @for (r of shownRecents(); track r.ts) {
+                <app-recent-search-v2-card [entry]="r" (replayed)="pickRecent(r)" />
+              }
+            </div>
           }
         }
 
@@ -227,24 +217,12 @@
               }
             </ng-template>
 
-            @if (historyFilter() === 'all') {
-              @for (g of favoriteGroups(); track g.kind) {
-                <section class="search-page__group" [attr.aria-label]="g.label">
-                  <h3 class="search-page__group-title">{{ g.label }} ({{ g.items.length }})</h3>
-                  <div class="search-page__results">
-                    @for (f of g.items; track f.kind + f.id) {
-                      <ng-container [ngTemplateOutlet]="favCard" [ngTemplateOutletContext]="{ $implicit: f }" />
-                    }
-                  </div>
-                </section>
+            <!-- Un seul fil, du plus récemment ajouté au plus ancien, comme les autres onglets -->
+            <div class="search-page__results">
+              @for (f of shownFavorites(); track f.kind + f.id) {
+                <ng-container [ngTemplateOutlet]="favCard" [ngTemplateOutletContext]="{ $implicit: f }" />
               }
-            } @else {
-              <div class="search-page__results">
-                @for (f of shownFavorites(); track f.kind + f.id) {
-                  <ng-container [ngTemplateOutlet]="favCard" [ngTemplateOutletContext]="{ $implicit: f }" />
-                }
-              </div>
-            }
+            </div>
           }
         }
       </div>
