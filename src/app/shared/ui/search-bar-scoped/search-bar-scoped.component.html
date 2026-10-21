@@ -101,7 +101,7 @@
 
     <!-- BU : obligatoire en Open policy, optionnelle en Global search. La
          recherche vit dans le panneau, en tête de la liste. -->
-    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country" [class.ds-search-bar-scoped__slot--error]="buError()">
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country ds-search-bar-scoped__bu-slot" [class.ds-search-bar-scoped__slot--error]="buError()">
       <ds-standalone-dropdown icon="tenant" [label]="buLabel()" (clicked)="toggle('bu')" />
       @if (openFlyout() === 'bu') {
         <div class="ds-search-bar-scoped__flyout ds-search-bar-scoped__flyout--list">
@@ -212,7 +212,6 @@
     <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__status-slot" [class.ds-search-bar-scoped__slot--error]="statusError()">
       <ds-multi-select
         variant="inline"
-        icon="check-circle"
         placeholder="No status"
         [options]="statusOptions"
         [disabled]="statusDisabled()"

@@ -239,10 +239,11 @@
   padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
 }
 
-// Status : assez large pour les trois tags d'office ; le composant passe à
+// Status : assez large pour les trois tags d'office (sans icône : les tags disent
+// déjà ce que c'est) ; le composant passe à
 // « (+x more) » tout seul quand la barre rétrécit.
 .ds-search-bar-scoped__status-slot {
-  flex:      0 1 calc(var(--foundation-spacing-104) * 3 + var(--semantic-measurement-spacing-l));
+  flex:      0 1 calc(var(--foundation-spacing-104) * 3);
   min-width: calc(var(--foundation-spacing-104) * 1.5); // rétrécit avec la barre, jamais sous un tag + « (+x more) »
 }
 
@@ -250,4 +251,9 @@
 // barre manque de place, c'est Status qui cède (et passe à « (+x more) »).
 .ds-search-bar-scoped__field-slot--policy {
   min-width: calc(var(--foundation-spacing-104) * 2);
+}
+
+// BU : taillé pour « AT Belgium » / « Select a BU », la place gagnée va à Status
+.ds-search-bar-scoped__bu-slot {
+  width: calc(var(--foundation-spacing-104) + var(--semantic-measurement-spacing-xl) + var(--semantic-measurement-spacing-s));
 }
