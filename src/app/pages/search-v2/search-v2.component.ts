@@ -20,7 +20,7 @@ import { BuyerSummaryStore } from '../buyer-summary/buyer-summary.store';
 import { ViewedBuyersStore } from '../buyer-summary/viewed-buyers.store';
 import { CompanyCreationWizardComponent } from '../search/company-creation-wizard/company-creation-wizard.component';
 import { ToasterService } from '../../shared/ui/toaster/toaster.service';
-import { RecentSearchesTableComponent } from './components/recent-searches-table.component';
+import { RecentSearchV2CardComponent } from './components/recent-search-v2-card.component';
 import { SearchV2RecentsStore } from './search-v2-recents.store';
 import type { RecentV2Entry } from './search-v2-recents.model';
 import { SearchV2ViewedStore } from './search-v2-viewed.store';
@@ -43,7 +43,7 @@ type TabId = 'search' | 'searched' | 'viewed' | 'favorites';
     TopboxTestShellComponent, PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, TabComponent,
     IconComponent, ButtonComponent, SpinnerComponent, ConfirmDialogComponent, SegmentedControlComponent,
     SearchBarScopedComponent, MoreCriteriaComponent,
-    ResultCardComponent, PolicyResultCardComponent, RecentSearchesTableComponent, CompanyCreationWizardComponent,
+    ResultCardComponent, PolicyResultCardComponent, RecentSearchV2CardComponent, CompanyCreationWizardComponent,
     NgTemplateOutlet,
   ],
   templateUrl: './search-v2.component.html',
@@ -322,7 +322,7 @@ export class SearchV2Component {
   });
 
   shownRecents   = computed(() => filterHistory(this.recentsStore.entries(), this.historyFilter()));
-  /** Recent search : un tableau par objet (colonnes propres), le plus récent d'abord. */
+  /** Recent search : un bloc par objet (colonnes propres à chacun), le plus récent d'abord. */
   recentGroups   = computed(() => groupByKind(this.shownRecents(), 'recent'));
   shownViewed    = computed(() => filterHistory(this.viewedItems(), this.historyFilter()));
   shownFavorites = computed(() => filterHistory(this.favorites.entries(), this.historyFilter()));
