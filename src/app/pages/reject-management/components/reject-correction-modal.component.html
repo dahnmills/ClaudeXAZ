@@ -1,80 +1,87 @@
-<ds-modal [open]="open()" size="xlarge" [title]="reject()?.type ?? 'Reject'"
-  [contentHeight]="contentHeight" (closed)="closed.emit()">
+<ds-modal [open]="open()" [size]="mode() === 'browse' ? 'xlarge' : 'large'" [title]="reject()?.type ?? 'Reject'"
+  [contentHeight]="contentHeight()" (closed)="closed.emit()">
 
-  <div class="rc">
-    <!-- Carrefour : toutes les sections, toujours affichées -->
-    <nav class="rc__rail" aria-label="Message sections">
-      @for (b of rail(); track b.name) {
-        <span class="rc__rail-block">{{ b.name }}</span>
-        @for (s of b.sections; track s.key) {
-          <ds-side-nav-item [attr.data-rail]="s.key" [selected]="activeSection() === s.key" (clicked)="goToSection(s.key)">
-            <span class="rc__rail-item">
-              <span class="rc__rail-name">{{ s.name }}</span>
-              @if (s.open > 0) {
-                <ds-badge [label]="'' + s.open" status="error" variant="strong" size="s"
-                  [attr.aria-label]="s.open + ' to correct'" />
-              } @else if (s.hadErrors) {
-                <ds-icon class="rc__rail-done" name="check" [size]="16" />
-              }
-            </span>
-          </ds-side-nav-item>
-        }
-      }
-    </nav>
-
-    <div class="rc__main" (scroll)="onScroll($event)">
-      <!-- Ce qui bloque, qui est concerné, combien il en reste : reste en haut au défilement -->
-      <div class="rc__summary">
-        <ds-functional-notice [status]="openErrors().length ? 'error' : 'success'" emphasis="medium"
-          [title]="remainingLabel()"
-          [message]="openErrors().length ? 'Correct the highlighted fields, then resubmit the reject.' : 'You can resubmit the reject.'" />
-
-        <div class="rc__toolbar">
-          <ds-segmented-control [options]="viewOptions()" [selected]="view()" (selectedChange)="setView($event)" />
-          <div class="rc__nav">
-            <ds-button type="tertiary" [disabled]="!openErrors().length" (clicked)="goToError(-1)">
-              <ds-icon slot="icon-left" name="chevron-up" [size]="16" /> Previous error
-            </ds-button>
-            <ds-button type="tertiary" [disabled]="!openErrors().length" (clicked)="goToError(1)">
-              <ds-icon slot="icon-left" name="chevron-down" [size]="16" /> Next error
-            </ds-button>
-          </div>
-        </div>
-      </div>
-
-      <ds-properties-panel class="rc__identity" [sections]="identity()" [columns]="4" variant="flat"
-        layout="stacked" density="compact" />
-
-      @for (s of sections(); track s.key) {
-        <section class="rc__section" [id]="'rc-sec-' + s.key">
-          <header class="rc__section-head">
-            <span class="rc__section-block">{{ s.block }}</span>
-            <h3 class="rc__section-title">{{ s.name }}</h3>
-          </header>
-
-          <div class="rc__fields">
-            @for (f of s.fields; track f.n) {
-              <div class="rc__field" [class.rc__field--wide]="isWide(f)" [id]="'rc-field-' + f.n"
-                (focusin)="onFieldFocus(f)">
-                <ds-input-text [label]="f.label" [value]="values()[f.n]" (valueChange)="setValue(f.n, $event)"
-                  [error]="isOpenError(f)" [errorMessage]="f.error ?? ''" />
-                <span class="rc__field-meta">#{{ f.n }} · {{ f.tech }} · max {{ f.length }}</span>
-              </div>
-            }
-          </div>
-
-          @if (s.hiddenCount > 0) {
-            <ds-button class="rc__more" type="plain" (clicked)="expandSection(s.key)">
-              <ds-icon slot="icon-left" name="plus" [size]="16" />
-              {{ s.hiddenCount }} other {{ s.hiddenCount === 1 ? 'field' : 'fields' }} in {{ s.name }}
-            </ds-button>
-          }
-        </section>
-      } @empty {
-        <p class="rc__empty">No field in this view</p>
-      }
-    </div>
+  <!-- Identité du message et ce qu'il reste à faire, sur une ligne -->
+  <div class="rc__head">
+    <span class="rc__identity">{{ identity() }}</span>
+    <ds-badge [label]="counterLabel()" [status]="openCount() ? 'error' : 'success'" variant="light" size="m" />
   </div>
+
+  @if (mode() === 'correct') {
+    <!-- Tous les champs en cause réunis : on enchaîne de haut en bas -->
+    <ol class="rc__errors">
+      @for (e of errors(); track e.field.n; let i = $index) {
+        <li class="rc__error" [id]="'rc-err-' + e.field.n">
+          <span class="rc__error-index">
+            @if (isOpenError(e.field)) {
+              <ds-badge [label]="'' + (i + 1)" status="error" variant="strong" size="s" />
+            } @else {
+              <ds-icon class="rc__error-done" name="check" [size]="16" />
+            }
+          </span>
+          <div class="rc__error-body">
+            <span class="rc__error-where">{{ e.where }}</span>
+            <ds-input-text [label]="e.field.label" [value]="values()[e.field.n]"
+              (valueChange)="setValue(e.field.n, $event)"
+              [error]="isOpenError(e.field)" [errorMessage]="e.field.error ?? ''" />
+            <span class="rc__field-meta">#{{ e.field.n }} · {{ e.field.tech }} · max {{ e.field.length }}</span>
+          </div>
+        </li>
+      }
+    </ol>
+
+    <ds-button class="rc__switch" type="tertiary" (clicked)="browse()">
+      Browse all fields ({{ allFields().length }})
+      <ds-icon slot="icon-right" name="chevron-right" [size]="16" />
+    </ds-button>
+  } @else {
+    <div class="rc__browse-bar">
+      <ds-button type="tertiary" (clicked)="backToCorrections()">
+        <ds-icon slot="icon-left" name="chevron-left" [size]="16" /> Back to corrections
+      </ds-button>
+      <ds-segmented-control [options]="browseOptions()" [selected]="browseView()" (selectedChange)="setBrowseView($event)" />
+    </div>
+
+    <div class="rc">
+      <!-- Carrefour : toutes les sections, toujours affichées -->
+      <nav class="rc__rail" aria-label="Message sections">
+        @for (b of rail(); track b.name) {
+          <span class="rc__rail-block">{{ b.name }}</span>
+          @for (s of b.sections; track s.key) {
+            <ds-side-nav-item [attr.data-rail]="s.key" [selected]="activeSection() === s.key" (clicked)="goToSection(s.key)">
+              <span class="rc__rail-item">
+                <span class="rc__rail-name">{{ s.name }}</span>
+                @if (s.open > 0) {
+                  <ds-badge [label]="'' + s.open" status="error" variant="strong" size="s"
+                    [attr.aria-label]="s.open + ' to correct'" />
+                }
+              </span>
+            </ds-side-nav-item>
+          }
+        }
+      </nav>
+
+      <div class="rc__main" (scroll)="onScroll($event)">
+        @for (s of sections(); track s.key) {
+          <section class="rc__section" [id]="'rc-sec-' + s.key">
+            <header class="rc__section-head">
+              <span class="rc__section-block">{{ s.block }}</span>
+              <h3 class="rc__section-title">{{ s.name }}</h3>
+            </header>
+            <div class="rc__fields">
+              @for (f of s.fields; track f.n) {
+                <div class="rc__field" [class.rc__field--wide]="isWide(f)">
+                  <ds-input-text [label]="f.label" [value]="values()[f.n]" (valueChange)="setValue(f.n, $event)"
+                    [error]="isOpenError(f)" [errorMessage]="f.error ?? ''" />
+                  <span class="rc__field-meta">#{{ f.n }} · {{ f.tech }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    </div>
+  }
 
   <div slot="actions" class="rc__actions">
     <ds-button type="secondary" (clicked)="closed.emit()">Cancel</ds-button>

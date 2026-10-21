@@ -5,39 +5,39 @@ import {
   ButtonComponent,
   IconComponent,
   InputTextComponent,
-  FunctionalNoticeComponent,
-  PropertiesPanelComponent,
   SegmentedControlComponent,
   SideNavItemComponent,
   ToasterService,
-  type PropertySection,
   type SegmentedOption,
 } from '../../../shared/ui';
 import type { RejectField, RejectRecord } from '../reject-record.model';
 import type { Reject } from '../reject-management.data';
 
-type FieldView = 'errors' | 'filled' | 'all';
+type Mode = 'correct' | 'browse';
+type BrowseView = 'filled' | 'all';
 
-/** Une sous-section telle qu'affichée : sa clé d'ancre et les champs retenus par la vue. */
+/** Un champ en cause, avec l'endroit du message d'où il vient. */
+interface ErrorItem {
+  field: RejectField;
+  where: string;
+}
+
+/** Une sous-section affichée en mode consultation. */
 interface ShownSection {
   key: string;
   block: string;
   name: string;
   fields: RejectField[];
-  /** Champs de la section masqués par la vue, révélables sur place. */
-  hiddenCount: number;
 }
 
 /**
- * Correction d'un rejet, sur un seul écran : jamais d'aller-retour entre un
- * récapitulatif et des sous-écrans. La colonne de gauche est le carrefour, elle
- * reste affichée : toutes les sections, leur compteur d'erreurs, un clic fait
- * défiler. À droite, la raison du rejet et l'identité du message, puis les
- * champs. Par défaut seuls les champs en cause sont montrés (un message compte
- * jusqu'à 126 champs, la plupart vides) ; les autres restent à un clic, section
- * par section ou pour tout le message. Erreur suivante / précédente enchaîne les
- * corrections sans chercher. Resubmit n'est jamais grisé : tant qu'il reste une
- * erreur, il y mène.
+ * Correction d'un rejet. Deux modes dans la même modale :
+ * - Correct (à l'ouverture) : tous les champs en cause réunis en un seul bloc,
+ *   l'un sous l'autre, chacun avec son emplacement. On enchaîne de haut en bas,
+ *   sans structure de message à parcourir.
+ * - Browse : tout le message, section par section, avec le carrefour des
+ *   sections à gauche. Pour aller voir un champ voisin, puis revenir.
+ * Resubmit n'est jamais grisé : tant qu'il reste une erreur, il y mène.
  */
 @Component({
   selector: 'rm-reject-correction-modal',
@@ -48,8 +48,6 @@ interface ShownSection {
     ButtonComponent,
     IconComponent,
     InputTextComponent,
-    FunctionalNoticeComponent,
-    PropertiesPanelComponent,
     SegmentedControlComponent,
     SideNavItemComponent,
   ],
@@ -61,7 +59,7 @@ export class RejectCorrectionModalComponent {
   private toaster = inject(ToasterService);
 
   open = input<boolean>(false);
-  /** La ligne du tableau : titre et identité du rejet. */
+  /** La ligne du tableau : titre du rejet. */
   reject = input<Reject | null>(null);
   /** Le contenu du message rejeté. */
   record = input<RejectRecord | null>(null);
@@ -69,30 +67,29 @@ export class RejectCorrectionModalComponent {
   closed = output<void>();
   resubmitted = output<string>();
 
-  /** Presque toute la hauteur de l'écran : en-tête et pied de modale déduits. */
-  readonly contentHeight = 'calc(100vh - 240px)';
-
-  readonly view = signal<FieldView>('errors');
+  readonly mode = signal<Mode>('correct');
+  readonly browseView = signal<BrowseView>('filled');
   /** Valeurs saisies, par numéro de champ. */
   readonly values = signal<Record<number, string>>({});
-  /** Sections dépliées en entier malgré la vue. */
-  readonly expanded = signal<Set<string>>(new Set());
   readonly activeSection = signal<string | null>(null);
 
+  /** Correct : la modale prend la hauteur de ses quelques champs. Browse : presque tout l'écran. */
+  readonly contentHeight = computed(() => this.mode() === 'browse' ? 'calc(100vh - 240px)' : 'auto');
+
   constructor() {
-    // Chaque ouverture repart des valeurs reçues
+    // Chaque ouverture repart des valeurs reçues, en mode correction
     effect(() => {
       const rec = this.record();
       if (!this.open() || !rec) return;
       const init: Record<number, string> = {};
       for (const f of this.allFields()) init[f.n] = f.value;
       this.values.set(init);
-      this.view.set('errors');
-      this.expanded.set(new Set());
-      this.activeSection.set(this.firstErrorSectionKey());
+      this.mode.set('correct');
+      this.browseView.set('filled');
+      this.activeSection.set(null);
     });
 
-    // La section active reste visible dans le carrefour, même quand il défile
+    // La section active reste visible dans le carrefour
     effect(() => {
       const key = this.activeSection();
       if (!key) return;
@@ -111,80 +108,89 @@ export class RejectCorrectionModalComponent {
     return v === '' || v === f.value.trim();
   }
 
-  readonly openErrors = computed(() => this.allFields().filter(f => this.isOpenError(f)));
-  readonly errorTotal = computed(() => this.allFields().filter(f => f.error).length);
-  readonly filledCount = computed(() => this.allFields().filter(f => (this.values()[f.n] ?? '').trim() !== '').length);
+  /** Les champs en cause, dans l'ordre du message, avec leur emplacement. */
+  readonly errors = computed<ErrorItem[]>(() =>
+    (this.record()?.blocks ?? []).flatMap(b => b.sections.flatMap(s =>
+      s.fields.filter(f => f.error).map(field => ({ field, where: `${b.name} › ${s.name}` })))));
 
-  readonly remainingLabel = computed(() => {
-    const n = this.openErrors().length;
-    return n === 0 ? 'All fields corrected' : `${n} ${n === 1 ? 'field' : 'fields'} to correct`;
+  readonly openCount = computed(() => this.errors().filter(e => this.isOpenError(e.field)).length);
+  readonly counterLabel = computed(() => {
+    const n = this.openCount();
+    return n === 0 ? 'All corrected' : `${n} to correct`;
   });
 
-  readonly viewOptions = computed<SegmentedOption[]>(() => [
-    { value: 'errors', label: `Fields to correct (${this.errorTotal()})` },
+  /** Identité du message sur une ligne, sous le titre. */
+  readonly identity = computed(() => {
+    const m = this.record()?.meta ?? {};
+    return [
+      m['EHBU'],
+      m['Provider ID'] && `Provider ${m['Provider ID']}`,
+      m['Date'],
+      m['Country'],
+      m['Identifier type'] && `${m['Identifier type']} ${m['Identifier value'] ?? ''}`.trim(),
+    ].filter(Boolean).join(' · ');
+  });
+
+  setValue(n: number, value: string): void {
+    this.values.update(v => ({ ...v, [n]: value }));
+  }
+
+  // ── Mode consultation ────────────────────────────────────────────────────
+  readonly filledCount = computed(() => this.allFields().filter(f => (this.values()[f.n] ?? '').trim() !== '').length);
+
+  readonly browseOptions = computed<SegmentedOption[]>(() => [
     { value: 'filled', label: `Filled fields (${this.filledCount()})` },
     { value: 'all',    label: `All fields (${this.allFields().length})` },
   ]);
 
-  setView(v: string): void {
-    this.view.set(v === 'filled' || v === 'all' ? v : 'errors');
-    this.expanded.set(new Set());
+  setBrowseView(v: string): void {
+    this.browseView.set(v === 'all' ? 'all' : 'filled');
   }
 
-  // ── Identité du message ──────────────────────────────────────────────────
-  readonly identity = computed<PropertySection[]>(() => {
-    const m = this.record()?.meta ?? {};
-    // Quatre colonnes de deux lignes : l'identité tient sur une bande basse
-    const pairs = [['Sub-System', 'EHBU'], ['Provider ID', 'Date'], ['Euler Hermes ID', 'Country'], ['Identifier type', 'Identifier value']];
-    return pairs.map(keys => ({ rows: keys.map(k => ({ label: k, value: m[k] ?? '', showEmptyPlaceholder: true })) }));
-  });
+  browse(): void {
+    this.mode.set('browse');
+    this.activeSection.set(null);
+  }
 
-  // ── Sections affichées selon la vue ──────────────────────────────────────
-  private keep(f: RejectField, view: FieldView): boolean {
-    if (view === 'all') return true;
-    if (view === 'filled') return !!f.error || (this.values()[f.n] ?? '').trim() !== '';
-    return !!f.error;
+  backToCorrections(): void {
+    this.mode.set('correct');
   }
 
   readonly sections = computed<ShownSection[]>(() => {
-    const view = this.view();
-    const open = this.expanded();
+    const all = this.browseView() === 'all';
     const out: ShownSection[] = [];
     (this.record()?.blocks ?? []).forEach((b, bi) => b.sections.forEach((s, si) => {
-      const key = `${bi}-${si}`;
-      const kept = open.has(key) ? s.fields : s.fields.filter(f => this.keep(f, view));
-      if (!kept.length) return;
-      out.push({ key, block: b.name, name: s.name, fields: kept, hiddenCount: s.fields.length - kept.length });
+      const kept = all ? s.fields : s.fields.filter(f => !!f.error || (this.values()[f.n] ?? '').trim() !== '');
+      if (kept.length) out.push({ key: `${bi}-${si}`, block: b.name, name: s.name, fields: kept });
     }));
     return out;
   });
 
-  /** Colonne de gauche : tous les blocs et toutes les sections, quelle que soit la vue. */
+  /** Carrefour : toutes les sections ; une section sans champ renseigné bascule la vue sur All. */
   readonly rail = computed(() => (this.record()?.blocks ?? []).map((b, bi) => ({
     name: b.name,
     sections: b.sections.map((s, si) => ({
       key: `${bi}-${si}`,
       name: s.name,
       open: s.fields.filter(f => this.isOpenError(f)).length,
-      hadErrors: s.fields.some(f => !!f.error),
     })),
   })));
 
-  expandSection(key: string): void {
-    this.expanded.update(set => new Set(set).add(key));
-  }
-
-  /** Une section absente de la vue y est ajoutée avant de défiler jusqu'à elle. */
   goToSection(key: string): void {
-    if (!this.sections().some(s => s.key === key)) this.expandSection(key);
+    if (!this.sections().some(s => s.key === key)) this.browseView.set('all');
     this.activeSection.set(key);
     setTimeout(() => {
       const sec = this.el(`#rc-sec-${key}`);
-      if (sec) this.scrollMain(sec.offsetTop - this.summaryBottom());
+      if (sec) this.scrollMain(sec.offsetTop);
     });
   }
 
-  /** Défilement piloté (ancre, erreur suivante) : la surbrillance automatique se tait le temps de l'animation. */
+  /** Les champs longs prennent deux colonnes : un libellé ne passe jamais sur deux lignes. */
+  isWide(f: RejectField): boolean {
+    return f.label.length > 30 || f.length >= 70;
+  }
+
+  // Défilement piloté par une ancre : la surbrillance automatique se tait le temps de l'animation
   private steering = false;
   private steerTimer?: ReturnType<typeof setTimeout>;
 
@@ -197,20 +203,12 @@ export class RejectCorrectionModalComponent {
     main.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }
 
-  /** Bas du résumé collant, plus l'écart entre blocs de la colonne : ce qui défile se range sous lui. */
-  private summaryBottom(): number {
-    const main = this.el('.rc__main');
-    const summary = this.el('.rc__summary');
-    const gap = main ? parseFloat(getComputedStyle(main).rowGap) || 0 : 0;
-    return (summary?.offsetHeight ?? 0) + gap;
-  }
-
-  /** Au défilement, le carrefour surligne la section dont le titre a passé le résumé. */
+  /** Au défilement, le carrefour surligne la section dont le titre a atteint le haut. */
   onScroll(event: Event): void {
     if (this.steering) return;
     const main = event.target as HTMLElement;
-    // Tolérance d'un écart de plus : une section posée par une ancre compte comme atteinte
-    const line = main.getBoundingClientRect().top + 2 * this.summaryBottom() - (this.el('.rc__summary')?.offsetHeight ?? 0);
+    const gap = parseFloat(getComputedStyle(main).rowGap) || 0;
+    const line = main.getBoundingClientRect().top + gap;
     let current: string | null = null;
     for (const sec of Array.from(main.querySelectorAll<HTMLElement>('.rc__section'))) {
       if (sec.getBoundingClientRect().top <= line) current = sec.id.replace('rc-sec-', '');
@@ -219,73 +217,17 @@ export class RejectCorrectionModalComponent {
     if (current) this.activeSection.set(current);
   }
 
-  // ── Saisie ───────────────────────────────────────────────────────────────
-  setValue(n: number, value: string): void {
-    this.values.update(v => ({ ...v, [n]: value }));
-  }
-
-  /** Les champs longs prennent deux colonnes : un libellé ne passe jamais sur deux lignes. */
-  isWide(f: RejectField): boolean {
-    return f.label.length > 30 || f.length >= 70;
-  }
-
-  // ── Erreur suivante / précédente ─────────────────────────────────────────
-  private currentError = signal<number | null>(null);
-
-  goToError(step: 1 | -1): void {
-    const list = this.openErrors();
-    if (!list.length) return;
-    const at = list.findIndex(f => f.n === this.currentError());
-    const next = at === -1 ? (step === 1 ? 0 : list.length - 1) : (at + step + list.length) % list.length;
-    this.focusField(list[next]);
-  }
-
-  private focusField(f: RejectField): void {
-    const key = this.sectionKeyOf(f);
-    if (key && !this.sections().some(s => s.key === key && s.fields.includes(f))) this.expandSection(key);
-    this.currentError.set(f.n);
-    if (key) this.activeSection.set(key);
-    setTimeout(() => {
-      const field = this.el(`#rc-field-${f.n}`);
-      if (!field) return;
-      // Le champ remonte sous le résumé, avec le titre de sa section au-dessus quand il tient
-      const sec = field.closest<HTMLElement>('.rc__section');
-      const main = this.el('.rc__main');
-      const near = (main?.clientHeight ?? 0) / 3;
-      const top = sec && field.offsetTop - sec.offsetTop < near ? sec.offsetTop : field.offsetTop;
-      this.scrollMain(top - this.summaryBottom());
-      field.querySelector('input')?.focus({ preventScroll: true });
-    });
-  }
-
-  onFieldFocus(f: RejectField): void {
-    if (f.error) this.currentError.set(f.n);
-  }
-
   // ── Fin ──────────────────────────────────────────────────────────────────
-  /** Jamais grisé : tant qu'il reste une erreur, Resubmit y mène. */
+  /** Jamais grisé : tant qu'il reste une erreur, Resubmit y ramène. */
   resubmit(): void {
-    const left = this.openErrors();
-    if (left.length) {
-      this.toaster.show(`${this.remainingLabel()} before resubmitting`, { tone: 'warning' });
-      this.focusField(left[0]);
+    const left = this.errors().find(e => this.isOpenError(e.field));
+    if (left) {
+      this.toaster.show(`${this.counterLabel()} before resubmitting`, { tone: 'warning' });
+      this.mode.set('correct');
+      setTimeout(() => this.el(`#rc-err-${left.field.n} input`)?.focus());
       return;
     }
-    const id = this.reject()?.id ?? this.record()?.id ?? '';
-    this.resubmitted.emit(id);
-  }
-
-  private sectionKeyOf(f: RejectField): string | null {
-    const blocks = this.record()?.blocks ?? [];
-    for (let bi = 0; bi < blocks.length; bi++)
-      for (let si = 0; si < blocks[bi].sections.length; si++)
-        if (blocks[bi].sections[si].fields.includes(f)) return `${bi}-${si}`;
-    return null;
-  }
-
-  private firstErrorSectionKey(): string | null {
-    const f = this.allFields().find(x => x.error);
-    return f ? this.sectionKeyOf(f) : null;
+    this.resubmitted.emit(this.reject()?.id ?? this.record()?.id ?? '');
   }
 
   private el(selector: string): HTMLElement | null {

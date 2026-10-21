@@ -1,21 +1,108 @@
 // =============================================================
-// Correction d'un rejet : carrefour à gauche (sections, compteurs), champs à
-// droite, sur un seul écran. Les deux colonnes défilent chacune de leur côté :
-// le carrefour reste entier sous les yeux, le résumé reste en haut des champs.
+// Correction d'un rejet, deux modes dans la même modale :
+// - Correct : les champs en cause réunis en une liste qu'on enchaîne.
+// - Browse : tout le message, carrefour des sections à gauche ; les deux
+//   colonnes défilent chacune de leur côté.
 // =============================================================
 
-// Remplit la zone de contenu de la modale (hauteur fixe) : rien n'y déborde,
-// ce sont les colonnes qui défilent
+:host {
+  font-family: var(--semantic-font-family);
+}
+
+// ── En-tête : identité du message et compteur ──────────────────────────────
+.rc__head {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+}
+
+.rc__identity {
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+  font-size:     var(--semantic-font-text-style-size-m);
+  line-height:   var(--semantic-font-text-style-line-height-m);
+  color:         var(--semantic-color-static-text-main-secondary);
+}
+
+// ── Mode Correct ───────────────────────────────────────────────────────────
+.rc__errors {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-l);
+  margin:         var(--semantic-measurement-spacing-none);
+  padding:        var(--semantic-measurement-spacing-none);
+  list-style:     none;
+}
+
+// Rang à gauche, champ à droite : la liste se lit comme une suite de tâches
+.rc__error {
+  display:     flex;
+  align-items: flex-start;
+  gap:         var(--semantic-measurement-spacing-m);
+}
+
+// Aligné sur la ligne du libellé du champ
+.rc__error-index {
+  display:         flex;
+  justify-content: center;
+  flex-shrink:     0;
+  width:           var(--semantic-measurement-sizing-l);
+  padding-top:     var(--semantic-measurement-spacing-l);
+}
+
+.rc__error-done {
+  color: var(--semantic-color-static-icon-main-functional-positive);
+}
+
+.rc__error-body {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+  flex:           1 1 0;
+  min-width:      0;
+  max-width:      calc(var(--semantic-measurement-spacing-3xl) * 9); // un champ, pas une ligne d'écran
+}
+
+.rc__error-where {
+  font-size:      var(--semantic-font-text-style-size-s);
+  line-height:    var(--semantic-font-text-style-line-height-s);
+  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
+  color:          var(--semantic-color-static-text-main-tertiary);
+}
+
+.rc__field-meta {
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+  font-size:     var(--semantic-font-text-style-size-s);
+  line-height:   var(--semantic-font-text-style-line-height-s);
+  color:         var(--semantic-color-static-text-main-tertiary);
+}
+
+.rc__switch {
+  align-self: flex-start;
+}
+
+// ── Mode Browse ────────────────────────────────────────────────────────────
+.rc__browse-bar {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+}
+
+// Remplit le reste de la zone de contenu (hauteur fixe) : ce sont les colonnes qui défilent
 .rc {
   display:               grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
   gap:                   var(--semantic-measurement-spacing-l);
   flex:                  1 1 0;
   min-height:            0;
-  font-family:           var(--semantic-font-family);
 }
 
-// ── Carrefour ──────────────────────────────────────────────────────────────
 .rc__rail {
   overflow-y:     auto;
   display:        flex;
@@ -55,12 +142,6 @@
   white-space:   nowrap;
 }
 
-.rc__rail-done {
-  flex-shrink: 0;
-  color:       var(--semantic-color-static-icon-main-functional-positive);
-}
-
-// ── Zone de droite ─────────────────────────────────────────────────────────
 .rc__main {
   position:       relative;
   overflow-y:     auto;
@@ -71,32 +152,6 @@
   padding-right:  var(--semantic-measurement-spacing-s); // la barre de défilement ne colle pas aux champs
 }
 
-.rc__summary {
-  position:       sticky;
-  top:            0;
-  z-index:        1;
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-s);
-  padding-bottom: var(--semantic-measurement-spacing-s);
-  background:     var(--semantic-color-static-background-main-primary);
-  border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary);
-}
-
-.rc__toolbar {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  gap:             var(--semantic-measurement-spacing-m);
-}
-
-.rc__nav {
-  display:     flex;
-  align-items: center;
-  gap:         var(--semantic-measurement-spacing-s);
-}
-
-// ── Sections et champs ─────────────────────────────────────────────────────
 .rc__section {
   display:        flex;
   flex-direction: column;
@@ -141,27 +196,6 @@
   &--wide {
     grid-column: span 2;
   }
-}
-
-.rc__field-meta {
-  overflow:      hidden;
-  text-overflow: ellipsis;
-  white-space:   nowrap;
-  font-size:     var(--semantic-font-text-style-size-s);
-  line-height:   var(--semantic-font-text-style-line-height-s);
-  color:         var(--semantic-color-static-text-main-tertiary);
-}
-
-.rc__more {
-  align-self: flex-start;
-}
-
-.rc__empty {
-  margin:     var(--semantic-measurement-spacing-none);
-  padding:    var(--semantic-measurement-spacing-xl);
-  text-align: center;
-  font-style: italic;
-  color:      var(--semantic-color-static-text-main-tertiary);
 }
 
 .rc__actions {
