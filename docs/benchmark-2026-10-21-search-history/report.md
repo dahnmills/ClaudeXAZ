@@ -4,97 +4,90 @@ Décision évaluée : une carte unique, indépendante du type d'objet, pour Rece
 Recently viewed et Favorites (icône d'objet, ligne 1 = recherche + type de recherche,
 ligne 2 = critères renseignés, date à droite), un seul fil chronologique et un filtre de type.
 
-## Méthode et limites
+Deux passes :
 
-- Pas d'outil de recherche web : sources atteintes par fetch direct d'URL (moteur proxy vite
-  limité en HTTP 429). Environ 60 URL tentées, une trentaine exploitables.
-- Sources surtout textuelles (documentation) : elles disent ce que fait le produit, rarement la
-  mise en page exacte d'un élément d'historique. Galeries visuelles (Mobbin, Dribbble, Land-book,
-  Pttrns, Behance, UI Sources) non analysées (accès refusé ou contenu non lisible).
-- « Fait » = ce que dit la source ; « inférence » = déduction.
+- **Passe 1 (texte)** : documentation produit et recherche UX, sans navigateur.
+- **Passe 2 (visuel)** : navigateur réel (Edge headless), captures analysées une à une.
+  Détail dans [`visual-galleries.md`](visual-galleries.md) et [`visual-products.md`](visual-products.md),
+  captures dans [`shots/`](shots/) (`gal-*` galeries, `prod-*` produits).
 
 ## 1. Résumé exécutif
 
-**Verdict : à ajuster. Décision valide sur le fond, quatre corrections. Confiance ~65 %.**
+**Verdict : décision validée, avec cinq ajustements. Confiance ~80 %** (65 % après la passe 1).
 
-- La liste chronologique mixte de récents tous types est le pattern des sources qui documentent
-  les récents (Salesforce, Jira, Linear, Notion). Le regroupement par type sert surtout aux
-  résultats (Dynamics, Salesforce), pas à l'historique : l'abandon des blocs par type est soutenu.
-- Le filtre de type à côté d'une liste unique est très courant (LinkedIn, Slack, Dynamics,
-  Shopify, HubSpot) ; segmenté puis dropdown au-delà de quelques types est cohérent.
-- Aucune source ne montre un résumé des critères d'une recherche passée en ligne 2 : c'est le
-  point le moins étayé. Analogues : Stripe (requête en jetons `clé:valeur`), GitHub.
-- À ajuster : (1) distinguer recherche passée et objet consulté, (2) libellé de type en texte en
-  plus de l'icône, (3) états vides et filtre actif visibles par onglet, (4) troncature « +N » de la
-  ligne 2.
+- **Ligne 2 de critères : confirmée.** C'était le point le moins étayé. 6 produits sur les 15
+  qui listent des recherches passées résument les critères (Sales Navigator, Airbnb, Booking,
+  Expedia, Indeed, Skyscanner), plus Autotrader et Gumtree côté galeries. Règle observée :
+  recherche par formulaire multi-champs = critères affichés ; texte libre = requête seule.
+  Notre recherche est un formulaire.
+- **Anatomie : un précédent quasi identique en production.** Atlassian Rovo (`prod-03`) :
+  icône de type, titre gras, ligne 2 grise « Jira · Bug · … », date à droite avec verbe
+  (« Viewed yesterday »). Pipedrive (`prod-08`) : même structure sans la date. Autotrader
+  (`gal-01`) : titre généré, « 200 miles • N19 4PQ • £4K - £20K • Petrol • Manual », date relative.
+- **Liste mixte + filtre de type : confirmés.** 8 produits mélangent les types, 4 les séparent
+  (Sales Navigator, ZoomInfo : les bases B2B les plus proches). Le filtre All / Buyers / Policies
+  couvre ce besoin s'il reste bien visible.
+- **Recherche passée et objet consulté : toujours distingués** (6 sur 6 produits, 6 sur 7
+  galeries), le plus souvent par sections ou onglets. Nos onglets le font déjà. Aucun produit
+  ne donne à une recherche passée l'icône de l'objet : c'est le seul point contre la carte unique.
+- **Concurrents directs** : rien de public chez Allianz Trade, Coface, Creditsafe, D&B. Seul
+  analogue métier : Orbis (Moody's), onglets « Saved searches / Favourites / History » (`prod-18`),
+  très proches des nôtres.
 
-## 2. Patterns observés
+## 2. Ajustements à la décision
 
-| # | Pattern | Sources | Détail |
+1. **Verbe dans la date** : « Searched 2 h ago » dans Recent search, « Viewed yesterday » dans
+   Recently viewed (Rovo). Compense l'icône d'objet partagée entre requête et objet.
+2. **Pas de badge « +N »** : 0 cas en historique. Une ligne avec ellipse, texte complet au
+   survol. Si un compteur est nécessaire, en mots (« 4 more », Kibana `prod-16`, Sales Navigator
+   `prod-11`). Les identifiants (Company ID, n° de police) restent visibles, on tronque le reste.
+3. **Libellé court sur les valeurs ambiguës** : « Ext. 01 » oui, « 01 » seul non. Séparateur « · ».
+4. **Favorites** : si l'onglet mélange recherches et objets, type écrit en texte en plus de
+   l'icône (Crunchbase `prod-17`). Une recherche favorite a besoin d'un titre lisible : généré à
+   partir des critères (Autotrader) ou renommable.
+5. **Date** : relative sur quelques jours, puis absolue (Autotrader affiche « 77 weeks ago »,
+   à éviter). Date complète au survol.
+
+## 3. Points tranchés en passe 2
+
+| Question | Passe 1 | Passe 2 (vu) | Conclusion |
 |---|---|---|---|
-| P1 | Récents avant toute saisie | 8 : Salesforce, Jira, Linear, Notion, GitHub, Slack, UX Magazine, UX Collective | Notion : pages visitées avec heure ; Slack : icône horloge |
-| P2 | Liste mixte multi-types pour les récents | 3 : Salesforce, Jira, Notion | Regroupement non précisé |
-| P3 | Regroupement par type pour les résultats, pas l'historique | 2 à 3 : Dynamics, Salesforce, Slack | Distinction résultats/historique : inférence |
-| P4 | Filtre de type à côté d'une liste unique | 10 : LinkedIn, Slack, Dynamics, Shopify, HubSpot, Zendesk, Stripe, Linear, Google Drive, UX Magazine | Dropdown si beaucoup de types (Dynamics) |
-| P5 | Types distingués par libellé et style | 3 : NN/g, UX Magazine, Baymard | |
-| P6 | Suppression d'historique | 5 : LinkedIn, Shopify, YouTube, Spotify, Slack | × par ligne, « Clear » global confirmé |
-| P7 | Rejeu en un clic | 4 : LinkedIn, GitHub, Linear, Stripe | |
-| P8 | Recherches enregistrées distinctes de l'historique | 3 : GitHub, Jira, Linear | |
-| P9 | Limite de taille | 2 : UX Magazine (moins de 10 en dropdown), Salesforce (5) | |
-| P10 | Résumé de critères d'une requête passée | 1 indirect : Stripe | |
+| (a) Ligne 2 = critères | 1 source indirecte | 8 produits + 2 concepts | Garder |
+| (b) Requête vs objet | Risque signalé | Distingués partout, sections ou onglets | Onglets OK + verbe dans la date |
+| (c) Groupement par date | Recommandé | 4 produits (Notion, Drive, YouTube, Chrome), tous des historiques longs ; 3 concepts sur 42 | Optionnel, pas pour v1 |
+| (d) Troncature « +N » | Recommandée | 0 cas ; ellipse + infobulle, compteur en mots sur 4 produits | Remplacer par ellipse |
+| (e) Anatomie | Inférence | Rovo, Pipedrive, Autotrader | Garder |
+| × de suppression | Au survol | Survol chez Rovo ; toujours visible sur 6 cas mobiles | Survol + focus (desktop), « Clear all » confirmé, Undo (Indeed) |
 
-## 3. Sources principales
+## 4. Recommandations (mises à jour)
 
-Enterprise / B2B : Salesforce (salesforceben.com/salesforce-search, lightningdesignsystem.com),
-Jira (support.atlassian.com/jira-software-cloud/docs/find-recent-issues), Linear
-(linear.app/docs/search), Notion (notion.com/help/search), Slack
-(slack.com/help/articles/202528808), GitHub (docs.github.com, about-searching-on-github,
-using-github-code-search), HubSpot (knowledge.hubspot.com, search-within-your-hubspot-account),
-Dynamics 365 / Power Apps (learn.microsoft.com, quick-find, search-records), Stripe
-(docs.stripe.com/dashboard/search), Shopify (help.shopify.com, admin search), Zendesk
-(support.zendesk.com, Searching Zendesk Support), Google Drive (support.google.com/drive/answer/2375114),
-VS Code, macOS Spotlight, Alfred, Raycast.
-
-Grand public : LinkedIn (linkedin.com/help, a523136 et a524275), YouTube
-(support.google.com/youtube/answer/57711), Spotify (community.spotify.com).
-
-Recherche UX et design systems : NN/g (Enriched Site-Search Suggestions, Site Search
-Suggestions, Search: Visible and Simple, Filters vs. Facets, Designing Search Suggestions),
-Baymard (Autocomplete design), UX Magazine (Best practices designing autosuggest), UX Collective
-(UX for search 101), IxDF, UXPin (Advanced search UX), Material 3 (search specs), Carbon
-(search usage), GOV.UK Design System, Page Flows.
-
-## 4. Recommandations
-
-1. **Anatomie** : icône d'objet, 2 lignes, date à droite de la ligne 1, actions en bout de ligne
-   au survol et au focus ; hauteur fixe pour les trois onglets.
+1. **Anatomie** : icône d'objet, 2 lignes, date avec verbe à droite de la ligne 1, actions au
+   survol et au focus ; hauteur fixe pour les trois onglets.
 2. **Lignes** : ligne 1 = ce qu'on a cherché en gras + type de recherche en texte secondaire ;
-   ligne 2 = critères renseignés seulement, ordre du formulaire, séparateur unique.
-3. **Type** : icône + libellé texte (NN/g, UX Magazine) ; une requête passée et un objet ouvert
-   doivent se distinguer.
-4. **Date** : relative les derniers jours (« 2 h ago », « Yesterday »), date courte au-delà,
-   date complète au survol (inférence, aucune source ne tranche).
-5. **Critères** : 4 visibles au plus puis « +N », une ligne avec ellipse, statuts multiples
-   condensés (inférence).
-6. **Groupement par date** : en-têtes légers Today / Yesterday / Earlier (YouTube groupe par
-   date), pas pour Favorites (inférence à tester).
-7. **Filtre** : All par défaut, segmenté jusqu'à 4 types puis dropdown avec compteurs ; portée
-   active visible, sortie en un clic quand le filtre ne rend rien.
-8. **Rejeu** : carte entière cliquable (Recent relance, Viewed et Favorites ouvrent l'objet).
-9. **Suppression** : × par ligne au survol et au focus ; « Clear all » confirmé ; retrait de
-   favori distinct.
-10. **Taille et états vides** : ~20 éléments puis « Show more » ; état vide propre à chaque
-    onglet et état « filtre sans résultat » avec lien vers All.
+   ligne 2 = critères renseignés seulement, ordre du formulaire, séparateur « · », ellipse.
+3. **Filtre** : All par défaut, segmenté jusqu'à 4 types puis dropdown ; état « filtre sans
+   résultat » avec retour vers All (Teams `gal-18`).
+4. **Rejeu** : carte entière cliquable (Recent relance, Viewed et Favorites ouvrent l'objet).
+5. **Suppression** : × par ligne, « Clear all » confirmé, Undo après suppression.
+6. **Taille et états vides** : ~20 éléments puis « Show more » ; état vide propre à chaque onglet.
 
 ## 5. Risques et points ouverts
 
-1. Pas de précédent pour la ligne 2 « critères résumés » : tester avec des analystes sur des cas
-   réels (buyer avec adresse complète, police avec plusieurs statuts).
-2. Preuves faibles sur la mise en page des éléments : revue visuelle des produits et des galeries
-   à faire.
-3. Trois onglets + un filtre de type = deux axes de navigation ; vérifier que les trois onglets
-   correspondent à des tâches distinctes.
-4. Un composant pour deux natures d'éléments (requête passée, objet ouvert) : risque de confusion.
-5. Accessibilité AA : date relative lisible au lecteur d'écran, suppression au clavier, icône nommée.
-6. Confidentialité : l'historique de recherche d'entreprises est sensible ; rétention et taille à
-   définir.
+1. Aucun concurrent direct observable : tester avec des analystes sur des cas réels (buyer avec
+   adresse complète, police avec plusieurs statuts).
+2. Galeries : 30 exemples sur 42 sont des concepts Dribbble, pondérés en conséquence.
+3. Échantillon produits surtout grand public pour la ligne 2 (voyage, emploi, auto) ; seul
+   Sales Navigator est B2B sur ce point.
+4. Accessibilité AA : date relative lisible au lecteur d'écran, suppression au clavier, icône nommée.
+5. Confidentialité : l'historique de recherche d'entreprises est sensible ; rétention et taille à définir.
+
+## 6. Méthode et limites
+
+- Passe 1 : environ 60 URL tentées, une trentaine exploitables, sources textuelles. Sources
+  principales : Salesforce, Jira, Linear, Notion, Slack, GitHub, HubSpot, Dynamics 365, Stripe,
+  Shopify, Zendesk, Google Drive, LinkedIn, NN/g, Baymard, Material 3, Carbon, GOV.UK.
+- Passe 2 galeries : 48 exemples ouverts, 42 exploitables (Dribbble, Page Flows). Behance,
+  Saaspo, Nicelydone, Refero, SaaSFrame, Land-book bloqués ou vides ; UI Garage fermé ; Mobbin exclu.
+- Passe 2 produits : 38 produits, environ 140 captures publiques ouvertes, 33 utiles. Entrée par
+  la recherche d'images Bing (recherche texte inutilisable).
+- « Vu » = constaté sur capture ; « inférence » = déduction.
