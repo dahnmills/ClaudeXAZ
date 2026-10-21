@@ -45,7 +45,8 @@
   display:     flex;
   align-items: center;
   gap:         var(--semantic-measurement-spacing-m);
-  padding:     var(--semantic-measurement-spacing-m);
+  // Resserrée : le carrefour tient dans la hauteur du wizard sans défiler
+  padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
   cursor:      pointer;
   transition:  background 0.15s ease;
 
@@ -117,29 +118,40 @@
   color:       var(--semantic-color-static-text-main-primary);
 }
 
-// Vue Errors : les champs en cause l'un sous l'autre
-.rc__errors {
+// Panneau gris du wizard de création de société : il défile seul dans la
+// hauteur fixe de la modale ; une famille = un titre en capitales + une carte
+// blanche qui porte les champs
+.rc__panel {
+  flex:           1 1 0;
+  min-height:     0;
+  overflow-y:     auto;
   display:        flex;
   flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-l);
-  margin:         var(--semantic-measurement-spacing-none);
-  padding:        var(--semantic-measurement-spacing-none);
-  list-style:     none;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        var(--semantic-measurement-spacing-l);
+  background:     var(--semantic-color-static-background-main-secondary);
+  border-radius:  var(--semantic-border-radius-s);
 }
 
-.rc__error {
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-xxs);
-  max-width:      calc(var(--semantic-measurement-spacing-3xl) * 9); // un champ, pas une ligne d'écran
+.rc__family-head {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
 }
 
-.rc__error-where {
+.rc__family {
   font-size:      var(--semantic-font-text-style-size-s);
-  line-height:    var(--semantic-font-text-style-line-height-s);
-  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
-  letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
+  font-weight:    var(--semantic-font-text-style-font-weight-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+  text-transform: uppercase;
   color:          var(--semantic-color-static-text-main-tertiary);
+}
+
+.rc__card-white {
+  padding:       var(--semantic-measurement-spacing-m);
+  background:    var(--semantic-color-static-background-main-primary);
+  border-radius: var(--semantic-border-radius-s);
 }
 
 .rc__field-meta {
@@ -149,21 +161,6 @@
   font-size:     var(--semantic-font-text-style-size-s);
   line-height:   var(--semantic-font-text-style-line-height-s);
   color:         var(--semantic-color-static-text-main-tertiary);
-}
-
-// Vue d'un bloc : sous-sections, trois colonnes de champs
-.rc__section {
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-s);
-}
-
-.rc__section-title {
-  margin:      var(--semantic-measurement-spacing-none);
-  font-size:   var(--semantic-font-text-style-size-m);
-  line-height: var(--semantic-font-text-style-line-height-m);
-  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-  color:       var(--semantic-color-static-text-main-secondary);
 }
 
 // Un libellé long prend deux colonnes plutôt que deux lignes
@@ -184,7 +181,6 @@
   }
 }
 
-.rc__more,
 .rc__next {
   align-self: flex-start;
 }

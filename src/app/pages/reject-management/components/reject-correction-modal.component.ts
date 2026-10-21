@@ -65,8 +65,8 @@ export class RejectCorrectionModalComponent {
   /** Sous-sections dont les champs vides sont dépliés. */
   readonly expanded = signal<Set<string>>(new Set());
 
-  /** Un bloc complet demande presque tout l'écran ; le carrefour et les erreurs, leur seule hauteur. */
-  readonly contentHeight = computed(() => typeof this.screen() === 'number' ? 'calc(100vh - 240px)' : 'auto');
+  /** Même hauteur que le wizard de création de société, sur tous les écrans : la modale ne saute pas. */
+  readonly contentHeight = '520px';
 
   constructor() {
     // Chaque ouverture repart des valeurs reçues, sur le carrefour
@@ -100,6 +100,17 @@ export class RejectCorrectionModalComponent {
   readonly errors = computed<ErrorItem[]>(() =>
     (this.record()?.blocks ?? []).flatMap(b => b.sections.flatMap(s =>
       s.fields.filter(f => f.error).map(field => ({ field, where: `${b.name} › ${s.name}` })))));
+
+  /** Vue Errors : les erreurs groupées par emplacement, une famille par sous-section. */
+  readonly errorGroups = computed(() => {
+    const groups: { where: string; items: ErrorItem[] }[] = [];
+    for (const e of this.errors()) {
+      const last = groups.at(-1);
+      if (last?.where === e.where) last.items.push(e);
+      else groups.push({ where: e.where, items: [e] });
+    }
+    return groups;
+  });
 
   readonly openCount = computed(() => this.errors().filter(e => this.isOpenError(e.field)).length);
 
@@ -141,8 +152,8 @@ export class RejectCorrectionModalComponent {
     this.screen.set(screen);
     this.expanded.set(new Set());
     setTimeout(() => {
-      const content = this.el('ds-modal-content');
-      content?.scrollTo({ top: 0 });
+      this.el('ds-modal-content')?.scrollTo({ top: 0 });
+      this.el('.rc__panel')?.scrollTo({ top: 0 });
       if (typeof screen !== 'number') return;
       const first = this.record()?.blocks[screen]?.sections.flatMap(s => s.fields).find(f => this.isOpenError(f));
       if (first) this.el(`#rc-field-${first.n}`)?.scrollIntoView({ block: 'center' });

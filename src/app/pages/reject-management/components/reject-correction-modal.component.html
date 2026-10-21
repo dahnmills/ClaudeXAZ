@@ -1,5 +1,5 @@
 <ds-modal [open]="open()" size="large" [title]="reject()?.type ?? 'Reject'"
-  [contentHeight]="contentHeight()" (closed)="closed.emit()">
+  [contentHeight]="contentHeight" (closed)="closed.emit()">
 
   <!-- Identité du message et ce qu'il reste à faire, sur une ligne -->
   <div class="rc__head">
@@ -52,51 +52,62 @@
       <span class="rc__screen-title">{{ screenTitle() }}</span>
     </div>
 
-    @if (screen() === 'errors') {
-      <!-- Vue spéciale : toutes les erreurs, l'une sous l'autre, chacune avec son emplacement -->
-      <ol class="rc__errors">
-        @for (e of errors(); track e.field.n) {
-          <li class="rc__error" [id]="'rc-err-' + e.field.n">
-            <span class="rc__error-where">{{ e.where }}</span>
-            <ds-input-text [label]="e.field.label" [value]="values()[e.field.n]"
-              (valueChange)="setValue(e.field.n, $event)"
-              [error]="isOpenError(e.field)" [errorMessage]="e.field.error ?? ''" />
-            <span class="rc__field-meta">#{{ e.field.n }} · {{ e.field.tech }} · max {{ e.field.length }}</span>
-          </li>
+    <!-- Panneau gris du wizard de création : une famille = un titre + une carte blanche de champs -->
+    <div class="rc__panel">
+      @if (screen() === 'errors') {
+        @for (g of errorGroups(); track g.where) {
+          <div class="rc__group">
+            <span class="rc__family">{{ g.where }}</span>
+            <div class="rc__card-white">
+              <div class="rc__fields">
+                @for (e of g.items; track e.field.n) {
+                  <div class="rc__field" [class.rc__field--wide]="isWide(e.field)" [id]="'rc-err-' + e.field.n">
+                    <ds-input-text [label]="e.field.label" [value]="values()[e.field.n]"
+                      (valueChange)="setValue(e.field.n, $event)"
+                      [error]="isOpenError(e.field)" [errorMessage]="e.field.error ?? ''" />
+                    <span class="rc__field-meta">#{{ e.field.n }} · {{ e.field.tech }} · max {{ e.field.length }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
         }
-      </ol>
-    } @else {
-      <!-- Un bloc : ses sous-sections, champs en cause d'abord, vides repliés -->
-      @for (s of blockSections(); track s.key) {
-        <section class="rc__section">
-          <h4 class="rc__section-title">{{ s.name }}</h4>
-          @if (s.fields.length) {
-            <div class="rc__fields">
-              @for (f of s.fields; track f.n) {
-                <div class="rc__field" [class.rc__field--wide]="isWide(f)" [id]="'rc-field-' + f.n">
-                  <ds-input-text [label]="f.label" [value]="values()[f.n]" (valueChange)="setValue(f.n, $event)"
-                    [error]="isOpenError(f)" [errorMessage]="f.error ?? ''" />
-                  <span class="rc__field-meta">#{{ f.n }} · {{ f.tech }}</span>
-                </div>
+      } @else {
+        @for (s of blockSections(); track s.key) {
+          <div class="rc__group">
+            <div class="rc__family-head">
+              <span class="rc__family">{{ s.name }}</span>
+              @if (s.emptyCount > 0) {
+                <ds-button type="plain" tone="default" (clicked)="showEmpty(s.key)">
+                  <ds-icon slot="icon-left" name="plus" [size]="16" />
+                  {{ s.emptyCount }} empty {{ s.emptyCount === 1 ? 'field' : 'fields' }}
+                </ds-button>
               }
             </div>
-          }
-          @if (s.emptyCount > 0) {
-            <ds-button class="rc__more" type="plain" (clicked)="showEmpty(s.key)">
-              <ds-icon slot="icon-left" name="plus" [size]="16" />
-              {{ s.emptyCount }} empty {{ s.emptyCount === 1 ? 'field' : 'fields' }}
-            </ds-button>
-          }
-        </section>
-      }
+            @if (s.fields.length) {
+              <div class="rc__card-white">
+                <div class="rc__fields">
+                  @for (f of s.fields; track f.n) {
+                    <div class="rc__field" [class.rc__field--wide]="isWide(f)" [id]="'rc-field-' + f.n">
+                      <ds-input-text [label]="f.label" [value]="values()[f.n]" (valueChange)="setValue(f.n, $event)"
+                        [error]="isOpenError(f)" [errorMessage]="f.error ?? ''" />
+                      <span class="rc__field-meta">#{{ f.n }} · {{ f.tech }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
 
-      @if (nextBlock(); as next) {
-        <ds-button class="rc__next" type="secondary" (clicked)="go(next.index)">
-          Next: {{ next.name }} ({{ next.open }})
-          <ds-icon slot="icon-right" name="chevron-right" [size]="16" />
-        </ds-button>
+        @if (nextBlock(); as next) {
+          <ds-button class="rc__next" type="secondary" (clicked)="go(next.index)">
+            Next: {{ next.name }} ({{ next.open }})
+            <ds-icon slot="icon-right" name="chevron-right" [size]="16" />
+          </ds-button>
+        }
       }
-    }
+    </div>
   }
 
   <div slot="actions" class="rc__actions">
