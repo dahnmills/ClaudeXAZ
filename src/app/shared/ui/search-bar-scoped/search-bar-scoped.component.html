@@ -207,19 +207,20 @@
     </div>
     <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
 
-    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country" [class.ds-search-bar-scoped__slot--error]="statusError()">
-      <ds-standalone-dropdown icon="check-circle" [label]="statusLabel()" [disabled]="statusDisabled()" (clicked)="toggle('status')" />
-      @if (openFlyout() === 'status') {
-        <div class="ds-search-bar-scoped__flyout ds-search-bar-scoped__flyout--list">
-          <ds-flyout-menu>
-            <div class="ds-search-bar-scoped__flyout-options">
-              @for (s of policyStatuses; track s.id) {
-                <ds-checkbox [label]="s.label" [checked]="isStatusChecked(s.id)" (checkedChange)="toggleStatus(s.id)" />
-              }
-            </div>
-          </ds-flyout-menu>
-        </div>
-      }
+    <!-- Status : les statuts choisis remontent en tags dans le slot, la croix
+         d'un tag le retire, le slot ouvre la liste à cocher (ds-multi-select inline) -->
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__status-slot" [class.ds-search-bar-scoped__slot--error]="statusError()">
+      <ds-multi-select
+        variant="inline"
+        icon="check-circle"
+        placeholder="No status selected"
+        [options]="statusOptions"
+        [maxVisible]="2"
+        [disabled]="statusDisabled()"
+        [error]="statusError()"
+        [value]="policyCriteria().statuses"
+        (valueChange)="setStatuses($event)"
+      />
       @if (statusError()) {
         <span class="ds-search-bar-scoped__error-msg">
           <ds-icon name="error-circle" [size]="16" /> Select at least one status

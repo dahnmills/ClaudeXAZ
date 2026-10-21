@@ -9,12 +9,12 @@ import { FlagComponent, type FlagCode } from '../flag/flag.component';
 import { DividerComponent } from '../divider/divider.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { InputSearchComponent } from '../input-search/input-search.component';
-import { CheckboxComponent } from '../checkbox/checkbox.component';
+import { MultiSelectComponent, type MultiSelectOption } from '../multi-select/multi-select.component';
 import {
   SEARCH_TYPES, COUNTRIES, ID_TYPES, DIAL_CODES,
   type SearchType, type IdTypeOption,
 } from '../search-bar-multi/search-bar-multi.component';
-import { BU_CODES, type PolicyStatus } from '../policy-result-card/policy.model';
+import { BU_CODES } from '../policy-result-card/policy.model';
 import {
   POLICY_MODES, POLICY_STATUSES, defaultPolicyCriteria, allPolicyStatuses,
   type PolicyMode, type PolicyCriteriaValues,
@@ -22,7 +22,7 @@ import {
 
 export type SearchScope = 'buyers' | 'policies';
 
-type Flyout = 'scope' | 'type' | 'country' | 'id-type' | 'mode' | 'bu' | 'search-in' | 'status';
+type Flyout = 'scope' | 'type' | 'country' | 'id-type' | 'mode' | 'bu' | 'search-in';
 
 const SCOPES: { id: SearchScope; label: string; icon: IconName }[] = [
   { id: 'buyers',   label: 'Buyers',   icon: 'buyers' },
@@ -56,7 +56,7 @@ const BUYER_PLACEHOLDERS: Record<SearchType, string> = {
 @Component({
   selector: 'ds-search-bar-scoped',
   standalone: true,
-  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent, DividerComponent, TooltipDirective, InputSearchComponent, CheckboxComponent],
+  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent, DividerComponent, TooltipDirective, InputSearchComponent, MultiSelectComponent],
   templateUrl: './search-bar-scoped.component.html',
   styleUrl: './search-bar-scoped.component.scss',
   host: { class: 'ds-search-bar-scoped' },
@@ -83,7 +83,7 @@ export class SearchBarScopedComponent {
   readonly countries = COUNTRIES;
   readonly idTypes = ID_TYPES;
   readonly policyModes = POLICY_MODES.map(m => ({ ...m, icon: POLICY_MODE_ICONS[m.id] }));
-  readonly policyStatuses = POLICY_STATUSES;
+  readonly statusOptions: MultiSelectOption[] = POLICY_STATUSES.map(s => ({ value: s.id, label: s.label }));
   readonly searchInOptions = SEARCH_IN_OPTIONS;
 
   isBuyers = computed(() => this.scope() === 'buyers');
@@ -147,12 +147,6 @@ export class SearchBarScopedComponent {
   searchInLabel = computed(() => this.policyCriteria().searchIn === 'drafts' ? 'Drafts' : 'Policies');
   /** Un draft n'a pas de statut : le slot reste visible, désactivé. */
   statusDisabled = computed(() => this.policyCriteria().searchIn === 'drafts');
-  statusLabel = computed(() => {
-    const picked = POLICY_STATUSES.filter(s => this.policyCriteria().statuses.includes(s.id));
-    if (!picked.length) return 'No status selected';
-    if (picked.length === POLICY_STATUSES.length) return 'All statuses';
-    return picked.length <= 2 ? picked.map(s => s.label).join(', ') : `${picked.length} statuses`;
-  });
 
   /** Aucun statut coché en Global search sur les polices : rien ne pourrait sortir,
    *  on le dit tout de suite et la recherche reste bloquée. */
@@ -209,13 +203,9 @@ export class SearchBarScopedComponent {
     this.close();
   }
 
-  isStatusChecked(id: PolicyStatus) { return this.policyCriteria().statuses.includes(id); }
-
-  toggleStatus(id: PolicyStatus) {
-    this.policyCriteria.update(c => ({
-      ...c,
-      statuses: c.statuses.includes(id) ? c.statuses.filter(s => s !== id) : [...c.statuses, id],
-    }));
+  setStatuses(values: string[]) {
+    const statuses = POLICY_STATUSES.map(s => s.id).filter(id => values.includes(id));
+    this.policyCriteria.update(c => ({ ...c, statuses }));
   }
 
   markTouched() { this.attempted.set(true); }

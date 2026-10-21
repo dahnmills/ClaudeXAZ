@@ -230,14 +230,6 @@
   overflow-y:     auto;
 }
 
-// Une case à cocher est une rangée de flyout : mêmes métriques que ds-flyout-menu-item
-.ds-search-bar-scoped__flyout-options ds-checkbox {
-  padding:    var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
-  transition: background-color 0.15s ease;
-
-  &:hover  { background-color: var(--semantic-color-interactive-background-light-alt-hover); }
-  &:active { background-color: var(--semantic-color-interactive-background-light-alt-active); }
-}
 
 .ds-search-bar-scoped__flyout-empty {
   font-family: var(--semantic-font-family);
@@ -245,4 +237,10 @@
   line-height: var(--semantic-font-text-style-line-height-m);
   color:       var(--semantic-color-static-text-main-secondary);
   padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+}
+
+// Status : les tags des statuts choisis tiennent dans le slot (2 visibles + « (+x more) »)
+.ds-search-bar-scoped__status-slot {
+  width:     calc(var(--foundation-spacing-104) * 3);
+  min-width: 0;
 }
