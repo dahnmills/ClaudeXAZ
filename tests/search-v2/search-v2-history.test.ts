@@ -67,3 +67,10 @@ test('clearKind keeps the other kind', () => {
   assert.deepEqual(removeKind(items, 'policy').map(e => e.id), ['b1', 'b2']);
   assert.deepEqual(removeKind(items), []);
 });
+
+test('groupByKind recent order puts the block holding the newest entry first', () => {
+  // items : p1 (ts 4) est le plus récent → Policies d'abord
+  assert.deepEqual(groupByKind(items, 'recent').map(x => x.label), ['Policies', 'Buyers']);
+  const buyerNewest = [...items, { kind: 'buyer' as const, ts: 9, id: 'b3' }];
+  assert.deepEqual(groupByKind(buyerNewest, 'recent').map(x => x.label), ['Buyers', 'Policies']);
+});

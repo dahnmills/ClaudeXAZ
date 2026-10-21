@@ -143,13 +143,18 @@
               <span class="search-page__empty-text">{{ historyEmpty('searched') }}</span>
             </div>
           } @else {
-            <div class="search-page__list">
-              @for (r of shownRecents(); track r.ts) {
-                <div class="search-page__entry">
-                  <app-recent-search-v2-card [entry]="r" (replayed)="pickRecent(r)" />
-                </div>
-              }
-            </div>
+            <!-- Un tableau par objet : colonnes fixes, lecture stable. En All, le
+                 bloc qui porte la recherche la plus récente passe en premier. -->
+            @for (g of recentGroups(); track g.kind) {
+              <section class="search-page__group" [attr.aria-labelledby]="'recent-' + g.kind">
+                @if (historyFilter() === 'all') {
+                  <h3 class="search-page__group-title" [id]="'recent-' + g.kind">
+                    {{ g.kind === 'buyer' ? 'Buyer searches' : 'Policy searches' }} ({{ g.items.length }})
+                  </h3>
+                }
+                <app-recent-searches-table [kind]="g.kind" [entries]="g.items" (replayed)="pickRecent($event)" />
+              </section>
+            }
           }
         }
 

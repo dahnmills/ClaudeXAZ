@@ -24,13 +24,19 @@ export function filterHistory<T extends Stamped>(items: T[], f: HistoryFilter): 
   return byRecent(f === 'all' ? items : items.filter(i => i.kind === f));
 }
 
-/** Favorites en All : Buyers puis Policies, chaque section triée, section vide omise. */
-export function groupByKind<T extends Stamped>(items: T[]): HistoryGroup<T>[] {
+/**
+ * Une section par objet, chaque section triée du plus récent au plus ancien,
+ * section vide omise. `fixed` : Buyers puis Policies (Favorites).
+ * `recent` : la section qui porte l'entrée la plus récente d'abord (Recent
+ * search, Recently viewed : le haut de la page reste « ce que je viens de faire »).
+ */
+export function groupByKind<T extends Stamped>(items: T[], order: 'fixed' | 'recent' = 'fixed'): HistoryGroup<T>[] {
   const groups: HistoryGroup<T>[] = [
     { kind: 'buyer',  label: 'Buyers',   items: filterHistory(items, 'buyer') },
     { kind: 'policy', label: 'Policies', items: filterHistory(items, 'policy') },
   ];
-  return groups.filter(g => g.items.length > 0);
+  const kept = groups.filter(g => g.items.length > 0);
+  return order === 'recent' ? kept.sort((a, b) => b.items[0].ts - a.items[0].ts) : kept;
 }
 
 export function countByKind(items: Stamped[]): Record<HistoryFilter, number> {

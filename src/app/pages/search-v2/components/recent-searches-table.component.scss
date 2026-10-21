@@ -1,0 +1,53 @@
+// =============================================================
+// Recent searches table
+// Composition : ds-card (noPadding) + ds-table-row / ds-cell-header / ds-cell,
+// même assemblage que le tableau de Portfolio Management. Un tableau par objet :
+// colonnes fixes, libellés une fois en en-tête, plus de bordure par ligne.
+// =============================================================
+
+:host {
+  display: block;
+}
+
+.recent-table {
+  display:        flex;
+  flex-direction: column;
+  overflow:       hidden;
+  border-radius:  var(--semantic-border-radius-s);
+
+  // La dernière rangée n'a pas de trait : le bord de la carte la ferme
+  ds-table-row:last-child {
+    border-bottom: none;
+  }
+}
+
+// Largeurs portées par des classes partagées en-tête / donnée : impossible de
+// désaligner une colonne. Les poids suivent la longueur attendue des valeurs.
+// Colonne icône : largeur fixe, identique en en-tête et en rangée
+.recent-table__col--icon {
+  flex:  0 0 var(--semantic-measurement-sizing-3xl);
+  width: var(--semantic-measurement-sizing-3xl);
+}
+.recent-table__col--searched { flex: 1.4; }
+.recent-table__col--meta     { flex: 1; }
+.recent-table__col--criteria { flex: 2.2; }
+.recent-table__col--at       { flex: 1.3; }
+
+.recent-table__value {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  min-width:   0;
+}
+
+// Troncature tôt, texte entier au survol (attribut title)
+.recent-table__text {
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+
+  &--empty,
+  &--muted {
+    color: var(--semantic-color-static-text-main-tertiary);
+  }
+}

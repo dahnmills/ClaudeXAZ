@@ -1,0 +1,40 @@
+<ds-card [noPadding]="true">
+  <div class="recent-table" role="table" [attr.aria-label]="isPolicy() ? 'Recent policy searches' : 'Recent buyer searches'">
+    <ds-table-row role="row">
+      <ds-cell class="recent-table__col--icon" size="s" aria-hidden="true" />
+      <ds-cell-header class="recent-table__col--searched" title="Searched" />
+      @for (c of columns(); track c) {
+        <ds-cell-header [class.recent-table__col--criteria]="c === 'Criteria'" [class.recent-table__col--meta]="c !== 'Criteria'" [title]="c" />
+      }
+      <ds-cell-header class="recent-table__col--at" title="Searched at" />
+    </ds-table-row>
+
+    @for (r of rows(); track r.entry.ts) {
+      <ds-table-row role="row" [interactive]="true"
+        [attr.aria-label]="'Search again for ' + r.searched"
+        (clicked)="replayed.emit(r.entry)">
+        <ds-cell class="recent-table__col--icon" size="s">
+          <ds-icon-tile size="s" tone="brand">
+            <ds-icon [name]="isPolicy() ? 'contract' : 'buyers'" [size]="16" />
+          </ds-icon-tile>
+        </ds-cell>
+        <ds-cell class="recent-table__col--searched" size="s" [emphasized]="true">
+          <span class="recent-table__text" [title]="r.searched">{{ r.searched }}</span>
+        </ds-cell>
+        @for (cell of r.cells; track $index) {
+          <ds-cell [class.recent-table__col--criteria]="columns()[$index] === 'Criteria'" [class.recent-table__col--meta]="columns()[$index] !== 'Criteria'" size="s">
+            <span class="recent-table__value">
+              @if (cell.flag) {
+                <ds-flag [code]="cell.flag" />
+              }
+              <span class="recent-table__text" [class.recent-table__text--empty]="cell.value === '—'" [title]="cell.value">{{ cell.value }}</span>
+            </span>
+          </ds-cell>
+        }
+        <ds-cell class="recent-table__col--at" size="s">
+          <span class="recent-table__text recent-table__text--muted">{{ r.at }}</span>
+        </ds-cell>
+      </ds-table-row>
+    }
+  </div>
+</ds-card>
