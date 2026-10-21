@@ -1,8 +1,7 @@
 // =============================================================
-// Correction d'un rejet, deux modes dans la même modale :
-// - Correct : les champs en cause réunis en une liste qu'on enchaîne.
-// - Browse : tout le message, carrefour des sections à gauche ; les deux
-//   colonnes défilent chacune de leur côté.
+// Correction d'un rejet par un écran carrefour : la carte Errors (toutes les
+// erreurs), puis une carte par bloc du message ; chaque carte ouvre son écran
+// dans la même modale.
 // =============================================================
 
 :host {
@@ -26,7 +25,99 @@
   color:         var(--semantic-color-static-text-main-secondary);
 }
 
-// ── Mode Correct ───────────────────────────────────────────────────────────
+// ── Carrefour ──────────────────────────────────────────────────────────────
+.rc__group {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+}
+
+.rc__group-title {
+  margin:      var(--semantic-measurement-spacing-none);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+// Carte cliquable en entier : statut, titre et compteur, indication, chevron
+.rc__card {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m);
+  padding:     var(--semantic-measurement-spacing-m);
+  cursor:      pointer;
+  transition:  background 0.15s ease;
+
+  &:hover {
+    background: var(--semantic-color-interactive-background-light-alt-hover);
+  }
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: -2px;
+  }
+}
+
+.rc__card-status {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-icon-main-functional-negative);
+
+  &--done {
+    color: var(--semantic-color-static-icon-main-functional-positive);
+  }
+}
+
+.rc__card-text {
+  display:        flex;
+  flex:           1 1 0;
+  flex-direction: column;
+  min-width:      0;
+}
+
+.rc__card-title {
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.rc__card-count {
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-functional-negative);
+
+  &--done {
+    color: var(--semantic-color-static-text-main-functional-positive);
+  }
+}
+
+.rc__card-hint {
+  flex-shrink: 0;
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+.rc__card-chevron {
+  flex-shrink: 0;
+  color:       var(--semantic-color-interactive-text-strong-default);
+}
+
+// ── Écran d'une carte ──────────────────────────────────────────────────────
+.rc__screen-bar {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m);
+}
+
+.rc__screen-title {
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+// Vue Errors : les champs en cause l'un sous l'autre
 .rc__errors {
   display:        flex;
   flex-direction: column;
@@ -36,32 +127,10 @@
   list-style:     none;
 }
 
-// Rang à gauche, champ à droite : la liste se lit comme une suite de tâches
 .rc__error {
-  display:     flex;
-  align-items: flex-start;
-  gap:         var(--semantic-measurement-spacing-m);
-}
-
-// Aligné sur la ligne du libellé du champ
-.rc__error-index {
-  display:         flex;
-  justify-content: center;
-  flex-shrink:     0;
-  width:           var(--semantic-measurement-sizing-l);
-  padding-top:     var(--semantic-measurement-spacing-l);
-}
-
-.rc__error-done {
-  color: var(--semantic-color-static-icon-main-functional-positive);
-}
-
-.rc__error-body {
   display:        flex;
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-xxs);
-  flex:           1 1 0;
-  min-width:      0;
   max-width:      calc(var(--semantic-measurement-spacing-3xl) * 9); // un champ, pas une ligne d'écran
 }
 
@@ -82,105 +151,22 @@
   color:         var(--semantic-color-static-text-main-tertiary);
 }
 
-.rc__switch {
-  align-self: flex-start;
-}
-
-// ── Mode Browse ────────────────────────────────────────────────────────────
-.rc__browse-bar {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  gap:             var(--semantic-measurement-spacing-m);
-}
-
-// Remplit le reste de la zone de contenu (hauteur fixe) : ce sont les colonnes qui défilent
-.rc {
-  display:               grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 4fr);
-  gap:                   var(--semantic-measurement-spacing-l);
-  flex:                  1 1 0;
-  min-height:            0;
-}
-
-.rc__rail {
-  overflow-y:     auto;
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-xxs);
-  padding:        var(--semantic-measurement-spacing-s);
-  border-radius:  var(--semantic-border-radius-m);
-  background:     var(--semantic-color-static-background-main-secondary);
-}
-
-// Rangées à hauteur fixe : la colonne défile au lieu de les écraser
-.rc__rail > * {
-  flex-shrink: 0;
-}
-
-.rc__rail-block {
-  padding:        var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-xs);
-  font-size:      var(--semantic-font-text-style-size-s);
-  line-height:    var(--semantic-font-text-style-line-height-s);
-  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
-  letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
-  color:          var(--semantic-color-static-text-main-tertiary);
-}
-
-.rc__rail-item {
-  display:     flex;
-  align-items: center;
-  gap:         var(--semantic-measurement-spacing-s);
-  min-width:   0;
-}
-
-.rc__rail-name {
-  flex:          1 1 0;
-  min-width:     0;
-  overflow:      hidden;
-  text-overflow: ellipsis;
-  white-space:   nowrap;
-}
-
-.rc__main {
-  position:       relative;
-  overflow-y:     auto;
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-l);
-  min-width:      0;
-  padding-right:  var(--semantic-measurement-spacing-s); // la barre de défilement ne colle pas aux champs
-}
-
+// Vue d'un bloc : sous-sections, trois colonnes de champs
 .rc__section {
   display:        flex;
   flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-m);
-}
-
-.rc__section-head {
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-xxs);
-}
-
-.rc__section-block {
-  font-size:      var(--semantic-font-text-style-size-s);
-  line-height:    var(--semantic-font-text-style-line-height-s);
-  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
-  letter-spacing: var(--semantic-font-text-style-letter-spacing-m);
-  color:          var(--semantic-color-static-text-main-tertiary);
+  gap:            var(--semantic-measurement-spacing-s);
 }
 
 .rc__section-title {
   margin:      var(--semantic-measurement-spacing-none);
-  font-size:   var(--semantic-font-text-style-size-l);
-  line-height: var(--semantic-font-text-style-line-height-l);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
   font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-  color:       var(--semantic-color-static-text-main-primary);
+  color:       var(--semantic-color-static-text-main-secondary);
 }
 
-// Trois colonnes ; un libellé long prend deux colonnes plutôt que deux lignes
+// Un libellé long prend deux colonnes plutôt que deux lignes
 .rc__fields {
   display:               grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -196,6 +182,11 @@
   &--wide {
     grid-column: span 2;
   }
+}
+
+.rc__more,
+.rc__next {
+  align-self: flex-start;
 }
 
 .rc__actions {

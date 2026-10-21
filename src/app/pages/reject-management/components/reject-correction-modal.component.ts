@@ -1,20 +1,19 @@
 import { Component, ElementRef, computed, effect, inject, input, output, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ModalComponent,
   BadgeComponent,
   ButtonComponent,
+  CardComponent,
   IconComponent,
   InputTextComponent,
-  SegmentedControlComponent,
-  SideNavItemComponent,
   ToasterService,
-  type SegmentedOption,
 } from '../../../shared/ui';
 import type { RejectField, RejectRecord } from '../reject-record.model';
 import type { Reject } from '../reject-management.data';
 
-type Mode = 'correct' | 'browse';
-type BrowseView = 'filled' | 'all';
+/** Carrefour, vue spéciale des erreurs, ou un bloc du message (son index). */
+type Screen = 'hub' | 'errors' | number;
 
 /** Un champ en cause, avec l'endroit du message d'où il vient. */
 interface ErrorItem {
@@ -22,35 +21,28 @@ interface ErrorItem {
   where: string;
 }
 
-/** Une sous-section affichée en mode consultation. */
-interface ShownSection {
+/** Une sous-section d'un bloc : champs en cause d'abord, puis les renseignés, les vides repliés. */
+interface BlockSection {
   key: string;
-  block: string;
   name: string;
   fields: RejectField[];
+  emptyCount: number;
 }
 
 /**
- * Correction d'un rejet. Deux modes dans la même modale :
- * - Correct (à l'ouverture) : tous les champs en cause réunis en un seul bloc,
- *   l'un sous l'autre, chacun avec son emplacement. On enchaîne de haut en bas,
- *   sans structure de message à parcourir.
- * - Browse : tout le message, section par section, avec le carrefour des
- *   sections à gauche. Pour aller voir un champ voisin, puis revenir.
- * Resubmit n'est jamais grisé : tant qu'il reste une erreur, il y mène.
+ * Correction d'un rejet, par un écran carrefour :
+ * - en tête, la carte « Errors » réunit toutes les erreurs du message, toutes
+ *   catégories confondues, pour les traiter d'une traite ;
+ * - dessous, une carte par bloc du message, pour travailler un bloc dans son
+ *   contexte. Fini, « Next » enchaîne sur le bloc suivant qui a des erreurs, sans
+ *   repasser par le carrefour.
+ * Le carrefour se met à jour à chaque correction. Resubmit n'est jamais grisé :
+ * tant qu'il reste une erreur, il mène à la vue des erreurs.
  */
 @Component({
   selector: 'rm-reject-correction-modal',
   standalone: true,
-  imports: [
-    ModalComponent,
-    BadgeComponent,
-    ButtonComponent,
-    IconComponent,
-    InputTextComponent,
-    SegmentedControlComponent,
-    SideNavItemComponent,
-  ],
+  imports: [NgTemplateOutlet, ModalComponent, BadgeComponent, ButtonComponent, CardComponent, IconComponent, InputTextComponent],
   templateUrl: './reject-correction-modal.component.html',
   styleUrl: './reject-correction-modal.component.scss',
 })
@@ -67,33 +59,25 @@ export class RejectCorrectionModalComponent {
   closed = output<void>();
   resubmitted = output<string>();
 
-  readonly mode = signal<Mode>('correct');
-  readonly browseView = signal<BrowseView>('filled');
+  readonly screen = signal<Screen>('hub');
   /** Valeurs saisies, par numéro de champ. */
   readonly values = signal<Record<number, string>>({});
-  readonly activeSection = signal<string | null>(null);
+  /** Sous-sections dont les champs vides sont dépliés. */
+  readonly expanded = signal<Set<string>>(new Set());
 
-  /** Correct : la modale prend la hauteur de ses quelques champs. Browse : presque tout l'écran. */
-  readonly contentHeight = computed(() => this.mode() === 'browse' ? 'calc(100vh - 240px)' : 'auto');
+  /** Un bloc complet demande presque tout l'écran ; le carrefour et les erreurs, leur seule hauteur. */
+  readonly contentHeight = computed(() => typeof this.screen() === 'number' ? 'calc(100vh - 240px)' : 'auto');
 
   constructor() {
-    // Chaque ouverture repart des valeurs reçues, en mode correction
+    // Chaque ouverture repart des valeurs reçues, sur le carrefour
     effect(() => {
       const rec = this.record();
       if (!this.open() || !rec) return;
       const init: Record<number, string> = {};
       for (const f of this.allFields()) init[f.n] = f.value;
       this.values.set(init);
-      this.mode.set('correct');
-      this.browseView.set('filled');
-      this.activeSection.set(null);
-    });
-
-    // La section active reste visible dans le carrefour
-    effect(() => {
-      const key = this.activeSection();
-      if (!key) return;
-      setTimeout(() => this.el(`[data-rail="${key}"]`)?.scrollIntoView({ block: 'nearest' }));
+      this.screen.set('hub');
+      this.expanded.set(new Set());
     });
   }
 
@@ -108,16 +92,20 @@ export class RejectCorrectionModalComponent {
     return v === '' || v === f.value.trim();
   }
 
+  private isFilled(f: RejectField): boolean {
+    return (this.values()[f.n] ?? '').trim() !== '';
+  }
+
   /** Les champs en cause, dans l'ordre du message, avec leur emplacement. */
   readonly errors = computed<ErrorItem[]>(() =>
     (this.record()?.blocks ?? []).flatMap(b => b.sections.flatMap(s =>
       s.fields.filter(f => f.error).map(field => ({ field, where: `${b.name} › ${s.name}` })))));
 
   readonly openCount = computed(() => this.errors().filter(e => this.isOpenError(e.field)).length);
-  readonly counterLabel = computed(() => {
-    const n = this.openCount();
-    return n === 0 ? 'All corrected' : `${n} to correct`;
-  });
+
+  errorsLabel(n: number): string {
+    return `${n} ${n === 1 ? 'error' : 'errors'} to correct`;
+  }
 
   /** Identité du message sur une ligne, sous le titre. */
   readonly identity = computed(() => {
@@ -135,95 +123,88 @@ export class RejectCorrectionModalComponent {
     this.values.update(v => ({ ...v, [n]: value }));
   }
 
-  // ── Mode consultation ────────────────────────────────────────────────────
-  readonly filledCount = computed(() => this.allFields().filter(f => (this.values()[f.n] ?? '').trim() !== '').length);
+  // ── Carrefour ────────────────────────────────────────────────────────────
+  /** Une carte par bloc du message, avec ce qu'il reste à y corriger. */
+  readonly blockCards = computed(() => (this.record()?.blocks ?? []).map((b, index) => {
+    const fields = b.sections.flatMap(s => s.fields);
+    return {
+      index,
+      name: b.name,
+      open: fields.filter(f => this.isOpenError(f)).length,
+      filled: fields.filter(f => this.isFilled(f)).length,
+      total: fields.length,
+    };
+  }));
 
-  readonly browseOptions = computed<SegmentedOption[]>(() => [
-    { value: 'filled', label: `Filled fields (${this.filledCount()})` },
-    { value: 'all',    label: `All fields (${this.allFields().length})` },
-  ]);
-
-  setBrowseView(v: string): void {
-    this.browseView.set(v === 'all' ? 'all' : 'filled');
-  }
-
-  browse(): void {
-    this.mode.set('browse');
-    this.activeSection.set(null);
-  }
-
-  backToCorrections(): void {
-    this.mode.set('correct');
-  }
-
-  readonly sections = computed<ShownSection[]>(() => {
-    const all = this.browseView() === 'all';
-    const out: ShownSection[] = [];
-    (this.record()?.blocks ?? []).forEach((b, bi) => b.sections.forEach((s, si) => {
-      const kept = all ? s.fields : s.fields.filter(f => !!f.error || (this.values()[f.n] ?? '').trim() !== '');
-      if (kept.length) out.push({ key: `${bi}-${si}`, block: b.name, name: s.name, fields: kept });
-    }));
-    return out;
-  });
-
-  /** Carrefour : toutes les sections ; une section sans champ renseigné bascule la vue sur All. */
-  readonly rail = computed(() => (this.record()?.blocks ?? []).map((b, bi) => ({
-    name: b.name,
-    sections: b.sections.map((s, si) => ({
-      key: `${bi}-${si}`,
-      name: s.name,
-      open: s.fields.filter(f => this.isOpenError(f)).length,
-    })),
-  })));
-
-  goToSection(key: string): void {
-    if (!this.sections().some(s => s.key === key)) this.browseView.set('all');
-    this.activeSection.set(key);
+  /** En entrant dans un bloc, la vue descend jusqu'à sa première erreur restante. */
+  go(screen: Screen): void {
+    this.screen.set(screen);
+    this.expanded.set(new Set());
     setTimeout(() => {
-      const sec = this.el(`#rc-sec-${key}`);
-      if (sec) this.scrollMain(sec.offsetTop);
+      const content = this.el('ds-modal-content');
+      content?.scrollTo({ top: 0 });
+      if (typeof screen !== 'number') return;
+      const first = this.record()?.blocks[screen]?.sections.flatMap(s => s.fields).find(f => this.isOpenError(f));
+      if (first) this.el(`#rc-field-${first.n}`)?.scrollIntoView({ block: 'center' });
     });
   }
+
+  /** Titre de l'écran courant, à côté du retour au carrefour. */
+  readonly screenTitle = computed(() => {
+    const s = this.screen();
+    if (s === 'errors') return 'Errors';
+    if (typeof s === 'number') return this.record()?.blocks[s]?.name ?? '';
+    return '';
+  });
+
+  // ── Un bloc ──────────────────────────────────────────────────────────────
+  readonly blockSections = computed<BlockSection[]>(() => {
+    const s = this.screen();
+    if (typeof s !== 'number') return [];
+    const block = this.record()?.blocks[s];
+    const open = this.expanded();
+    return (block?.sections ?? []).map((sec, si) => {
+      const key = `${s}-${si}`;
+      const atFault = sec.fields.filter(f => f.error);
+      const filled = sec.fields.filter(f => !f.error && this.isFilled(f));
+      const empty = sec.fields.filter(f => !f.error && !this.isFilled(f));
+      return {
+        key,
+        name: sec.name,
+        fields: open.has(key) ? [...atFault, ...filled, ...empty] : [...atFault, ...filled],
+        emptyCount: open.has(key) ? 0 : empty.length,
+      };
+    });
+  });
+
+  showEmpty(key: string): void {
+    this.expanded.update(set => new Set(set).add(key));
+  }
+
+  /** Bloc suivant qui a encore des erreurs, après le bloc courant. */
+  readonly nextBlock = computed(() => {
+    const s = this.screen();
+    if (typeof s !== 'number') return null;
+    const cards = this.blockCards();
+    for (let i = 1; i < cards.length; i++) {
+      const c = cards[(s + i) % cards.length];
+      if (c.open > 0) return c;
+    }
+    return null;
+  });
 
   /** Les champs longs prennent deux colonnes : un libellé ne passe jamais sur deux lignes. */
   isWide(f: RejectField): boolean {
     return f.label.length > 30 || f.length >= 70;
   }
 
-  // Défilement piloté par une ancre : la surbrillance automatique se tait le temps de l'animation
-  private steering = false;
-  private steerTimer?: ReturnType<typeof setTimeout>;
-
-  private scrollMain(top: number): void {
-    const main = this.el('.rc__main');
-    if (!main) return;
-    this.steering = true;
-    clearTimeout(this.steerTimer);
-    this.steerTimer = setTimeout(() => (this.steering = false), 1000);
-    main.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-  }
-
-  /** Au défilement, le carrefour surligne la section dont le titre a atteint le haut. */
-  onScroll(event: Event): void {
-    if (this.steering) return;
-    const main = event.target as HTMLElement;
-    const gap = parseFloat(getComputedStyle(main).rowGap) || 0;
-    const line = main.getBoundingClientRect().top + gap;
-    let current: string | null = null;
-    for (const sec of Array.from(main.querySelectorAll<HTMLElement>('.rc__section'))) {
-      if (sec.getBoundingClientRect().top <= line) current = sec.id.replace('rc-sec-', '');
-      else break;
-    }
-    if (current) this.activeSection.set(current);
-  }
-
   // ── Fin ──────────────────────────────────────────────────────────────────
-  /** Jamais grisé : tant qu'il reste une erreur, Resubmit y ramène. */
+  /** Jamais grisé : tant qu'il reste une erreur, Resubmit mène à la vue des erreurs. */
   resubmit(): void {
     const left = this.errors().find(e => this.isOpenError(e.field));
     if (left) {
-      this.toaster.show(`${this.counterLabel()} before resubmitting`, { tone: 'warning' });
-      this.mode.set('correct');
+      this.toaster.show(`${this.errorsLabel(this.openCount())} before resubmitting`, { tone: 'warning' });
+      this.go('errors');
       setTimeout(() => this.el(`#rc-err-${left.field.n} input`)?.focus());
       return;
     }

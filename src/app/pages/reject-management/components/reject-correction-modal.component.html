@@ -1,86 +1,102 @@
-<ds-modal [open]="open()" [size]="mode() === 'browse' ? 'xlarge' : 'large'" [title]="reject()?.type ?? 'Reject'"
+<ds-modal [open]="open()" size="large" [title]="reject()?.type ?? 'Reject'"
   [contentHeight]="contentHeight()" (closed)="closed.emit()">
 
   <!-- Identité du message et ce qu'il reste à faire, sur une ligne -->
   <div class="rc__head">
     <span class="rc__identity">{{ identity() }}</span>
-    <ds-badge [label]="counterLabel()" [status]="openCount() ? 'error' : 'success'" variant="light" size="m" />
+    <ds-badge [label]="openCount() ? errorsLabel(openCount()) : 'All corrected'"
+      [status]="openCount() ? 'error' : 'success'" variant="light" size="m" />
   </div>
 
-  @if (mode() === 'correct') {
-    <!-- Tous les champs en cause réunis : on enchaîne de haut en bas -->
-    <ol class="rc__errors">
-      @for (e of errors(); track e.field.n; let i = $index) {
-        <li class="rc__error" [id]="'rc-err-' + e.field.n">
-          <span class="rc__error-index">
-            @if (isOpenError(e.field)) {
-              <ds-badge [label]="'' + (i + 1)" status="error" variant="strong" size="s" />
-            } @else {
-              <ds-icon class="rc__error-done" name="check" [size]="16" />
-            }
+  <ng-template #card let-title="title" let-open="open" let-hint="hint" let-target="target">
+    <ds-card [noPadding]="true">
+      <div class="rc__card" role="button" tabindex="0"
+        [attr.aria-label]="title + ', ' + (open ? errorsLabel(open) : 'nothing to correct')"
+        (click)="go(target)" (keydown.enter)="go(target)" (keydown.space)="$event.preventDefault(); go(target)">
+        <ds-icon class="rc__card-status" [class.rc__card-status--done]="!open"
+          [name]="open ? 'error-circle' : 'check-circle'" [size]="24" />
+        <span class="rc__card-text">
+          <span class="rc__card-title">{{ title }}</span>
+          <span class="rc__card-count" [class.rc__card-count--done]="!open">
+            {{ open ? errorsLabel(open) : 'No error to correct' }}
           </span>
-          <div class="rc__error-body">
+        </span>
+        @if (hint) {
+          <span class="rc__card-hint">{{ hint }}</span>
+        }
+        <ds-icon class="rc__card-chevron" name="chevron-right" [size]="24" />
+      </div>
+    </ds-card>
+  </ng-template>
+
+  @if (screen() === 'hub') {
+    <!-- Carrefour : toutes les erreurs d'un coup, ou un bloc dans son contexte -->
+    <section class="rc__group">
+      <h3 class="rc__group-title">Things to correct</h3>
+      <ng-container [ngTemplateOutlet]="card"
+        [ngTemplateOutletContext]="{ title: 'Errors', open: openCount(), hint: 'All blocks', target: 'errors' }" />
+    </section>
+
+    <section class="rc__group">
+      <h3 class="rc__group-title">Categories</h3>
+      @for (b of blockCards(); track b.index) {
+        <ng-container [ngTemplateOutlet]="card"
+          [ngTemplateOutletContext]="{ title: b.name, open: b.open, hint: b.filled + ' of ' + b.total + ' fields filled', target: b.index }" />
+      }
+    </section>
+  } @else {
+    <div class="rc__screen-bar">
+      <ds-button type="tertiary" (clicked)="go('hub')">
+        <ds-icon slot="icon-left" name="chevron-left" [size]="16" /> Overview
+      </ds-button>
+      <span class="rc__screen-title">{{ screenTitle() }}</span>
+    </div>
+
+    @if (screen() === 'errors') {
+      <!-- Vue spéciale : toutes les erreurs, l'une sous l'autre, chacune avec son emplacement -->
+      <ol class="rc__errors">
+        @for (e of errors(); track e.field.n) {
+          <li class="rc__error" [id]="'rc-err-' + e.field.n">
             <span class="rc__error-where">{{ e.where }}</span>
             <ds-input-text [label]="e.field.label" [value]="values()[e.field.n]"
               (valueChange)="setValue(e.field.n, $event)"
               [error]="isOpenError(e.field)" [errorMessage]="e.field.error ?? ''" />
             <span class="rc__field-meta">#{{ e.field.n }} · {{ e.field.tech }} · max {{ e.field.length }}</span>
-          </div>
-        </li>
-      }
-    </ol>
-
-    <ds-button class="rc__switch" type="tertiary" (clicked)="browse()">
-      Browse all fields ({{ allFields().length }})
-      <ds-icon slot="icon-right" name="chevron-right" [size]="16" />
-    </ds-button>
-  } @else {
-    <div class="rc__browse-bar">
-      <ds-button type="tertiary" (clicked)="backToCorrections()">
-        <ds-icon slot="icon-left" name="chevron-left" [size]="16" /> Back to corrections
-      </ds-button>
-      <ds-segmented-control [options]="browseOptions()" [selected]="browseView()" (selectedChange)="setBrowseView($event)" />
-    </div>
-
-    <div class="rc">
-      <!-- Carrefour : toutes les sections, toujours affichées -->
-      <nav class="rc__rail" aria-label="Message sections">
-        @for (b of rail(); track b.name) {
-          <span class="rc__rail-block">{{ b.name }}</span>
-          @for (s of b.sections; track s.key) {
-            <ds-side-nav-item [attr.data-rail]="s.key" [selected]="activeSection() === s.key" (clicked)="goToSection(s.key)">
-              <span class="rc__rail-item">
-                <span class="rc__rail-name">{{ s.name }}</span>
-                @if (s.open > 0) {
-                  <ds-badge [label]="'' + s.open" status="error" variant="strong" size="s"
-                    [attr.aria-label]="s.open + ' to correct'" />
-                }
-              </span>
-            </ds-side-nav-item>
-          }
+          </li>
         }
-      </nav>
-
-      <div class="rc__main" (scroll)="onScroll($event)">
-        @for (s of sections(); track s.key) {
-          <section class="rc__section" [id]="'rc-sec-' + s.key">
-            <header class="rc__section-head">
-              <span class="rc__section-block">{{ s.block }}</span>
-              <h3 class="rc__section-title">{{ s.name }}</h3>
-            </header>
+      </ol>
+    } @else {
+      <!-- Un bloc : ses sous-sections, champs en cause d'abord, vides repliés -->
+      @for (s of blockSections(); track s.key) {
+        <section class="rc__section">
+          <h4 class="rc__section-title">{{ s.name }}</h4>
+          @if (s.fields.length) {
             <div class="rc__fields">
               @for (f of s.fields; track f.n) {
-                <div class="rc__field" [class.rc__field--wide]="isWide(f)">
+                <div class="rc__field" [class.rc__field--wide]="isWide(f)" [id]="'rc-field-' + f.n">
                   <ds-input-text [label]="f.label" [value]="values()[f.n]" (valueChange)="setValue(f.n, $event)"
                     [error]="isOpenError(f)" [errorMessage]="f.error ?? ''" />
                   <span class="rc__field-meta">#{{ f.n }} · {{ f.tech }}</span>
                 </div>
               }
             </div>
-          </section>
-        }
-      </div>
-    </div>
+          }
+          @if (s.emptyCount > 0) {
+            <ds-button class="rc__more" type="plain" (clicked)="showEmpty(s.key)">
+              <ds-icon slot="icon-left" name="plus" [size]="16" />
+              {{ s.emptyCount }} empty {{ s.emptyCount === 1 ? 'field' : 'fields' }}
+            </ds-button>
+          }
+        </section>
+      }
+
+      @if (nextBlock(); as next) {
+        <ds-button class="rc__next" type="secondary" (clicked)="go(next.index)">
+          Next: {{ next.name }} ({{ next.open }})
+          <ds-icon slot="icon-right" name="chevron-right" [size]="16" />
+        </ds-button>
+      }
+    }
   }
 
   <div slot="actions" class="rc__actions">
