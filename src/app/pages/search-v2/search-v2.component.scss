@@ -1,0 +1,162 @@
+:host {
+  display: block;
+}
+
+.search-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--semantic-color-static-background-main-primary);
+}
+
+.search-page__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+ds-page-header {
+  flex-shrink: 0;
+  // Même gouttière que le corps de la page : breadcrumb et onglets tombent sur
+  // le bord gauche des cartes, pas 8px à côté.
+  --ds-page-header-gutter: var(--semantic-measurement-spacing-l);
+}
+
+.search-page__bar-wrap {
+  position: relative;
+  padding: var(--semantic-measurement-spacing-xl) var(--semantic-measurement-spacing-l) 0;
+  flex-shrink: 0;
+}
+
+.search-page__criteria-overlay {
+  position:      absolute;
+  top:           calc(100% + var(--semantic-measurement-spacing-s));
+  left:          var(--semantic-measurement-spacing-l);
+  right:         var(--semantic-measurement-spacing-l);
+  z-index:       40;
+  max-height:    calc(100vh - 240px);
+  overflow-y:    auto;
+  border-radius: var(--semantic-border-radius-m);
+  box-shadow:    var(--semantic-shadow-modal);
+}
+
+.search-page__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl);
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+// Compteur de résultats, aligné à gauche au-dessus de la liste. Dégage aussi
+// l'espace sous la barre pour que le helper text d'erreur ne chevauche plus
+// la 1re carte.
+.search-page__results-header {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+// En-tête d'une liste d'historique : rien que son action, à droite, au-dessus
+// d'elle. Le nombre d'entrées se lit sur le compteur de l'onglet.
+.search-page__list-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.search-page__results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+}
+
+.search-page__loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--semantic-measurement-spacing-s);
+  padding: var(--semantic-measurement-spacing-l);
+  color: var(--semantic-color-static-text-main-tertiary);
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+}
+
+.search-page__end {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-xl) 0;
+  text-align: center;
+}
+
+.search-page__end-text {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+.search-page__empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  align-items: center;
+  justify-content: center;
+  padding: var(--semantic-measurement-spacing-3xl);
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.search-page__empty-text {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+}
+
+.search-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-s);
+}
+
+// En-tête de liste des historiques : filtre à gauche, Clear à droite
+.search-page__list-header--split {
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+}
+
+// Une carte d'historique (l'objet se lit dans la carte elle-même)
+.search-page__entry {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+}
+
+
+
+
+// Date projetée dans les cartes Recently viewed : mêmes métriques que la date
+// de la carte Recent search
+.search-page__date {
+  flex-shrink: 0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+  white-space: nowrap;
+}
+
+// Chips de filtre de l'historique : même écart que les chips du modal portfolio (Figma 4)
+.search-page__filters {
+  display:     flex;
+  flex-wrap:   wrap;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+}

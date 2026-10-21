@@ -30,6 +30,8 @@
   </div>
 
   <div class="ds-result-card__right">
+    <!-- Méta propre au contexte (ex. date de consultation dans un historique) -->
+    <ng-content select="[slot=meta]" />
     <div class="ds-result-card__score">
       <span class="ds-result-card__score-value">{{ data().score ?? 0 }}</span>
       <ds-progress-bar class="ds-result-card__score-bar" [value]="(data().score ?? 0)" size="s" tone="brand" />

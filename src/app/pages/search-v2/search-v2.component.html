@@ -1,0 +1,251 @@
+<div class="search-page">
+  <app-topbox-test-shell [showSidenav]="false">
+    <div class="search-page__content">
+      <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="true">
+        <ds-breadcrumbs slot="breadcrumbs">
+          <ds-crumb label="Home" />
+          <ds-crumb label="Search" [currentPage]="true" />
+        </ds-breadcrumbs>
+
+        <ng-container slot="tabs">
+          <ds-tab [selected]="activeTab() === 'search'" [icon]="true" (clicked)="setTab('search')">
+            <ds-icon slot="icon" name="search" [size]="20" /> Search
+          </ds-tab>
+          <ds-tab [selected]="activeTab() === 'searched'" [icon]="true" [counter]="recentsCount() || null" (clicked)="setTab('searched')">
+            <ds-icon slot="icon" name="search-recent" [size]="20" /> Recent search
+          </ds-tab>
+          <ds-tab [selected]="activeTab() === 'viewed'" [icon]="true" [counter]="viewedCount() || null" (clicked)="setTab('viewed')">
+            <ds-icon slot="icon" name="history" [size]="20" /> Recently viewed
+          </ds-tab>
+          <ds-tab [selected]="activeTab() === 'favorites'" [icon]="true" [counter]="favoritesCount() || null" (clicked)="setTab('favorites')">
+            <ds-icon slot="icon" name="star" [size]="20" /> Favorites
+          </ds-tab>
+        </ng-container>
+      </ds-page-header>
+
+      @if (activeTab() === 'search') {
+        <div class="search-page__bar-wrap">
+          <ds-search-bar-scoped
+            [scope]="scope()"
+            (scopeChange)="onScopeChange($event)"
+            [(type)]="searchType"
+            [(country)]="searchCountry"
+            [(idType)]="searchIdType"
+            [policyMode]="policyMode()"
+            (policyModeChange)="onPolicyModeChange($event)"
+            [(buCode)]="buCode"
+            [(policyCriteria)]="policyCriteria"
+            [(query)]="searchQuery"
+            [criteriaCount]="criteriaCount()"
+            (moreCriteriaClicked)="toggleMoreCriteria()"
+            (searchClicked)="runSearch()"
+          />
+
+          <!-- More criteria : Buyers seulement, côté Policies tout est dans la barre -->
+          @if (showMoreCriteria() && scope() === 'buyers') {
+            <div class="search-page__criteria-overlay">
+              <ds-more-criteria [(value)]="criteria" (closed)="toggleMoreCriteria()" />
+            </div>
+          }
+        </div>
+      }
+
+      <div class="search-page__inner" #scrollHost (scroll)="onScroll($event)">
+        @if (activeTab() === 'search') {
+          @if (isResults()) {
+            @if (noResults()) {
+              <div class="search-page__empty">
+                <ds-icon name="search" [size]="48" />
+                @if (scope() === 'buyers') {
+                  <span class="search-page__empty-text">No company found for your search</span>
+                  <ds-button type="primary" (clicked)="openManualCreate()">
+                    <ds-icon slot="icon-left" name="plus" [size]="16" /> Create a company manually
+                  </ds-button>
+                } @else {
+                  <span class="search-page__empty-text">No policy found for your search</span>
+                }
+              </div>
+            } @else {
+              <div class="search-page__results-header">
+                {{ totalCount() }} {{ totalCount() === 1 ? 'result' : 'results' }}
+              </div>
+              <div class="search-page__results">
+                @if (scope() === 'buyers') {
+                  @for (r of visibleBuyers(); track $index) {
+                    <ds-result-card
+                      [data]="r"
+                      [open]="expandedKey() === buyerKey(r, $index)"
+                      [favorited]="isBuyerFavorite(r)"
+                      [internal]="isInternalSearch()"
+                      (toggled)="toggleExpanded(buyerKey(r, $index))"
+                      (starred)="toggleBuyerFavorite(r)"
+                      (added)="addCompany(r)"
+                      (opened)="openResult(r)"
+                    />
+                  }
+                } @else {
+                  @for (p of visiblePolicies(); track p.id) {
+                    <ds-policy-result-card
+                      [data]="p"
+                      [open]="expandedKey() === policyKey(p)"
+                      [favorited]="isPolicyFavorite(p)"
+                      (toggled)="toggleExpanded(policyKey(p))"
+                      (starred)="togglePolicyFavorite(p)"
+                      (opened)="openPolicy(p)"
+                    />
+                  }
+                }
+              </div>
+
+              @if (loadingMore()) {
+                <div class="search-page__loading-more">
+                  <ds-spinner size="s" /> <span>Loading more results…</span>
+                </div>
+              }
+
+              @if (allLoaded() && scope() === 'buyers') {
+                <div class="search-page__end">
+                  <span class="search-page__end-text">Can’t find the company you’re looking for?</span>
+                  <ds-button type="primary" (clicked)="openManualCreate()">
+                    <ds-icon slot="icon-left" name="plus" [size]="16" /> Create a company manually
+                  </ds-button>
+                </div>
+              }
+            }
+          } @else {
+            <div class="search-page__empty">
+              <ds-icon name="search" [size]="48" />
+              <span class="search-page__empty-text">Start your search above</span>
+            </div>
+          }
+        }
+
+        @if (activeTab() !== 'search') {
+          <div class="search-page__list-header search-page__list-header--split">
+            <!-- Chips de filtre : un seul objet affiché à la fois, All pour tout voir -->
+            <div class="search-page__filters" role="group" aria-label="Filter by object">
+              @for (o of historyOptions(); track o.value) {
+                <ds-chip type="select" [label]="o.label"
+                  [selected]="historyFilter() === o.value"
+                  (activated)="setHistoryFilter(o.value)" />
+              }
+            </div>
+            @if (historyShownCount() > 0) {
+              <ds-button type="plain" tone="default" (clicked)="clearHistory()">
+                <ds-icon slot="icon-left" name="trash" [size]="16" /> {{ historyClearLabel() }}
+              </ds-button>
+            }
+          </div>
+        }
+
+
+        @if (activeTab() === 'searched') {
+          @if (shownRecents().length === 0) {
+            <div class="search-page__empty">
+              <ds-icon name="search-recent" [size]="48" />
+              <span class="search-page__empty-text">{{ historyEmpty('searched') }}</span>
+            </div>
+          } @else {
+            <!-- Un seul fil, du plus récent au plus ancien : la carte a la même
+                 forme pour tous les objets, le filtre isole un objet au besoin. -->
+            <div class="search-page__results">
+              @for (r of shownRecents(); track r.ts) {
+                <app-recent-search-v2-card [entry]="r" (replayed)="pickRecent(r)" />
+              }
+            </div>
+          }
+        }
+
+        @if (activeTab() === 'viewed') {
+          @if (shownViewed().length === 0) {
+            <div class="search-page__empty">
+              <ds-icon name="history" [size]="48" />
+              <span class="search-page__empty-text">{{ historyEmpty('viewed') }}</span>
+            </div>
+          } @else {
+            <div class="search-page__results">
+              @for (v of shownViewed(); track v.kind + v.id) {
+                <div class="search-page__entry">
+                  @if (v.kind === 'buyer') {
+                    <ds-result-card
+                      size="s"
+                      [data]="v.buyer"
+                      [open]="expandedKey() === 'buyer:' + v.id"
+                      [favorited]="isBuyerFavorite(v.buyer)"
+                      (toggled)="toggleExpanded('buyer:' + v.id)"
+                      (starred)="toggleBuyerFavorite(v.buyer)"
+                      (opened)="openResult(v.buyer)"
+                    >
+                      <time slot="meta" class="search-page__date" [attr.datetime]="isoDate(v.ts)" [title]="exactDate(v.ts)">{{ viewedDate(v.ts) }}</time>
+                    </ds-result-card>
+                  } @else {
+                    <ds-policy-result-card
+                      size="s"
+                      [data]="v.policy"
+                      [open]="expandedKey() === 'policy:' + v.id"
+                      [favorited]="isPolicyFavorite(v.policy)"
+                      (toggled)="toggleExpanded('policy:' + v.id)"
+                      (starred)="togglePolicyFavorite(v.policy)"
+                      (opened)="openPolicy(v.policy)"
+                    >
+                      <time slot="meta" class="search-page__date" [attr.datetime]="isoDate(v.ts)" [title]="exactDate(v.ts)">{{ viewedDate(v.ts) }}</time>
+                    </ds-policy-result-card>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+
+        @if (activeTab() === 'favorites') {
+          @if (shownFavorites().length === 0) {
+            <div class="search-page__empty">
+              <ds-icon name="star" [size]="48" />
+              <span class="search-page__empty-text">{{ historyEmpty('favorites') }}</span>
+            </div>
+          } @else {
+            <ng-template #favCard let-f>
+              @if (f.kind === 'buyer') {
+                <ds-result-card
+                  size="s"
+                  [data]="f.buyer"
+                  [open]="expandedKey() === 'buyer:' + f.id"
+                  [favorited]="true"
+                  (toggled)="toggleExpanded('buyer:' + f.id)"
+                  (starred)="toggleBuyerFavorite(f.buyer)"
+                  (opened)="openResult(f.buyer)"
+                />
+              } @else {
+                <ds-policy-result-card
+                  size="s"
+                  [data]="f.policy"
+                  [open]="expandedKey() === 'policy:' + f.id"
+                  [favorited]="true"
+                  (toggled)="toggleExpanded('policy:' + f.id)"
+                  (starred)="togglePolicyFavorite(f.policy)"
+                  (opened)="openPolicy(f.policy)"
+                />
+              }
+            </ng-template>
+
+            <!-- Un seul fil, du plus récemment ajouté au plus ancien, comme les autres onglets -->
+            <div class="search-page__results">
+              @for (f of shownFavorites(); track f.kind + f.id) {
+                <ng-container [ngTemplateOutlet]="favCard" [ngTemplateOutletContext]="{ $implicit: f }" />
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </app-topbox-test-shell>
+
+  <ds-confirm-dialog
+    title="Create company" tone="info" confirmLabel="Create" cancelLabel="Cancel"
+    [open]="pendingCreateIdx() !== null"
+    (confirmed)="confirmCreate()" (cancelled)="cancelCreate()">
+    Do you really want to create the company "{{ pendingCompanyName() }}"?
+  </ds-confirm-dialog>
+
+  <app-company-creation-wizard [open]="showCreateWizard()" (closed)="closeManualCreate()" />
+</div>

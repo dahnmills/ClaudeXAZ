@@ -1,0 +1,100 @@
+// =============================================================
+// Recent Search Card
+// Forme unique pour tous les objets : pastille, ligne 1 (ce qu'on a cherché
+// - type de recherche), ligne 2 (critères renseignés : libellé, puis valeur en
+// gras), date à droite.
+// Boîte, gouttières et typographies reprises de ds-result-card size s : une recherche
+// récente, un buyer consulté et une police en favori ont la même hauteur.
+// =============================================================
+
+:host {
+  display: block;
+}
+
+.recent-card {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-l);
+  width:         100%;
+  // Size s de ds-result-card : 8 px en haut et en bas
+  padding:       var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  box-sizing:    border-box;
+  background:    var(--semantic-color-interactive-background-neutral-default);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+  font-family:   var(--semantic-font-family);
+  cursor:        pointer;
+  transition:    background 0.15s ease;
+
+  &:hover {
+    background: var(--semantic-color-interactive-background-light-alt-hover);
+  }
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: -2px;
+  }
+}
+
+.recent-card__info {
+  display:        flex;
+  flex:           1 0 0;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+  min-width:      0;
+}
+
+// Ligne 1 : mêmes métriques que la ligne de nom de ds-result-card
+.recent-card__line {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+  min-width:   0;
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: var(--semantic-font-text-style-line-height-l);
+}
+
+.recent-card__searched {
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+  color:         var(--semantic-color-static-text-main-primary);
+}
+
+.recent-card__sep,
+.recent-card__type {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+// Ligne 2 : mêmes métriques que l'adresse de ds-result-card. Paires libellé /
+// valeur sur une ligne, coupée en fin si elle déborde (texte entier au survol)
+.recent-card__criteria {
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+  font-size:     var(--semantic-font-text-style-size-l);
+  line-height:   var(--semantic-font-text-style-line-height-l);
+}
+
+.recent-card__criterion + .recent-card__criterion {
+  margin-left: var(--semantic-measurement-spacing-m);
+}
+
+.recent-card__criterion-label {
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.recent-card__criterion-value {
+  margin-left: var(--semantic-measurement-spacing-xs);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.recent-card__at {
+  flex-shrink: 0;
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+  white-space: nowrap;
+}

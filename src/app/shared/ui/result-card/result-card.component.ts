@@ -37,6 +37,8 @@ export interface ResultCardData {
 export class ResultCardComponent {
   data = input.required<ResultCardData>();
   open = input<boolean>(false);
+  /** s : version resserrée pour les listes d'historique. */
+  size = input<'s' | 'm'>('m');
   favorited = input<boolean>(false);
   /**
    * Résultat issu d'une recherche interne (par Company ID) : la donnée ne vient
@@ -66,6 +68,7 @@ export class ResultCardComponent {
   hostClasses = computed(() => [
     'ds-result-card',
     this.open() ? 'ds-result-card--open' : '',
+    this.size() === 's' ? 'ds-result-card--s' : '',
   ].filter(Boolean).join(' '));
 
   scorePct = computed(() => {

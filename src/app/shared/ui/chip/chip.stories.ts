@@ -11,7 +11,6 @@ const meta: Meta<ChipComponent> = {
   argTypes: {
     type:     { control: 'select', options: ['static', 'filter', 'select'] },
     size:     { control: 'select', options: ['s', 'm'] },
-    emphasis: { control: 'select', options: ['light', 'strong'] },
     selected: { control: 'boolean' },
     disabled: { control: 'boolean' },
   },
@@ -31,8 +30,12 @@ export const Select: Story = {
   args: { label: 'Active', type: 'select', selected: true, size: 'm' },
 };
 
-export const SelectStrong: Story = {
-  args: { label: 'New', type: 'select', emphasis: 'strong', selected: true, size: 'm' },
+export const SelectUnselected: Story = {
+  args: { label: 'Inactive', type: 'select', selected: false, size: 'm' },
+};
+
+export const SelectSmall: Story = {
+  args: { label: 'Active', type: 'select', selected: true, size: 's' },
 };
 
 export const WithIcon: Story = {

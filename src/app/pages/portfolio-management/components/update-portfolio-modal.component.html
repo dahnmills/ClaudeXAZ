@@ -15,9 +15,9 @@
           <!-- Les deux pastilles sont indépendantes : les décocher toutes les deux
                vide la colonne, ce qui est un résultat de filtre, pas une erreur. -->
           <div class="pmu-col__filters">
-            <ds-chip type="select" emphasis="strong" label="New"
+            <ds-chip type="select" label="New"
               [selected]="showNew()" (activated)="showNew.set(!showNew())" />
-            <ds-chip type="select" emphasis="strong" label="Unchanged"
+            <ds-chip type="select" label="Unchanged"
               [selected]="showKept()" (activated)="showKept.set(!showKept())" />
           </div>
 
@@ -70,9 +70,9 @@
 
         <div class="pmu-col__controls">
           <div class="pmu-col__filters">
-            <ds-chip type="select" emphasis="strong" label="Removed"
+            <ds-chip type="select" label="Removed"
               [selected]="showRemoved()" (activated)="showRemoved.set(!showRemoved())" />
-            <ds-chip type="select" emphasis="strong" label="Unchanged"
+            <ds-chip type="select" label="Unchanged"
               [selected]="showNeverIn()" (activated)="showNeverIn.set(!showNeverIn())" />
           </div>
 

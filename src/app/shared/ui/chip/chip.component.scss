@@ -1,37 +1,44 @@
 // =============================================================
 // Chip
-// Source : Figma > -Components--Action > Chip
+// Source : Figma > -Components--Action > Chip (456:438)
 //
 // Pill rond compact pour filtres actifs, valeurs sélectionnées,
 // shortcuts. Distinct du Tag (Tag = status badge).
+// Un seul style, celui de Figma : non sélectionnée, contour foncé sur fond
+// blanc ; sélectionnée, aplat bleu à texte blanc. Figma « main » = token
+// « strong », « main/alt » = « strong-alt ».
 // =============================================================
 
 :host {
   display:        inline-flex;
   align-items:    center;
   gap:            var(--semantic-measurement-spacing-xs);
-  padding:        0 var(--semantic-measurement-spacing-s);
+  box-sizing:     border-box;
   border-radius:  var(--semantic-border-radius-round, 100px);
-  border:         1px solid var(--semantic-color-static-border-subtle-tertiary);
-  background:     var(--semantic-color-static-background-main-primary);
-  color:          var(--semantic-color-static-text-main-secondary);
+  border:         1px solid var(--semantic-color-interactive-border-strong-alt-default);
+  background:     var(--semantic-color-interactive-background-neutral-default);
+  color:          var(--semantic-color-interactive-text-strong-alt-default);
   font-family:    var(--semantic-font-family);
-  font-size:      var(--semantic-font-text-style-size-m);
-  line-height:    var(--semantic-font-text-style-line-height-m);
-  font-weight:    var(--semantic-font-text-style-font-weight-regular);
+  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-l); // Figma 1
+  line-height:    var(--semantic-font-text-style-line-height-s);
   white-space:    nowrap;
   user-select:    none;
   transition:     background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
-:host.ds-chip--size-s { height: var(--semantic-measurement-sizing-l); }  // 24
+// Taille S : 12 px, padding 8 (Figma px-8 py-4), 24 de haut
+:host.ds-chip--size-s {
+  height:    var(--semantic-measurement-sizing-l); // 24
+  padding:   0 var(--semantic-measurement-spacing-s);
+  font-size: var(--semantic-font-text-style-size-s);
+}
 
-// Taille M : 32 de haut, 16 de padding horizontal (Figma Team Management
-// 2852:16918, `px-16 py-8` sur un texte de line-height 16). La taille S garde
-// 8 : sur 24 de haut, 16 de chaque côté déséquilibre la pastille.
+// Taille M : 14 px, padding 16 (Figma px-16 py-8), 32 de haut
 :host.ds-chip--size-m {
-  height:  var(--semantic-measurement-sizing-xl); // 32
-  padding: 0 var(--semantic-measurement-spacing-m);
+  height:    var(--semantic-measurement-sizing-xl); // 32
+  padding:   0 var(--semantic-measurement-spacing-m);
+  font-size: var(--semantic-font-text-style-size-m);
 }
 
 :host.ds-chip--type-filter,
@@ -39,8 +46,12 @@
   cursor: pointer;
 
   &:hover:not(.ds-chip--disabled) {
-    border-color: var(--semantic-color-interactive-border-strong-default);
-    color:        var(--semantic-color-interactive-text-strong-default);
+    border-color: var(--semantic-color-interactive-border-strong-alt-hover);
+    color:        var(--semantic-color-interactive-text-strong-alt-active); // Figma : alt/pressed au survol
+  }
+  &:active:not(.ds-chip--disabled) {
+    border-color: var(--semantic-color-interactive-border-strong-alt-active);
+    color:        var(--semantic-color-interactive-text-strong-alt-hover);  // Figma : alt/hover à l'appui
   }
   &:focus-visible {
     outline:        2px solid var(--semantic-color-interactive-border-focus);
@@ -48,35 +59,26 @@
   }
 }
 
+// Sélectionnée : aplat bleu, texte blanc, le contour prend la couleur du fond
 :host.ds-chip--selected {
-  background:   var(--semantic-color-static-background-subtle-informative);
-  border-color: var(--semantic-color-interactive-border-strong-default);
-  color:        var(--semantic-color-interactive-text-strong-default);
-}
-
-// Emphase forte : la pastille allumée est un aplat bleu à texte blanc. Le fond
-// pâle suffit quand une seule pastille porte un filtre ; sur une rangée de
-// filtres de colonne il ne dit pas assez vite ce qui est allumé.
-:host.ds-chip--emphasis-strong.ds-chip--selected {
   background:   var(--semantic-color-interactive-background-strong-default);
   border-color: var(--semantic-color-interactive-background-strong-default);
   color:        var(--semantic-color-interactive-text-neutral-default);
-  font-weight:  var(--semantic-font-text-style-font-weight-semi-bold);
 
   &:hover:not(.ds-chip--disabled) {
     background:   var(--semantic-color-interactive-background-strong-hover);
     border-color: var(--semantic-color-interactive-background-strong-hover);
-    color:        var(--semantic-color-interactive-text-neutral-default);
+    color:        var(--semantic-color-interactive-text-neutral-hover);
   }
-
   &:active:not(.ds-chip--disabled) {
     background:   var(--semantic-color-interactive-background-strong-active);
     border-color: var(--semantic-color-interactive-background-strong-active);
+    color:        var(--semantic-color-interactive-text-neutral-active);
   }
 }
 
 :host.ds-chip--disabled {
-  opacity:        var(--semantic-measurement-opacity-disabled);
+  opacity:        var(--semantic-measurement-opacity-disabled); // Figma 40 %
   cursor:         not-allowed;
   pointer-events: none;
 }

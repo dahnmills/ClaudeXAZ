@@ -1,0 +1,190 @@
+// =============================================================
+// Multi Select (Dropdown multi-sélection)
+// Source : Figma > -Components--Data Entry > Dropdown (node 3008:817)
+//
+// Fidélité Figma :
+//   • Label : comme ds-input-text, 2px au-dessus du container
+//   • Container : coque ds-input-text (32px, padding 0 8px, radius 4px, bordure)
+//   • Contenu : tags ds-tag Filter espacés de 8px, « (+x more) » à 22px de la
+//     liste (14px semi-bold, texte principal), chevron 16px à 8px
+//   • Variante inline : sans bordure ni hauteur, pour un slot de barre
+// =============================================================
+
+:host {
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+  width:          100%;
+  min-width:      0;
+}
+
+.ds-multi-select__label {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+  white-space: nowrap;
+}
+
+.ds-multi-select__anchor {
+  position:  relative;
+  min-width: 0;
+}
+
+// ── Container : coque de ds-input-text ───────────────────────
+.ds-multi-select__container {
+  display:       flex;
+  align-items:   center;
+  height:        var(--semantic-measurement-spacing-xl);    // 32px
+  padding:       0 var(--semantic-measurement-spacing-s);   // 0 8px
+  gap:           var(--semantic-measurement-spacing-s);     // 8px
+  border-radius: var(--semantic-border-radius-s);           // 4px
+  border:        1px solid var(--semantic-color-interactive-border-medium-alt-default);
+  background:    var(--semantic-color-static-background-main-primary);
+  box-sizing:    border-box;
+  cursor:        pointer;
+  transition:    border-color 0.15s ease, background 0.15s ease;
+
+  &:hover { border-color: var(--semantic-color-interactive-border-medium-alt-hover); }
+
+  &:focus-visible {
+    border-color:   var(--semantic-color-interactive-border-strong-active);
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+.ds-multi-select__icon {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-icon-main-tertiary);
+}
+
+.ds-multi-select__value {
+  display:     flex;
+  flex:        1 0 0;
+  align-items: center;
+  gap:         calc(var(--semantic-measurement-spacing-m) + var(--semantic-measurement-spacing-xs) + var(--semantic-measurement-spacing-xxs)); // 22px Figma
+  min-width:   0;
+  overflow:    hidden;
+}
+
+.ds-multi-select__tags {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s); // 8px
+
+  ds-tag { flex-shrink: 0; }
+  min-width:   0;
+}
+
+.ds-multi-select__more {
+  flex-shrink:    0;
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-m);
+  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+  line-height:    var(--semantic-font-text-style-line-height-s);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+  color:          var(--semantic-color-static-text-main-primary);
+  white-space:    nowrap;
+}
+
+// Rangée de mesure : hors flux, invisible, mêmes styles que les vrais tags
+.ds-multi-select__measure {
+  position:       absolute;
+  top:            0;
+  left:           0;
+  display:        flex;
+  visibility:     hidden;
+  pointer-events: none;
+  white-space:    nowrap;
+}
+
+.ds-multi-select__placeholder {
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-l);
+  line-height:   var(--semantic-font-text-style-line-height-l);
+  color:         var(--semantic-color-static-text-main-tertiary);
+}
+
+.ds-multi-select__chevron {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-icon-main-secondary);
+}
+
+// ── Flyout : rangées à cocher, comme ds-tag-filter-chip ──────
+.ds-multi-select__flyout {
+  position: absolute;
+  top:      calc(100% + var(--semantic-measurement-spacing-xs));
+  left:     0;
+  right:    0;
+  z-index:  50;
+
+  ::ng-deep .ds-flyout-menu {
+    display:    block;
+    width:      100%;
+    box-sizing: border-box;
+  }
+}
+
+.ds-multi-select__options {
+  display:        flex;
+  flex-direction: column;
+  max-height:     calc(var(--semantic-measurement-sizing-3xl) * 4); // ~6 rangées visibles
+  overflow-y:     auto;
+
+  ds-checkbox {
+    padding:    var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+    transition: background-color 0.15s ease;
+
+    &:hover  { background-color: var(--semantic-color-interactive-background-light-alt-hover); }
+    &:active { background-color: var(--semantic-color-interactive-background-light-alt-active); }
+  }
+}
+
+// ── États ─────────────────────────────────────────────────────
+:host(.ds-multi-select--error) .ds-multi-select__container {
+  border-color: var(--semantic-color-interactive-border-strong-negative-default);
+}
+
+:host(.ds-multi-select--error) .ds-multi-select__placeholder {
+  color: var(--semantic-color-static-text-main-functional-negative);
+}
+
+.ds-multi-select__error-msg {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-interactive-text-strong-negative-default);
+}
+
+:host(.ds-multi-select--disabled) {
+  opacity:        var(--semantic-measurement-opacity-disabled);
+  pointer-events: none;
+}
+
+// ── Variante inline : slot de barre, ni bordure ni hauteur imposée ─
+:host(.ds-multi-select--inline) {
+  .ds-multi-select__container {
+    height:        auto;
+    padding:       0;
+    border:        none;
+    border-radius: 0;
+    background:    transparent;
+  }
+
+  .ds-multi-select__container:focus-visible {
+    outline-offset: 2px;
+  }
+
+  .ds-multi-select__flyout {
+    right:     auto;
+    min-width: 100%;
+  }
+}

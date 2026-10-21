@@ -1,0 +1,30 @@
+<div class="recent-card" role="button" tabindex="0"
+     [attr.aria-label]="'Search again: ' + view().object + ', ' + view().searchType + ', ' + view().searched + ', ' + criteriaText() + ', ' + timestamp()"
+     (click)="replayed.emit()"
+     (keydown.enter)="replayed.emit()"
+     (keydown.space)="$event.preventDefault(); replayed.emit()">
+
+  <ds-icon-tile size="m" tone="brand" [attr.title]="view().object + ' search'">
+    <ds-icon [name]="view().icon" [size]="24" />
+  </ds-icon-tile>
+
+  <div class="recent-card__info">
+    <div class="recent-card__line">
+      <span class="recent-card__searched" [title]="view().searched">{{ view().searched }}</span>
+      <span class="recent-card__sep">-</span>
+      <span class="recent-card__type">{{ view().searchType }}</span>
+    </div>
+    <span class="recent-card__criteria" [title]="criteriaText()">
+      @for (c of view().criteria; track c.label) {
+        <span class="recent-card__criterion">
+          <span class="recent-card__criterion-label">{{ c.label }}</span>
+          <span class="recent-card__criterion-value">{{ c.value }}</span>
+        </span>
+      } @empty {
+        <span class="recent-card__criterion-label">No criteria</span>
+      }
+    </span>
+  </div>
+
+  <time class="recent-card__at" [attr.datetime]="isoDate()" [title]="exactDate()">{{ timestamp() }}</time>
+</div>
