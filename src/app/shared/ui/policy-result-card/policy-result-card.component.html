@@ -24,26 +24,30 @@
     </div>
   </div>
 
-  <div class="ds-policy-result-card__actions">
+  <!-- Même structure que ds-result-card (méta, puis boutons resserrés) : l'étoile
+       et le chevron tombent au même endroit dans une liste qui mêle les deux -->
+  <div class="ds-policy-result-card__right">
     <!-- Méta propre au contexte (ex. date de consultation dans un historique) -->
     <ng-content select="[slot=meta]" />
-    <ds-button-icon
-      type="plain"
-      tone="accent"
-      [ariaLabel]="favorited() ? 'Unfavorite' : 'Favorite'"
-      class="ds-policy-result-card__star"
-      [class.ds-policy-result-card__star--on]="favorited()"
-      dsTooltip="Add to favorite"
-      dsTooltipPosition="top-center"
-      (clicked)="starred.emit()"
-    >
-      <ds-icon [name]="favorited() ? 'star-filled' : 'star'" [size]="20" />
-    </ds-button-icon>
-    <ds-button-icon type="plain" tone="accent" ariaLabel="Toggle details"
-      [disabled]="!hasDetails()"
-      (clicked)="hasDetails() && toggled.emit()">
-      <ds-icon [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="20" />
-    </ds-button-icon>
+    <div class="ds-policy-result-card__actions">
+      <ds-button-icon
+        type="plain"
+        tone="accent"
+        [ariaLabel]="favorited() ? 'Unfavorite' : 'Favorite'"
+        class="ds-policy-result-card__star"
+        [class.ds-policy-result-card__star--on]="favorited()"
+        dsTooltip="Add to favorite"
+        dsTooltipPosition="top-center"
+        (clicked)="starred.emit()"
+      >
+        <ds-icon [name]="favorited() ? 'star-filled' : 'star'" [size]="20" />
+      </ds-button-icon>
+      <ds-button-icon type="plain" tone="accent" ariaLabel="Toggle details"
+        [disabled]="!hasDetails()"
+        (clicked)="hasDetails() && toggled.emit()">
+        <ds-icon [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="20" />
+      </ds-button-icon>
+    </div>
   </div>
 </div>
 

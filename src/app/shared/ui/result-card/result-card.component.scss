@@ -119,7 +119,7 @@
 .ds-result-card__actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--semantic-measurement-spacing-s);
 }
 
 .ds-result-card__add--hidden {

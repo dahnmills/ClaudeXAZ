@@ -81,11 +81,18 @@
   color: var(--semantic-color-static-text-main-tertiary);
 }
 
-.ds-policy-result-card__actions {
+.ds-policy-result-card__right {
   display: flex;
   align-items: center;
   gap: var(--semantic-measurement-spacing-xl);
   flex-shrink: 0;
+}
+
+// Même espacement que les boutons de ds-result-card
+.ds-policy-result-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
 }
 
 .ds-policy-result-card__star--on {
