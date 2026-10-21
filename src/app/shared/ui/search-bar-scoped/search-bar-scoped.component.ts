@@ -16,7 +16,7 @@ import {
 } from '../search-bar-multi/search-bar-multi.component';
 import { BU_CODES, type PolicyStatus } from '../policy-result-card/policy.model';
 import {
-  POLICY_MODES, POLICY_STATUSES, defaultPolicyCriteria,
+  POLICY_MODES, POLICY_STATUSES, defaultPolicyCriteria, allPolicyStatuses,
   type PolicyMode, type PolicyCriteriaValues,
 } from '../policy-criteria/policy-criteria.model';
 
@@ -126,7 +126,7 @@ export class SearchBarScopedComponent {
   buError = computed(() => this.attempted() && !this.isBuyers() && this.isOpen() && !this.buCode());
 
   searchValid = computed(() => {
-    if (!this.isBuyers()) return !this.isOpen() || (!!this.buCode() && !!this.query().trim());
+    if (!this.isBuyers()) return this.isOpen() ? (!!this.buCode() && !!this.query().trim()) : !this.statusError();
     if (!this.query().trim()) return false;
     if (this.type() === 'phone') return !!this.country();
     if (this.type() === 'id') return !!this.country() && !!this.idType();
@@ -149,10 +149,17 @@ export class SearchBarScopedComponent {
   statusDisabled = computed(() => this.policyCriteria().searchIn === 'drafts');
   statusLabel = computed(() => {
     const picked = POLICY_STATUSES.filter(s => this.policyCriteria().statuses.includes(s.id));
-    if (!picked.length) return 'Any status';
+    if (!picked.length) return 'No status selected';
+    if (picked.length === POLICY_STATUSES.length) return 'All statuses';
     return picked.length <= 2 ? picked.map(s => s.label).join(', ') : `${picked.length} statuses`;
   });
 
+  /** Aucun statut coché en Global search sur les polices : rien ne pourrait sortir,
+   *  on le dit tout de suite et la recherche reste bloquée. */
+  statusError = computed(() => !this.isBuyers() && !this.isOpen() && !this.statusDisabled()
+    && !this.policyCriteria().statuses.length);
+  /** Open policy : n° et extension sont deux champs jumeaux, même icône. */
+  fieldIcon = computed<IconName>(() => !this.isBuyers() && this.isOpen() ? 'hash' : 'search');
   private host = inject(ElementRef<HTMLElement>);
 
   @HostListener('document:click', ['$event'])
@@ -197,7 +204,8 @@ export class SearchBarScopedComponent {
   }
 
   pickSearchIn(v: 'policies' | 'drafts') {
-    this.policyCriteria.update(c => ({ ...c, searchIn: v }));
+    // Revenir aux polices recoche tous les statuts : on repart de tout.
+    this.policyCriteria.update(c => ({ ...c, searchIn: v, statuses: v === 'policies' ? allPolicyStatuses() : c.statuses }));
     this.close();
   }
 
@@ -217,6 +225,7 @@ export class SearchBarScopedComponent {
     this.policyCriteria.update(c => ({ ...c, extension }));
   }
   clearQuery() { this.query.set(''); }
+  clearExtension() { this.policyCriteria.update(c => ({ ...c, extension: '' })); }
 
   submit() {
     if (this.searchValid()) this.searchClicked.emit();

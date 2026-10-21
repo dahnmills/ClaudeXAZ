@@ -139,7 +139,7 @@
     <div class="ds-search-bar-scoped__field"
       [class.ds-search-bar-scoped__field--disabled]="inputDisabled()"
       [class.ds-search-bar-scoped__field--error]="queryError()">
-      <ds-icon name="search" [size]="24" class="ds-search-bar-scoped__field-icon" />
+      <ds-icon [name]="fieldIcon()" [size]="24" class="ds-search-bar-scoped__field-icon" />
       @if (phonePrefix(); as p) {
         <span class="ds-search-bar-scoped__phone-prefix">{{ p }}</span>
       }
@@ -168,9 +168,10 @@
   <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
 
   @if (!isBuyers() && isOpen()) {
-    <!-- Extension : même champ que la saisie, court -->
-    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__ext-slot">
+    <!-- Extension : champ jumeau du n° de police, même largeur, même icône, même croix -->
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__field-slot">
       <div class="ds-search-bar-scoped__field">
+        <ds-icon name="hash" [size]="24" class="ds-search-bar-scoped__field-icon" />
         <input
           type="text"
           inputmode="numeric"
@@ -181,6 +182,11 @@
           (input)="onExtensionInput($event)"
           (keydown.enter)="submit()"
         />
+        @if (policyCriteria().extension) {
+          <ds-button-icon class="ds-search-bar-scoped__clear" type="plain" size="s" ariaLabel="Clear extension" (clicked)="clearExtension()">
+            <ds-icon name="close" [size]="16" />
+          </ds-button-icon>
+        }
       </div>
     </div>
     <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
@@ -201,7 +207,7 @@
     </div>
     <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
 
-    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country">
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country" [class.ds-search-bar-scoped__slot--error]="statusError()">
       <ds-standalone-dropdown icon="check-circle" [label]="statusLabel()" [disabled]="statusDisabled()" (clicked)="toggle('status')" />
       @if (openFlyout() === 'status') {
         <div class="ds-search-bar-scoped__flyout ds-search-bar-scoped__flyout--list">
@@ -214,8 +220,14 @@
           </ds-flyout-menu>
         </div>
       }
+      @if (statusError()) {
+        <span class="ds-search-bar-scoped__error-msg">
+          <ds-icon name="error-circle" [size]="16" /> Select at least one status
+        </span>
+      }
     </div>
-    <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
+    <ds-divider class="ds-search-bar-scoped__divider"
+      [class.ds-search-bar-scoped__divider--error-adjacent]="statusError()" orientation="vertical" />
   }
 
   @if (isBuyers()) {

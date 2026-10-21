@@ -46,7 +46,9 @@ export class RecentSearchV2CardComponent {
       const open = e.mode === 'open';
       const statuses = open || c.searchIn === 'drafts'
         ? ''
-        : POLICY_STATUSES.filter(s => c.statuses.includes(s.id)).map(s => s.label).join(', ') || 'Any status';
+        : c.statuses.length === POLICY_STATUSES.length
+          ? 'All statuses'
+          : POLICY_STATUSES.filter(s => c.statuses.includes(s.id)).map(s => s.label).join(', ');
       return [
         { label: 'Searched',    value: this.searchedValue() },
         { label: 'Mode',        value: POLICY_MODES.find(m => m.id === e.mode)?.label ?? '' },

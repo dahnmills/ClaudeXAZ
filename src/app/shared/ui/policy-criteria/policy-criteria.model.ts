@@ -26,8 +26,13 @@ export const POLICY_STATUSES: { id: PolicyStatus; label: string }[] = [
   { id: 'expired',   label: 'Expired' },
 ];
 
-/** Jeu par défaut, celui de Qirin : polices émises. Fonction, pas constante :
+/** Jeu par défaut : tous les statuts cochés. Fonction, pas constante :
  *  chaque appelant a le sien. */
 export function defaultPolicyCriteria(): PolicyCriteriaValues {
-  return { searchIn: 'policies', statuses: ['issued'], extension: '' };
+  return { searchIn: 'policies', statuses: allPolicyStatuses(), extension: '' };
+}
+
+/** Tous les statuts, cochés d'office : en Global search sur les polices, on part de tout. */
+export function allPolicyStatuses(): PolicyStatus[] {
+  return POLICY_STATUSES.map(s => s.id);
 }

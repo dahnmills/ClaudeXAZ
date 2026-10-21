@@ -20,8 +20,8 @@ export interface PolicySearchResult {
  * Open policy : police de la BU dont le n° (ou n°-extension, tel qu'affiché)
  * est exactement la saisie, extension appliquée si elle est renseignée, tous
  * statuts confondus.
- * Global search : source (polices ou drafts, exclusif), BU si choisie, statut
- * (polices seulement, aucun coché = tous), puis recherche partielle sur le n°
+ * Global search : source (polices ou drafts, exclusif), BU si choisie, statuts
+ * cochés (polices seulement ; aucun coché = aucune police), puis recherche partielle sur le n°
  * et le policyholder. L'extension n'y joue pas.
  */
 export function searchPolicies(pool: PolicyResultData[], q: PolicyQuery): PolicySearchResult {
@@ -43,7 +43,7 @@ export function searchPolicies(pool: PolicyResultData[], q: PolicyQuery): Policy
   const filtered = pool.filter(p =>
     (c.searchIn === 'drafts' ? p.kind === 'draft' : p.kind === 'policy') &&
     (!q.buCode || p.buCode === q.buCode) &&
-    (c.searchIn === 'drafts' || !c.statuses.length || (p.status !== null && c.statuses.includes(p.status))),
+    (c.searchIn === 'drafts' || (p.status !== null && c.statuses.includes(p.status))),
   );
   if (!text) return { items: filtered, exactHit: false };
   return {

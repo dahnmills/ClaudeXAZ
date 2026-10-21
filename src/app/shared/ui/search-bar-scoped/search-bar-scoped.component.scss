@@ -207,8 +207,6 @@
 }
 
 // ── Policies ────────────────────────────────────────────────────────────
-// Extension : champ court, même rendu que la saisie
-.ds-search-bar-scoped__ext-slot { width: var(--foundation-spacing-104); }
 
 // Flyout à liste (BU, Status) : même construction que ds-tag-filter-chip.
 // La recherche vit dans le panneau, séparée de la liste par un trait ; la
