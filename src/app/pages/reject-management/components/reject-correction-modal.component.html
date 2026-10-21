@@ -1,13 +1,6 @@
 <ds-modal [open]="open()" size="large" [title]="reject()?.type ?? 'Reject'"
   [contentHeight]="contentHeight" (closed)="closed.emit()">
 
-  <!-- Identité du message et ce qu'il reste à faire, sur une ligne -->
-  <div class="rc__head">
-    <span class="rc__identity">{{ identity() }}</span>
-    <ds-badge [label]="openCount() ? errorsLabel(openCount()) : 'All corrected'"
-      [status]="openCount() ? 'error' : 'success'" variant="light" size="m" />
-  </div>
-
   <ng-template #card let-title="title" let-open="open" let-hint="hint" let-target="target">
     <ds-card [noPadding]="true">
       <div class="rc__card" role="button" tabindex="0"
@@ -64,8 +57,10 @@
                   <div class="rc__field" [class.rc__field--wide]="isWide(e.field)" [id]="'rc-err-' + e.field.n">
                     <ds-input-text [label]="e.field.label" [value]="values()[e.field.n]"
                       (valueChange)="setValue(e.field.n, $event)"
-                      [error]="isOpenError(e.field)" [errorMessage]="e.field.error ?? ''" />
-                    <span class="rc__field-meta">#{{ e.field.n }} · {{ e.field.tech }} · max {{ e.field.length }}</span>
+                      [error]="isOpenError(e.field)" [errorMessage]="e.field.error ?? ''">
+                      <span slot="label-info" class="rc__info" tabindex="0" [dsTooltip]="techInfo(e.field)" [dsTooltipDelay]="200"
+                        [attr.aria-label]="techInfo(e.field)"><ds-icon name="info-circle" [size]="16" /></span>
+                    </ds-input-text>
                   </div>
                 }
               </div>
@@ -75,28 +70,20 @@
       } @else {
         @for (s of blockSections(); track s.key) {
           <div class="rc__group">
-            <div class="rc__family-head">
-              <span class="rc__family">{{ s.name }}</span>
-              @if (s.emptyCount > 0) {
-                <ds-button type="plain" tone="default" (clicked)="showEmpty(s.key)">
-                  <ds-icon slot="icon-left" name="plus" [size]="16" />
-                  {{ s.emptyCount }} empty {{ s.emptyCount === 1 ? 'field' : 'fields' }}
-                </ds-button>
-              }
-            </div>
-            @if (s.fields.length) {
-              <div class="rc__card-white">
-                <div class="rc__fields">
-                  @for (f of s.fields; track f.n) {
-                    <div class="rc__field" [class.rc__field--wide]="isWide(f)" [id]="'rc-field-' + f.n">
-                      <ds-input-text [label]="f.label" [value]="values()[f.n]" (valueChange)="setValue(f.n, $event)"
-                        [error]="isOpenError(f)" [errorMessage]="f.error ?? ''" />
-                      <span class="rc__field-meta">#{{ f.n }} · {{ f.tech }}</span>
-                    </div>
-                  }
-                </div>
+            <span class="rc__family">{{ s.name }}</span>
+            <div class="rc__card-white">
+              <div class="rc__fields">
+                @for (f of s.fields; track f.n) {
+                  <div class="rc__field" [class.rc__field--wide]="isWide(f)" [id]="'rc-field-' + f.n">
+                    <ds-input-text [label]="f.label" [value]="values()[f.n]" (valueChange)="setValue(f.n, $event)"
+                      [error]="isOpenError(f)" [errorMessage]="f.error ?? ''">
+                      <span slot="label-info" class="rc__info" tabindex="0" [dsTooltip]="techInfo(f)" [dsTooltipDelay]="200"
+                        [attr.aria-label]="techInfo(f)"><ds-icon name="info-circle" [size]="16" /></span>
+                    </ds-input-text>
+                  </div>
+                }
               </div>
-            }
+            </div>
           </div>
         }
 

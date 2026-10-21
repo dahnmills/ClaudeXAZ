@@ -2,12 +2,12 @@ import { Component, ElementRef, computed, effect, inject, input, output, signal 
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ModalComponent,
-  BadgeComponent,
   ButtonComponent,
   CardComponent,
   IconComponent,
   InputTextComponent,
   ToasterService,
+  TooltipDirective,
 } from '../../../shared/ui';
 import type { RejectField, RejectRecord } from '../reject-record.model';
 import type { Reject } from '../reject-management.data';
@@ -21,12 +21,11 @@ interface ErrorItem {
   where: string;
 }
 
-/** Une sous-section d'un bloc : champs en cause d'abord, puis les renseignés, les vides repliés. */
+/** Une sous-section d'un bloc : champs en cause d'abord, puis les renseignés, puis les vides. */
 interface BlockSection {
   key: string;
   name: string;
   fields: RejectField[];
-  emptyCount: number;
 }
 
 /**
@@ -42,7 +41,7 @@ interface BlockSection {
 @Component({
   selector: 'rm-reject-correction-modal',
   standalone: true,
-  imports: [NgTemplateOutlet, ModalComponent, BadgeComponent, ButtonComponent, CardComponent, IconComponent, InputTextComponent],
+  imports: [NgTemplateOutlet, ModalComponent, ButtonComponent, CardComponent, IconComponent, InputTextComponent, TooltipDirective],
   templateUrl: './reject-correction-modal.component.html',
   styleUrl: './reject-correction-modal.component.scss',
 })
@@ -62,8 +61,6 @@ export class RejectCorrectionModalComponent {
   readonly screen = signal<Screen>('hub');
   /** Valeurs saisies, par numéro de champ. */
   readonly values = signal<Record<number, string>>({});
-  /** Sous-sections dont les champs vides sont dépliés. */
-  readonly expanded = signal<Set<string>>(new Set());
 
   /** Même hauteur que le wizard de création de société, sur tous les écrans : la modale ne saute pas. */
   readonly contentHeight = '520px';
@@ -77,7 +74,6 @@ export class RejectCorrectionModalComponent {
       for (const f of this.allFields()) init[f.n] = f.value;
       this.values.set(init);
       this.screen.set('hub');
-      this.expanded.set(new Set());
     });
   }
 
@@ -118,17 +114,10 @@ export class RejectCorrectionModalComponent {
     return `${n} ${n === 1 ? 'error' : 'errors'} to correct`;
   }
 
-  /** Identité du message sur une ligne, sous le titre. */
-  readonly identity = computed(() => {
-    const m = this.record()?.meta ?? {};
-    return [
-      m['EHBU'],
-      m['Provider ID'] && `Provider ${m['Provider ID']}`,
-      m['Date'],
-      m['Country'],
-      m['Identifier type'] && `${m['Identifier type']} ${m['Identifier value'] ?? ''}`.trim(),
-    ].filter(Boolean).join(' · ');
-  });
+  /** Nom technique du champ, dans l'infobulle du « i » à côté du libellé. */
+  techInfo(f: RejectField): string {
+    return `#${f.n} · ${f.tech} · max ${f.length}`;
+  }
 
   setValue(n: number, value: string): void {
     this.values.update(v => ({ ...v, [n]: value }));
@@ -150,7 +139,6 @@ export class RejectCorrectionModalComponent {
   /** En entrant dans un bloc, la vue descend jusqu'à sa première erreur restante. */
   go(screen: Screen): void {
     this.screen.set(screen);
-    this.expanded.set(new Set());
     setTimeout(() => {
       this.el('ds-modal-content')?.scrollTo({ top: 0 });
       this.el('.rc__panel')?.scrollTo({ top: 0 });
@@ -173,7 +161,6 @@ export class RejectCorrectionModalComponent {
     const s = this.screen();
     if (typeof s !== 'number') return [];
     const block = this.record()?.blocks[s];
-    const open = this.expanded();
     return (block?.sections ?? []).map((sec, si) => {
       const key = `${s}-${si}`;
       const atFault = sec.fields.filter(f => f.error);
@@ -182,15 +169,10 @@ export class RejectCorrectionModalComponent {
       return {
         key,
         name: sec.name,
-        fields: open.has(key) ? [...atFault, ...filled, ...empty] : [...atFault, ...filled],
-        emptyCount: open.has(key) ? 0 : empty.length,
+        fields: [...atFault, ...filled, ...empty],
       };
     });
   });
-
-  showEmpty(key: string): void {
-    this.expanded.update(set => new Set(set).add(key));
-  }
 
   /** Bloc suivant qui a encore des erreurs, après le bloc courant. */
   readonly nextBlock = computed(() => {

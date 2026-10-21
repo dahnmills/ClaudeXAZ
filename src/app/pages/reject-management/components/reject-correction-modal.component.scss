@@ -8,23 +8,6 @@
   font-family: var(--semantic-font-family);
 }
 
-// ── En-tête : identité du message et compteur ──────────────────────────────
-.rc__head {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  gap:             var(--semantic-measurement-spacing-m);
-}
-
-.rc__identity {
-  overflow:      hidden;
-  text-overflow: ellipsis;
-  white-space:   nowrap;
-  font-size:     var(--semantic-font-text-style-size-m);
-  line-height:   var(--semantic-font-text-style-line-height-m);
-  color:         var(--semantic-color-static-text-main-secondary);
-}
-
 // ── Carrefour ──────────────────────────────────────────────────────────────
 .rc__group {
   display:        flex;
@@ -133,13 +116,6 @@
   border-radius:  var(--semantic-border-radius-s);
 }
 
-.rc__family-head {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  gap:             var(--semantic-measurement-spacing-m);
-}
-
 .rc__family {
   font-size:      var(--semantic-font-text-style-size-s);
   font-weight:    var(--semantic-font-text-style-font-weight-bold);
@@ -154,13 +130,17 @@
   border-radius: var(--semantic-border-radius-s);
 }
 
-.rc__field-meta {
-  overflow:      hidden;
-  text-overflow: ellipsis;
-  white-space:   nowrap;
-  font-size:     var(--semantic-font-text-style-size-s);
-  line-height:   var(--semantic-font-text-style-line-height-s);
-  color:         var(--semantic-color-static-text-main-tertiary);
+// « i » à côté du libellé : nom technique du champ au survol et au focus
+.rc__info {
+  display:     inline-flex;
+  color:       var(--semantic-color-static-icon-main-tertiary);
+  cursor:      help;
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+    border-radius:  var(--semantic-border-radius-round);
+  }
 }
 
 // Un libellé long prend deux colonnes plutôt que deux lignes
