@@ -1,5 +1,5 @@
 <div class="recent-card" role="button" tabindex="0"
-     [attr.aria-label]="'Search again: ' + view().object + ', ' + view().searchType + ', ' + view().searched"
+     [attr.aria-label]="'Search again: ' + view().object + ', ' + view().searchType + ', ' + view().searched + ', ' + view().summary + ', ' + timestamp()"
      (click)="replayed.emit()"
      (keydown.enter)="replayed.emit()"
      (keydown.space)="$event.preventDefault(); replayed.emit()">
@@ -17,5 +17,5 @@
     <span class="recent-card__summary" [title]="view().summary">{{ view().summary }}</span>
   </div>
 
-  <span class="recent-card__at">{{ timestamp() }}</span>
+  <time class="recent-card__at" [attr.datetime]="isoDate()" [title]="exactDate()">{{ timestamp() }}</time>
 </div>

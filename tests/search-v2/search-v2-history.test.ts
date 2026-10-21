@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   byRecent, filterHistory, countByKind, clearLabel, emptyLabel, upsertFront, removeKind,
+  searchedLabel, fullDate,
 } from '../../src/app/pages/search-v2/search-v2-history.ts';
 
 type E = { kind: 'buyer' | 'policy'; ts: number; id: string };
@@ -58,3 +59,24 @@ test('clearKind keeps the other kind', () => {
   assert.deepEqual(removeKind(items), []);
 });
 
+
+// Mercredi 21 octobre 2026, 15:00 (heure locale)
+const now = new Date(2026, 9, 21, 15, 0).getTime();
+const at = (d: number, h: number, m = 0, y = 2026, mo = 9) => new Date(y, mo, d, h, m).getTime();
+
+test('searchedLabel is relative over a few days, with the verb', () => {
+  assert.equal(searchedLabel(now - 30_000, now), 'Searched just now');
+  assert.equal(searchedLabel(at(21, 14, 48), now), 'Searched 12 min ago');
+  assert.equal(searchedLabel(at(21, 9), now), 'Searched 6 h ago');
+  assert.equal(searchedLabel(at(20, 23), now), 'Searched yesterday');
+  assert.equal(searchedLabel(at(17, 10), now), 'Searched 4 days ago');
+});
+
+test('searchedLabel turns absolute after a week, year only when it differs', () => {
+  assert.equal(searchedLabel(at(14, 10), now), 'Searched 14 Oct');
+  assert.equal(searchedLabel(at(29, 10, 0, 2025, 8), now), 'Searched 29 Sep 2025');
+});
+
+test('fullDate gives the exact moment for the tooltip', () => {
+  assert.equal(fullDate(at(29, 14, 32, 2026, 8)), '29 Sep 2026, 14:32');
+});

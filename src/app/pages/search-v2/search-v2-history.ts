@@ -60,3 +60,44 @@ export function upsertFront<T extends { ts: number }>(list: T[], entry: T, key: 
 export function removeKind<T extends Stamped>(list: T[], kind?: HistoryKind): T[] {
   return kind ? list.filter(e => e.kind !== kind) : [];
 }
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MINUTE = 60_000;
+const HOUR = 60 * MINUTE;
+
+/** Jours calendaires entre deux instants, en heure locale. */
+function daysBetween(ts: number, now: number): number {
+  const day = (t: number) => { const d = new Date(t); return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); };
+  return Math.round((day(now) - day(ts)) / (24 * HOUR));
+}
+
+/** Date de carte : verbe d'abord (une recherche se distingue d'un objet
+ *  consulté), relative sur la semaine, absolue au-delà, l'année seulement si
+ *  elle diffère. */
+export function searchedLabel(ts: number, now: number): string {
+  const days = daysBetween(ts, now);
+  const d = new Date(ts);
+  let when: string;
+  if (days === 0) {
+    const diff = now - ts;
+    when = diff < MINUTE ? 'just now'
+      : diff < HOUR ? `${Math.floor(diff / MINUTE)} min ago`
+      : `${Math.floor(diff / HOUR)} h ago`;
+  } else if (days === 1) {
+    when = 'yesterday';
+  } else if (days < 7) {
+    when = `${days} days ago`;
+  } else {
+    const year = d.getFullYear() !== new Date(now).getFullYear() ? ` ${d.getFullYear()}` : '';
+    when = `${d.getDate()} ${MONTHS[d.getMonth()]}${year}`;
+  }
+  return `Searched ${when}`;
+}
+
+/** L'instant exact, pour l'infobulle : "29 Sep 2026, 14:32". */
+export function fullDate(ts: number): string {
+  const d = new Date(ts);
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${hh}:${mm}`;
+}

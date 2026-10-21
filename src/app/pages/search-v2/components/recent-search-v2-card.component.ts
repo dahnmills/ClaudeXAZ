@@ -5,8 +5,7 @@ import { SEARCH_TYPES, COUNTRIES, DIAL_CODES } from '../../../shared/ui/search-b
 import { moreCriteriaSlots } from '../../../shared/ui/more-criteria/more-criteria.component';
 import { POLICY_MODES, POLICY_STATUSES } from '../../../shared/ui/policy-criteria/policy-criteria.model';
 import type { BuyerRecentV2, PolicyRecentV2, RecentV2Entry } from '../search-v2-recents.model';
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+import { fullDate, searchedLabel } from '../search-v2-history';
 
 /** Ce qu'une carte affiche, quel que soit l'objet cherché. */
 interface RecentView {
@@ -43,13 +42,11 @@ export class RecentSearchV2CardComponent {
     return e.kind === 'policy' ? this.policyView(e) : this.buyerView(e);
   });
 
-  /** Quand la recherche a été lancée (ou rejouée), en clair : "29 Sep 2026, 14:32". */
-  timestamp = computed(() => {
-    const d = new Date(this.entry().ts);
-    const hh = String(d.getHours()).padStart(2, '0');
-    const mm = String(d.getMinutes()).padStart(2, '0');
-    return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${hh}:${mm}`;
-  });
+  /** Quand la recherche a été lancée (ou rejouée) : "Searched 2 h ago", l'instant
+   *  exact en infobulle. */
+  timestamp = computed(() => searchedLabel(this.entry().ts, Date.now()));
+  exactDate = computed(() => fullDate(this.entry().ts));
+  isoDate = computed(() => new Date(this.entry().ts).toISOString());
 
   // Même pastille que la carte de résultat de l'objet (ds-result-card : grid)
   private buyerView(e: BuyerRecentV2): RecentView {
@@ -59,7 +56,10 @@ export class RecentSearchV2CardComponent {
       country,
       e.idType,
       s.status.value,
-      s.street.value, s.city.value, s.region.value, s.zip.value, s.phone.value,
+      s.street.value, s.city.value, s.region.value,
+      // Un code postal ou un numéro seul ne dit pas ce qu'il est
+      s.zip.value && `ZIP ${s.zip.value}`,
+      s.phone.value && `Phone ${s.phone.value}`,
       s.extendedSearch.value ? 'Extended country search' : null,
     ].filter((v): v is string => !!v);
     return {
