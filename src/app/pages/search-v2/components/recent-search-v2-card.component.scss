@@ -102,13 +102,14 @@
   }
 }
 
-// Variante Policy : six colonnes, mêmes deux pistes libellé / valeur
+// Variante Policy : sept colonnes, dans l'ordre de la barre, mêmes deux pistes libellé / valeur
 .recent-card--policy {
   grid-template-columns:
     minmax(0, 1.5fr)    // Searched
+    minmax(0, 1.1fr)    // Mode
     minmax(0, 1fr)      // BU code
+    minmax(0, 0.8fr)    // Extension
     minmax(0, 0.9fr)    // Search in
     minmax(0, 1.4fr)    // Status
-    minmax(0, 0.8fr)    // Extension
     minmax(0, 1.6fr);   // Searched at
 }

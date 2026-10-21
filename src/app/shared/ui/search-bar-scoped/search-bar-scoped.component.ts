@@ -9,17 +9,31 @@ import { FlagComponent, type FlagCode } from '../flag/flag.component';
 import { DividerComponent } from '../divider/divider.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { InputSearchComponent } from '../input-search/input-search.component';
+import { CheckboxComponent } from '../checkbox/checkbox.component';
 import {
   SEARCH_TYPES, COUNTRIES, ID_TYPES, DIAL_CODES,
   type SearchType, type IdTypeOption,
 } from '../search-bar-multi/search-bar-multi.component';
-import { BU_CODES } from '../policy-result-card/policy.model';
+import { BU_CODES, type PolicyStatus } from '../policy-result-card/policy.model';
+import {
+  POLICY_MODES, POLICY_STATUSES, defaultPolicyCriteria,
+  type PolicyMode, type PolicyCriteriaValues,
+} from '../policy-criteria/policy-criteria.model';
 
 export type SearchScope = 'buyers' | 'policies';
+
+type Flyout = 'scope' | 'type' | 'country' | 'id-type' | 'mode' | 'bu' | 'search-in' | 'status';
 
 const SCOPES: { id: SearchScope; label: string; icon: IconName }[] = [
   { id: 'buyers',   label: 'Buyers',   icon: 'buyers' },
   { id: 'policies', label: 'Policies', icon: 'contract' },
+];
+
+const POLICY_MODE_ICONS: Record<PolicyMode, IconName> = { open: 'launch', global: 'search' };
+
+const SEARCH_IN_OPTIONS: { id: 'policies' | 'drafts'; label: string }[] = [
+  { id: 'policies', label: 'Policies' },
+  { id: 'drafts',   label: 'Drafts' },
 ];
 
 const BUYER_PLACEHOLDERS: Record<SearchType, string> = {
@@ -34,12 +48,15 @@ const BUYER_PLACEHOLDERS: Record<SearchType, string> = {
  * Barre de recherche à objet. Le premier slot choisit ce qu'on cherche ;
  * les slots suivants en dépendent. Côté Buyers, mêmes règles que
  * ds-search-bar-multi (types et listes importés, pas redéclarés). Côté
- * Policies : BU (optionnelle) puis un champ unique, n° ou mot-clé.
+ * Policies, les deux écrans de Qirin mis à plat : le 2e slot choisit Open
+ * policy (BU obligatoire, n°, extension) ou Global search (BU optionnelle,
+ * saisie, Search in, Status). Pas de More criteria côté Policies : tout est
+ * dans la barre.
  */
 @Component({
   selector: 'ds-search-bar-scoped',
   standalone: true,
-  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent, DividerComponent, TooltipDirective, InputSearchComponent],
+  imports: [IconComponent, StandaloneDropdownComponent, ButtonComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent, FlagComponent, DividerComponent, TooltipDirective, InputSearchComponent, CheckboxComponent],
   templateUrl: './search-bar-scoped.component.html',
   styleUrl: './search-bar-scoped.component.scss',
   host: { class: 'ds-search-bar-scoped' },
@@ -49,26 +66,34 @@ export class SearchBarScopedComponent {
   type    = model<SearchType>('company-id');
   country = model<FlagCode | null>(null);
   idType  = model<IdTypeOption | null>(null);
-  buCode  = model<string | null>(null);
+  policyMode     = model<PolicyMode>('open');
+  buCode         = model<string | null>(null);
+  policyCriteria = model<PolicyCriteriaValues>(defaultPolicyCriteria());
   query   = model<string>('');
   criteriaCount = input<number>(0);
 
   searchClicked = output<void>();
   moreCriteriaClicked = output<void>();
 
-  openFlyout = signal<'scope' | 'type' | 'country' | 'id-type' | 'bu' | null>(null);
+  openFlyout = signal<Flyout | null>(null);
   buFilter = signal<string>('');
 
   readonly scopes = SCOPES;
   readonly searchTypes = SEARCH_TYPES;
   readonly countries = COUNTRIES;
   readonly idTypes = ID_TYPES;
+  readonly policyModes = POLICY_MODES.map(m => ({ ...m, icon: POLICY_MODE_ICONS[m.id] }));
+  readonly policyStatuses = POLICY_STATUSES;
+  readonly searchInOptions = SEARCH_IN_OPTIONS;
 
   isBuyers = computed(() => this.scope() === 'buyers');
   scopeMeta = computed(() => SCOPES.find(s => s.id === this.scope())!);
   typeMeta = computed(() => SEARCH_TYPES.find(t => t.id === this.type())!);
 
-  placeholder = computed(() => this.isBuyers() ? BUYER_PLACEHOLDERS[this.type()] : 'Policy number or keyword');
+  placeholder = computed(() => {
+    if (this.isBuyers()) return BUYER_PLACEHOLDERS[this.type()];
+    return this.isOpen() ? 'Enter a policy number' : 'Search a policy number or policyholder';
+  });
 
   // ── Buyers : règles reprises de ds-search-bar-multi ───────────────────
   countryVisible = computed(() => this.isBuyers() && this.type() !== 'company-id');
@@ -87,30 +112,45 @@ export class SearchBarScopedComponent {
   });
   inputDisabled = computed(() => this.isBuyers() && this.type() === 'phone' && !this.country());
 
-  /** Company ID = recherche interne, critères inutiles. Policies : toujours disponibles. */
-  moreCriteriaEnabled = computed(() => !this.isBuyers() || this.type() !== 'company-id');
+  /** Company ID = recherche interne, critères inutiles. Policies : pas de bouton du tout. */
+  moreCriteriaEnabled = computed(() => this.type() !== 'company-id');
   moreCriteriaTooltip = computed(() => this.moreCriteriaEnabled() ? '' : 'Not available for a Company ID search');
 
   attempted = signal(false);
   countryError = computed(() => this.attempted() && this.countryEnabled() && this.countryVisible()
     && (this.type() === 'phone' || this.type() === 'id') && !this.country());
   idTypeError = computed(() => this.attempted() && this.idTypeEnabled() && !this.idType());
-  /** La saisie n'est obligatoire que côté Buyers : une recherche Policies vide liste les filtres. */
-  queryError = computed(() => this.attempted() && this.isBuyers() && !this.query().trim());
+  /** Saisie obligatoire côté Buyers et en Open policy ; une Global search vide liste les filtres. */
+  queryError = computed(() => this.attempted() && (this.isBuyers() || this.isOpen()) && !this.query().trim());
+  /** La BU est obligatoire pour ouvrir une police, comme dans Qirin. */
+  buError = computed(() => this.attempted() && !this.isBuyers() && this.isOpen() && !this.buCode());
 
   searchValid = computed(() => {
-    if (!this.isBuyers()) return true;
+    if (!this.isBuyers()) return !this.isOpen() || (!!this.buCode() && !!this.query().trim());
     if (!this.query().trim()) return false;
     if (this.type() === 'phone') return !!this.country();
     if (this.type() === 'id') return !!this.country() && !!this.idType();
     return true;
   });
 
-  // ── Policies : BU ─────────────────────────────────────────────────────
-  buLabel = computed(() => this.buCode() ?? 'All BUs');
+  // ── Policies ──────────────────────────────────────────────────────────
+  isOpen = computed(() => this.policyMode() === 'open');
+  modeMeta = computed(() => this.policyModes.find(m => m.id === this.policyMode()) ?? this.policyModes[0]);
+  submitLabel = computed(() => !this.isBuyers() && this.isOpen() ? 'Open' : 'Search');
+
+  buLabel = computed(() => this.buCode() ?? (this.isOpen() ? 'Select a BU' : 'All BUs'));
   buOptions = computed(() => {
     const f = this.buFilter().trim().toLowerCase();
     return f ? BU_CODES.filter(b => b.toLowerCase().includes(f)) : BU_CODES;
+  });
+
+  searchInLabel = computed(() => this.policyCriteria().searchIn === 'drafts' ? 'Drafts' : 'Policies');
+  /** Un draft n'a pas de statut : le slot reste visible, désactivé. */
+  statusDisabled = computed(() => this.policyCriteria().searchIn === 'drafts');
+  statusLabel = computed(() => {
+    const picked = POLICY_STATUSES.filter(s => this.policyCriteria().statuses.includes(s.id));
+    if (!picked.length) return 'Any status';
+    return picked.length <= 2 ? picked.map(s => s.label).join(', ') : `${picked.length} statuses`;
   });
 
   private host = inject(ElementRef<HTMLElement>);
@@ -120,7 +160,7 @@ export class SearchBarScopedComponent {
     if (this.openFlyout() && !this.host.nativeElement.contains(ev.target as Node)) this.close();
   }
 
-  toggle(which: 'scope' | 'type' | 'country' | 'id-type' | 'bu') {
+  toggle(which: Flyout) {
     this.openFlyout.update(v => v === which ? null : which);
     if (which === 'bu') this.buFilter.set('');
   }
@@ -146,8 +186,36 @@ export class SearchBarScopedComponent {
   pickIdType(it: IdTypeOption) { this.idType.set(it); this.close(); }
   pickBu(b: string | null) { this.buCode.set(b); this.close(); }
 
+  /** Changer de mode repart de zéro : la saisie et les critères d'un mode n'ont pas de sens dans l'autre. */
+  pickMode(m: PolicyMode) {
+    this.close();
+    if (m === this.policyMode()) return;
+    this.query.set('');
+    this.policyCriteria.set(defaultPolicyCriteria());
+    this.attempted.set(false);
+    this.policyMode.set(m);
+  }
+
+  pickSearchIn(v: 'policies' | 'drafts') {
+    this.policyCriteria.update(c => ({ ...c, searchIn: v }));
+    this.close();
+  }
+
+  isStatusChecked(id: PolicyStatus) { return this.policyCriteria().statuses.includes(id); }
+
+  toggleStatus(id: PolicyStatus) {
+    this.policyCriteria.update(c => ({
+      ...c,
+      statuses: c.statuses.includes(id) ? c.statuses.filter(s => s !== id) : [...c.statuses, id],
+    }));
+  }
+
   markTouched() { this.attempted.set(true); }
   onInput(ev: Event) { this.query.set((ev.target as HTMLInputElement).value); }
+  onExtensionInput(ev: Event) {
+    const extension = (ev.target as HTMLInputElement).value;
+    this.policyCriteria.update(c => ({ ...c, extension }));
+  }
   clearQuery() { this.query.set(''); }
 
   submit() {

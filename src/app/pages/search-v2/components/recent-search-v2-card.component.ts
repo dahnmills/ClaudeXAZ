@@ -3,7 +3,7 @@ import { CardComponent } from '../../../shared/ui/card/card.component';
 import { FlagComponent, type FlagCode } from '../../../shared/ui/flag/flag.component';
 import { SEARCH_TYPES, COUNTRIES, DIAL_CODES } from '../../../shared/ui/search-bar-multi/search-bar-multi.component';
 import { moreCriteriaSlots } from '../../../shared/ui/more-criteria/more-criteria.component';
-import { POLICY_STATUSES } from '../../../shared/ui/policy-criteria/policy-criteria.model';
+import { POLICY_MODES, POLICY_STATUSES } from '../../../shared/ui/policy-criteria/policy-criteria.model';
 import type { RecentV2Entry } from '../search-v2-recents.model';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -40,16 +40,20 @@ export class RecentSearchV2CardComponent {
   fields = computed<RecentField[]>(() => {
     const e = this.entry();
     if (e.kind === 'policy') {
+      // Chaque critère n'a de valeur que dans son mode : l'extension en Open
+      // policy, Search in et Status en Global search. La colonne reste en place.
       const c = e.criteria;
-      const statuses = c.searchIn === 'drafts'
+      const open = e.mode === 'open';
+      const statuses = open || c.searchIn === 'drafts'
         ? ''
-        : POLICY_STATUSES.filter(s => c.statuses.includes(s.id)).map(s => s.label).join(', ');
+        : POLICY_STATUSES.filter(s => c.statuses.includes(s.id)).map(s => s.label).join(', ') || 'Any status';
       return [
         { label: 'Searched',    value: this.searchedValue() },
+        { label: 'Mode',        value: POLICY_MODES.find(m => m.id === e.mode)?.label ?? '' },
         { label: 'BU code',     value: e.buCode ?? 'All BUs' },
-        { label: 'Search in',   value: c.searchIn === 'drafts' ? 'Drafts' : 'Policies' },
+        { label: 'Extension',   value: open ? c.extension : '' },
+        { label: 'Search in',   value: open ? '' : (c.searchIn === 'drafts' ? 'Drafts' : 'Policies') },
         { label: 'Status',      value: statuses },
-        { label: 'Extension',   value: c.extension },
         { label: 'Searched at', value: this.timestamp() },
       ];
     }

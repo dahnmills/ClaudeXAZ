@@ -83,22 +83,54 @@
         [class.ds-search-bar-scoped__divider--error-adjacent]="queryError()" orientation="vertical" />
     }
   } @else {
-    <!-- Policies : BU optionnelle, flyout filtrable -->
-    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country">
-      <ds-standalone-dropdown icon="tenant" [label]="buLabel()" (clicked)="toggle('bu')" />
-      @if (openFlyout() === 'bu') {
-        <div class="ds-search-bar-scoped__flyout ds-search-bar-scoped__flyout--bu">
-          <ds-input-search class="ds-search-bar-scoped__bu-filter" placeholder="Search option" [(value)]="buFilter" />
+    <!-- Policies, slot 2 : Open policy ou Global search, les deux écrans de Qirin -->
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__type">
+      <ds-standalone-dropdown [icon]="modeMeta().icon" [label]="modeMeta().label" (clicked)="toggle('mode')" />
+      @if (openFlyout() === 'mode') {
+        <div class="ds-search-bar-scoped__flyout">
           <ds-flyout-menu>
-            <ds-flyout-menu-item label="All BUs" (clicked)="pickBu(null)" />
-            @for (b of buOptions(); track b) {
-              <ds-flyout-menu-item [label]="b" (clicked)="pickBu(b)" />
+            @for (m of policyModes; track m.id) {
+              <ds-flyout-menu-item [label]="m.label" [icon]="m.icon" (clicked)="pickMode(m.id)" />
             }
           </ds-flyout-menu>
         </div>
       }
     </div>
-    <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
+    <ds-divider class="ds-search-bar-scoped__divider"
+      [class.ds-search-bar-scoped__divider--error-adjacent]="buError()" orientation="vertical" />
+
+    <!-- BU : obligatoire en Open policy, optionnelle en Global search. La
+         recherche vit dans le panneau, en tête de la liste. -->
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country" [class.ds-search-bar-scoped__slot--error]="buError()">
+      <ds-standalone-dropdown icon="tenant" [label]="buLabel()" (clicked)="toggle('bu')" />
+      @if (openFlyout() === 'bu') {
+        <div class="ds-search-bar-scoped__flyout ds-search-bar-scoped__flyout--list">
+          <ds-flyout-menu>
+            <div class="ds-search-bar-scoped__flyout-search">
+              <ds-input-search placeholder="Search a BU" [value]="buFilter()" (valueChange)="buFilter.set($event)" />
+            </div>
+            <div class="ds-search-bar-scoped__flyout-options">
+              @if (!isOpen() && !buFilter().trim()) {
+                <ds-flyout-menu-item label="All BUs" (clicked)="pickBu(null)" />
+              }
+              @for (b of buOptions(); track b) {
+                <ds-flyout-menu-item [label]="b" [icon]="b === buCode() ? 'check' : null" (clicked)="pickBu(b)" />
+              }
+              @if (!buOptions().length) {
+                <span class="ds-search-bar-scoped__flyout-empty">No match</span>
+              }
+            </div>
+          </ds-flyout-menu>
+        </div>
+      }
+      @if (buError()) {
+        <span class="ds-search-bar-scoped__error-msg">
+          <ds-icon name="error-circle" [size]="16" /> This field is required
+        </span>
+      }
+    </div>
+    <ds-divider class="ds-search-bar-scoped__divider"
+      [class.ds-search-bar-scoped__divider--error-adjacent]="buError() || queryError()" orientation="vertical" />
   }
 
   <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__field-slot" [class.ds-search-bar-scoped__slot--error]="queryError()">
@@ -135,12 +167,65 @@
   </div>
   <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
 
-  <span [dsTooltip]="moreCriteriaTooltip()" dsTooltipPosition="top-center">
-    <ds-button type="tertiary" tone="accent" [disabled]="!moreCriteriaEnabled()"
-      (clicked)="moreCriteriaEnabled() && moreCriteriaClicked.emit()">
-      <ds-icon slot="icon-left" name="sliders" [size]="16" />
-      More criteria ({{ criteriaCount() }})
-    </ds-button>
-  </span>
-  <ds-button type="primary" [disabled]="!searchValid()" (clicked)="submit()">Search</ds-button>
+  @if (!isBuyers() && isOpen()) {
+    <!-- Extension : même champ que la saisie, court -->
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__ext-slot">
+      <div class="ds-search-bar-scoped__field">
+        <input
+          type="text"
+          inputmode="numeric"
+          class="ds-search-bar-scoped__input"
+          placeholder="Extension"
+          aria-label="Extension"
+          [value]="policyCriteria().extension"
+          (input)="onExtensionInput($event)"
+          (keydown.enter)="submit()"
+        />
+      </div>
+    </div>
+    <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
+  }
+
+  @if (!isBuyers() && !isOpen()) {
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__id-type">
+      <ds-standalone-dropdown icon="file-text" [label]="searchInLabel()" (clicked)="toggle('search-in')" />
+      @if (openFlyout() === 'search-in') {
+        <div class="ds-search-bar-scoped__flyout">
+          <ds-flyout-menu>
+            @for (o of searchInOptions; track o.id) {
+              <ds-flyout-menu-item [label]="o.label" [icon]="o.id === policyCriteria().searchIn ? 'check' : null" (clicked)="pickSearchIn(o.id)" />
+            }
+          </ds-flyout-menu>
+        </div>
+      }
+    </div>
+    <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
+
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country">
+      <ds-standalone-dropdown icon="check-circle" [label]="statusLabel()" [disabled]="statusDisabled()" (clicked)="toggle('status')" />
+      @if (openFlyout() === 'status') {
+        <div class="ds-search-bar-scoped__flyout ds-search-bar-scoped__flyout--list">
+          <ds-flyout-menu>
+            <div class="ds-search-bar-scoped__flyout-options">
+              @for (s of policyStatuses; track s.id) {
+                <ds-checkbox [label]="s.label" [checked]="isStatusChecked(s.id)" (checkedChange)="toggleStatus(s.id)" />
+              }
+            </div>
+          </ds-flyout-menu>
+        </div>
+      }
+    </div>
+    <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
+  }
+
+  @if (isBuyers()) {
+    <span [dsTooltip]="moreCriteriaTooltip()" dsTooltipPosition="top-center">
+      <ds-button type="tertiary" tone="accent" [disabled]="!moreCriteriaEnabled()"
+        (clicked)="moreCriteriaEnabled() && moreCriteriaClicked.emit()">
+        <ds-icon slot="icon-left" name="sliders" [size]="16" />
+        More criteria ({{ criteriaCount() }})
+      </ds-button>
+    </span>
+  }
+  <ds-button type="primary" [disabled]="!searchValid()" (clicked)="submit()">{{ submitLabel() }}</ds-button>
 </div>

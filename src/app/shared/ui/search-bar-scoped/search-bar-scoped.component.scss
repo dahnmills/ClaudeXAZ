@@ -206,11 +206,45 @@
   }
 }
 
-// Flyout BU : filtre en tête, liste dessous (comme le select de BU de Qirin).
-// ds-flyout-menu porte déjà fond, rayon et ombre : le wrapper ne fait que
-// empiler le filtre et la liste.
-.ds-search-bar-scoped__flyout--bu {
+// ── Policies ────────────────────────────────────────────────────────────
+// Extension : champ court, même rendu que la saisie
+.ds-search-bar-scoped__ext-slot { width: var(--foundation-spacing-104); }
+
+// Flyout à liste (BU, Status) : même construction que ds-tag-filter-chip.
+// La recherche vit dans le panneau, séparée de la liste par un trait ; la
+// liste est bornée et défile.
+.ds-search-bar-scoped__flyout--list ::ng-deep .ds-flyout-menu {
+  display:    block;
+  width:      100%;
+  box-sizing: border-box;
+}
+
+.ds-search-bar-scoped__flyout-search {
+  padding:       0 var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-s);
+  border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  margin-bottom: var(--semantic-measurement-spacing-s);
+}
+
+.ds-search-bar-scoped__flyout-options {
   display:        flex;
   flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-xs);
+  max-height:     calc(var(--semantic-measurement-sizing-3xl) * 4); // ~6 rangées visibles
+  overflow-y:     auto;
+}
+
+// Une case à cocher est une rangée de flyout : mêmes métriques que ds-flyout-menu-item
+.ds-search-bar-scoped__flyout-options ds-checkbox {
+  padding:    var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  transition: background-color 0.15s ease;
+
+  &:hover  { background-color: var(--semantic-color-interactive-background-light-alt-hover); }
+  &:active { background-color: var(--semantic-color-interactive-background-light-alt-active); }
+}
+
+.ds-search-bar-scoped__flyout-empty {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+  padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
 }

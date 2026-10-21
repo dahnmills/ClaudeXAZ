@@ -1,6 +1,19 @@
 import type { PolicyStatus } from '../policy-result-card/policy.model';
 
-/** Critères complémentaires d'une recherche Policies, tels que la page les détient. */
+/**
+ * Les deux recherches de Qirin, choisies dans le 2e slot de la barre.
+ * Open policy : on connaît la police (BU + n° + extension), accès direct.
+ * Global search : recherche large, filtrée par source et statut.
+ */
+export type PolicyMode = 'open' | 'global';
+
+export const POLICY_MODES: { id: PolicyMode; label: string }[] = [
+  { id: 'open',   label: 'Open policy' },
+  { id: 'global', label: 'Global search' },
+];
+
+/** Critères d'une recherche Policies, tous posés dans la barre. L'extension ne
+ *  sert qu'en Open policy ; Search in et les statuts qu'en Global search. */
 export interface PolicyCriteriaValues {
   searchIn: 'policies' | 'drafts';
   statuses: PolicyStatus[];
@@ -17,12 +30,4 @@ export const POLICY_STATUSES: { id: PolicyStatus; label: string }[] = [
  *  chaque appelant a le sien. */
 export function defaultPolicyCriteria(): PolicyCriteriaValues {
   return { searchIn: 'policies', statuses: ['issued'], extension: '' };
-}
-
-/** Nombre de critères actifs, lu par le compteur « More criteria (n) ».
- *  En Drafts, les statuts ne filtrent rien : ils ne comptent pas. */
-export function policyCriteriaCount(v: PolicyCriteriaValues): number {
-  let n = v.searchIn === 'drafts' ? 1 : v.statuses.length;
-  if (v.extension.trim()) n++;
-  return n;
 }

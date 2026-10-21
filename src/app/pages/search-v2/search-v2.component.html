@@ -31,20 +31,20 @@
             [(type)]="searchType"
             [(country)]="searchCountry"
             [(idType)]="searchIdType"
+            [policyMode]="policyMode()"
+            (policyModeChange)="onPolicyModeChange($event)"
             [(buCode)]="buCode"
+            [(policyCriteria)]="policyCriteria"
             [(query)]="searchQuery"
             [criteriaCount]="criteriaCount()"
             (moreCriteriaClicked)="toggleMoreCriteria()"
             (searchClicked)="runSearch()"
           />
 
-          @if (showMoreCriteria()) {
+          <!-- More criteria : Buyers seulement, côté Policies tout est dans la barre -->
+          @if (showMoreCriteria() && scope() === 'buyers') {
             <div class="search-page__criteria-overlay">
-              @if (scope() === 'buyers') {
-                <ds-more-criteria [(value)]="criteria" (closed)="toggleMoreCriteria()" />
-              } @else {
-                <ds-policy-criteria [(value)]="policyCriteria" (closed)="toggleMoreCriteria()" />
-              }
+              <ds-more-criteria [(value)]="criteria" (closed)="toggleMoreCriteria()" />
             </div>
           }
         </div>
