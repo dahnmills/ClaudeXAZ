@@ -27,13 +27,15 @@ export * from './policy.model';
 export class PolicyResultCardComponent {
   data = input.required<PolicyResultData>();
   open = input<boolean>(false);
+  /** s : version resserrée pour les listes d'historique. */
+  size = input<'s' | 'm'>('m');
   favorited = input<boolean>(false);
 
   toggled = output<void>();
   starred = output<void>();
   opened = output<void>();
 
-  hostClasses = computed(() => ['ds-policy-result-card', this.open() ? 'ds-policy-result-card--open' : ''].filter(Boolean).join(' '));
+  hostClasses = computed(() => ['ds-policy-result-card', this.open() ? 'ds-policy-result-card--open' : '', this.size() === 's' ? 'ds-policy-result-card--s' : ''].filter(Boolean).join(' '));
 
   title = computed(() => {
     const d = this.data();

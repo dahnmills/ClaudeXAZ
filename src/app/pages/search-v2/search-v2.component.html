@@ -165,6 +165,7 @@
                 <div class="search-page__entry">
                   @if (v.kind === 'buyer') {
                     <ds-result-card
+                      size="s"
                       [data]="v.buyer"
                       [open]="expandedKey() === 'buyer:' + v.id"
                       [favorited]="isBuyerFavorite(v.buyer)"
@@ -176,6 +177,7 @@
                     </ds-result-card>
                   } @else {
                     <ds-policy-result-card
+                      size="s"
                       [data]="v.policy"
                       [open]="expandedKey() === 'policy:' + v.id"
                       [favorited]="isPolicyFavorite(v.policy)"
@@ -202,6 +204,7 @@
             <ng-template #favCard let-f>
               @if (f.kind === 'buyer') {
                 <ds-result-card
+                  size="s"
                   [data]="f.buyer"
                   [open]="expandedKey() === 'buyer:' + f.id"
                   [favorited]="true"
@@ -211,6 +214,7 @@
                 />
               } @else {
                 <ds-policy-result-card
+                  size="s"
                   [data]="f.policy"
                   [open]="expandedKey() === 'policy:' + f.id"
                   [favorited]="true"

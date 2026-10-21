@@ -7,24 +7,28 @@ import { POLICY_MODES, POLICY_STATUSES } from '../../../shared/ui/policy-criteri
 import type { BuyerRecentV2, PolicyRecentV2, RecentV2Entry } from '../search-v2-recents.model';
 import { fullDate, historyDate } from '../search-v2-history';
 
+/** Un critère renseigné : son libellé, puis la valeur cherchée. */
+interface Criterion { label: string; value: string; }
+
 /** Ce qu'une carte affiche, quel que soit l'objet cherché. */
 interface RecentView {
   icon: IconName;
   object: string;
   searched: string;
   searchType: string;
-  /** Critères renseignés seulement, déjà résumés en une ligne. */
-  summary: string;
+  /** Critères renseignés seulement, dans l'ordre du formulaire. */
+  criteria: Criterion[];
 }
 
 /**
  * Une recherche passée, sous une forme unique pour tous les objets : pastille
  * d'objet, ce qu'on a cherché et le type de recherche sur la ligne 1, les seuls
- * critères renseignés sur la ligne 2, la date à droite. Aucune colonne propre à
- * un objet : un fil chronologique mêlant plusieurs objets reste lisible, et un
- * nouvel objet ne demande qu'une icône et un résumé. Mêmes métriques que
- * ds-result-card, pour que Recent search, Recently viewed et Favorites aient la
- * même hauteur de carte. Cliquable en entier : le clic relance la recherche.
+ * critères renseignés sur la ligne 2 (libellé, puis valeur en gras), la date à
+ * droite. Aucune colonne propre à un objet : un fil chronologique mêlant
+ * plusieurs objets reste lisible, et un nouvel objet ne demande qu'une icône et
+ * ses critères. Mêmes métriques que ds-result-card en size s, pour que Recent
+ * search, Recently viewed et Favorites aient la même hauteur de carte.
+ * Cliquable en entier : le clic relance la recherche.
  */
 @Component({
   selector: 'app-recent-search-v2-card',
@@ -42,6 +46,10 @@ export class RecentSearchV2CardComponent {
     return e.kind === 'policy' ? this.policyView(e) : this.buyerView(e);
   });
 
+  /** Les critères en clair, pour l'infobulle et le lecteur d'écran. */
+  criteriaText = computed(() =>
+    this.view().criteria.map(c => `${c.label}: ${c.value}`).join(', ') || 'No criteria');
+
   /** Quand la recherche a été lancée (ou rejouée) : "Searched 2 h ago", l'instant
    *  exact en infobulle. */
   timestamp = computed(() => historyDate('Searched', this.entry().ts, Date.now()));
@@ -52,45 +60,43 @@ export class RecentSearchV2CardComponent {
   private buyerView(e: BuyerRecentV2): RecentView {
     const s = moreCriteriaSlots(e.criteria);
     const country = e.country ? COUNTRIES.find(c => c.code === e.country)?.label ?? e.country.toUpperCase() : null;
-    const parts = [
-      country,
-      e.idType,
-      s.status.value,
-      s.street.value, s.city.value, s.region.value,
-      // Un code postal ou un numéro seul ne dit pas ce qu'il est
-      s.zip.value && `ZIP ${s.zip.value}`,
-      s.phone.value && `Phone ${s.phone.value}`,
-      s.extendedSearch.value ? 'Extended country search' : null,
-    ].filter((v): v is string => !!v);
+    const criteria: (Criterion | null)[] = [
+      country ? { label: 'Country', value: country } : null,
+      e.idType ? { label: 'ID type', value: e.idType } : null,
+      ...[s.status, s.street, s.city, s.region, s.zip, s.phone, s.extendedSearch]
+        .map(slot => slot.value ? { label: slot.key, value: slot.value } : null),
+    ];
     return {
       icon: 'grid',
       object: 'Buyer',
       searched: e.type === 'phone' && e.country ? `${DIAL_CODES[e.country]} ${e.query}` : e.query,
       searchType: SEARCH_TYPES.find(t => t.id === e.type)?.label ?? e.type,
-      summary: parts.join(' · ') || 'No criteria',
+      criteria: criteria.filter((c): c is Criterion => !!c),
     };
   }
 
   private policyView(e: PolicyRecentV2): RecentView {
     const c = e.criteria;
-    const bu = e.buCode ?? 'All BUs';
-    let summary: string;
+    const criteria: Criterion[] = [{ label: 'BU', value: e.buCode ?? 'All BUs' }];
     if (e.mode === 'open') {
-      summary = c.extension.trim() ? `${bu} · Ext. ${c.extension.trim()}` : bu;
+      if (c.extension.trim()) criteria.push({ label: 'Extension', value: c.extension.trim() });
     } else if (c.searchIn === 'drafts') {
-      summary = `${bu} · Drafts`;
+      criteria.push({ label: 'Search in', value: 'Drafts' });
     } else {
-      const statuses = c.statuses.length === POLICY_STATUSES.length
-        ? 'All statuses'
-        : POLICY_STATUSES.filter(s => c.statuses.includes(s.id)).map(s => s.label).join(', ');
-      summary = `${bu} · Policies · ${statuses}`;
+      criteria.push({ label: 'Search in', value: 'Policies' });
+      criteria.push({
+        label: 'Status',
+        value: c.statuses.length === POLICY_STATUSES.length
+          ? 'All'
+          : POLICY_STATUSES.filter(s => c.statuses.includes(s.id)).map(s => s.label).join(', '),
+      });
     }
     return {
       icon: 'contract',
       object: 'Policy',
       searched: e.query.trim() || 'Any number or keyword',
       searchType: POLICY_MODES.find(m => m.id === e.mode)?.label ?? '',
-      summary,
+      criteria,
     };
   }
 }

@@ -1,8 +1,9 @@
 // =============================================================
 // Recent Search Card
 // Forme unique pour tous les objets : pastille, ligne 1 (ce qu'on a cherché
-// - type de recherche), ligne 2 (critères renseignés), date à droite.
-// Boîte, gouttières et typographies reprises de ds-result-card : une recherche
+// - type de recherche), ligne 2 (critères renseignés : libellé, puis valeur en
+// gras), date à droite.
+// Boîte, gouttières et typographies reprises de ds-result-card size s : une recherche
 // récente, un buyer consulté et une police en favori ont la même hauteur.
 // =============================================================
 
@@ -15,7 +16,8 @@
   align-items:   center;
   gap:           var(--semantic-measurement-spacing-l);
   width:         100%;
-  padding:       var(--semantic-measurement-spacing-m);
+  // Size s de ds-result-card : 8 px en haut et en bas
+  padding:       var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
   box-sizing:    border-box;
   background:    var(--semantic-color-interactive-background-neutral-default);
   border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
@@ -37,7 +39,7 @@
   display:        flex;
   flex:           1 0 0;
   flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-s);
+  gap:            var(--semantic-measurement-spacing-xs);
   min-width:      0;
 }
 
@@ -65,15 +67,28 @@
   color:       var(--semantic-color-static-text-main-tertiary);
 }
 
-// Ligne 2 : mêmes métriques que l'adresse de ds-result-card
-.recent-card__summary {
+// Ligne 2 : mêmes métriques que l'adresse de ds-result-card. Paires libellé /
+// valeur sur une ligne, coupée en fin si elle déborde (texte entier au survol)
+.recent-card__criteria {
   overflow:      hidden;
   text-overflow: ellipsis;
   white-space:   nowrap;
   font-size:     var(--semantic-font-text-style-size-l);
-  font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
   line-height:   var(--semantic-font-text-style-line-height-l);
-  color:         var(--semantic-color-static-text-main-secondary);
+}
+
+.recent-card__criterion + .recent-card__criterion {
+  margin-left: var(--semantic-measurement-spacing-m);
+}
+
+.recent-card__criterion-label {
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.recent-card__criterion-value {
+  margin-left: var(--semantic-measurement-spacing-xs);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
 }
 
 .recent-card__at {
