@@ -135,14 +135,6 @@
           </div>
         }
 
-        <ng-template #kindMarker let-kind>
-          @if (showKindMarker()) {
-            <span class="search-page__kind">
-              <ds-icon [name]="kind === 'buyer' ? 'buyers' : 'contract'" [size]="16" />
-              {{ kind === 'buyer' ? 'Buyer' : 'Policy' }}
-            </span>
-          }
-        </ng-template>
 
         @if (activeTab() === 'searched') {
           @if (shownRecents().length === 0) {
@@ -154,7 +146,6 @@
             <div class="search-page__list">
               @for (r of shownRecents(); track r.ts) {
                 <div class="search-page__entry">
-                  <ng-container [ngTemplateOutlet]="kindMarker" [ngTemplateOutletContext]="{ $implicit: r.kind }" />
                   <app-recent-search-v2-card [entry]="r" (replayed)="pickRecent(r)" />
                 </div>
               }
@@ -172,7 +163,6 @@
             <div class="search-page__results">
               @for (v of shownViewed(); track v.kind + v.id) {
                 <div class="search-page__entry">
-                  <ng-container [ngTemplateOutlet]="kindMarker" [ngTemplateOutletContext]="{ $implicit: v.kind }" />
                   @if (v.kind === 'buyer') {
                     <ds-result-card
                       [data]="v.buyer"

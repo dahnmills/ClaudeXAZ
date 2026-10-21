@@ -1,6 +1,8 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CardComponent } from '../../../shared/ui/card/card.component';
 import { FlagComponent, type FlagCode } from '../../../shared/ui/flag/flag.component';
+import { IconComponent } from '../../../shared/ui/icon/icon.component';
+import { IconTileComponent } from '../../../shared/ui/icon-tile/icon-tile.component';
 import { SEARCH_TYPES, COUNTRIES, DIAL_CODES } from '../../../shared/ui/search-bar-multi/search-bar-multi.component';
 import { moreCriteriaSlots } from '../../../shared/ui/more-criteria/more-criteria.component';
 import { POLICY_MODES, POLICY_STATUSES } from '../../../shared/ui/policy-criteria/policy-criteria.model';
@@ -14,7 +16,7 @@ interface RecentField { label: string; value: string; flag?: FlagCode; }
 @Component({
   selector: 'app-recent-search-v2-card',
   standalone: true,
-  imports: [CardComponent, FlagComponent],
+  imports: [CardComponent, FlagComponent, IconComponent, IconTileComponent],
   templateUrl: './recent-search-v2-card.component.html',
   styleUrl: './recent-search-v2-card.component.scss',
 })

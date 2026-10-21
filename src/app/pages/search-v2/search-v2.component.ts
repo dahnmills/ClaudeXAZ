@@ -327,8 +327,6 @@ export class SearchV2Component {
   /** Favorites en All : sections Buyers puis Policies. */
   favoriteGroups = computed(() => groupByKind(this.favorites.entries()));
 
-  /** Repère d'objet au-dessus de chaque carte, seulement en All. */
-  showKindMarker = computed(() => this.historyFilter() === 'all');
 
   historyClearLabel = computed(() => clearLabel(this.historyFilter()));
   historyEmpty(tab: HistoryTab) { return emptyLabel(tab, this.historyFilter()); }

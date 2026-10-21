@@ -132,23 +132,13 @@ ds-page-header {
   gap:             var(--semantic-measurement-spacing-m);
 }
 
-// Une carte d'historique + son repère d'objet au-dessus
+// Une carte d'historique (l'objet se lit dans la carte elle-même)
 .search-page__entry {
   display:        flex;
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-xs);
 }
 
-// Repère d'objet (vue All) : texte secondaire, pas un badge
-.search-page__kind {
-  display:     inline-flex;
-  align-items: center;
-  gap:         var(--semantic-measurement-spacing-xs);
-  font-family: var(--semantic-font-family);
-  font-size:   var(--semantic-font-text-style-size-s);
-  line-height: var(--semantic-font-text-style-line-height-s);
-  color:       var(--semantic-color-static-text-main-secondary);
-}
 
 // Favorites en All : une section par objet
 .search-page__group {
