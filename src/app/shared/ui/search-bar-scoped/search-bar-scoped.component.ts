@@ -92,7 +92,7 @@ export class SearchBarScopedComponent {
 
   placeholder = computed(() => {
     if (this.isBuyers()) return BUYER_PLACEHOLDERS[this.type()];
-    return this.isOpen() ? 'Enter a policy number' : 'Search a policy number or policyholder';
+    return this.isOpen() ? 'Enter a policy number' : 'Number or policyholder';
   });
 
   // ── Buyers : règles reprises de ds-search-bar-multi ───────────────────

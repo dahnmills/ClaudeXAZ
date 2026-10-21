@@ -133,7 +133,7 @@
       [class.ds-search-bar-scoped__divider--error-adjacent]="buError() || queryError()" orientation="vertical" />
   }
 
-  <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__field-slot" [class.ds-search-bar-scoped__slot--error]="queryError()">
+  <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__field-slot" [class.ds-search-bar-scoped__field-slot--policy]="!isBuyers()" [class.ds-search-bar-scoped__slot--error]="queryError()">
     <!-- Champ repris tel quel de ds-search-bar-multi (V1) : même markup, mêmes
          styles, pour que les deux barres se lisent à l'identique. -->
     <div class="ds-search-bar-scoped__field"

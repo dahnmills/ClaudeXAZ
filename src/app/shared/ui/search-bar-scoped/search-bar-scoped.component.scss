@@ -245,3 +245,9 @@
   flex:      0 1 calc(var(--foundation-spacing-104) * 3 + var(--semantic-measurement-spacing-l));
   min-width: calc(var(--foundation-spacing-104) * 1.5); // rétrécit avec la barre, jamais sous un tag + « (+x more) »
 }
+
+// Policies : la saisie garde de quoi lire son placeholder en entier. Quand la
+// barre manque de place, c'est Status qui cède (et passe à « (+x more) »).
+.ds-search-bar-scoped__field-slot--policy {
+  min-width: calc(var(--foundation-spacing-104) * 2);
+}
