@@ -9,6 +9,8 @@ export interface Screen {
   label: string;
   hint: string;
   version: ScreenVersion;
+  /** Catégorie de la feature : les écrans d'une même catégorie sont groupés sous son titre. */
+  category?: string;
 }
 
 const V1: ScreenVersion = { major: 1, minor: 0, patch: 0 };
@@ -30,6 +32,7 @@ export const SCREENS: Screen[] = [
   { path: 'loading', label: 'Loading', hint: 'Initial app loading state', version: { ...V1 } },
   { path: 'keyboard-shortcuts', label: 'Keyboard Shortcuts', hint: 'Shortcut reference panel', version: { ...V1 } },
   { path: 'card-builder-lab', label: 'Card Builder Lab', hint: 'Custom card builder redesign', version: { ...V1 } },
+  { path: 'reject-management', label: 'Reject Management', hint: 'Rejects by category, in a table', version: { ...V1 }, category: 'Reject Management' },
 ];
 
 export function versionLabel(v: ScreenVersion): string {
