@@ -71,10 +71,10 @@ function daysBetween(ts: number, now: number): number {
   return Math.round((day(now) - day(ts)) / (24 * HOUR));
 }
 
-/** Date de carte : verbe d'abord (une recherche se distingue d'un objet
+/** Date de carte : verbe d'abord (une recherche passée se distingue d'un objet
  *  consulté), relative sur la semaine, absolue au-delà, l'année seulement si
  *  elle diffère. */
-export function searchedLabel(ts: number, now: number): string {
+export function historyDate(verb: 'Searched' | 'Viewed', ts: number, now: number): string {
   const days = daysBetween(ts, now);
   const d = new Date(ts);
   let when: string;
@@ -91,7 +91,7 @@ export function searchedLabel(ts: number, now: number): string {
     const year = d.getFullYear() !== new Date(now).getFullYear() ? ` ${d.getFullYear()}` : '';
     when = `${d.getDate()} ${MONTHS[d.getMonth()]}${year}`;
   }
-  return `Searched ${when}`;
+  return `${verb} ${when}`;
 }
 
 /** L'instant exact, pour l'infobulle : "29 Sep 2026, 14:32". */

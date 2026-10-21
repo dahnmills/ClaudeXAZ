@@ -25,6 +25,8 @@
   </div>
 
   <div class="ds-policy-result-card__actions">
+    <!-- Méta propre au contexte (ex. date de consultation dans un historique) -->
+    <ng-content select="[slot=meta]" />
     <ds-button-icon
       type="plain"
       tone="accent"

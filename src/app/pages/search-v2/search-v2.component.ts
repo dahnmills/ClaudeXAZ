@@ -30,7 +30,7 @@ import { POLICIES } from './policies.mock';
 import { BUYERS } from './buyers.mock';
 import type { SegmentedOption } from '../../shared/ui/segmented-control/segmented-control.component';
 import {
-  filterHistory, countByKind, clearLabel, emptyLabel,
+  filterHistory, countByKind, clearLabel, emptyLabel, historyDate, fullDate,
   type HistoryFilter, type HistoryTab, type HistoryKind,
 } from './search-v2-history';
 
@@ -328,6 +328,12 @@ export class SearchV2Component {
 
   historyClearLabel = computed(() => clearLabel(this.historyFilter()));
   historyEmpty(tab: HistoryTab) { return emptyLabel(tab, this.historyFilter()); }
+
+  /** Date des cartes Recently viewed : "Viewed yesterday", l'instant exact en infobulle. */
+  viewedDate(ts: number) { return historyDate('Viewed', ts, Date.now()); }
+  exactDate(ts: number) { return fullDate(ts); }
+  isoDate(ts: number) { return new Date(ts).toISOString(); }
+
   historyShownCount = computed(() => this.historyCounts()[this.historyFilter()]);
 
   /** Clear n'efface que ce qui est affiché. */

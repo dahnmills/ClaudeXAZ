@@ -171,7 +171,9 @@
                       (toggled)="toggleExpanded('buyer:' + v.id)"
                       (starred)="toggleBuyerFavorite(v.buyer)"
                       (opened)="openResult(v.buyer)"
-                    />
+                    >
+                      <time slot="meta" class="search-page__date" [attr.datetime]="isoDate(v.ts)" [title]="exactDate(v.ts)">{{ viewedDate(v.ts) }}</time>
+                    </ds-result-card>
                   } @else {
                     <ds-policy-result-card
                       [data]="v.policy"
@@ -180,7 +182,9 @@
                       (toggled)="toggleExpanded('policy:' + v.id)"
                       (starred)="togglePolicyFavorite(v.policy)"
                       (opened)="openPolicy(v.policy)"
-                    />
+                    >
+                      <time slot="meta" class="search-page__date" [attr.datetime]="isoDate(v.ts)" [title]="exactDate(v.ts)">{{ viewedDate(v.ts) }}</time>
+                    </ds-policy-result-card>
                   }
                 </div>
               }
