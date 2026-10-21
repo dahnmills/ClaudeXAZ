@@ -1,4 +1,6 @@
-/** Données factices de Reject Management : quelques rejets par catégorie. */
+/** Données de Reject Management : les 3 rejets réels de l'extraction en tête,
+ *  puis des rejets factices qui réutilisent leur contenu comme modèle. */
+import { REJECT_RECORDS } from './reject-records.data';
 
 export type RejectCategory = 'functional' | 'technical' | 'maintenance';
 
@@ -14,6 +16,8 @@ export interface Reject {
   /** ISO, affiché "27 jul 2026" comme dans Figma. */
   date: string;
   country: string;
+  /** Contenu du message ouvert au clic sur la ligne. */
+  recordId: string;
 }
 
 /** Colonnes du tableau, dans l'ordre de Figma. */
@@ -41,10 +45,32 @@ export const REJECT_TOTALS: Record<'all' | RejectCategory, number> = {
 let n = 0;
 function r(category: RejectCategory, type: string, bu: string, provId: string, buyerId: string,
            idType: string, idValue: string, date: string, country: string): Reject {
-  return { id: `rej-${++n}`, category, type, bu, provId, buyerId, idType, idValue, date, country };
+  // Modèle de contenu : identifiant ou date pour l'administratif, incident pour le paiement
+  const recordId = /incident|payment/i.test(type) ? 'rec-3' : /date/i.test(type) ? 'rec-2' : 'rec-1';
+  return { id: `rej-${++n}`, category, type, bu, provId, buyerId, idType, idValue, date, country, recordId };
 }
 
+/** Une ligne par rejet réel, lue dans l'en-tête de l'extraction. */
+const REAL: Reject[] = REJECT_RECORDS.map(rec => {
+  const m = rec.meta;
+  const [d, mo, y] = (m['Date'] ?? '').split('/');
+  return {
+    id: rec.id,
+    category: (m['Reject Source'] ?? 'Functional').toLowerCase() as RejectCategory,
+    type: m['Reject Type'] ?? '',
+    bu: m['EHBU'] ?? '',
+    provId: m['Provider ID'] ?? '',
+    buyerId: m['Euler Hermes ID'] ?? '',
+    idType: m['Identifier type'] ?? '',
+    idValue: m['Identifier value'] ?? '',
+    date: `${y}-${mo}-${d}`,
+    country: m['Country'] ?? '',
+    recordId: rec.id,
+  };
+});
+
 export const REJECTS: Reject[] = [
+  ...REAL,
   r('functional',  'Contract P2000044 is invalid',    'CBNL',   '0',     '110630689', 'CON',   'CBNL 200004400/', '2026-07-27', 'N/A'),
   r('functional',  'Contract P2000051 is invalid',    'CBNL',   '0',     '110630702', 'CON',   'CBNL 200005100/', '2026-07-27', 'N/A'),
   r('functional',  'Buyer limit exceeds policy cap',  'AT USA', '41208', '207815533', 'DUNS',  '080131726',       '2026-07-26', 'US'),

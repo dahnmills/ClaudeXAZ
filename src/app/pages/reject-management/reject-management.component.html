@@ -73,7 +73,7 @@
       </ds-table-row>
 
       @for (row of rows(); track row.id) {
-        <ds-table-row>
+        <ds-table-row [interactive]="true" (clicked)="openReject(row.id)">
           <ds-cell-selection control="check" [ariaLabel]="'Select ' + row.type"
             [checked]="isSelected(row.id)"
             (checkedChange)="toggleRow(row.id, $event)" />
@@ -82,7 +82,7 @@
           }
           <ds-cell-action ariaLabel="Reject actions">
             <ds-flyout-menu slot="menu">
-              <ds-flyout-menu-item label="View details" icon="eye" />
+              <ds-flyout-menu-item label="View details" icon="eye" (clicked)="openReject(row.id)" />
               <ds-flyout-menu-item label="Edit" icon="edit" />
             </ds-flyout-menu>
           </ds-cell-action>
@@ -92,6 +92,13 @@
       }
     </div>
   </div>
+
+  <rm-reject-correction-modal slot="modals"
+    [open]="openedId() !== null"
+    [reject]="openedReject()"
+    [record]="openedRecord()"
+    (closed)="openedId.set(null)"
+    (resubmitted)="onResubmitted($event)" />
 </app-topbox-test-shell>
 
 <ds-filter-drawer

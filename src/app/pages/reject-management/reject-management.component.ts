@@ -17,6 +17,7 @@ import {
   CellSelectionComponent,
   FlyoutMenuComponent,
   FlyoutMenuItemComponent,
+  ToasterService,
 } from '../../shared/ui';
 import type { SelectOption } from '../../shared/ui/select/select.component';
 import {
@@ -27,6 +28,8 @@ import {
   type SavedFilter,
 } from '../../shared/ui/filter-drawer/filter-drawer.component';
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
+import { RejectCorrectionModalComponent } from './components/reject-correction-modal.component';
+import { REJECT_RECORDS } from './reject-records.data';
 import {
   REJECTS,
   REJECT_COLUMNS,
@@ -83,12 +86,36 @@ const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', '
     CellSelectionComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
+    RejectCorrectionModalComponent,
   ],
   templateUrl: './reject-management.component.html',
   styleUrl: './reject-management.component.scss',
 })
 export class RejectManagementComponent {
   private elRef = inject(ElementRef);
+  private toaster = inject(ToasterService);
+
+  // ── Correction d'un rejet ───────────────────────────────────────────────────
+  readonly openedId = signal<string | null>(null);
+  /** Rejets resoumis : ils sortent de la liste. */
+  private readonly resolvedIds = signal<Set<string>>(new Set());
+
+  readonly openedReject = computed(() => REJECTS.find(r => r.id === this.openedId()) ?? null);
+  readonly openedRecord = computed(() => {
+    const row = this.openedReject();
+    return row ? REJECT_RECORDS.find(rec => rec.id === row.recordId) ?? null : null;
+  });
+
+  openReject(id: string): void {
+    this.openedId.set(id);
+  }
+
+  onResubmitted(id: string): void {
+    this.resolvedIds.update(set => new Set(set).add(id));
+    this.selectedIds.update(list => list.filter(other => other !== id));
+    this.openedId.set(null);
+    this.toaster.show('Reject resubmitted', { tone: 'success' });
+  }
 
   readonly totals = REJECT_TOTALS;
   readonly tabs: { id: RejectTab; label: string }[] = [
@@ -192,7 +219,9 @@ export class RejectManagementComponent {
     const f = this.appliedFilters();
     const key = this.sortKey();
     const way = this.sortDir() === 'asc' ? 1 : -1;
+    const resolved = this.resolvedIds();
     const list = REJECTS
+      .filter(r => !resolved.has(r.id))
       .filter(r => tab === 'all' || r.category === tab)
       .filter(r => matchesText(r.type, f['type']) && matchesText(r.buyerId, f['buyerId']))
       .filter(r => inList(r.bu, f['bu']) && inList(r.idType, f['idType']) && inList(r.country, f['country']));
