@@ -1,0 +1,59 @@
+<div class="ds-policy-result-card__main">
+  <div class="ds-policy-result-card__left">
+    <ds-icon-tile size="m" tone="brand">
+      <ds-icon name="contract" [size]="24" />
+    </ds-icon-tile>
+    <div class="ds-policy-result-card__info">
+      <div class="ds-policy-result-card__name-row">
+        <ds-link
+          href="#"
+          weight="semi-bold"
+          dsTooltip="Open the policy"
+          dsTooltipPosition="top-center"
+          (click)="onOpen($event)"
+        >{{ title() }}</ds-link>
+        <ds-badge [label]="badge().label" [status]="badge().status" />
+        @if (data().kind === 'policy') {
+          <ds-identifier [value]="data().id" icon="hash" [copyable]="true" />
+        }
+      </div>
+      <!-- Deux lignes, comme ds-result-card (nom, puis adresse) : même hauteur de carte -->
+      <span class="ds-policy-result-card__holder">
+        {{ data().policyholder }} · {{ data().buCode }} · <span class="ds-policy-result-card__period">{{ period() }}</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Même structure que ds-result-card (méta, puis boutons resserrés) : l'étoile
+       et le chevron tombent au même endroit dans une liste qui mêle les deux -->
+  <div class="ds-policy-result-card__right">
+    <!-- Méta propre au contexte (ex. date de consultation dans un historique) -->
+    <ng-content select="[slot=meta]" />
+    <div class="ds-policy-result-card__actions">
+      <ds-button-icon
+        type="plain"
+        tone="accent"
+        [ariaLabel]="favorited() ? 'Unfavorite' : 'Favorite'"
+        class="ds-policy-result-card__star"
+        [class.ds-policy-result-card__star--on]="favorited()"
+        dsTooltip="Add to favorite"
+        dsTooltipPosition="top-center"
+        (clicked)="starred.emit()"
+      >
+        <ds-icon [name]="favorited() ? 'star-filled' : 'star'" [size]="20" />
+      </ds-button-icon>
+      <ds-button-icon type="plain" tone="accent" ariaLabel="Toggle details"
+        [disabled]="!hasDetails()"
+        (clicked)="hasDetails() && toggled.emit()">
+        <ds-icon [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="20" />
+      </ds-button-icon>
+    </div>
+  </div>
+</div>
+
+@if (open()) {
+  <ds-divider class="ds-policy-result-card__divider" />
+  <div class="ds-policy-result-card__details">
+    <ds-properties-panel [sections]="detailSections()" [columns]="3" variant="flat" />
+  </div>
+}

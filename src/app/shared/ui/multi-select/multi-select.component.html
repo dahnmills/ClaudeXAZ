@@ -1,0 +1,75 @@
+@if (label()) {
+  <span class="ds-multi-select__label" [id]="fieldId + '-label'">{{ label() }}</span>
+}
+
+<div class="ds-multi-select__anchor">
+  <div
+    class="ds-multi-select__container"
+    role="combobox"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="open()"
+    [attr.aria-labelledby]="label() ? fieldId + '-label' : null"
+    [attr.aria-disabled]="disabled() || null"
+    [attr.aria-invalid]="error() || null"
+    [attr.tabindex]="disabled() ? -1 : 0"
+    (click)="toggleOpen()"
+    (keydown.enter)="toggleOpen()"
+    (keydown.space)="$event.preventDefault(); toggleOpen()"
+  >
+    @if (icon(); as i) {
+      <ds-icon class="ds-multi-select__icon" [name]="i" [size]="24" />
+    }
+
+    <div class="ds-multi-select__value" #valueEl>
+      @if (selectedOptions().length) {
+        <div class="ds-multi-select__tags">
+          @for (o of visibleTags(); track o.value) {
+            <ds-tag
+              type="filter"
+              [label]="o.label"
+              [disabled]="disabled()"
+              [attr.aria-label]="'Remove ' + o.label"
+              (click)="$event.stopPropagation()"
+              (removed)="remove(o.value)"
+            />
+          }
+        </div>
+        @if (hiddenCount()) {
+          <span class="ds-multi-select__more">(+{{ hiddenCount() }} more)</span>
+        }
+      } @else {
+        <span class="ds-multi-select__placeholder">{{ placeholder() }}</span>
+      }
+    </div>
+
+    <ds-icon class="ds-multi-select__chevron" [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="16" />
+  </div>
+
+  <!-- Rangée de mesure, invisible : tous les tags choisis, pour savoir combien tiennent -->
+  <div class="ds-multi-select__measure" #measureEl aria-hidden="true">
+    <div class="ds-multi-select__tags">
+      @for (o of selectedOptions(); track o.value) {
+        <ds-tag type="filter" [label]="o.label" tabindex="-1" />
+      }
+    </div>
+    <span class="ds-multi-select__more">(+{{ selectedOptions().length }} more)</span>
+  </div>
+
+  @if (open()) {
+    <div class="ds-multi-select__flyout">
+      <ds-flyout-menu>
+        <div class="ds-multi-select__options" role="listbox" aria-multiselectable="true">
+          @for (o of options(); track o.value) {
+            <ds-checkbox [label]="o.label" [checked]="isChecked(o.value)" (checkedChange)="toggleValue(o.value)" />
+          }
+        </div>
+      </ds-flyout-menu>
+    </div>
+  }
+</div>
+
+@if (error() && errorMessage()) {
+  <span class="ds-multi-select__error-msg" role="alert">
+    <ds-icon name="error-circle" [size]="16" /> {{ errorMessage() }}
+  </span>
+}
