@@ -18,3 +18,10 @@ export const POLICY_STATUSES: { id: PolicyStatus; label: string }[] = [
 export function defaultPolicyCriteria(): PolicyCriteriaValues {
   return { searchIn: 'policies', statuses: ['issued'] };
 }
+
+/** Changer de source. Revenir des drafts aux polices recoche le défaut (Issued) :
+ *  on repart d'une recherche valide. Resélectionner la source courante ne touche à rien. */
+export function withSearchIn(c: PolicyCriteriaValues, searchIn: PolicyCriteriaValues['searchIn']): PolicyCriteriaValues {
+  if (searchIn === c.searchIn) return c;
+  return searchIn === 'policies' ? { searchIn, statuses: defaultPolicyCriteria().statuses } : { ...c, searchIn };
+}

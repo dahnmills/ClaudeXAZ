@@ -16,7 +16,7 @@ import {
 } from '../search-bar-multi/search-bar-multi.component';
 import { BU_CODES } from '../policy-result-card/policy.model';
 import {
-  POLICY_STATUSES, defaultPolicyCriteria, type PolicyCriteriaValues,
+  POLICY_STATUSES, defaultPolicyCriteria, withSearchIn, type PolicyCriteriaValues,
 } from '../policy-criteria/policy-criteria.model';
 
 export type SearchScope = 'buyers' | 'policies';
@@ -174,8 +174,7 @@ export class SearchBarScopedComponent {
   pickBu(b: string | null) { this.buCode.set(b); this.close(); }
 
   pickSearchIn(v: 'policies' | 'drafts') {
-    // Revenir aux polices recoche le défaut (Issued) : on repart d'une recherche valide.
-    this.policyCriteria.update(c => ({ ...c, searchIn: v, statuses: v === 'policies' ? defaultPolicyCriteria().statuses : c.statuses }));
+    this.policyCriteria.update(c => withSearchIn(c, v));
     this.close();
   }
 
