@@ -16,6 +16,8 @@ const meta: Meta<FlyoutMenuItemComponent> = {
     label:    { control: 'text' },
     icon:     { control: 'text' },
     disabled: { control: 'boolean' },
+    selectable: { control: 'boolean' },
+    selected:   { control: 'boolean' },
   },
 };
 
@@ -54,6 +56,20 @@ export const NoIcon: Story = {
     template: `
       <div style="width:196px;background:white;border:1px dashed #d9d9d9;">
         <ds-flyout-menu-item [label]="label" [icon]="icon" />
+      </div>
+    `,
+  }),
+};
+
+/** Liste à choix unique (Figma, Data Entry > Dropdown Flyout Menu) : emplacement
+ *  de coche fixe, le libellé reste aligné que l'option soit retenue ou non. */
+export const Selectable: Story = {
+  name: 'Single choice (selected and not selected)',
+  render: () => ({
+    template: `
+      <div style="width:196px;background:white;border:1px dashed #d9d9d9;">
+        <ds-flyout-menu-item label="Policies" [selectable]="true" [selected]="true" />
+        <ds-flyout-menu-item label="Drafts" [selectable]="true" [selected]="false" />
       </div>
     `,
   }),

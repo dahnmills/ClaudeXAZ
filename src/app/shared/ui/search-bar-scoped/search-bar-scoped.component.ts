@@ -10,6 +10,7 @@ import { DividerComponent } from '../divider/divider.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { InputSearchComponent } from '../input-search/input-search.component';
 import { MultiSelectComponent, type MultiSelectOption } from '../multi-select/multi-select.component';
+import type { SelectOption } from '../select/select.component';
 import {
   SEARCH_TYPES, COUNTRIES, ID_TYPES, DIAL_CODES,
   type SearchType, type IdTypeOption,
@@ -21,16 +22,16 @@ import {
 
 export type SearchScope = 'buyers' | 'policies';
 
-type Flyout = 'scope' | 'type' | 'country' | 'id-type' | 'bu' | 'search-in';
+type Flyout = 'scope' | 'type' | 'country' | 'id-type' | 'bu';
 
 const SCOPES: { id: SearchScope; label: string; icon: IconName }[] = [
   { id: 'buyers',   label: 'Buyers',   icon: 'buyers' },
   { id: 'policies', label: 'Policies', icon: 'contract' },
 ];
 
-const SEARCH_IN_OPTIONS: { id: 'policies' | 'drafts'; label: string }[] = [
-  { id: 'policies', label: 'Policies' },
-  { id: 'drafts',   label: 'Drafts' },
+const SEARCH_IN_OPTIONS: SelectOption[] = [
+  { value: 'policies', label: 'Policies' },
+  { value: 'drafts',   label: 'Drafts' },
 ];
 
 const BUYER_PLACEHOLDERS: Record<SearchType, string> = {
@@ -132,7 +133,6 @@ export class SearchBarScopedComponent {
     return f ? BU_CODES.filter(b => b.toLowerCase().includes(f)) : BU_CODES;
   });
 
-  searchInLabel = computed(() => this.policyCriteria().searchIn === 'drafts' ? 'Drafts' : 'Policies');
   /** Un draft n'a pas de statut : le slot reste visible, désactivé. */
   statusDisabled = computed(() => this.policyCriteria().searchIn === 'drafts');
 
@@ -173,9 +173,10 @@ export class SearchBarScopedComponent {
   pickIdType(it: IdTypeOption) { this.idType.set(it); this.close(); }
   pickBu(b: string | null) { this.buCode.set(b); this.close(); }
 
-  pickSearchIn(v: 'policies' | 'drafts') {
+  /** Choix venu de ds-standalone-dropdown, qui ferme lui-même sa liste. */
+  pickSearchIn(v: string) {
+    if (v !== 'policies' && v !== 'drafts') return;
     this.policyCriteria.update(c => withSearchIn(c, v));
-    this.close();
   }
 
   setStatuses(values: string[]) {

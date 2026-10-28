@@ -18,7 +18,8 @@ import { ShortcutKeysComponent, type KeyCombo } from '../keycap/shortcut-keys.co
   styleUrl: './flyout-menu-item.component.scss',
   host: {
     '[class]':              'hostClasses()',
-    'role':                 'menuitem',
+    '[attr.role]':          'selectable() ? "option" : "menuitem"',
+    '[attr.aria-selected]': 'selectable() ? selected() : null',
     '[attr.tabindex]':      'disabled() ? -1 : 0',
     '[attr.aria-disabled]': 'disabled() || null',
     '(click)':              '!disabled() && clicked.emit()',
@@ -32,11 +33,17 @@ export class FlyoutMenuItemComponent {
   disabled = input<boolean>(false);
   /** Combinaison clavier de l'action, libellés déjà résolus pour l'OS. */
   shortcut = input<KeyCombo>([]);
+  /** Option d'une liste à choix unique (Figma, Dropdown Flyout Menu) : un
+   *  emplacement de coche fixe précède le libellé, qu'elle soit retenue ou non. */
+  selectable = input<boolean>(false);
+  /** Option retenue : la coche s'affiche dans son emplacement. */
+  selected   = input<boolean>(false);
 
   clicked = output<void>();
 
   hostClasses = computed(() => [
     'ds-flyout-menu-item',
-    this.disabled() ? 'ds-flyout-menu-item--disabled' : '',
+    this.disabled()   ? 'ds-flyout-menu-item--disabled'   : '',
+    this.selectable() ? 'ds-flyout-menu-item--selectable' : '',
   ].filter(Boolean).join(' '));
 }
