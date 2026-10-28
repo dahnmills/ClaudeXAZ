@@ -98,7 +98,7 @@
                 <ds-flyout-menu-item label="All BUs" (clicked)="pickBu(null)" />
               }
               @for (b of buOptions(); track b) {
-                <ds-flyout-menu-item [label]="b" [icon]="b === buCode() ? 'check' : null" (clicked)="pickBu(b)" />
+                <ds-flyout-menu-item [label]="b" (clicked)="pickBu(b)" />
               }
               @if (!buOptions().length) {
                 <span class="ds-search-bar-scoped__flyout-empty">No match</span>
@@ -152,7 +152,7 @@
         <div class="ds-search-bar-scoped__flyout">
           <ds-flyout-menu>
             @for (o of searchInOptions; track o.id) {
-              <ds-flyout-menu-item [label]="o.label" [icon]="o.id === policyCriteria().searchIn ? 'check' : null" (clicked)="pickSearchIn(o.id)" />
+              <ds-flyout-menu-item [label]="o.label" (clicked)="pickSearchIn(o.id)" />
             }
           </ds-flyout-menu>
         </div>
