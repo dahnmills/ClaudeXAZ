@@ -1,109 +1,92 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { searchPolicies } from '../../src/app/pages/search-v2/policy-search.ts';
+import { searchPolicies, type PolicyQuery } from '../../src/app/pages/search-v2/policy-search.ts';
 import { POLICIES } from '../../src/app/pages/search-v2/policies.mock.ts';
 import { defaultPolicyCriteria } from '../../src/app/shared/ui/policy-criteria/policy-criteria.model.ts';
 
+const q = (over: Partial<PolicyQuery> = {}): PolicyQuery =>
+  ({ buCode: null, query: '', criteria: defaultPolicyCriteria(), ...over });
 const crit = (over = {}) => ({ ...defaultPolicyCriteria(), ...over });
+const allStatuses = crit({ statuses: ['issued', 'cancelled', 'expired'] });
 
-// ── Open policy ──────────────────────────────────────────────────────────
-
-test('open: number + BU is a direct hit', () => {
-  const r = searchPolicies(POLICIES, { mode: 'open', buCode: 'AT USA', query: '5012390', criteria: crit() });
-  assert.equal(r.exactHit, true);
-  assert.deepEqual(r.items.map(p => p.id), ['5012390-00']);
+test('default criteria check Issued only', () => {
+  assert.deepEqual(defaultPolicyCriteria().statuses, ['issued']);
 });
 
-test('open: without BU finds nothing (BU is required)', () => {
-  const r = searchPolicies(POLICIES, { mode: 'open', buCode: null, query: '5012390', criteria: crit() });
-  assert.deepEqual(r.items, []);
+test('default search lists issued policies only', () => {
+  const r = searchPolicies(POLICIES, q());
+  assert.ok(r.length > 0);
+  assert.ok(r.every(p => p.kind === 'policy' && p.status === 'issued'));
 });
 
-test('open: wrong BU finds nothing', () => {
-  const r = searchPolicies(POLICIES, { mode: 'open', buCode: 'AT UK', query: '5012390', criteria: crit() });
-  assert.deepEqual(r.items, []);
+test('BU filter keeps only that BU', () => {
+  const r = searchPolicies(POLICIES, q({ buCode: 'AT UK', criteria: allStatuses }));
+  assert.ok(r.length > 0);
+  assert.ok(r.every(p => p.buCode === 'AT UK'));
 });
 
-test('open: several extensions, no extension given, lists them all', () => {
-  const r = searchPolicies(POLICIES, { mode: 'open', buCode: 'AT USA', query: '5012346', criteria: crit() });
-  assert.equal(r.exactHit, false);
-  assert.equal(r.items.length, 2);
+test('matches policy name, partial, case insensitive', () => {
+  const r = searchPolicies(POLICIES, q({ query: 'FOOD' }));
+  assert.ok(r.length >= 2);
+  assert.ok(r.every(p => `${p.policyName} ${p.insuredName}`.toLowerCase().includes('food')));
+  assert.ok(r.some(p => p.policyName.toLowerCase().includes('food')));
 });
 
-test('open: extension narrows to one hit, any status', () => {
-  const r = searchPolicies(POLICIES, { mode: 'open', buCode: 'AT USA', query: '5012346', criteria: crit({ extension: '00' }) });
-  assert.equal(r.exactHit, true);
-  assert.deepEqual(r.items.map(p => p.id), ['5012346-00']);
-  assert.equal(r.items[0].status, 'expired');
+test('matches insured name partial', () => {
+  const r = searchPolicies(POLICIES, q({ query: 'brooklyn craft', criteria: allStatuses }));
+  assert.ok(r.length >= 2);
+  assert.ok(r.every(p => p.insuredName.toLowerCase().includes('brooklyn craft')));
 });
 
-test('open: number-extension as displayed is a direct hit', () => {
-  const r = searchPolicies(POLICIES, { mode: 'open', buCode: 'AT USA', query: '5012346-01', criteria: crit() });
-  assert.equal(r.exactHit, true);
-  assert.deepEqual(r.items.map(p => p.id), ['5012346-01']);
+test('matches broker name partial', () => {
+  const r = searchPolicies(POLICIES, q({ query: 'marsh', criteria: allStatuses }));
+  assert.ok(r.length >= 2);
+  assert.ok(r.every(p => (p.brokerName ?? '').toLowerCase().includes('marsh')));
 });
 
-test('open: partial number is not a match', () => {
-  const r = searchPolicies(POLICIES, { mode: 'open', buCode: 'AT USA', query: '50123', criteria: crit() });
-  assert.deepEqual(r.items, []);
+test('matches policy number partial across BUs', () => {
+  const r = searchPolicies(POLICIES, q({ query: '330117', criteria: allStatuses }));
+  assert.ok(r.every(p => p.policyNumber.includes('330117')));
+  assert.ok(new Set(r.map(p => p.buCode)).size >= 2);
 });
 
-// ── Global search ────────────────────────────────────────────────────────
-
-test('global: default criteria list every policy, all statuses, across BUs', () => {
-  const r = searchPolicies(POLICIES, { mode: 'global', buCode: null, query: '', criteria: crit() });
-  assert.equal(r.exactHit, false);
-  assert.ok(r.items.length > 0);
-  assert.ok(r.items.every(p => p.kind === 'policy'));
-  assert.equal(new Set(r.items.map(p => p.status)).size, 3);
+test('insured Company ID matches exactly, not partially', () => {
+  const full = searchPolicies(POLICIES, q({ query: '40213377' }));
+  assert.ok(full.length >= 1);
+  assert.ok(full.every(p => p.insuredCompanyId === '40213377'));
+  assert.deepEqual(searchPolicies(POLICIES, q({ query: '402133' })), []);
 });
 
-test('global: BU filter keeps only that BU', () => {
-  const r = searchPolicies(POLICIES, { mode: 'global', buCode: 'AT UK', query: '', criteria: crit() });
-  assert.ok(r.items.length > 0);
-  assert.ok(r.items.every(p => p.buCode === 'AT UK'));
+test('broker Company ID matches exactly', () => {
+  const r = searchPolicies(POLICIES, q({ query: '80011290', criteria: allStatuses }));
+  assert.ok(r.length >= 2);
+  assert.ok(r.every(p => p.brokerCompanyId === '80011290'));
+  assert.deepEqual(searchPolicies(POLICIES, q({ query: '800112', criteria: allStatuses })), []);
 });
 
-test('global: keyword matches policyholder, case insensitive', () => {
-  const r = searchPolicies(POLICIES, { mode: 'global', buCode: null, query: 'brooklyn', criteria: crit() });
-  assert.ok(r.items.length >= 2);
-  assert.ok(r.items.every(p => p.policyholder.toLowerCase().includes('brooklyn')));
+test('Company ID ignores surrounding spaces', () => {
+  const r = searchPolicies(POLICIES, q({ query: '  40213377 ' }));
+  assert.ok(r.length >= 1);
+  assert.ok(r.every(p => p.insuredCompanyId === '40213377'));
 });
 
-test('global: exact number is never a direct hit', () => {
-  const r = searchPolicies(POLICIES, { mode: 'global', buCode: 'AT USA', query: '5012390', criteria: crit() });
-  assert.equal(r.exactHit, false);
-  assert.deepEqual(r.items.map(p => p.id), ['5012390-00']);
+test('extension is never searched', () => {
+  const withExt = POLICIES.find(p => p.kind === 'policy' && p.extension === '0234');
+  assert.ok(withExt, 'mock has a policy with extension 0234');
+  const r = searchPolicies(POLICIES, q({ query: '0234', criteria: allStatuses }));
+  assert.ok(!r.some(p => p.id === withExt.id));
 });
 
-test('global: extension is ignored', () => {
-  const r = searchPolicies(POLICIES, { mode: 'global', buCode: 'AT USA', query: '5012346', criteria: crit({ extension: '01' }) });
-  assert.equal(r.items.length, 2);
+test('drafts ignore statuses', () => {
+  const r = searchPolicies(POLICIES, q({ criteria: crit({ searchIn: 'drafts', statuses: [] }) }));
+  assert.equal(r.length, POLICIES.filter(p => p.kind === 'draft').length);
+  assert.ok(r.every(p => p.kind === 'draft'));
 });
 
-
-test('global: drafts ignore statuses', () => {
-  const r = searchPolicies(POLICIES, { mode: 'global', buCode: null, query: '', criteria: crit({ searchIn: 'drafts', statuses: ['issued'] }) });
-  assert.equal(r.items.length, 4);
-  assert.ok(r.items.every(p => p.kind === 'draft'));
+test('no status checked finds no policy', () => {
+  assert.deepEqual(searchPolicies(POLICIES, q({ criteria: crit({ statuses: [] }) })), []);
 });
 
-test('global: no match returns an empty list', () => {
-  const r = searchPolicies(POLICIES, { mode: 'global', buCode: null, query: 'zzz-nothing', criteria: crit() });
-  assert.deepEqual(r.items, []);
-});
-
-test('global: one status keeps only that status', () => {
-  const r = searchPolicies(POLICIES, { mode: 'global', buCode: 'AT USA', query: '', criteria: crit({ statuses: ['expired'] }) });
-  assert.ok(r.items.length > 0);
-  assert.ok(r.items.every(p => p.status === 'expired'));
-});
-
-test('global: no status checked finds no policy', () => {
-  const r = searchPolicies(POLICIES, { mode: 'global', buCode: 'AT USA', query: '', criteria: crit({ statuses: [] }) });
-  assert.deepEqual(r.items, []);
-});
-
-test('default criteria check every status', () => {
-  assert.deepEqual([...defaultPolicyCriteria().statuses].sort(), ['cancelled', 'expired', 'issued']);
+test('no match returns an empty list', () => {
+  assert.deepEqual(searchPolicies(POLICIES, q({ query: 'zzz-nothing', criteria: allStatuses })), []);
 });
