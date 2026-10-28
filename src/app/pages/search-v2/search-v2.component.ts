@@ -11,7 +11,7 @@ import type { FlagCode } from '../../shared/ui/flag/flag.component';
 import {
   MoreCriteriaComponent, emptyMoreCriteria, moreCriteriaCount, type MoreCriteriaValues,
 } from '../../shared/ui/more-criteria/more-criteria.component';
-import { defaultPolicyCriteria, type PolicyCriteriaValues, type PolicyMode } from '../../shared/ui/policy-criteria/policy-criteria.model';
+import { defaultPolicyCriteria, type PolicyCriteriaValues } from '../../shared/ui/policy-criteria/policy-criteria.model';
 import { ResultCardComponent, type ResultCardData } from '../../shared/ui/result-card/result-card.component';
 import { PolicyResultCardComponent } from '../../shared/ui/policy-result-card/policy-result-card.component';
 import type { PolicyResultData } from '../../shared/ui/policy-result-card/policy.model';
@@ -59,7 +59,6 @@ export class SearchV2Component {
   searchType = signal<SearchType>('company-id');
   searchCountry = signal<FlagCode | null>(null);
   searchIdType = signal<IdTypeOption | null>(null);
-  policyMode = signal<PolicyMode>('open');
   buCode = signal<string | null>(null);
   searchQuery = signal('');
   criteria = signal<MoreCriteriaValues>(emptyMoreCriteria());
@@ -76,16 +75,8 @@ export class SearchV2Component {
     this.scope.set(s);
     this.searchQuery.set('');
     this.criteria.set(emptyMoreCriteria());
-    this.policyMode.set('open');
     this.policyCriteria.set(defaultPolicyCriteria());
     this.buCode.set(null);
-    this.clearResults();
-  }
-
-  /** Changer de mode Policies (Open policy / Global search) repart de zéro aussi :
-   *  la barre a déjà vidé la saisie et les critères, on retire les résultats. */
-  onPolicyModeChange(m: PolicyMode) {
-    this.policyMode.set(m);
     this.clearResults();
   }
 
@@ -115,9 +106,9 @@ export class SearchV2Component {
 
   // ── Policies ────────────────────────────────────────────────────────────
   appliedPolicyQuery = signal<PolicyQuery | null>(null);
-  policyResult = computed(() => {
+  policyResult = computed<PolicyResultData[]>(() => {
     const q = this.appliedPolicyQuery();
-    return q ? searchPolicies(POLICIES, q) : { items: [] as PolicyResultData[], exactHit: false };
+    return q ? searchPolicies(POLICIES, q) : [];
   });
 
   // ── Liste courante + chargement progressif ─────────────────────────────
@@ -125,9 +116,9 @@ export class SearchV2Component {
   visibleCount = signal(this.PAGE_SIZE);
   loadingMore = signal(false);
 
-  totalCount = computed(() => this.scope() === 'buyers' ? this.buyerFiltered().length : this.policyResult().items.length);
+  totalCount = computed(() => this.scope() === 'buyers' ? this.buyerFiltered().length : this.policyResult().length);
   visibleBuyers = computed(() => this.buyerFiltered().slice(0, this.visibleCount()));
-  visiblePolicies = computed(() => this.policyResult().items.slice(0, this.visibleCount()));
+  visiblePolicies = computed(() => this.policyResult().slice(0, this.visibleCount()));
   allLoaded = computed(() => this.visibleCount() >= this.totalCount());
   noResults = computed(() => this.isResults() && this.totalCount() === 0);
 
@@ -179,11 +170,10 @@ export class SearchV2Component {
         country: this.searchCountry(), idType: this.searchIdType(), criteria: this.criteria(),
       });
     } else {
-      const query: PolicyQuery = { mode: this.policyMode(), buCode: this.buCode(), query: q, criteria: this.policyCriteria() };
+      const query: PolicyQuery = { buCode: this.buCode(), query: q, criteria: this.policyCriteria() };
       this.appliedPolicyQuery.set(query);
-      const r = this.policyResult();
-      this.expandedKey.set(r.exactHit ? this.policyKey(r.items[0]) : null);
-      this.recentsStore.record({ kind: 'policy', mode: query.mode, buCode: query.buCode, query: q, criteria: query.criteria });
+      this.expandedKey.set(null);
+      this.recentsStore.record({ kind: 'policy', buCode: query.buCode, query: q, criteria: query.criteria });
     }
     setTimeout(() => this.maybeFill());
   }
@@ -199,7 +189,6 @@ export class SearchV2Component {
       this.searchIdType.set(e.idType);
       this.criteria.set(e.criteria);
     } else {
-      this.policyMode.set(e.mode);
       this.buCode.set(e.buCode);
       this.policyCriteria.set(e.criteria);
     }

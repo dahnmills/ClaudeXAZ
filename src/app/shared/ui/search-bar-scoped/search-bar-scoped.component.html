@@ -83,25 +83,9 @@
         [class.ds-search-bar-scoped__divider--error-adjacent]="queryError()" orientation="vertical" />
     }
   } @else {
-    <!-- Policies, slot 2 : Open policy ou Global search, les deux écrans de Qirin -->
-    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__type">
-      <ds-standalone-dropdown [icon]="modeMeta().icon" [label]="modeMeta().label" (clicked)="toggle('mode')" />
-      @if (openFlyout() === 'mode') {
-        <div class="ds-search-bar-scoped__flyout">
-          <ds-flyout-menu>
-            @for (m of policyModes; track m.id) {
-              <ds-flyout-menu-item [label]="m.label" [icon]="m.icon" (clicked)="pickMode(m.id)" />
-            }
-          </ds-flyout-menu>
-        </div>
-      }
-    </div>
-    <ds-divider class="ds-search-bar-scoped__divider"
-      [class.ds-search-bar-scoped__divider--error-adjacent]="buError()" orientation="vertical" />
-
-    <!-- BU : obligatoire en Open policy, optionnelle en Global search. La
-         recherche vit dans le panneau, en tête de la liste. -->
-    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country ds-search-bar-scoped__bu-slot" [class.ds-search-bar-scoped__slot--error]="buError()">
+    <!-- Policies, slot 2 : BU optionnelle. La recherche vit dans le panneau, en
+         tête de la liste. -->
+    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__country ds-search-bar-scoped__bu-slot">
       <ds-standalone-dropdown icon="tenant" [label]="buLabel()" (clicked)="toggle('bu')" />
       @if (openFlyout() === 'bu') {
         <div class="ds-search-bar-scoped__flyout ds-search-bar-scoped__flyout--list">
@@ -110,7 +94,7 @@
               <ds-input-search placeholder="Search a BU" [value]="buFilter()" (valueChange)="buFilter.set($event)" />
             </div>
             <div class="ds-search-bar-scoped__flyout-options">
-              @if (!isOpen() && !buFilter().trim()) {
+              @if (!buFilter().trim()) {
                 <ds-flyout-menu-item label="All BUs" (clicked)="pickBu(null)" />
               }
               @for (b of buOptions(); track b) {
@@ -123,14 +107,8 @@
           </ds-flyout-menu>
         </div>
       }
-      @if (buError()) {
-        <span class="ds-search-bar-scoped__error-msg">
-          <ds-icon name="error-circle" [size]="16" /> This field is required
-        </span>
-      }
     </div>
-    <ds-divider class="ds-search-bar-scoped__divider"
-      [class.ds-search-bar-scoped__divider--error-adjacent]="buError() || queryError()" orientation="vertical" />
+    <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
   }
 
   <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__field-slot" [class.ds-search-bar-scoped__field-slot--policy]="!isBuyers()" [class.ds-search-bar-scoped__slot--error]="queryError()">
@@ -139,7 +117,7 @@
     <div class="ds-search-bar-scoped__field"
       [class.ds-search-bar-scoped__field--disabled]="inputDisabled()"
       [class.ds-search-bar-scoped__field--error]="queryError()">
-      <ds-icon [name]="fieldIcon()" [size]="24" class="ds-search-bar-scoped__field-icon" />
+      <ds-icon name="search" [size]="24" class="ds-search-bar-scoped__field-icon" />
       @if (phonePrefix(); as p) {
         <span class="ds-search-bar-scoped__phone-prefix">{{ p }}</span>
       }
@@ -167,32 +145,7 @@
   </div>
   <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
 
-  @if (!isBuyers() && isOpen()) {
-    <!-- Extension : champ jumeau du n° de police, même largeur, même icône, même croix -->
-    <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__field-slot">
-      <div class="ds-search-bar-scoped__field">
-        <ds-icon name="hash" [size]="24" class="ds-search-bar-scoped__field-icon" />
-        <input
-          type="text"
-          inputmode="numeric"
-          class="ds-search-bar-scoped__input"
-          placeholder="Extension"
-          aria-label="Extension"
-          [value]="policyCriteria().extension"
-          (input)="onExtensionInput($event)"
-          (keydown.enter)="submit()"
-        />
-        @if (policyCriteria().extension) {
-          <ds-button-icon class="ds-search-bar-scoped__clear" type="plain" size="s" ariaLabel="Clear extension" (clicked)="clearExtension()">
-            <ds-icon name="close" [size]="16" />
-          </ds-button-icon>
-        }
-      </div>
-    </div>
-    <ds-divider class="ds-search-bar-scoped__divider" orientation="vertical" />
-  }
-
-  @if (!isBuyers() && !isOpen()) {
+  @if (!isBuyers()) {
     <div class="ds-search-bar-scoped__slot ds-search-bar-scoped__id-type">
       <ds-standalone-dropdown icon="file-text" [label]="searchInLabel()" (clicked)="toggle('search-in')" />
       @if (openFlyout() === 'search-in') {
@@ -238,5 +191,5 @@
       </ds-button>
     </span>
   }
-  <ds-button type="primary" [disabled]="!searchValid()" (clicked)="submit()">{{ submitLabel() }}</ds-button>
+  <ds-button type="primary" [disabled]="!searchValid()" (clicked)="submit()">Search</ds-button>
 </div>

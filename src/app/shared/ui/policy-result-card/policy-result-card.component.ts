@@ -10,7 +10,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { PropertiesPanelComponent, type PropertySection } from '../properties-panel/properties-panel.component';
 import type { PolicyResultData } from './policy.model';
 import {
-  policyKeyLabel, policyBadge, policyDateBlock, policyDetailRows, policyTileIcon, EMPTY_VALUE,
+  policyKeyLabel, policyBadge, policyDateBlock, policyDetailColumns, policyTileIcon, EMPTY_VALUE,
 } from './policy-card.view';
 
 export * from './policy.model';
@@ -53,9 +53,9 @@ export class PolicyResultCardComponent {
   secondLine = computed(() => [this.data().product, this.data().insuredName].filter(Boolean).join(' · '));
 
   /** Une donnée absente (hors Compass, draft peu renseigné) garde le poids d'un vide. */
-  detailSections = computed<PropertySection[]>(() => [{
-    rows: policyDetailRows(this.data()).map(r => ({ ...r, muted: r.value === EMPTY_VALUE })),
-  }]);
+  detailSections = computed<PropertySection[]>(() => policyDetailColumns(this.data()).map(col => ({
+    rows: col.map(r => ({ ...r, muted: r.value === EMPTY_VALUE })),
+  })));
 
   onOpen(ev: Event) {
     ev.preventDefault();

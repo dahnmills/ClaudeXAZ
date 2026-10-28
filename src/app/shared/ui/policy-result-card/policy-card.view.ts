@@ -91,6 +91,17 @@ export function policyDetailRows(p: PolicyResultData): PolicyDetailRow[] {
   return rows;
 }
 
+/** Champs par colonne du dépliage : ds-properties-panel pose une colonne par section. */
+const DETAIL_ROWS_PER_COLUMN = 2;
+
+/** Le dépliage en colonnes de 2 champs, dans l'ordre de lecture : 4 colonnes pour une police. */
+export function policyDetailColumns(p: PolicyResultData): PolicyDetailRow[][] {
+  const rows = policyDetailRows(p);
+  const cols: PolicyDetailRow[][] = [];
+  for (let i = 0; i < rows.length; i += DETAIL_ROWS_PER_COLUMN) cols.push(rows.slice(i, i + DETAIL_ROWS_PER_COLUMN));
+  return cols;
+}
+
 /** Police signée, draft au stade applicant, draft en NBI : trois icônes distinctes. */
 export function policyTileIcon(p: PolicyResultData): 'contract' | 'file-new' | 'file-text' {
   if (p.kind === 'policy') return 'contract';

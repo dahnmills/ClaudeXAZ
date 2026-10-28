@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  policyKeyLabel, policyBadge, policyDateBlock, formatPolicyDate, policyDetailRows, policyTileIcon,
+  policyKeyLabel, policyBadge, policyDateBlock, formatPolicyDate, policyDetailRows, policyDetailColumns, policyTileIcon,
 } from '../../src/app/shared/ui/policy-result-card/policy-card.view.ts';
 import type { SignedPolicy, DraftPolicy } from '../../src/app/shared/ui/policy-result-card/policy.model.ts';
 
@@ -124,4 +124,15 @@ test('tile icons', () => {
   assert.equal(policyTileIcon(policy()), 'contract');
   assert.equal(policyTileIcon(draft({ draftStage: 'app', status: 'applicant' })), 'file-new');
   assert.equal(policyTileIcon(draft()), 'file-text');
+});
+
+test('detail columns: a policy reads as 4 columns of 2 fields', () => {
+  const cols = policyDetailColumns(policy());
+  assert.deepEqual(cols.map(c => c.length), [2, 2, 2, 2]);
+  assert.deepEqual(cols[0].map(r => r.label), ['Insured Company ID', 'Insured country']);
+  assert.deepEqual(cols[3].map(r => r.label), ['Broker', 'Inforce BU']);
+});
+
+test('detail columns: a draft fills columns of 2 in reading order', () => {
+  assert.deepEqual(policyDetailColumns(draft()).map(c => c.length), [2, 2, 1]);
 });

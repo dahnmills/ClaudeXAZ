@@ -3,7 +3,7 @@ import { IconComponent, type IconName } from '../../../shared/ui/icon/icon.compo
 import { IconTileComponent } from '../../../shared/ui/icon-tile/icon-tile.component';
 import { SEARCH_TYPES, COUNTRIES, DIAL_CODES } from '../../../shared/ui/search-bar-multi/search-bar-multi.component';
 import { moreCriteriaSlots } from '../../../shared/ui/more-criteria/more-criteria.component';
-import { POLICY_MODES, POLICY_STATUSES } from '../../../shared/ui/policy-criteria/policy-criteria.model';
+import { POLICY_STATUSES } from '../../../shared/ui/policy-criteria/policy-criteria.model';
 import type { BuyerRecentV2, PolicyRecentV2, RecentV2Entry } from '../search-v2-recents.model';
 import { fullDate, historyDate } from '../search-v2-history';
 
@@ -78,9 +78,7 @@ export class RecentSearchV2CardComponent {
   private policyView(e: PolicyRecentV2): RecentView {
     const c = e.criteria;
     const criteria: Criterion[] = [{ label: 'BU', value: e.buCode ?? 'All BUs' }];
-    if (e.mode === 'open') {
-      if (c.extension.trim()) criteria.push({ label: 'Extension', value: c.extension.trim() });
-    } else if (c.searchIn === 'drafts') {
+    if (c.searchIn === 'drafts') {
       criteria.push({ label: 'Search in', value: 'Drafts' });
     } else {
       criteria.push({ label: 'Search in', value: 'Policies' });
@@ -94,8 +92,8 @@ export class RecentSearchV2CardComponent {
     return {
       icon: 'contract',
       object: 'Policy',
-      searched: e.query.trim() || 'Any number or keyword',
-      searchType: POLICY_MODES.find(m => m.id === e.mode)?.label ?? '',
+      searched: e.query.trim() || 'Any name, number or Company ID',
+      searchType: 'Global search',
       criteria,
     };
   }
