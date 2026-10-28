@@ -1,26 +1,23 @@
 <div class="ds-policy-result-card__main">
   <div class="ds-policy-result-card__left">
-    <ds-icon-tile size="m" tone="brand">
-      <ds-icon name="contract" [size]="24" />
+    <ds-icon-tile size="m" [tone]="data().kind === 'policy' ? 'brand' : 'subtle'">
+      <ds-icon [name]="tileIcon()" [size]="24" />
     </ds-icon-tile>
     <div class="ds-policy-result-card__info">
       <div class="ds-policy-result-card__name-row">
+        <!-- Seul le nom ouvre la police : le reste de la carte ne navigue pas -->
         <ds-link
           href="#"
           weight="semi-bold"
           dsTooltip="Open the policy"
           dsTooltipPosition="top-center"
           (click)="onOpen($event)"
-        >{{ title() }}</ds-link>
+        >{{ data().policyName }}</ds-link>
         <ds-badge [label]="badge().label" [status]="badge().status" />
-        @if (data().kind === 'policy') {
-          <ds-identifier [value]="data().id" icon="hash" [copyable]="true" />
-        }
+        <ds-identifier [value]="keyLabel()" icon="hash" [copyable]="true" />
       </div>
       <!-- Deux lignes, comme ds-result-card (nom, puis adresse) : même hauteur de carte -->
-      <span class="ds-policy-result-card__holder">
-        {{ data().policyholder }} · {{ data().buCode }} · <span class="ds-policy-result-card__period">{{ period() }}</span>
-      </span>
+      <span class="ds-policy-result-card__holder">{{ secondLine() }}</span>
     </div>
   </div>
 
@@ -29,6 +26,17 @@
   <div class="ds-policy-result-card__right">
     <!-- Méta propre au contexte (ex. date de consultation dans un historique) -->
     <ng-content select="[slot=meta]" />
+    @if (dateBlock(); as d) {
+      <div class="ds-policy-result-card__date" [class.ds-policy-result-card__date--alert]="d.alert">
+        <span class="ds-policy-result-card__date-label">{{ d.label }}</span>
+        <span class="ds-policy-result-card__date-value">
+          @if (d.alert) {
+            <ds-icon name="warning-triangle" [size]="16" />
+          }
+          {{ d.value }}
+        </span>
+      </div>
+    }
     <div class="ds-policy-result-card__actions">
       <ds-button-icon
         type="plain"
@@ -42,9 +50,7 @@
       >
         <ds-icon [name]="favorited() ? 'star-filled' : 'star'" [size]="20" />
       </ds-button-icon>
-      <ds-button-icon type="plain" tone="accent" ariaLabel="Toggle details"
-        [disabled]="!hasDetails()"
-        (clicked)="hasDetails() && toggled.emit()">
+      <ds-button-icon type="plain" tone="accent" ariaLabel="Toggle details" (clicked)="toggled.emit()">
         <ds-icon [name]="open() ? 'chevron-up' : 'chevron-down'" [size]="20" />
       </ds-button-icon>
     </div>
@@ -54,6 +60,6 @@
 @if (open()) {
   <ds-divider class="ds-policy-result-card__divider" />
   <div class="ds-policy-result-card__details">
-    <ds-properties-panel [sections]="detailSections()" [columns]="3" variant="flat" />
+    <ds-properties-panel [sections]="detailSections()" [columns]="4" variant="flat" />
   </div>
 }

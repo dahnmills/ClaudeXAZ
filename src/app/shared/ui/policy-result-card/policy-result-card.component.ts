@@ -3,18 +3,23 @@ import { IconComponent } from '../icon/icon.component';
 import { IconTileComponent } from '../icon-tile/icon-tile.component';
 import { LinkComponent } from '../link/link.component';
 import { ButtonIconComponent } from '../button-icon/button-icon.component';
-import { BadgeComponent, type BadgeStatus } from '../badge/badge.component';
+import { BadgeComponent } from '../badge/badge.component';
 import { IdentifierComponent } from '../identifier/identifier.component';
 import { DividerComponent } from '../divider/divider.component';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { PropertiesPanelComponent, type PropertySection } from '../properties-panel/properties-panel.component';
-import { POLICY_STATUS_LABELS, type PolicyResultData } from './policy.model';
+import type { PolicyResultData } from './policy.model';
+import {
+  policyKeyLabel, policyBadge, policyDateBlock, policyDetailRows, policyTileIcon, EMPTY_VALUE,
+} from './policy-card.view';
 
 export * from './policy.model';
 
 /**
- * Résultat de recherche d'une police. Même enveloppe et même rangée d'actions
- * que ds-result-card : un buyer et une police se lisent pareil dans une liste.
+ * Résultat de recherche d'une police ou d'un draft. Même enveloppe et même rangée
+ * d'actions que ds-result-card : un buyer et une police se lisent pareil dans une
+ * liste. Première lecture : nom, statut, clé, produit et assuré, date utile
+ * (renouvellement, fin ou mise à jour). Le reste au dépliage.
  */
 @Component({
   selector: 'ds-policy-result-card',
@@ -30,6 +35,8 @@ export class PolicyResultCardComponent {
   /** s : version resserrée pour les listes d'historique. */
   size = input<'s' | 'm'>('m');
   favorited = input<boolean>(false);
+  /** Référence des alertes de renouvellement ; figée dans les stories. */
+  today = input<Date>(new Date());
 
   toggled = output<void>();
   starred = output<void>();
@@ -37,25 +44,18 @@ export class PolicyResultCardComponent {
 
   hostClasses = computed(() => ['ds-policy-result-card', this.open() ? 'ds-policy-result-card--open' : '', this.size() === 's' ? 'ds-policy-result-card--s' : ''].filter(Boolean).join(' '));
 
-  title = computed(() => {
-    const d = this.data();
-    return d.kind === 'draft' ? `Draft ${d.policyNumber}` : `Policy ${d.policyNumber}-${d.extension}`;
-  });
+  keyLabel = computed(() => policyKeyLabel(this.data()));
+  badge = computed(() => policyBadge(this.data()));
+  dateBlock = computed(() => policyDateBlock(this.data(), this.today()));
+  tileIcon = computed(() => policyTileIcon(this.data()));
 
-  badge = computed<{ label: string; status: BadgeStatus }>(() => {
-    const d = this.data();
-    if (d.kind === 'draft' || !d.status) return { label: 'Draft', status: 'info' };
-    const status: BadgeStatus = d.status === 'issued' ? 'success' : d.status === 'cancelled' ? 'error' : 'neutral';
-    return { label: POLICY_STATUS_LABELS[d.status], status };
-  });
+  /** Produit puis assuré ; le produit manque parfois sur un draft. */
+  secondLine = computed(() => [this.data().product, this.data().insuredName].filter(Boolean).join(' · '));
 
-  period = computed(() => `${this.data().effectiveDate} → ${this.data().expiryDate}`);
-
-  hasDetails = computed(() => !!this.data().details?.length);
-
-  detailSections = computed<PropertySection[]>(() => [
-    { rows: (this.data().details ?? []).map(r => ({ label: r.label, value: r.value })) },
-  ]);
+  /** Une donnée absente (hors Compass, draft peu renseigné) garde le poids d'un vide. */
+  detailSections = computed<PropertySection[]>(() => [{
+    rows: policyDetailRows(this.data()).map(r => ({ ...r, muted: r.value === EMPTY_VALUE })),
+  }]);
 
   onOpen(ev: Event) {
     ev.preventDefault();
