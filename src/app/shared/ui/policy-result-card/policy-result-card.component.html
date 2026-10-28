@@ -13,7 +13,9 @@
           dsTooltipPosition="top-center"
           (click)="onOpen($event)"
         >{{ data().policyName }}</ds-link>
-        <ds-badge [label]="badge().label" [status]="badge().status" />
+        @if (data().kind === 'policy') {
+          <ds-badge [label]="badge().label" [status]="badge().status" />
+        }
         <ds-identifier [value]="keyLabel()" icon="hash" [copyable]="true" />
       </div>
       <!-- Deux lignes, comme ds-result-card (nom, puis adresse) : même hauteur de carte -->
@@ -26,6 +28,11 @@
   <div class="ds-policy-result-card__right">
     <!-- Méta propre au contexte (ex. date de consultation dans un historique) -->
     <ng-content select="[slot=meta]" />
+    <!-- Draft : statuts nombreux et de longueur variable, posés à droite contre
+         la date pour tomber au même endroit d'une carte à l'autre -->
+    @if (data().kind === 'draft') {
+      <ds-badge [label]="badge().label" [status]="badge().status" />
+    }
     @if (dateBlock(); as d) {
       <div class="ds-policy-result-card__date" [class.ds-policy-result-card__date--alert]="d.alert">
         <span class="ds-policy-result-card__date-label">{{ d.label }}</span>

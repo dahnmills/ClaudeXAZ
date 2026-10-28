@@ -86,6 +86,9 @@
   font-size: var(--semantic-font-text-style-size-m);
   line-height: var(--semantic-font-text-style-line-height-m);
   white-space: nowrap;
+  // Largeur plancher (une date '00 Mmm 0000' y tient) : la colonne ne varie plus
+  // avec le mois, le badge de draft posé contre elle tombe au même endroit
+  min-width: calc(var(--semantic-measurement-sizing-3xl) + var(--semantic-measurement-sizing-l));
 }
 
 .ds-policy-result-card__date-label {
