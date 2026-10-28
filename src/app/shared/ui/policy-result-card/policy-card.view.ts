@@ -16,24 +16,25 @@ const EMPTY = EMPTY_VALUE;
 
 const POLICY_TONES: Record<PolicyStatus, BadgeStatus> = { issued: 'success', cancelled: 'error', expired: 'neutral' };
 const DRAFT_TONES: Record<DraftStatus, BadgeStatus> = {
-  applicant: 'info', pending: 'warning', returned: 'warning',
+  issued: 'info', inactive: 'neutral', pending: 'warning', returned: 'warning',
   aborted: 'neutral', cancelled: 'error', transformed: 'success',
 };
 
 export interface PolicyDateBlock { label: string; value: string; alert: boolean; }
 export interface PolicyDetailRow { label: string; value: string; }
 
-/** La clé telle que l'utilisateur la lit et la copie : 'AT UK · 7730012 · 0234', 'AT UK · D20431 · NBI'. */
+/** La clé telle que Qirin l'affiche et que l'utilisateur la copie : 'AT UK · 7730012 · 0234'. */
 export function policyKeyLabel(p: PolicyResultData): string {
   const parts = [p.buCode, p.policyNumber];
-  if (p.kind === 'draft') parts.push(p.draftStage.toUpperCase());
-  else if (p.extension !== null) parts.push(p.extension);
+  if (p.extension !== null) parts.push(p.extension);
   return parts.join(' · ');
 }
 
+/** Draft : l'étape atteinte d'abord (« s'il est que applicant, il faut que tu le
+ *  saches »), puis le statut de sa dernière version : 'NBI · Pending'. */
 export function policyBadge(p: PolicyResultData): { label: string; status: BadgeStatus } {
   return p.kind === 'draft'
-    ? { label: DRAFT_STATUS_LABELS[p.status], status: DRAFT_TONES[p.status] }
+    ? { label: `${p.draftStage.toUpperCase()} · ${DRAFT_STATUS_LABELS[p.status]}`, status: DRAFT_TONES[p.status] }
     : { label: POLICY_STATUS_LABELS[p.status], status: POLICY_TONES[p.status] };
 }
 
@@ -52,10 +53,11 @@ function daysUntil(iso: string, today: Date): number {
 /**
  * La date de la colonne droite. Police Issued : next renewal, en alerte dans les
  * 30 jours qui précèdent ou une fois dépassée. Police terminée : sa date de fin.
- * Draft : sa dernière mise à jour. null quand il n'y a rien de fiable à montrer.
+ * Draft : le début de la couverture proposée. null quand il n'y a rien de fiable
+ * à montrer.
  */
 export function policyDateBlock(p: PolicyResultData, today: Date): PolicyDateBlock | null {
-  if (p.kind === 'draft') return { label: 'Updated', value: formatPolicyDate(p.updatedDate), alert: false };
+  if (p.kind === 'draft') return { label: 'Inception', value: formatPolicyDate(p.inceptionDate), alert: false };
   if (p.status === 'cancelled') {
     return p.cancellationDate ? { label: 'Cancelled on', value: formatPolicyDate(p.cancellationDate), alert: false } : null;
   }
@@ -69,26 +71,20 @@ export function policyDateBlock(p: PolicyResultData, today: Date): PolicyDateBlo
   };
 }
 
-/** Les infos secondaires du dépliage, dans l'ordre de lecture. Un draft n'a pas de dates de police. */
+/** Les infos secondaires du dépliage, dans l'ordre de lecture. Mêmes champs pour
+ *  un draft et une police, comme dans Qirin. */
 export function policyDetailRows(p: PolicyResultData): PolicyDetailRow[] {
   const broker = [p.brokerName, p.brokerCompanyId].filter(Boolean).join(' · ');
-  const rows: PolicyDetailRow[] = [
+  return [
     { label: 'Insured Company ID', value: p.insuredCompanyId ?? EMPTY },
     { label: 'Insured country', value: p.insuredCountry ?? EMPTY },
-  ];
-  if (p.kind === 'policy') {
-    rows.push(
-      { label: 'Inception', value: formatPolicyDate(p.inceptionDate) },
-      { label: 'Expiry', value: formatPolicyDate(p.expiryDate) },
-    );
-  }
-  rows.push(
+    { label: 'Inception', value: formatPolicyDate(p.inceptionDate) },
+    { label: 'Expiry', value: formatPolicyDate(p.expiryDate) },
     { label: 'Segment', value: p.segment ?? EMPTY },
     { label: 'LOB', value: p.lob ?? EMPTY },
     { label: 'Broker', value: broker || EMPTY },
-  );
-  if (p.kind === 'policy') rows.push({ label: 'Inforce BU', value: p.inforceBu ?? EMPTY });
-  return rows;
+    { label: 'Inforce BU', value: p.inforceBu ?? EMPTY },
+  ];
 }
 
 /** Champs par colonne du dépliage : ds-properties-panel pose une colonne par section. */

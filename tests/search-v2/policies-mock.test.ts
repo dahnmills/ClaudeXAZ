@@ -10,7 +10,8 @@ const DAY = 86_400_000;
 test('policyId includes the BU and the extension when there is one', () => {
   assert.equal(policyId({ kind: 'policy', buCode: 'AT UK', policyNumber: '7730012', extension: '0234' }), 'POL/AT UK/7730012/0234');
   assert.equal(policyId({ kind: 'policy', buCode: 'AT UK', policyNumber: '7730250', extension: null }), 'POL/AT UK/7730250');
-  assert.equal(policyId({ kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431' }), 'DFT/AT UK/D20431');
+  assert.equal(policyId({ kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', extension: '002' }), 'DFT/AT UK/D20431/002');
+  assert.equal(policyId({ kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', extension: null }), 'DFT/AT UK/D20431');
 });
 
 test('ids are unique', () => {
@@ -56,9 +57,17 @@ test('drafts cover both stages and at least 3 statuses', () => {
   assert.ok(new Set(drafts.map(d => d.status)).size >= 3);
 });
 
-test('every APP draft has status applicant', () => {
-  assert.ok(drafts.filter(d => d.draftStage === 'app').every(d => d.status === 'applicant'));
-  assert.ok(drafts.filter(d => d.draftStage === 'nbi').every(d => d.status !== 'applicant'));
+test('applicant is a stage, never a draft status', () => {
+  assert.ok(drafts.every(d => (d.status as string) !== 'applicant'));
+  assert.ok(drafts.some(d => d.draftStage === 'app' && d.status === 'issued'), 'an APP can be Issued, as in Qirin');
+});
+
+test('drafts carry inception and expiry like a policy', () => {
+  assert.ok(drafts.every(d => !!d.inceptionDate && !!d.expiryDate));
+});
+
+test('a draft number can start with C, not only D', () => {
+  assert.ok(drafts.some(d => d.policyNumber.startsWith('C')));
 });
 
 test('one insured holds a CAP and a Partial non-can policy', () => {

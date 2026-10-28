@@ -2,9 +2,11 @@
  *  Module pur : aucun import Angular, lu par les tests node. */
 
 export type PolicyStatus = 'issued' | 'cancelled' | 'expired';
-/** Une version APP est toujours `applicant` ; les autres statuts sont ceux des NBI. */
-export type DraftStatus = 'applicant' | 'pending' | 'returned' | 'aborted' | 'cancelled' | 'transformed';
-/** Étape de la dernière version du draft : applicant, puis Non Binding Indication. */
+/** Statut de la dernière version d'un draft, quelle que soit son étape : une APP
+ *  peut être Issued, une NBI Inactive (statuts lus dans Qirin et la réunion du
+ *  27 octobre). « Applicant » est une étape, pas un statut. */
+export type DraftStatus = 'issued' | 'inactive' | 'pending' | 'returned' | 'aborted' | 'cancelled' | 'transformed';
+/** Étape atteinte par le draft : applicant, puis Non Binding Indication. */
 export type DraftStage = 'app' | 'nbi';
 export type PolicyKind = 'policy' | 'draft';
 
@@ -27,42 +29,42 @@ interface PolicyBase {
   lob?: string;
   brokerName?: string;
   brokerCompanyId?: string;
-}
-
-/** Police signée. Dates au format ISO 'YYYY-MM-DD'. */
-export interface SignedPolicy extends PolicyBase {
-  kind: 'policy';
-  /** Texte : '001', '01' et '1' sont trois clés différentes. null = pas d'extension. */
+  /** Texte : '001', '01' et '1' sont trois clés différentes. null = pas d'extension.
+   *  Sur un draft, Qirin affiche ici '000', '002'… : extension ou version, la
+   *  réunion ne tranche pas, on l'affiche tel quel. */
   extension: string | null;
-  status: PolicyStatus;
+  /** Dates au format ISO 'YYYY-MM-DD'. Sur un draft : la couverture proposée. */
   inceptionDate: string;
   expiryDate: string;
-  /** Absente pour une police terminée. */
-  nextRenewalDate?: string;
-  /** Police Cancelled seulement. */
-  cancellationDate?: string;
   /** BU qui porte le risque, identique à buCode dans la plupart des cas. */
   inforceBu?: string;
 }
 
-/** Draft : une carte par draft, son étape et son statut sont ceux de la dernière version. */
+/** Police signée. */
+export interface SignedPolicy extends PolicyBase {
+  kind: 'policy';
+  status: PolicyStatus;
+  /** Absente pour une police terminée. */
+  nextRenewalDate?: string;
+  /** Police Cancelled seulement. */
+  cancellationDate?: string;
+}
+
+/** Draft : une carte par draft, avec l'étape atteinte et le statut de sa dernière version. */
 export interface DraftPolicy extends PolicyBase {
   kind: 'draft';
   draftStage: DraftStage;
   status: DraftStatus;
-  updatedDate: string;
 }
 
 export type PolicyResultData = SignedPolicy | DraftPolicy;
 
-type PolicyKeyParts =
-  | { kind: 'policy'; buCode: string; policyNumber: string; extension: string | null }
-  | { kind: 'draft'; buCode: string; policyNumber: string };
+type PolicyKeyParts = { kind: PolicyKind; buCode: string; policyNumber: string; extension: string | null };
 
-/** Clé unique, sur le modèle de l'URL Qirin : 'POL/AT UK/7730012/0234', 'DFT/AT UK/D20431'. */
+/** Clé unique, sur le modèle de l'URL Qirin : 'POL/AT UK/7730012/0234', 'DFT/AT UK/D20431/002'. */
 export function policyId(p: PolicyKeyParts): string {
-  if (p.kind === 'draft') return `DFT/${p.buCode}/${p.policyNumber}`;
-  return p.extension === null ? `POL/${p.buCode}/${p.policyNumber}` : `POL/${p.buCode}/${p.policyNumber}/${p.extension}`;
+  const head = `${p.kind === 'draft' ? 'DFT' : 'POL'}/${p.buCode}/${p.policyNumber}`;
+  return p.extension === null ? head : `${head}/${p.extension}`;
 }
 
 /** BU proposées par le slot BU de la barre, triées. */
@@ -75,7 +77,8 @@ export const POLICY_STATUS_LABELS: Record<PolicyStatus, string> = {
 };
 
 export const DRAFT_STATUS_LABELS: Record<DraftStatus, string> = {
-  applicant:   'Applicant',
+  issued:      'Issued',
+  inactive:    'Inactive',
   pending:     'Pending',
   returned:    'Returned',
   aborted:     'Aborted',

@@ -29,9 +29,14 @@ mock et carte de résultat (police et draft).
 
 - Clé d'une police : BU + Policy Number + Extension, en texte. `001`, `01` et `1` sont trois
   clés différentes. Un même n° peut exister dans deux BU.
-- Un draft s'identifie par BU + n° de draft (commence par `D`). Il passe par une étape
-  APP (applicant), puis par N versions NBI (Non Binding Indication), jusqu'à 50. Chaque
-  version a un statut (pending, returned, aborted, cancelled, transformed…).
+- Un draft s'identifie par BU + n° de draft (`D…` dans la nouvelle nomenclature, `C…`
+  dans l'existant) + un suffixe que Qirin affiche `000`, `002`… (extension ou version,
+  non tranché). Il passe par une étape APP (applicant), puis par N versions NBI (Non
+  Binding Indication), jusqu'à 50. Chaque version a un statut (Issued, Inactive, Pending,
+  Returned, Aborted, Cancelled, Transformed). « Applicant » est l'étape, pas un statut :
+  dans Qirin une APP peut être Issued.
+- Un draft porte les mêmes champs qu'une police : produit, segment, LOB, In Force BU,
+  pays / PH company ID, inception, expiration (capture de l'existant, 2026-10-28).
 - Les utilisateurs cherchent le draft, pas une version : « je veux la draft, c'est un
   sous-détail ». Ce qui compte : savoir si le prospect en est à APP ou à NBI, et le statut.
 - Polices et drafts ne se mélangent jamais dans une même liste (Compass ne sait pas).
@@ -59,29 +64,28 @@ mock et carte de résultat (police et draft).
 
 | Champ | Police | Draft | Notes |
 |-------|--------|-------|-------|
-| `id` | `POL/{bu}/{n°}/{ext}` | `DFT/{bu}/{n°}` | Inclut la BU : plus de collision dans les favoris ou l'historique |
+| `id` | `POL/{bu}/{n°}/{ext}` | `DFT/{bu}/{n°}/{suffixe}` | Inclut la BU : plus de collision dans les favoris ou l'historique |
 | `kind` | `'policy'` | `'draft'` | Inchangé |
 | `buCode` | ✓ | ✓ | Libellé de BU, inchangé |
 | `policyNumber` | ✓ | ✓ (`D…`) | |
-| `extension` | `string \| null` | `null` | Texte. `null` = pas d'extension, la clé s'affiche sans |
+| `extension` | `string \| null` | `string \| null` | Texte. `null` = pas d'extension, la clé s'affiche sans. Draft : le suffixe `000`, `002` tel quel |
 | `policyName` | ✓ | ✓ | **Nouveau.** Distinct du nom de l'assuré |
 | `insuredName` | ✓ | ✓ | Remplace `policyholder` |
 | `insuredCompanyId` | ✓ | optionnel | |
 | `insuredCountry` | ✓ | optionnel | |
 | `product` | ✓ | optionnel | CAP, CAP+, Partial non-can… |
 | `status` | `PolicyStatus` | `DraftStatus` | Deux types distincts |
-| `draftStage` | — | `'app' \| 'nbi'` | Étape de la dernière version |
-| `inceptionDate` | ✓ | — | |
-| `expiryDate` | ✓ | — | |
+| `draftStage` | — | `'app' \| 'nbi'` | Étape atteinte par le draft |
+| `inceptionDate` | ✓ | ✓ | Draft : début de la couverture proposée |
+| `expiryDate` | ✓ | ✓ | |
 | `nextRenewalDate` | optionnel | — | Absente pour une police terminée |
-| `updatedDate` | — | ✓ | Dernière mise à jour du draft |
 | `segment`, `lob` | optionnels | optionnels | Absents hors Compass |
 | `brokerName`, `brokerCompanyId` | optionnels | optionnels | |
-| `inforceBu` | optionnel | — | |
+| `inforceBu` | optionnel | optionnel | |
 | `cancellationDate` | optionnel | — | Police Cancelled seulement |
 
 - `PolicyStatus` reste `'issued' | 'cancelled' | 'expired'`.
-- `DraftStatus` = `'applicant' | 'pending' | 'returned' | 'aborted' | 'cancelled' | 'transformed'`.
+- `DraftStatus` = `'issued' | 'inactive' | 'pending' | 'returned' | 'aborted' | 'cancelled' | 'transformed'`.
 - `details` (montant couvert, devise, nombre de buyers) disparaît : la réunion n'en parle pas.
 - Un type discriminé par `kind` est souhaité si ça reste lisible. La forme exacte est
   laissée au builder.
@@ -128,11 +132,14 @@ qu'aujourd'hui.
   Inception, Expiry, Segment, LOB, Broker (nom + ID), Inforce BU. Valeur absente : `—`.
 
 **Draft**
-- Ligne 1 : nom, badge du statut de la dernière version, clé `BU · n° draft`.
+- Ligne 1 : nom, clé `BU · n° · suffixe` telle que Qirin l'affiche.
 - Ligne 2 : `produit · nom de l'assuré` (produit omis s'il manque).
-- Colonne droite : « Updated » + date.
+- Colonne droite : badge `ÉTAPE · Statut` (ex. `NBI · Pending`, `APP · Issued`) posé
+  contre la date, pour tomber au même endroit d'une carte à l'autre. L'étape d'abord :
+  « s'il est que applicant, il faut que tu le saches ». Puis « Inception » + date.
 - Icône de tuile : différente pour APP et pour NBI.
-- Dépliage : mêmes champs que la police quand ils existent, sauf les dates de police.
+- Dépliage : les mêmes 8 champs que la police.
+- Pas de numéro ni d'historique de versions : « c'est un sous-détail ».
 
 **Interaction** : comme la carte buyer et comme aujourd'hui, le chevron déplie et seul le
 nom ouvre (toaster « coming soon » + entrée dans Recently viewed). Pas de zone cliquable
@@ -151,12 +158,10 @@ de texte, comme les deux lignes d'info). *(Choix de l'auteur.)*
   modèle). Police Expired : « Expired on » + `expiryDate`.
 
 **Statuts de draft** *(choix de l'auteur)* :
-- Une version APP a toujours le statut `applicant`. Les statuts `pending`, `returned`,
-  `aborted`, `cancelled` et `transformed` sont ceux des NBI.
-- L'étape s'écrit aussi en texte dans la clé (`AT UK · D20431 · NBI`), pas seulement par
-  l'icône.
-- Tons de badge : applicant `info`, pending `warning`, returned `warning`, aborted
-  `neutral`, cancelled `error`, transformed `success`.
+- L'étape s'écrit en texte dans le badge, pas seulement par l'icône.
+- Tons de badge : issued `info`, inactive `neutral`, pending `warning`, returned
+  `warning`, aborted `neutral`, cancelled `error`, transformed `success`.
+- Le sens d'*Issued* sur une APP (envoyée ? validée ?) reste à demander aux users.
 
 **Copie de la clé** : l'identifier copie la clé telle qu'affichée (`AT UK · 7730012 · 0234`).
 L'utilisateur la relit pour remplir les champs ailleurs, aucun format de collage Qirin n'est

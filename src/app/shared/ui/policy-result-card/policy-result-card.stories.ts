@@ -14,9 +14,10 @@ const issued: SignedPolicy = {
 };
 
 const draft: DraftPolicy = {
-  id: 'DFT/AT UK/D20431', kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', draftStage: 'nbi',
-  status: 'pending', updatedDate: '2026-10-21', policyName: 'Nordic Food Supply',
+  id: 'DFT/AT UK/D20431/002', kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', extension: '002', draftStage: 'nbi',
+  status: 'pending', policyName: 'Nordic Food Supply',
   insuredName: 'Polaris Tech Nordic AB', insuredCountry: 'Sweden', product: 'CAP',
+  inceptionDate: '2027-01-01', expiryDate: '2027-12-31',
 };
 
 const meta: Meta<PolicyResultCardComponent> = {
@@ -44,7 +45,7 @@ export const NoExtension: Story = {
 };
 export const Open: Story = { args: { open: true, favorited: true } };
 export const DraftApplicant: Story = {
-  args: { data: { ...draft, id: 'DFT/AT UK/D20432', policyNumber: 'D20432', draftStage: 'app', status: 'applicant', product: undefined } },
+  args: { data: { ...draft, id: 'DFT/AT UK/D20432/000', policyNumber: 'D20432', extension: '000', draftStage: 'app', status: 'issued', product: undefined } },
 };
 export const DraftNbi: Story = { args: { data: draft } };
 export const DraftOpen: Story = { args: { data: draft, open: true } };

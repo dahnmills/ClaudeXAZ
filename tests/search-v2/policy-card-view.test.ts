@@ -17,8 +17,11 @@ const policy = (over: Partial<SignedPolicy> = {}): SignedPolicy => ({
 });
 
 const draft = (over: Partial<DraftPolicy> = {}): DraftPolicy => ({
-  id: 'DFT/AT UK/D20431', kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', draftStage: 'nbi',
-  status: 'pending', updatedDate: '2026-10-21', policyName: 'Nordic Food Supply', insuredName: 'Polaris Tech Nordic AB',
+  id: 'DFT/AT UK/D20431/002', kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', extension: '002', draftStage: 'nbi',
+  status: 'pending', policyName: 'Nordic Food Supply', insuredName: 'Polaris Tech Nordic AB',
+  insuredCompanyId: '20087731', insuredCountry: 'Sweden', product: 'CAP', segment: 'SME', lob: 'Core',
+  brokerName: 'Marsh Ltd', brokerCompanyId: '80011290',
+  inceptionDate: '2027-01-01', expiryDate: '2027-12-31', inforceBu: 'AT UK',
   ...over,
 });
 
@@ -30,9 +33,9 @@ test('key label without extension', () => {
   assert.equal(policyKeyLabel(policy({ policyNumber: '7730250', extension: null })), 'AT UK · 7730250');
 });
 
-test('draft key label shows stage', () => {
-  assert.equal(policyKeyLabel(draft()), 'AT UK · D20431 · NBI');
-  assert.equal(policyKeyLabel(draft({ policyNumber: 'D20432', draftStage: 'app', status: 'applicant' })), 'AT UK · D20432 · APP');
+test('draft key label shows the suffix as Qirin prints it, not the stage', () => {
+  assert.equal(policyKeyLabel(draft()), 'AT UK · D20431 · 002');
+  assert.equal(policyKeyLabel(draft({ policyNumber: 'D20432', extension: null })), 'AT UK · D20432');
 });
 
 test('policy badges', () => {
@@ -43,13 +46,18 @@ test('policy badges', () => {
 
 test('draft badges', () => {
   const tone = (status: DraftPolicy['status']) => policyBadge(draft({ status })).status;
-  assert.equal(tone('applicant'), 'info');
+  assert.equal(tone('issued'), 'info');
+  assert.equal(tone('inactive'), 'neutral');
   assert.equal(tone('pending'), 'warning');
   assert.equal(tone('returned'), 'warning');
   assert.equal(tone('aborted'), 'neutral');
   assert.equal(tone('cancelled'), 'error');
   assert.equal(tone('transformed'), 'success');
-  assert.equal(policyBadge(draft({ status: 'transformed' })).label, 'Transformed');
+});
+
+test('draft badge reads stage first, then status', () => {
+  assert.equal(policyBadge(draft()).label, 'NBI · Pending');
+  assert.equal(policyBadge(draft({ draftStage: 'app', status: 'issued' })).label, 'APP · Issued');
 });
 
 test('format policy date', () => {
@@ -91,8 +99,8 @@ test('expired shows expiry date', () => {
     { label: 'Expired on', value: '31 Mar 2026', alert: false });
 });
 
-test('draft shows updated date', () => {
-  assert.deepEqual(policyDateBlock(draft(), today), { label: 'Updated', value: '21 Oct 2026', alert: false });
+test('draft shows its proposed inception', () => {
+  assert.deepEqual(policyDateBlock(draft(), today), { label: 'Inception', value: '01 Jan 2027', alert: false });
 });
 
 test('detail rows for a policy', () => {
@@ -115,14 +123,14 @@ test('detail rows show — for a missing value', () => {
   assert.equal(rows.find(r => r.label === 'Broker')?.value, '—');
 });
 
-test('detail rows for a draft', () => {
-  assert.deepEqual(policyDetailRows(draft()).map(r => r.label),
-    ['Insured Company ID', 'Insured country', 'Segment', 'LOB', 'Broker']);
+test('detail rows for a draft are the same fields as a policy', () => {
+  assert.deepEqual(policyDetailRows(draft()).map(r => r.label), policyDetailRows(policy()).map(r => r.label));
+  assert.equal(policyDetailRows(draft()).find(r => r.label === 'Expiry')?.value, '31 Dec 2027');
 });
 
 test('tile icons', () => {
   assert.equal(policyTileIcon(policy()), 'contract');
-  assert.equal(policyTileIcon(draft({ draftStage: 'app', status: 'applicant' })), 'file-new');
+  assert.equal(policyTileIcon(draft({ draftStage: 'app', status: 'issued' })), 'file-new');
   assert.equal(policyTileIcon(draft()), 'file-text');
 });
 
@@ -133,6 +141,6 @@ test('detail columns: a policy reads as 4 columns of 2 fields', () => {
   assert.deepEqual(cols[3].map(r => r.label), ['Broker', 'Inforce BU']);
 });
 
-test('detail columns: a draft fills columns of 2 in reading order', () => {
-  assert.deepEqual(policyDetailColumns(draft()).map(c => c.length), [2, 2, 1]);
+test('detail columns: a draft reads as 4 columns of 2 fields too', () => {
+  assert.deepEqual(policyDetailColumns(draft()).map(c => c.length), [2, 2, 2, 2]);
 });
