@@ -49,6 +49,9 @@ export class StandaloneDropdownComponent implements SingleOpenFlyout, OnDestroy 
   label    = input<string>('');
   tone     = input<StandaloneDropdownTone>('accent');
   disabled = input<boolean>(false);
+  /** Bord du déclencheur sur lequel la liste s'aligne : `end` pour un déclencheur
+   *  posé contre le bord droit de la page, la liste s'ouvre alors vers la gauche. */
+  flyoutAlign = input<'start' | 'end'>('start');
 
   /** Liste de choix unique. Vide, le composant reste un simple déclencheur. */
   options = input<SelectOption[]>([]);
@@ -72,6 +75,7 @@ export class StandaloneDropdownComponent implements SingleOpenFlyout, OnDestroy 
     `ds-standalone-dropdown--tone-${this.tone()}`,
     this.disabled() ? 'ds-standalone-dropdown--disabled' : '',
     this.open()     ? 'ds-standalone-dropdown--open'     : '',
+    this.flyoutAlign() === 'end' ? 'ds-standalone-dropdown--flyout-end' : '',
   ].filter(Boolean).join(' '));
 
   onTrigger(event?: Event): void {

@@ -3,7 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import {
   PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, TabComponent, IconComponent,
-  ConfirmDialogComponent, ButtonComponent, SpinnerComponent, ChipComponent,
+  ConfirmDialogComponent, ButtonComponent, SpinnerComponent, ChipComponent, StandaloneDropdownComponent,
 } from '../../shared/ui';
 import { SearchBarScopedComponent, type SearchScope } from '../../shared/ui/search-bar-scoped/search-bar-scoped.component';
 import type { SearchType, IdTypeOption } from '../../shared/ui/search-bar-multi/search-bar-multi.component';
@@ -26,6 +26,7 @@ import type { RecentV2Entry } from './search-v2-recents.model';
 import { SearchV2ViewedStore } from './search-v2-viewed.store';
 import { SearchV2FavoritesStore } from './search-v2-favorites.store';
 import { searchPolicies, type PolicyQuery } from './policy-search';
+import { orderOptions as policyOrderOptions, orderPolicies, groupPolicies, groupCounts, type PolicyOrder } from './policy-order';
 import { POLICIES } from './policies.mock';
 import { BUYERS } from './buyers.mock';
 import {
@@ -40,7 +41,7 @@ type TabId = 'search' | 'searched' | 'viewed' | 'favorites';
   standalone: true,
   imports: [
     TopboxTestShellComponent, PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, TabComponent,
-    IconComponent, ButtonComponent, SpinnerComponent, ConfirmDialogComponent, ChipComponent,
+    IconComponent, ButtonComponent, SpinnerComponent, ConfirmDialogComponent, ChipComponent, StandaloneDropdownComponent,
     SearchBarScopedComponent, MoreCriteriaComponent,
     ResultCardComponent, PolicyResultCardComponent, RecentSearchV2CardComponent, CompanyCreationWizardComponent,
     NgTemplateOutlet,
@@ -111,6 +112,18 @@ export class SearchV2Component {
     return q ? searchPolicies(POLICIES, q) : [];
   });
 
+  /** Tri choisi ; retombe sur Relevance si la source affichée ne le propose pas (Stage hors drafts). */
+  policyOrder = signal<PolicyOrder>('relevance');
+  orderOptions = computed(() => policyOrderOptions(this.appliedPolicyQuery()?.criteria.searchIn ?? 'policies'));
+  activeOrder = computed<PolicyOrder>(() =>
+    this.orderOptions().some(o => o.value === this.policyOrder()) ? this.policyOrder() : 'relevance');
+  sortedPolicies = computed(() => orderPolicies(this.policyResult(), this.activeOrder()));
+
+  setOrder(v: string) {
+    const o = this.orderOptions().find(x => x.value === v);
+    if (o) this.policyOrder.set(o.value);
+  }
+
   // ── Liste courante + chargement progressif ─────────────────────────────
   private readonly PAGE_SIZE = 6;
   visibleCount = signal(this.PAGE_SIZE);
@@ -118,7 +131,10 @@ export class SearchV2Component {
 
   totalCount = computed(() => this.scope() === 'buyers' ? this.buyerFiltered().length : this.policyResult().length);
   visibleBuyers = computed(() => this.buyerFiltered().slice(0, this.visibleCount()));
-  visiblePolicies = computed(() => this.policyResult().slice(0, this.visibleCount()));
+  visiblePolicies = computed(() => this.sortedPolicies().slice(0, this.visibleCount()));
+  /** Les cartes chargées, rangées par groupe ; les compteurs portent sur toute la liste. */
+  policyGroups = computed(() => groupPolicies(this.visiblePolicies(), this.activeOrder()));
+  policyGroupCounts = computed(() => groupCounts(this.sortedPolicies(), this.activeOrder()));
   allLoaded = computed(() => this.visibleCount() >= this.totalCount());
   noResults = computed(() => this.isResults() && this.totalCount() === 0);
 

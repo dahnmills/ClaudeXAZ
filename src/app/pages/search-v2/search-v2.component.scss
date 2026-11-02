@@ -65,6 +65,39 @@ ds-page-header {
   color: var(--semantic-color-static-text-main-secondary);
 }
 
+// Policies : le compteur à gauche, le tri à droite, sur la même ligne
+.search-page__results-header--split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-page__order {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--semantic-measurement-spacing-s);
+}
+
+.search-page__order-label {
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+// En-tête d'un groupe (tri par Stage ou Status) : un intertitre dans la liste,
+// les cartes restent les mêmes
+.search-page__group {
+  margin: var(--semantic-measurement-spacing-s) 0 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color: var(--semantic-color-static-text-main-primary);
+}
+
+.search-page__group-count {
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
 // En-tête d'une liste d'historique : rien que son action, à droite, au-dessus
 // d'elle. Le nombre d'entrées se lit sur le compteur de l'onglet.
 .search-page__list-header {
