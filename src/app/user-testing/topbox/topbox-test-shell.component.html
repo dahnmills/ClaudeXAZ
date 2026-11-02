@@ -15,8 +15,8 @@
       <ds-icon name="search" [size]="16" />
     </ds-button-icon>
     <!-- « ? » : même mécanique de dropdown que le compte, à gauche de la barre
-         d'actions. Deux entrées seulement. Le centre d'aide, et l'aide-mémoire
-         clavier, dont le raccourci est affiché DANS l'entrée. -->
+         d'actions. Le centre d'aide, l'aide-mémoire clavier (raccourci affiché
+         DANS l'entrée), puis les parcours guidés de la page, s'il y en a. -->
     <div class="ut-help" (click)="$event.stopPropagation()">
       <ds-button-icon
         type="tertiary"
@@ -37,6 +37,13 @@
               [shortcut]="['?']"
               (clicked)="openShortcutsPanel()"
             />
+            @if (pageWalkthroughs().length) {
+              <ds-divider />
+              <ds-flyout-menu-title label="Walkthrough" />
+              @for (w of pageWalkthroughs(); track w.id) {
+                <ds-flyout-menu-item [label]="w.label" icon="speech-bubble" (clicked)="startWalkthrough(w)" />
+              }
+            }
           </ds-flyout-menu>
         </div>
       }

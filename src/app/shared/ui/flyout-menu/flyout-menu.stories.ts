@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
 import { FlyoutMenuComponent } from './flyout-menu.component';
 import { FlyoutMenuItemComponent } from './flyout-menu-item.component';
+import { FlyoutMenuTitleComponent } from './flyout-menu-title.component';
+import { DividerComponent } from '../divider/divider.component';
 import { IconComponent } from '../icon/icon.component';
 import { FlagComponent } from '../flag/flag.component';
 
@@ -10,7 +12,7 @@ const meta: Meta<FlyoutMenuComponent> = {
   component: FlyoutMenuComponent,
   tags: ['autodocs'],
   decorators: [
-    moduleMetadata({ imports: [FlyoutMenuItemComponent, IconComponent, FlagComponent] }),
+    moduleMetadata({ imports: [FlyoutMenuItemComponent, FlyoutMenuTitleComponent, DividerComponent, IconComponent, FlagComponent] }),
   ],
 };
 
@@ -109,6 +111,25 @@ export const CountryPicker: Story = {
         }
         .country-row:hover { background: var(--semantic-color-interactive-background-muted-hover); }
       </style>
+    `,
+  }),
+};
+
+/** Sections (Figma .Item Type=Title et Type=Separator) : un intertitre par groupe,
+ *  un ds-divider entre deux groupes. Cas du menu « ? » du header. */
+export const WithSections: Story = {
+  name: 'With sections',
+  render: () => ({
+    template: `
+      <div style="padding:32px;background:#f4f4f4;display:inline-block;">
+        <ds-flyout-menu>
+          <ds-flyout-menu-item label="Help with Qirin" icon="launch" />
+          <ds-flyout-menu-item label="Keyboard shortcuts" icon="keyboard" />
+          <ds-divider />
+          <ds-flyout-menu-title label="Walkthrough" />
+          <ds-flyout-menu-item label="Create a custom board" icon="speech-bubble" />
+        </ds-flyout-menu>
+      </div>
     `,
   }),
 };

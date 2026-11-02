@@ -9,6 +9,10 @@ import { SideNavComponent } from '../../shared/ui/side-nav/side-nav.component';
 import { SideNavItemComponent } from '../../shared/ui/side-nav/side-nav-item.component';
 import { FlyoutMenuComponent } from '../../shared/ui/flyout-menu/flyout-menu.component';
 import { FlyoutMenuItemComponent } from '../../shared/ui/flyout-menu/flyout-menu-item.component';
+import { FlyoutMenuTitleComponent } from '../../shared/ui/flyout-menu/flyout-menu-title.component';
+import { DividerComponent } from '../../shared/ui/divider/divider.component';
+import { WalkthroughService } from '../../shared/walkthrough/walkthrough.service';
+import { walkthroughsFor, type Walkthrough } from '../../shared/walkthrough/walkthroughs';
 import { ShortcutsPanelComponent, type Shortcut } from '../../shared/ui/shortcuts-panel/shortcuts-panel.component';
 import { SnackbarService } from '../../shared/ui/snackbar/snackbar.service';
 import { ShortcutsService } from './shortcuts.service';
@@ -55,6 +59,8 @@ const ZONE_PREFIXES = ['/review', '/prototype', '/user-testing'];
     SideNavItemComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
+    FlyoutMenuTitleComponent,
+    DividerComponent,
     ShortcutsPanelComponent,
   ],
   templateUrl: './topbox-test-shell.component.html',
@@ -76,6 +82,9 @@ export class TopboxTestShellComponent {
   sideNavCollapsed  = signal<boolean>(true);
   accountMenuOpen   = signal<boolean>(false);
   helpMenuOpen      = signal<boolean>(false);
+  /** Parcours guidés de la page affichée, relus à chaque ouverture du menu « ? ». */
+  pageWalkthroughs  = signal<Walkthrough[]>([]);
+  private walkthrough = inject(WalkthroughService);
 
   readonly shortcutGroups = SHORTCUT_GROUPS;
 
@@ -86,7 +95,13 @@ export class TopboxTestShellComponent {
 
   toggleHelpMenu() {
     this.accountMenuOpen.set(false);
+    this.pageWalkthroughs.set(walkthroughsFor(this.router.url));
     this.helpMenuOpen.update(v => !v);
+  }
+
+  startWalkthrough(w: Walkthrough) {
+    this.closeMenus();
+    this.walkthrough.start(w);
   }
 
   closeMenus() {

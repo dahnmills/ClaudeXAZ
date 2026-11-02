@@ -43,6 +43,7 @@ export * from './flyout/flyout-item.component';
 export * from './properties-panel/properties-panel.component';
 export * from './flyout-menu/flyout-menu.component';
 export * from './flyout-menu/flyout-menu-item.component';
+export * from './flyout-menu/flyout-menu-title.component';
 export * from './table/cell.component';
 export * from './table/cell-header.component';
 export * from './table/cell-action.component';
