@@ -1,3 +1,10 @@
+@if (selectable()) {
+  <!-- Emplacement fixe (Figma, Dropdown Flyout Menu) : la coche ne fait que
+       s'afficher ou se masquer, le libellé ne bouge pas d'une option à l'autre -->
+  <ds-icon class="ds-flyout-menu-item__check"
+    [class.ds-flyout-menu-item__check--on]="selected()"
+    name="check" [size]="20" />
+}
 <ng-content select="[slot=icon]" />
 @if (icon()) {
   <ds-icon class="ds-flyout-menu-item__icon" [name]="icon()!" [size]="16" />

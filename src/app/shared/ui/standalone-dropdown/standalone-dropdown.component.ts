@@ -19,9 +19,9 @@ export type StandaloneDropdownTone = 'default' | 'accent';
  *    qu'il veut (menu d'actions, panneau, modale) ;
  *  • avec `options`, il porte lui-même sa liste de choix unique et suit les mêmes
  *    règles que `ds-select` : un seul flyout ouvert à la fois dans le document,
- *    fermeture au clic extérieur et à Échap, et **aucune coche dans la liste**.
- *    La valeur retenue se lit dans le déclencheur, pas dans le menu : une coche
- *    décalerait les libellés à chaque changement de choix.
+ *    fermeture au clic extérieur et à Échap. L'option retenue porte une coche
+ *    dans un emplacement fixe (Figma, Dropdown Flyout Menu) : les libellés ne
+ *    bougent pas d'un choix à l'autre.
  */
 @Component({
   selector: 'ds-standalone-dropdown',
@@ -49,6 +49,9 @@ export class StandaloneDropdownComponent implements SingleOpenFlyout, OnDestroy 
   label    = input<string>('');
   tone     = input<StandaloneDropdownTone>('accent');
   disabled = input<boolean>(false);
+  /** Bord du déclencheur sur lequel la liste s'aligne : `end` pour un déclencheur
+   *  posé contre le bord droit de la page, la liste s'ouvre alors vers la gauche. */
+  flyoutAlign = input<'start' | 'end'>('start');
 
   /** Liste de choix unique. Vide, le composant reste un simple déclencheur. */
   options = input<SelectOption[]>([]);
@@ -72,6 +75,7 @@ export class StandaloneDropdownComponent implements SingleOpenFlyout, OnDestroy 
     `ds-standalone-dropdown--tone-${this.tone()}`,
     this.disabled() ? 'ds-standalone-dropdown--disabled' : '',
     this.open()     ? 'ds-standalone-dropdown--open'     : '',
+    this.flyoutAlign() === 'end' ? 'ds-standalone-dropdown--flyout-end' : '',
   ].filter(Boolean).join(' '));
 
   onTrigger(event?: Event): void {

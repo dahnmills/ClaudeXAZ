@@ -1,23 +1,10 @@
 import type { PolicyStatus } from '../policy-result-card/policy.model';
 
-/**
- * Les deux recherches de Qirin, choisies dans le 2e slot de la barre.
- * Open policy : on connaît la police (BU + n° + extension), accès direct.
- * Global search : recherche large, filtrée par source et statut.
- */
-export type PolicyMode = 'open' | 'global';
-
-export const POLICY_MODES: { id: PolicyMode; label: string }[] = [
-  { id: 'open',   label: 'Open policy' },
-  { id: 'global', label: 'Global search' },
-];
-
-/** Critères d'une recherche Policies, tous posés dans la barre. L'extension ne
- *  sert qu'en Open policy ; Search in et les statuts qu'en Global search. */
+/** Critères d'une recherche Policies, tous posés dans la barre. Les statuts ne
+ *  filtrent que les polices : un draft a ses propres statuts, non filtrés. */
 export interface PolicyCriteriaValues {
   searchIn: 'policies' | 'drafts';
   statuses: PolicyStatus[];
-  extension: string;
 }
 
 export const POLICY_STATUSES: { id: PolicyStatus; label: string }[] = [
@@ -26,13 +13,15 @@ export const POLICY_STATUSES: { id: PolicyStatus; label: string }[] = [
   { id: 'expired',   label: 'Expired' },
 ];
 
-/** Jeu par défaut : tous les statuts cochés. Fonction, pas constante :
- *  chaque appelant a le sien. */
+/** Jeu par défaut : polices Issued seulement, comme dans Qirin (les polices
+ *  terminées noient la liste). Fonction, pas constante : chaque appelant a le sien. */
 export function defaultPolicyCriteria(): PolicyCriteriaValues {
-  return { searchIn: 'policies', statuses: allPolicyStatuses(), extension: '' };
+  return { searchIn: 'policies', statuses: ['issued'] };
 }
 
-/** Tous les statuts, cochés d'office : en Global search sur les polices, on part de tout. */
-export function allPolicyStatuses(): PolicyStatus[] {
-  return POLICY_STATUSES.map(s => s.id);
+/** Changer de source. Revenir des drafts aux polices recoche le défaut (Issued) :
+ *  on repart d'une recherche valide. Resélectionner la source courante ne touche à rien. */
+export function withSearchIn(c: PolicyCriteriaValues, searchIn: PolicyCriteriaValues['searchIn']): PolicyCriteriaValues {
+  if (searchIn === c.searchIn) return c;
+  return searchIn === 'policies' ? { searchIn, statuses: defaultPolicyCriteria().statuses } : { ...c, searchIn };
 }

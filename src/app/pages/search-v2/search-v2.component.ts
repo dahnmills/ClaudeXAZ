@@ -3,7 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import {
   PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, TabComponent, IconComponent,
-  ConfirmDialogComponent, ButtonComponent, SpinnerComponent, ChipComponent,
+  ConfirmDialogComponent, ButtonComponent, SpinnerComponent, ChipComponent, StandaloneDropdownComponent,
 } from '../../shared/ui';
 import { SearchBarScopedComponent, type SearchScope } from '../../shared/ui/search-bar-scoped/search-bar-scoped.component';
 import type { SearchType, IdTypeOption } from '../../shared/ui/search-bar-multi/search-bar-multi.component';
@@ -11,7 +11,7 @@ import type { FlagCode } from '../../shared/ui/flag/flag.component';
 import {
   MoreCriteriaComponent, emptyMoreCriteria, moreCriteriaCount, type MoreCriteriaValues,
 } from '../../shared/ui/more-criteria/more-criteria.component';
-import { defaultPolicyCriteria, type PolicyCriteriaValues, type PolicyMode } from '../../shared/ui/policy-criteria/policy-criteria.model';
+import { defaultPolicyCriteria, type PolicyCriteriaValues } from '../../shared/ui/policy-criteria/policy-criteria.model';
 import { ResultCardComponent, type ResultCardData } from '../../shared/ui/result-card/result-card.component';
 import { PolicyResultCardComponent } from '../../shared/ui/policy-result-card/policy-result-card.component';
 import type { PolicyResultData } from '../../shared/ui/policy-result-card/policy.model';
@@ -26,6 +26,7 @@ import type { RecentV2Entry } from './search-v2-recents.model';
 import { SearchV2ViewedStore } from './search-v2-viewed.store';
 import { SearchV2FavoritesStore } from './search-v2-favorites.store';
 import { searchPolicies, type PolicyQuery } from './policy-search';
+import { groupingOptions as policyGroupingOptions, sortForGrouping, groupPolicies, groupCounts, type PolicyGrouping } from './policy-grouping';
 import { POLICIES } from './policies.mock';
 import { BUYERS } from './buyers.mock';
 import {
@@ -40,7 +41,7 @@ type TabId = 'search' | 'searched' | 'viewed' | 'favorites';
   standalone: true,
   imports: [
     TopboxTestShellComponent, PageHeaderComponent, BreadcrumbsComponent, CrumbComponent, TabComponent,
-    IconComponent, ButtonComponent, SpinnerComponent, ConfirmDialogComponent, ChipComponent,
+    IconComponent, ButtonComponent, SpinnerComponent, ConfirmDialogComponent, ChipComponent, StandaloneDropdownComponent,
     SearchBarScopedComponent, MoreCriteriaComponent,
     ResultCardComponent, PolicyResultCardComponent, RecentSearchV2CardComponent, CompanyCreationWizardComponent,
     NgTemplateOutlet,
@@ -59,7 +60,6 @@ export class SearchV2Component {
   searchType = signal<SearchType>('company-id');
   searchCountry = signal<FlagCode | null>(null);
   searchIdType = signal<IdTypeOption | null>(null);
-  policyMode = signal<PolicyMode>('open');
   buCode = signal<string | null>(null);
   searchQuery = signal('');
   criteria = signal<MoreCriteriaValues>(emptyMoreCriteria());
@@ -76,16 +76,8 @@ export class SearchV2Component {
     this.scope.set(s);
     this.searchQuery.set('');
     this.criteria.set(emptyMoreCriteria());
-    this.policyMode.set('open');
     this.policyCriteria.set(defaultPolicyCriteria());
     this.buCode.set(null);
-    this.clearResults();
-  }
-
-  /** Changer de mode Policies (Open policy / Global search) repart de zéro aussi :
-   *  la barre a déjà vidé la saisie et les critères, on retire les résultats. */
-  onPolicyModeChange(m: PolicyMode) {
-    this.policyMode.set(m);
     this.clearResults();
   }
 
@@ -115,19 +107,34 @@ export class SearchV2Component {
 
   // ── Policies ────────────────────────────────────────────────────────────
   appliedPolicyQuery = signal<PolicyQuery | null>(null);
-  policyResult = computed(() => {
+  policyResult = computed<PolicyResultData[]>(() => {
     const q = this.appliedPolicyQuery();
-    return q ? searchPolicies(POLICIES, q) : { items: [] as PolicyResultData[], exactHit: false };
+    return q ? searchPolicies(POLICIES, q) : [];
   });
+
+  /** Regroupement choisi ; retombe sur None si la source affichée ne le propose pas (Stage hors drafts). */
+  policyGrouping = signal<PolicyGrouping>('none');
+  groupingOptions = computed(() => policyGroupingOptions(this.appliedPolicyQuery()?.criteria.searchIn ?? 'policies'));
+  activeGrouping = computed<PolicyGrouping>(() =>
+    this.groupingOptions().some(o => o.value === this.policyGrouping()) ? this.policyGrouping() : 'none');
+  sortedPolicies = computed(() => sortForGrouping(this.policyResult(), this.activeGrouping()));
+
+  setGrouping(v: string) {
+    const o = this.groupingOptions().find(x => x.value === v);
+    if (o) this.policyGrouping.set(o.value);
+  }
 
   // ── Liste courante + chargement progressif ─────────────────────────────
   private readonly PAGE_SIZE = 6;
   visibleCount = signal(this.PAGE_SIZE);
   loadingMore = signal(false);
 
-  totalCount = computed(() => this.scope() === 'buyers' ? this.buyerFiltered().length : this.policyResult().items.length);
+  totalCount = computed(() => this.scope() === 'buyers' ? this.buyerFiltered().length : this.policyResult().length);
   visibleBuyers = computed(() => this.buyerFiltered().slice(0, this.visibleCount()));
-  visiblePolicies = computed(() => this.policyResult().items.slice(0, this.visibleCount()));
+  visiblePolicies = computed(() => this.sortedPolicies().slice(0, this.visibleCount()));
+  /** Les cartes chargées, rangées par groupe ; les compteurs portent sur toute la liste. */
+  policyGroups = computed(() => groupPolicies(this.visiblePolicies(), this.activeGrouping()));
+  policyGroupCounts = computed(() => groupCounts(this.sortedPolicies(), this.activeGrouping()));
   allLoaded = computed(() => this.visibleCount() >= this.totalCount());
   noResults = computed(() => this.isResults() && this.totalCount() === 0);
 
@@ -179,11 +186,10 @@ export class SearchV2Component {
         country: this.searchCountry(), idType: this.searchIdType(), criteria: this.criteria(),
       });
     } else {
-      const query: PolicyQuery = { mode: this.policyMode(), buCode: this.buCode(), query: q, criteria: this.policyCriteria() };
+      const query: PolicyQuery = { buCode: this.buCode(), query: q, criteria: this.policyCriteria() };
       this.appliedPolicyQuery.set(query);
-      const r = this.policyResult();
-      this.expandedKey.set(r.exactHit ? this.policyKey(r.items[0]) : null);
-      this.recentsStore.record({ kind: 'policy', mode: query.mode, buCode: query.buCode, query: q, criteria: query.criteria });
+      this.expandedKey.set(null);
+      this.recentsStore.record({ kind: 'policy', buCode: query.buCode, query: q, criteria: query.criteria });
     }
     setTimeout(() => this.maybeFill());
   }
@@ -199,7 +205,6 @@ export class SearchV2Component {
       this.searchIdType.set(e.idType);
       this.criteria.set(e.criteria);
     } else {
-      this.policyMode.set(e.mode);
       this.buCode.set(e.buCode);
       this.policyCriteria.set(e.criteria);
     }

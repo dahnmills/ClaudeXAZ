@@ -9,6 +9,7 @@ const meta: Meta<StandaloneDropdownComponent> = {
     icon:    { control: 'select', options: [null, 'hash', 'aa', 'globe', 'phone', 'user'] },
     label:   { control: 'text' },
     disabled: { control: 'boolean' },
+    flyoutAlign: { control: 'inline-radio', options: ['start', 'end'] },
     clicked: { action: 'clicked' },
   },
 };
@@ -34,6 +35,20 @@ export const AllIcons: Story = {
         <ds-standalone-dropdown icon="phone" label="Phone" />
         <ds-standalone-dropdown icon="user"  label="Manager" />
         <ds-standalone-dropdown icon="globe" label="Select a country" [disabled]="true" />
+      </div>
+    `,
+  }),
+};
+
+/** Choix unique posé contre le bord droit (ex. « Order by » d'une liste) : la
+ *  liste s'aligne sur le bord droit du déclencheur et s'ouvre vers la gauche. */
+export const OptionsAlignedEnd: Story = {
+  name: 'Options, flyout aligned end',
+  render: () => ({
+    template: `
+      <div style="display:flex;justify-content:flex-end;padding-bottom:180px;">
+        <ds-standalone-dropdown flyoutAlign="end" value="relevance"
+          [options]="[{ value: 'relevance', label: 'Relevance' }, { value: 'status', label: 'Status' }, { value: 'name', label: 'Name' }]" />
       </div>
     `,
   }),

@@ -31,8 +31,6 @@
             [(type)]="searchType"
             [(country)]="searchCountry"
             [(idType)]="searchIdType"
-            [policyMode]="policyMode()"
-            (policyModeChange)="onPolicyModeChange($event)"
             [(buCode)]="buCode"
             [(policyCriteria)]="policyCriteria"
             [(query)]="searchQuery"
@@ -66,8 +64,16 @@
                 }
               </div>
             } @else {
-              <div class="search-page__results-header">
-                {{ totalCount() }} {{ totalCount() === 1 ? 'result' : 'results' }}
+              <div class="search-page__results-header" [class.search-page__results-header--split]="scope() === 'policies'">
+                <span>{{ totalCount() }} {{ totalCount() === 1 ? 'result' : 'results' }}</span>
+                @if (scope() === 'policies') {
+                  <!-- Regroupement : même liste, mêmes cartes, rangées sous des intertitres -->
+                  <span class="search-page__grouping">
+                    <span class="search-page__grouping-label">Group by</span>
+                    <ds-standalone-dropdown flyoutAlign="end" [options]="groupingOptions()" [value]="activeGrouping()"
+                      (selectionChange)="setGrouping($event)" />
+                  </span>
+                }
               </div>
               <div class="search-page__results">
                 @if (scope() === 'buyers') {
@@ -84,15 +90,20 @@
                     />
                   }
                 } @else {
-                  @for (p of visiblePolicies(); track p.id) {
-                    <ds-policy-result-card
-                      [data]="p"
-                      [open]="expandedKey() === policyKey(p)"
-                      [favorited]="isPolicyFavorite(p)"
-                      (toggled)="toggleExpanded(policyKey(p))"
-                      (starred)="togglePolicyFavorite(p)"
-                      (opened)="openPolicy(p)"
-                    />
+                  @for (g of policyGroups(); track g.label) {
+                    @if (g.label) {
+                      <h3 class="search-page__group">{{ g.label }} <span class="search-page__group-count">({{ policyGroupCounts()[g.label] }})</span></h3>
+                    }
+                    @for (p of g.items; track p.id) {
+                      <ds-policy-result-card
+                        [data]="p"
+                        [open]="expandedKey() === policyKey(p)"
+                        [favorited]="isPolicyFavorite(p)"
+                        (toggled)="toggleExpanded(policyKey(p))"
+                        (starred)="togglePolicyFavorite(p)"
+                        (opened)="openPolicy(p)"
+                      />
+                    }
                   }
                 }
               </div>

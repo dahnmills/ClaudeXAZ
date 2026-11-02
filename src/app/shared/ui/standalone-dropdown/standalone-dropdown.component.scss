@@ -69,6 +69,11 @@
   cursor:   default;
 }
 
+:host(.ds-standalone-dropdown--flyout-end) .ds-standalone-dropdown__flyout {
+  left:  auto;
+  right: 0;
+}
+
 .ds-standalone-dropdown__chevron {
   display: inline-flex;
   align-items: center;

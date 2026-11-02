@@ -30,6 +30,8 @@
             <ds-flyout-menu-item
               [label]="option.label"
               [disabled]="!!option.disabled"
+              [selectable]="true"
+              [selected]="option.value === value()"
               (clicked)="selectOption(option)"
             />
           }

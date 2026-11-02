@@ -10,3 +10,6 @@ storybook-static/
 
 # OS/editor
 .DS_Store
+
+# Visual companion / SDD workspace
+.superpowers/
