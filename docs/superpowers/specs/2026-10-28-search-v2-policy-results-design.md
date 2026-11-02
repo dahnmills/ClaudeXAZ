@@ -30,8 +30,9 @@ mock et carte de résultat (police et draft).
 - Clé d'une police : BU + Policy Number + Extension, en texte. `001`, `01` et `1` sont trois
   clés différentes. Un même n° peut exister dans deux BU.
 - Un draft s'identifie par BU + n° de draft (`D…` dans la nouvelle nomenclature, `C…`
-  dans l'existant) + un suffixe que Qirin affiche `000`, `002`… (extension ou version,
-  non tranché). Il passe par une étape APP (applicant), puis par N versions NBI (Non
+  dans l'existant). Le suffixe que Qirin affiche est la **version** : `000` pour l'APP,
+  `001`, `002`… pour les NBI (captures du 2026-11-02 : D10012531 en 000 APP, 001 et 002
+  NBI). Il passe par une étape APP (applicant), puis par N versions NBI (Non
   Binding Indication), jusqu'à 50. Chaque version a un statut (Issued, Inactive, Pending,
   Returned, Aborted, Cancelled, Transformed). « Applicant » est l'étape, pas un statut :
   dans Qirin une APP peut être Issued.
@@ -64,11 +65,12 @@ mock et carte de résultat (police et draft).
 
 | Champ | Police | Draft | Notes |
 |-------|--------|-------|-------|
-| `id` | `POL/{bu}/{n°}/{ext}` | `DFT/{bu}/{n°}/{suffixe}` | Inclut la BU : plus de collision dans les favoris ou l'historique |
+| `id` | `POL/{bu}/{n°}/{ext}` | `DFT/{bu}/{n°}` | Inclut la BU : plus de collision dans les favoris ou l'historique |
 | `kind` | `'policy'` | `'draft'` | Inchangé |
 | `buCode` | ✓ | ✓ | Libellé de BU, inchangé |
 | `policyNumber` | ✓ | ✓ (`D…`) | |
-| `extension` | `string \| null` | `string \| null` | Texte. `null` = pas d'extension, la clé s'affiche sans. Draft : le suffixe `000`, `002` tel quel |
+| `extension` | `string \| null` | `null` | Texte. `null` = pas d'extension, la clé s'affiche sans |
+| `versionCount` | — | ✓ | Nombre de versions, APP comprise |
 | `policyName` | ✓ | ✓ | **Nouveau.** Distinct du nom de l'assuré |
 | `insuredName` | ✓ | ✓ | Remplace `policyholder` |
 | `insuredCompanyId` | ✓ | optionnel | |
@@ -132,14 +134,18 @@ qu'aujourd'hui.
   Inception, Expiry, Segment, LOB, Broker (nom + ID), Inforce BU. Valeur absente : `—`.
 
 **Draft**
-- Ligne 1 : nom, clé `BU · n° · suffixe` telle que Qirin l'affiche.
+- Un résultat par draft, jamais une carte par version. La recherche sert à trouver le
+  draft ; la navigation entre ses versions (jusqu'à 50) appartient à la future page
+  Draft, comme le sélecteur d'extension appartient à la page Police (réunion, 22:58).
+- Ligne 1 : nom, clé `BU · n°` du draft.
 - Ligne 2 : `produit · nom de l'assuré` (produit omis s'il manque).
 - Colonne droite : badge `ÉTAPE · Statut` (ex. `NBI · Pending`, `APP · Issued`) posé
   contre la date, pour tomber au même endroit d'une carte à l'autre. L'étape d'abord :
   « s'il est que applicant, il faut que tu le saches ». Puis « Inception » + date.
 - Icône de tuile : différente pour APP et pour NBI.
 - Dépliage : les mêmes 8 champs que la police.
-- Pas de numéro ni d'historique de versions : « c'est un sous-détail ».
+- Ligne 2 terminée par le nombre de versions (`· 3 versions`) : on signale l'historique
+  sans l'afficher, « c'est un sous-détail ».
 
 **Interaction** : comme la carte buyer et comme aujourd'hui, le chevron déplie et seul le
 nom ouvre (toaster « coming soon » + entrée dans Recently viewed). Pas de zone cliquable

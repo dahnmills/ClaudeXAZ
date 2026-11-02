@@ -30,6 +30,14 @@ export function policyKeyLabel(p: PolicyResultData): string {
   return parts.join(' · ');
 }
 
+/** Produit puis assuré ; un draft y ajoute son nombre de versions, signe qu'il a
+ *  un historique sans l'afficher. Le produit manque parfois sur un draft. */
+export function policySecondLine(p: PolicyResultData): string {
+  const parts = [p.product, p.insuredName];
+  if (p.kind === 'draft') parts.push(`${p.versionCount} ${p.versionCount === 1 ? 'version' : 'versions'}`);
+  return parts.filter(Boolean).join(' · ');
+}
+
 /** Draft : l'étape atteinte d'abord (« s'il est que applicant, il faut que tu le
  *  saches »), puis le statut de sa dernière version : 'NBI · Pending'. */
 export function policyBadge(p: PolicyResultData): { label: string; status: BadgeStatus } {

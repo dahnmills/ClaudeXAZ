@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   policyKeyLabel, policyBadge, policyDateBlock, formatPolicyDate, policyDetailRows, policyDetailColumns, policyTileIcon,
+  policySecondLine,
 } from '../../src/app/shared/ui/policy-result-card/policy-card.view.ts';
 import type { SignedPolicy, DraftPolicy } from '../../src/app/shared/ui/policy-result-card/policy.model.ts';
 
@@ -17,8 +18,8 @@ const policy = (over: Partial<SignedPolicy> = {}): SignedPolicy => ({
 });
 
 const draft = (over: Partial<DraftPolicy> = {}): DraftPolicy => ({
-  id: 'DFT/AT UK/D20431/002', kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', extension: '002', draftStage: 'nbi',
-  status: 'pending', policyName: 'Nordic Food Supply', insuredName: 'Polaris Tech Nordic AB',
+  id: 'DFT/AT UK/D20431', kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', extension: null, draftStage: 'nbi',
+  status: 'pending', versionCount: 3, policyName: 'Nordic Food Supply', insuredName: 'Polaris Tech Nordic AB',
   insuredCompanyId: '20087731', insuredCountry: 'Sweden', product: 'CAP', segment: 'SME', lob: 'Core',
   brokerName: 'Marsh Ltd', brokerCompanyId: '80011290',
   inceptionDate: '2027-01-01', expiryDate: '2027-12-31', inforceBu: 'AT UK',
@@ -33,9 +34,18 @@ test('key label without extension', () => {
   assert.equal(policyKeyLabel(policy({ policyNumber: '7730250', extension: null })), 'AT UK · 7730250');
 });
 
-test('draft key label shows the suffix as Qirin prints it, not the stage', () => {
-  assert.equal(policyKeyLabel(draft()), 'AT UK · D20431 · 002');
-  assert.equal(policyKeyLabel(draft({ policyNumber: 'D20432', extension: null })), 'AT UK · D20432');
+test('draft key label is the draft, not one of its versions', () => {
+  assert.equal(policyKeyLabel(draft()), 'AT UK · D20431');
+});
+
+test('second line: product then insured', () => {
+  assert.equal(policySecondLine(policy()), 'CAP · Galaxy Pharma Distribution Ltd');
+  assert.equal(policySecondLine(policy({ product: undefined })), 'Galaxy Pharma Distribution Ltd');
+});
+
+test('second line of a draft ends with its version count', () => {
+  assert.equal(policySecondLine(draft()), 'CAP · Polaris Tech Nordic AB · 3 versions');
+  assert.equal(policySecondLine(draft({ draftStage: 'app', status: 'issued', versionCount: 1 })), 'CAP · Polaris Tech Nordic AB · 1 version');
 });
 
 test('policy badges', () => {

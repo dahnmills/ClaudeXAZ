@@ -10,7 +10,7 @@ import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { PropertiesPanelComponent, type PropertySection } from '../properties-panel/properties-panel.component';
 import type { PolicyResultData } from './policy.model';
 import {
-  policyKeyLabel, policyBadge, policyDateBlock, policyDetailColumns, policyTileIcon, EMPTY_VALUE,
+  policyKeyLabel, policyBadge, policyDateBlock, policyDetailColumns, policyTileIcon, policySecondLine, EMPTY_VALUE,
 } from './policy-card.view';
 
 export * from './policy.model';
@@ -49,8 +49,7 @@ export class PolicyResultCardComponent {
   dateBlock = computed(() => policyDateBlock(this.data(), this.today()));
   tileIcon = computed(() => policyTileIcon(this.data()));
 
-  /** Produit puis assuré ; le produit manque parfois sur un draft. */
-  secondLine = computed(() => [this.data().product, this.data().insuredName].filter(Boolean).join(' · '));
+  secondLine = computed(() => policySecondLine(this.data()));
 
   /** Une donnée absente (hors Compass, draft peu renseigné) garde le poids d'un vide. */
   detailSections = computed<PropertySection[]>(() => policyDetailColumns(this.data()).map(col => ({

@@ -29,9 +29,7 @@ interface PolicyBase {
   lob?: string;
   brokerName?: string;
   brokerCompanyId?: string;
-  /** Texte : '001', '01' et '1' sont trois clés différentes. null = pas d'extension.
-   *  Sur un draft, Qirin affiche ici '000', '002'… : extension ou version, la
-   *  réunion ne tranche pas, on l'affiche tel quel. */
+  /** Texte : '001', '01' et '1' sont trois clés différentes. null = pas d'extension. */
   extension: string | null;
   /** Dates au format ISO 'YYYY-MM-DD'. Sur un draft : la couverture proposée. */
   inceptionDate: string;
@@ -50,11 +48,17 @@ export interface SignedPolicy extends PolicyBase {
   cancellationDate?: string;
 }
 
-/** Draft : une carte par draft, avec l'étape atteinte et le statut de sa dernière version. */
+/** Draft : un résultat par draft, avec l'étape atteinte et le statut de sa dernière
+ *  version. Les versions (000 pour l'APP, 001, 002… pour les NBI) ne se listent pas
+ *  dans la recherche : leur navigation appartient à la page du draft. */
 export interface DraftPolicy extends PolicyBase {
   kind: 'draft';
+  /** Le suffixe affiché par Qirin est la version : il ne fait pas partie du résultat. */
+  extension: null;
   draftStage: DraftStage;
   status: DraftStatus;
+  /** APP comprise : 1 pour un draft resté applicant. */
+  versionCount: number;
 }
 
 export type PolicyResultData = SignedPolicy | DraftPolicy;

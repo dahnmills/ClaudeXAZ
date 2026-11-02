@@ -10,8 +10,21 @@ const DAY = 86_400_000;
 test('policyId includes the BU and the extension when there is one', () => {
   assert.equal(policyId({ kind: 'policy', buCode: 'AT UK', policyNumber: '7730012', extension: '0234' }), 'POL/AT UK/7730012/0234');
   assert.equal(policyId({ kind: 'policy', buCode: 'AT UK', policyNumber: '7730250', extension: null }), 'POL/AT UK/7730250');
-  assert.equal(policyId({ kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', extension: '002' }), 'DFT/AT UK/D20431/002');
   assert.equal(policyId({ kind: 'draft', buCode: 'AT UK', policyNumber: 'D20431', extension: null }), 'DFT/AT UK/D20431');
+});
+
+test('one result per draft: no version suffix, a version count instead', () => {
+  assert.ok(drafts.every(d => d.extension === null));
+  assert.ok(drafts.every(d => Number.isInteger(d.versionCount) && d.versionCount >= 1));
+});
+
+test('an APP-stage draft has its single version, an NBI-stage draft at least two', () => {
+  assert.ok(drafts.filter(d => d.draftStage === 'app').every(d => d.versionCount === 1));
+  assert.ok(drafts.filter(d => d.draftStage === 'nbi').every(d => d.versionCount >= 2));
+});
+
+test('one draft has many versions', () => {
+  assert.ok(drafts.some(d => d.versionCount >= 40));
 });
 
 test('ids are unique', () => {

@@ -112,32 +112,32 @@ export const POLICIES: PolicyResultData[] = [
     insuredCountry: 'Switzerland', product: 'CAP',
     inceptionDate: isoInDays(-20), expiryDate: isoInDays(345), nextRenewalDate: isoInDays(345), inforceBu: 'AT Brazil' }),
 
-  // Drafts : une carte par draft, étape atteinte et statut de la dernière version.
-  // Suffixe '000' / '002' tel que Qirin l'affiche ; numéros en D (nouvelle
-  // nomenclature) ou en C, comme dans l'existant.
-  dft({ buCode: 'AT UK', policyNumber: 'D20431', extension: '002', draftStage: 'nbi', status: 'pending',
+  // Drafts : un résultat par draft, étape atteinte et statut de la dernière version,
+  // nombre de versions (APP comprise). Numéros en D (nouvelle nomenclature) ou en C,
+  // comme dans l'existant.
+  dft({ buCode: 'AT UK', policyNumber: 'D20431', extension: null, draftStage: 'nbi', status: 'pending', versionCount: 3,
     policyName: 'Nordic Food Supply', insuredName: 'Polaris Tech Nordic AB', insuredCompanyId: '20087731',
     insuredCountry: 'Sweden', product: 'CAP', segment: 'SME', lob: 'Core', ...MARSH,
     inceptionDate: isoInDays(65), expiryDate: isoInDays(430), inforceBu: 'AT UK' }),
   // Prospect resté au stade applicant
-  dft({ buCode: 'AT UK', policyNumber: 'D20432', extension: '000', draftStage: 'app', status: 'issued',
+  dft({ buCode: 'AT UK', policyNumber: 'D20432', extension: null, draftStage: 'app', status: 'issued', versionCount: 1,
     policyName: 'Polaris Tech Nordic Export', insuredName: 'Polaris Tech Nordic AB', insuredCompanyId: '20087731',
     insuredCountry: 'Sweden', product: 'CAP',
     inceptionDate: isoInDays(95), expiryDate: isoInDays(460) }),
-  dft({ buCode: 'AT Belgium', policyNumber: 'C10009627', extension: '002', draftStage: 'nbi', status: 'inactive',
+  dft({ buCode: 'AT Belgium', policyNumber: 'C10009627', extension: null, draftStage: 'nbi', status: 'inactive', versionCount: 3,
     policyName: 'Aurora Solar Benelux', insuredName: 'Aurora Solar Solutions BV', insuredCompanyId: '50077120',
     insuredCountry: 'Netherlands', product: 'CAP+', segment: 'STCI', lob: 'Core',
     inceptionDate: isoInDays(-57), expiryDate: isoInDays(308), inforceBu: 'AT Belgium' }),
-  dft({ buCode: 'AT Belgium', policyNumber: 'D10009627', extension: '001', draftStage: 'nbi', status: 'returned',
+  dft({ buCode: 'AT Belgium', policyNumber: 'D10009627', extension: null, draftStage: 'nbi', status: 'returned', versionCount: 2,
     policyName: 'Aurora Solar Wallonie', insuredName: 'Aurora Solar Solutions BV', insuredCompanyId: '50077120',
     insuredCountry: 'Netherlands', product: 'CAP',
     inceptionDate: isoInDays(35), expiryDate: isoInDays(400), inforceBu: 'AT Belgium' }),
   // NBI qui a donné lieu à la police N5012347
-  dft({ buCode: 'AT USA', policyNumber: 'D20434', extension: '003', draftStage: 'nbi', status: 'transformed',
+  dft({ buCode: 'AT USA', policyNumber: 'D20434', extension: null, draftStage: 'nbi', status: 'transformed', versionCount: 4,
     policyName: 'Brooklyn Craft Goods Non-Can', insuredName: 'Brooklyn Craft Goods LLC', insuredCompanyId: '10045521',
     insuredCountry: 'United States', product: 'Partial non-can', segment: 'Mid Market', lob: 'Single Risk', ...MARSH,
     inceptionDate: isoInDays(-120), expiryDate: isoInDays(245), inforceBu: 'AT USA' }),
-  dft({ buCode: 'Acredia', policyNumber: 'D20435', extension: '001', draftStage: 'nbi', status: 'aborted',
+  dft({ buCode: 'Acredia', policyNumber: 'D20435', extension: null, draftStage: 'nbi', status: 'aborted', versionCount: 47,
     policyName: 'Mistral Énergie France', insuredName: 'Mistral Énergie Renouvelable', insuredCountry: 'France', product: 'CAP',
     inceptionDate: isoInDays(-30), expiryDate: isoInDays(335) }),
 ];
