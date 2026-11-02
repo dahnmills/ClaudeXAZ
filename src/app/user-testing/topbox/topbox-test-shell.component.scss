@@ -125,3 +125,9 @@
   margin: var(--semantic-measurement-spacing-s) 0;
   background: var(--semantic-color-static-border-subtle-tertiary);
 }
+
+// Entrée du tour : enveloppée pour que l'infobulle reste lisible quand l'entrée
+// est grisée (un item désactivé ne reçoit plus le survol)
+.ut-help__tour {
+  display: block;
+}

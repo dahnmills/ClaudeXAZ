@@ -16,7 +16,8 @@
     </ds-button-icon>
     <!-- « ? » : même mécanique de dropdown que le compte, à gauche de la barre
          d'actions. Le centre d'aide, l'aide-mémoire clavier (raccourci affiché
-         DANS l'entrée), puis les parcours guidés de la page, s'il y en a. -->
+         DANS l'entrée), puis le tour guidé : même entrée sur toutes les pages,
+         grisée là où la page n'a pas encore de tour. -->
     <div class="ut-help" (click)="$event.stopPropagation()">
       <ds-button-icon
         type="tertiary"
@@ -37,13 +38,11 @@
               [shortcut]="['?']"
               (clicked)="openShortcutsPanel()"
             />
-            @if (pageWalkthroughs().length) {
-              <ds-divider />
-              <ds-flyout-menu-title label="Walkthrough" />
-              @for (w of pageWalkthroughs(); track w.id) {
-                <ds-flyout-menu-item [label]="w.label" icon="speech-bubble" (clicked)="startWalkthrough(w)" />
-              }
-            }
+            <span class="ut-help__tour"
+              [dsTooltip]="pageTour() ? '' : 'No tour for this page yet'" dsTooltipPosition="left">
+              <ds-flyout-menu-item [label]="tourLabel" icon="speech-bubble"
+                [disabled]="!pageTour()" (clicked)="startTour()" />
+            </span>
           </ds-flyout-menu>
         </div>
       }
