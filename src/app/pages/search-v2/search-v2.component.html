@@ -67,11 +67,11 @@
               <div class="search-page__results-header" [class.search-page__results-header--split]="scope() === 'policies'">
                 <span>{{ totalCount() }} {{ totalCount() === 1 ? 'result' : 'results' }}</span>
                 @if (scope() === 'policies') {
-                  <!-- Tri : même liste, mêmes cartes ; Stage et Status la rangent en groupes -->
-                  <span class="search-page__order">
-                    <span class="search-page__order-label">Order by</span>
-                    <ds-standalone-dropdown flyoutAlign="end" [options]="orderOptions()" [value]="activeOrder()"
-                      (selectionChange)="setOrder($event)" />
+                  <!-- Regroupement : même liste, mêmes cartes, rangées sous des intertitres -->
+                  <span class="search-page__grouping">
+                    <span class="search-page__grouping-label">Group by</span>
+                    <ds-standalone-dropdown flyoutAlign="end" [options]="groupingOptions()" [value]="activeGrouping()"
+                      (selectionChange)="setGrouping($event)" />
                   </span>
                 }
               </div>

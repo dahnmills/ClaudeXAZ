@@ -26,7 +26,7 @@ import type { RecentV2Entry } from './search-v2-recents.model';
 import { SearchV2ViewedStore } from './search-v2-viewed.store';
 import { SearchV2FavoritesStore } from './search-v2-favorites.store';
 import { searchPolicies, type PolicyQuery } from './policy-search';
-import { orderOptions as policyOrderOptions, orderPolicies, groupPolicies, groupCounts, type PolicyOrder } from './policy-order';
+import { groupingOptions as policyGroupingOptions, sortForGrouping, groupPolicies, groupCounts, type PolicyGrouping } from './policy-grouping';
 import { POLICIES } from './policies.mock';
 import { BUYERS } from './buyers.mock';
 import {
@@ -112,16 +112,16 @@ export class SearchV2Component {
     return q ? searchPolicies(POLICIES, q) : [];
   });
 
-  /** Tri choisi ; retombe sur Relevance si la source affichée ne le propose pas (Stage hors drafts). */
-  policyOrder = signal<PolicyOrder>('relevance');
-  orderOptions = computed(() => policyOrderOptions(this.appliedPolicyQuery()?.criteria.searchIn ?? 'policies'));
-  activeOrder = computed<PolicyOrder>(() =>
-    this.orderOptions().some(o => o.value === this.policyOrder()) ? this.policyOrder() : 'relevance');
-  sortedPolicies = computed(() => orderPolicies(this.policyResult(), this.activeOrder()));
+  /** Regroupement choisi ; retombe sur None si la source affichée ne le propose pas (Stage hors drafts). */
+  policyGrouping = signal<PolicyGrouping>('none');
+  groupingOptions = computed(() => policyGroupingOptions(this.appliedPolicyQuery()?.criteria.searchIn ?? 'policies'));
+  activeGrouping = computed<PolicyGrouping>(() =>
+    this.groupingOptions().some(o => o.value === this.policyGrouping()) ? this.policyGrouping() : 'none');
+  sortedPolicies = computed(() => sortForGrouping(this.policyResult(), this.activeGrouping()));
 
-  setOrder(v: string) {
-    const o = this.orderOptions().find(x => x.value === v);
-    if (o) this.policyOrder.set(o.value);
+  setGrouping(v: string) {
+    const o = this.groupingOptions().find(x => x.value === v);
+    if (o) this.policyGrouping.set(o.value);
   }
 
   // ── Liste courante + chargement progressif ─────────────────────────────
@@ -133,8 +133,8 @@ export class SearchV2Component {
   visibleBuyers = computed(() => this.buyerFiltered().slice(0, this.visibleCount()));
   visiblePolicies = computed(() => this.sortedPolicies().slice(0, this.visibleCount()));
   /** Les cartes chargées, rangées par groupe ; les compteurs portent sur toute la liste. */
-  policyGroups = computed(() => groupPolicies(this.visiblePolicies(), this.activeOrder()));
-  policyGroupCounts = computed(() => groupCounts(this.sortedPolicies(), this.activeOrder()));
+  policyGroups = computed(() => groupPolicies(this.visiblePolicies(), this.activeGrouping()));
+  policyGroupCounts = computed(() => groupCounts(this.sortedPolicies(), this.activeGrouping()));
   allLoaded = computed(() => this.visibleCount() >= this.totalCount());
   noResults = computed(() => this.isResults() && this.totalCount() === 0);
 

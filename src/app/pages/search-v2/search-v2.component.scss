@@ -65,24 +65,24 @@ ds-page-header {
   color: var(--semantic-color-static-text-main-secondary);
 }
 
-// Policies : le compteur à gauche, le tri à droite, sur la même ligne
+// Policies : le compteur à gauche, le regroupement à droite, sur la même ligne
 .search-page__results-header--split {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.search-page__order {
+.search-page__grouping {
   display: inline-flex;
   align-items: center;
   gap: var(--semantic-measurement-spacing-s);
 }
 
-.search-page__order-label {
+.search-page__grouping-label {
   color: var(--semantic-color-static-text-main-tertiary);
 }
 
-// En-tête d'un groupe (tri par Stage ou Status) : un intertitre dans la liste,
+// En-tête d'un groupe (Group by Stage ou Status) : un intertitre dans la liste,
 // les cartes restent les mêmes
 .search-page__group {
   margin: var(--semantic-measurement-spacing-s) 0 0;
