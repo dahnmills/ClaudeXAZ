@@ -40,7 +40,7 @@
             />
             <span class="ut-help__tour"
               [dsTooltip]="pageTour() ? '' : 'No tour for this page yet'" dsTooltipPosition="left">
-              <ds-flyout-menu-item [label]="tourLabel" icon="speech-bubble"
+              <ds-flyout-menu-item [label]="tourLabel" icon="play"
                 [disabled]="!pageTour()" (clicked)="startTour()" />
             </span>
           </ds-flyout-menu>

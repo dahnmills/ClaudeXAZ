@@ -74,67 +74,31 @@
   }
 }
 
-// ── Halo : l'élément à toucher pulse doucement ─────────────────
+// ── Élément à toucher : bordure focus qui pulse ───────────────
+// Le contour du DS (border focus) autour de l'élément, qui respire doucement.
+// Seuls outline-offset et l'opacité du contour bougent : pas de reflow, pas de lag.
 .driver-active .driver-active-element {
-  animation: qirin-tour-halo 1.8s ease-out infinite;
+  outline:        2px solid var(--semantic-color-interactive-border-focus);
+  outline-offset: var(--semantic-measurement-spacing-xxs);
+  animation:      qirin-tour-pulse 1.6s ease-in-out infinite;
 }
 
-@keyframes qirin-tour-halo {
-  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--semantic-color-interactive-border-focus) 45%, transparent); }
-  70%  { box-shadow: 0 0 0 var(--semantic-measurement-spacing-s) transparent; }
-  100% { box-shadow: 0 0 0 0 transparent; }
+@keyframes qirin-tour-pulse {
+  0%, 100% { outline-offset: var(--semantic-measurement-spacing-xxs); outline-color: var(--semantic-color-interactive-border-focus); }
+  50%      { outline-offset: var(--semantic-measurement-spacing-xs);  outline-color: color-mix(in srgb, var(--semantic-color-interactive-border-focus) 35%, transparent); }
 }
 
-// ── Curseur fantôme ───────────────────────────────────────────
-// Posé par WalkthroughService sur les étapes « click » : part du centre de la
-// bulle (--from-x/y), rejoint la cible (--to-x/y), puis la « tape » en boucle.
-// Au-dessus de la bulle driver.js, jamais cliquable.
-.qirin-tour-cursor {
-  position:       fixed;
-  top:            0;
-  left:           0;
-  z-index:        1000000001;
-  width:          var(--semantic-measurement-sizing-l);  // 24px
-  height:         var(--semantic-measurement-sizing-l);
-  border-radius:  50%;
-  background:     color-mix(in srgb, var(--semantic-color-interactive-background-strong-default) 80%, transparent);
-  border:         2px solid var(--semantic-color-static-background-main-primary);
-  box-shadow:     var(--semantic-shadow-popover);
-  pointer-events: none;
-  opacity:        0;
-  transform:      translate(var(--to-x), var(--to-y)) translate(-50%, -50%);
+// ── Attente entre deux étapes ─────────────────────────────────
+// Pendant qu'un drawer s'ouvre ou qu'un board charge, ni bulle ni voile : on voit
+// la page faire son travail, la bulle revient sur l'élément suivant une fois en place.
+body.qirin-tour--waiting {
+  .driver-popover,
+  .driver-overlay { visibility: hidden; }
 
-  // Onde du « tap »
-  &::after {
-    content:       '';
-    position:      absolute;
-    inset:         calc(-1 * var(--semantic-measurement-spacing-xxs));
-    border-radius: 50%;
-    border:        2px solid var(--semantic-color-interactive-border-focus);
-    opacity:       0;
-  }
+  .driver-active-element { outline: none; animation: none; }
 }
 
-.qirin-tour-cursor--on {
-  animation: qirin-tour-travel 700ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
-
-  &::after { animation: qirin-tour-tap 1.4s ease-out 700ms infinite; }
-}
-
-@keyframes qirin-tour-travel {
-  0%   { opacity: 0; transform: translate(var(--from-x), var(--from-y)) translate(-50%, -50%) scale(0.6); }
-  20%  { opacity: 1; }
-  100% { opacity: 1; transform: translate(var(--to-x), var(--to-y)) translate(-50%, -50%) scale(1); }
-}
-
-@keyframes qirin-tour-tap {
-  0%   { opacity: 0.8; transform: scale(1); }
-  100% { opacity: 0;   transform: scale(2.4); }
-}
-
-// Mouvement réduit : pas de trajet ni de pulsation, un repère fixe sur la cible
+// Mouvement réduit : contour fixe, sans pulsation
 @media (prefers-reduced-motion: reduce) {
   .driver-active .driver-active-element { animation: none; }
-  .qirin-tour-cursor--on { animation: none; opacity: 1; }
-  .qirin-tour-cursor--on::after { animation: none; opacity: 0.6; transform: scale(1.6); }
 }

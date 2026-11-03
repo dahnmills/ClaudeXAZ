@@ -3,7 +3,7 @@ import type { Walkthrough, WalkthroughStep } from './walkthrough.model';
 export type { Walkthrough, WalkthroughStep } from './walkthrough.model';
 
 /** Libellé unique de l'entrée du menu « ? », le même sur toutes les pages. */
-export const TOUR_MENU_LABEL = 'Take a tour of this page';
+export const TOUR_MENU_LABEL = 'Guided tour';
 
 /** Les 4 cases du layout 2×2, chacune remplie d'une card différente : on finit
  *  sur un board utile (une revue de risque), pas sur une case remplie. Les cards
@@ -44,7 +44,7 @@ export const WALKTHROUGHS: Walkthrough[] = [
     steps: [
       {
         title: 'Build your own board',
-        description: 'In about 2 minutes, you will build a risk review board with four cards, then give it a name. You do every click; follow the highlighted spot.',
+        description: 'In about 2 minutes, you will build a risk review board with four cards, then give it a name. You do every click: follow the highlighted element.',
         advance: 'next', nextLabel: 'Start',
       },
       {

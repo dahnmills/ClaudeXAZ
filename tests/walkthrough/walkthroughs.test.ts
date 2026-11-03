@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { WALKTHROUGHS, walkthroughFor, TOUR_MENU_LABEL } from '../../src/app/shared/walkthrough/walkthroughs.ts';
 
 test('the Help menu entry has one generic wording for every page', () => {
-  assert.equal(TOUR_MENU_LABEL, 'Take a tour of this page');
+  assert.equal(TOUR_MENU_LABEL, 'Guided tour');
 });
 
 test('buyer summary has its tour, in every zone', () => {
