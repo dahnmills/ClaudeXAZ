@@ -69,6 +69,8 @@ export class WalkthroughService {
         if (!this.waiting) document.body.classList.remove(WAITING_CLASS);
         this.armClick(el);
       },
+      // Boutons Start / Next / Done de la bulle : même passage qu'après un clic
+      onNextClick: () => this.advanceWhenReady(),
       // Croix, Done : on fond le tour avant de le démonter
       onDestroyStarted: () => this.stop(),
       onDestroyed: () => this.cleanup(),
@@ -126,9 +128,15 @@ export class WalkthroughService {
     this.detachClick = () => el.removeEventListener('click', onClick, true);
   }
 
-  /** Efface la bulle et referme le trou du voile, attend que l'élément de l'étape
-   *  suivante soit là et immobile, puis le montre. */
+  /**
+   * Passage à l'étape suivante, le même pour un clic dans la page et pour un bouton
+   * de la bulle : la bulle s'efface, le trou du voile se referme, l'élément suivant
+   * est amené dans la vue s'il n'y est pas (défilement de la page ou du drawer) ; une
+   * fois là et immobile, il est montré. Ainsi rien ne défile pendant que le cadre
+   * apparaît : il s'ouvre toujours sur place, jamais en arrivant du haut ou du bas.
+   */
   private advanceWhenReady(): void {
+    if (this.waiting) return;
     const next = this.step((this.active?.getActiveIndex() ?? -1) + 1);
     if (!next?.element) { this.active?.moveNext(); return; }
 
@@ -139,7 +147,11 @@ export class WalkthroughService {
     let last = '';
     let stable = 0;
     this.waitTick = setInterval(() => {
-      const r = document.querySelector(next.element!)?.getBoundingClientRect();
+      const el = document.querySelector(next.element!);
+      if (el && !isFullyVisible(el)) el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' });
+      // driver.js redessine le voile au défilement : on garde le trou refermé
+      this.closeHole();
+      const r = el?.getBoundingClientRect();
       const key = r && r.width && r.height ? `${r.left},${r.top},${r.width},${r.height}` : '';
       stable = key && key === last ? stable + 1 : 0;
       last = key;
@@ -233,4 +245,18 @@ export class WalkthroughService {
     this.tour = null;
     document.removeEventListener('keydown', this.onKeydown, true);
   }
+}
+
+/** L'élément est entièrement visible : dans la fenêtre et dans chaque conteneur qui
+ *  défile au-dessus de lui (la liste du drawer, par exemple). */
+function isFullyVisible(el: Element): boolean {
+  const r = el.getBoundingClientRect();
+  if (r.top < 0 || r.left < 0 || r.bottom > window.innerHeight || r.right > window.innerWidth) return false;
+  for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+    const s = getComputedStyle(p);
+    if (!/(auto|scroll|hidden)/.test(s.overflowY + s.overflowX)) continue;
+    const c = p.getBoundingClientRect();
+    if (r.top < c.top || r.bottom > c.bottom || r.left < c.left || r.right > c.right) return false;
+  }
+  return true;
 }
