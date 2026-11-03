@@ -1,20 +1,42 @@
 @for (opt of options(); track opt.value; let i = $index) {
-  <button
-    [class]="itemClasses(opt, i)"
-    type="button"
-    role="tab"
-    [attr.aria-selected]="isSelected(opt.value)"
-    [attr.aria-disabled]="(opt.disabled || disabled()) || null"
-    [disabled]="opt.disabled || disabled() || null"
-    [tabindex]="(opt.disabled || disabled()) ? -1 : 0"
-    (click)="onSelect(opt)"
-  >
-    @if (opt.icon && opt.iconPos !== 'right') {
-      <ds-icon [name]="opt.icon" [size]="16" />
-    }
-    <span class="ds-segmented-control__label">{{ opt.label }}</span>
-    @if (opt.icon && opt.iconPos === 'right') {
-      <ds-icon [name]="opt.icon" [size]="16" />
-    }
-  </button>
+  @if (mode() === 'radio') {
+    <!-- Réglage : une option désactivée reste lisible au lecteur d'écran -->
+    <button
+      [class]="itemClasses(opt, i)"
+      type="button"
+      role="radio"
+      [attr.aria-checked]="isSelected(opt.value)"
+      [attr.aria-disabled]="isOff(opt) || null"
+      [tabindex]="tabIndex(opt)"
+      (click)="onSelect(opt)"
+      (keydown)="onKeydown($event, i)"
+    >
+      @if (opt.icon && opt.iconPos !== 'right') {
+        <ds-icon [name]="opt.icon" [size]="16" />
+      }
+      <span class="ds-segmented-control__label">{{ opt.label }}</span>
+      @if (opt.icon && opt.iconPos === 'right') {
+        <ds-icon [name]="opt.icon" [size]="16" />
+      }
+    </button>
+  } @else {
+    <button
+      [class]="itemClasses(opt, i)"
+      type="button"
+      role="tab"
+      [attr.aria-selected]="isSelected(opt.value)"
+      [attr.aria-disabled]="isOff(opt) || null"
+      [disabled]="isOff(opt) || null"
+      [tabindex]="tabIndex(opt)"
+      (click)="onSelect(opt)"
+    >
+      @if (opt.icon && opt.iconPos !== 'right') {
+        <ds-icon [name]="opt.icon" [size]="16" />
+      }
+      <span class="ds-segmented-control__label">{{ opt.label }}</span>
+      @if (opt.icon && opt.iconPos === 'right') {
+        <ds-icon [name]="opt.icon" [size]="16" />
+      }
+    </button>
+  }
 }
