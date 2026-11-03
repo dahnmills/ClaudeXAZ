@@ -3,19 +3,21 @@ import { ModalHeaderComponent } from './modal-header.component';
 import { ModalContentComponent } from './modal-content.component';
 import { ModalFooterComponent } from './modal-footer.component';
 import { hasOpenFlyout } from '../flyout-menu/single-open-flyout';
+import { FocusTrapDirective } from '../focus-trap/focus-trap.directive';
 
 export type ModalSize = 'small' | 'medium' | 'large' | 'xlarge';
 
 @Component({
   selector: 'ds-modal',
   standalone: true,
-  imports: [ModalHeaderComponent, ModalContentComponent, ModalFooterComponent],
+  imports: [ModalHeaderComponent, ModalContentComponent, ModalFooterComponent, FocusTrapDirective],
   templateUrl: './modal.component.html',
   styleUrl: './modal.component.scss',
   host: {
     '[class]':            'hostClasses()',
     '[attr.aria-hidden]': '!open() || suspended() ? true : null',
     '[attr.title]':       'null',
+    '[attr.aria-label]':  'title()',
     'role':               'dialog',
     'aria-modal':         'true',
   },

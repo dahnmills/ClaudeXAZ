@@ -63,6 +63,7 @@ export * from './snackbar/snackbar.service';
 export * from './inline-edit/inline-edit.component';
 export * from './filter-drawer/filter-drawer.component';
 export * from './confirm-dialog/confirm-dialog.component';
+export * from './focus-trap/focus-trap.directive';
 export * from './toaster/toaster.service';
 export * from './toaster/toaster-container.component';
 export * from './button-split/button-split.component';

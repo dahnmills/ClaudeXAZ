@@ -2,13 +2,14 @@ import { Component, HostListener, computed, input, output } from '@angular/core'
 import { IconComponent } from '../icon/icon.component';
 import { ButtonComponent } from '../button/button.component';
 import { ButtonIconComponent } from '../button-icon/button-icon.component';
+import { FocusTrapDirective } from '../focus-trap/focus-trap.directive';
 
 export type ConfirmDialogTone = 'warning' | 'danger' | 'info';
 
 @Component({
   selector: 'ds-confirm-dialog',
   standalone: true,
-  imports: [IconComponent, ButtonComponent, ButtonIconComponent],
+  imports: [IconComponent, ButtonComponent, ButtonIconComponent, FocusTrapDirective],
   templateUrl: './confirm-dialog.component.html',
   styleUrl: './confirm-dialog.component.scss',
   host: {
