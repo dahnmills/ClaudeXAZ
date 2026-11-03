@@ -92,9 +92,17 @@ export const WALKTHROUGHS: Walkthrough[] = [
         advance: 'gone', gone: '.manage-board__rename', side: 'left',
       },
       {
+        element: 'ds-drawer ds-button-icon[ariaLabel="Close"]',
+        title: 'Close the panel',
+        description: 'Your board has its name. Close the panel to see it.',
+        advance: 'click', side: 'left',
+      },
+      {
+        // On finit sur le résultat : le board nommé, sélectionné, à sa place
+        element: '.bs-action-bar__select',
         title: 'Your board is ready',
-        description: 'It now shows in the board list at the top right. You can edit, rename or delete it from Manage boards. This tour stays in the Help menu.',
-        advance: 'done', nextLabel: 'Done',
+        description: 'Here it is, selected. Switch boards from this list; edit, rename or delete them from Manage boards. This tour stays in the Help menu.',
+        advance: 'done', nextLabel: 'Done', side: 'bottom',
       },
     ],
   },

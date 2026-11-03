@@ -23,13 +23,13 @@ test('one tour per page at most', () => {
   assert.equal(new Set(pages).size, pages.length);
 });
 
-test('every tour opens on an intro and closes on an outro, both centered', () => {
+test('every tour opens on a centered intro and ends on a Done step', () => {
   for (const w of WALKTHROUGHS) {
     const first = w.steps[0], last = w.steps[w.steps.length - 1];
     assert.equal(first.element, undefined);
     assert.equal(first.advance, 'next');
     assert.equal(first.nextLabel, 'Start');
-    assert.equal(last.element, undefined);
+
     assert.equal(last.advance, 'done');
   }
 });
@@ -53,6 +53,8 @@ test('the buyer summary tour builds a full board, then names it', () => {
   assert.equal(new Set(adds.map(s => s.element)).size, 4);
   assert.deepEqual(w.steps.filter(s => s.title.startsWith('Fill a spot')).map(s => s.title),
     ['Fill a spot · 4 left', 'Fill a spot · 3 left', 'Fill a spot · 2 left', 'Fill a spot · 1 left']);
-  assert.deepEqual(titles.slice(-5), ['Save your board', 'Open Manage boards again', 'Rename it', 'Type a name', 'Your board is ready']);
+  assert.deepEqual(titles.slice(-6), ['Save your board', 'Open Manage boards again', 'Rename it', 'Type a name', 'Close the panel', 'Your board is ready']);
+  // La fin montre le résultat : le board, dans le sélecteur, une fois le panneau fermé
+  assert.equal(w.steps[w.steps.length - 1].element, '.bs-action-bar__select');
   assert.ok(!titles.includes('Resize a card'), 'no resize step');
 });
