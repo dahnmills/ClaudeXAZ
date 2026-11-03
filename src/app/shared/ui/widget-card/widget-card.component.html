@@ -1,7 +1,8 @@
 <ds-card class="ds-widget-card__card" [noPadding]="true">
   <div class="ds-widget-card__inner">
     <div class="ds-widget-card__header">
-      <h3 class="ds-widget-card__title">{{ title() }}</h3>
+      <!-- slot=title : un titre éditable (ds-inline-edit) à la place du texte -->
+      <h3 class="ds-widget-card__title"><ng-content select="[slot=title]">{{ title() }}</ng-content></h3>
       <div class="ds-widget-card__actions">
         @if (seeFigures()) {
           <ds-button type="plain" tone="accent" (clicked)="seeFiguresClicked.emit()">

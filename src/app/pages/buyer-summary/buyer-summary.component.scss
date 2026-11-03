@@ -358,7 +358,13 @@ $drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-me
   color:         var(--semantic-color-static-text-main-secondary);
   transition:    background 120ms ease, color 120ms ease;
 
-  &:hover { background: var(--semantic-color-interactive-background-light-default); }
+  &:hover:not(:disabled) { background: var(--semantic-color-interactive-background-light-default); }
+
+  // Size that would push the board onto a 3rd row
+  &:disabled {
+    cursor: not-allowed;
+    color:  var(--semantic-color-interactive-text-medium-alt-disabled);
+  }
 
   &--on {
     background: var(--semantic-color-interactive-background-strong-default);

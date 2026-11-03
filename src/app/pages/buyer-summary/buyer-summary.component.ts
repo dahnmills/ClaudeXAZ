@@ -55,6 +55,35 @@ const DEFAULT_COMPANY: BuyerCompany = {
 let uidCounter = 0;
 function nextUid(): string { return `slot-${++uidCounter}`; }
 
+// Custom boards are capped at 2 rows of the 4-col ready grid (for now)
+const BOARD_COLS = 4;
+const BOARD_MAX_ROWS = 2;
+
+// Rows the ready grid needs for these slots: mirrors CSS grid auto-placement
+// (row-major, sparse) on 4 columns, spans honoured.
+function boardRowCount(slots: { cols: number; rows: number }[]): number {
+  const taken = new Set<string>();
+  const free = (r: number, c: number, w: number, h: number) => {
+    if (c + w > BOARD_COLS) return false;
+    for (let y = r; y < r + h; y++) for (let x = c; x < c + w; x++) if (taken.has(`${y}:${x}`)) return false;
+    return true;
+  };
+  let row = 0, col = 0, height = 0;
+  for (const s of slots) {
+    while (!free(row, col, s.cols, s.rows)) {
+      if (++col >= BOARD_COLS) { col = 0; row++; }
+    }
+    for (let y = row; y < row + s.rows; y++) for (let x = col; x < col + s.cols; x++) taken.add(`${y}:${x}`);
+    height = Math.max(height, row + s.rows);
+    col += s.cols;
+  }
+  return height;
+}
+
+function fitsBoard(slots: { cols: number; rows: number }[]): boolean {
+  return boardRowCount(slots) <= BOARD_MAX_ROWS;
+}
+
 export type SlotSize = '' | 'S' | 'M' | 'L';
 
 export interface SlotConfig {
@@ -186,7 +215,7 @@ export const LAYOUTS: LayoutConfig[] = [
   { id: '2x2-mix',      label: 'Large left', gridCols: 4, slots: [{cols:2,rows:2},{cols:1,rows:1},{cols:1,rows:1},{cols:1,rows:1},{cols:1,rows:1}] },
   { id: '1x2-side',     label: 'Large right',gridCols: 4, slots: [{cols:1,rows:1},{cols:1,rows:1},{cols:2,rows:2},{cols:1,rows:1},{cols:1,rows:1}] },
   { id: '2x2-full',     label: '2×2 grid',   gridCols: 4, slots: [{cols:2,rows:1},{cols:2,rows:1},{cols:2,rows:1},{cols:2,rows:1}] },
-  { id: '4x2-alt',      label: 'Tall left',  gridCols: 4, slots: [{cols:2,rows:2},{cols:2,rows:1},{cols:1,rows:1},{cols:1,rows:1},{cols:2,rows:1}] },
+  { id: '4x2-alt',      label: 'Tall left',  gridCols: 4, slots: [{cols:2,rows:2},{cols:2,rows:1},{cols:1,rows:1},{cols:1,rows:1}] },
 ];
 
 export const WIDGET_TYPE_OPTIONS: SelectOption[] = [
@@ -355,6 +384,8 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
 
   // ── Card builder state ─────────────────────────────────────────────────────
   customCards    = signal<CustomCard[]>([]);          // user-built cards (mock persistence)
+  // Card customisation is parked for now: entry points hidden, builder code kept
+  readonly cardBuilderEnabled = false;
   builderOpen    = signal(false);
   editingCardId  = signal<string | null>(null);       // null = creating a fresh card
   builderStep    = signal<'layout' | 'compose'>('layout');
@@ -712,16 +743,35 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
     if (!size) return;
     const cols: 1 | 2 = size === 'S' ? 1 : 2;
     const rows: 1 | 2 = size === 'L' ? 2 : 1;
-    this.slots.update(arr => arr.map((s, idx) =>
+    this.commitSlots(this.slots().map((s, idx) =>
       idx === i ? { ...s, widgetSize: size, cols, rows } : s
     ));
   }
 
+  // ── 2-row cap: every change that grows the board goes through these ─────────
+
+  // Room left for one more 1×1 card? Drives the trailing "Add card" tile.
+  canAddSlot = computed(() => fitsBoard([...this.slots(), { cols: 1, rows: 1 }]));
+
+  canSetSlotDims(i: number, cols: 1 | 2, rows: 1 | 2): boolean {
+    return fitsBoard(this.slots().map((s, idx) => idx === i ? { cols, rows } : s));
+  }
+
+  // Apply a slots change only if the board still fits on 2 rows
+  private commitSlots(next: SlotConfig[], notify = true): boolean {
+    if (!fitsBoard(next)) {
+      if (notify) this.toaster.show('A board holds 2 rows of cards. Remove or shrink a card first.', { tone: 'info', title: 'Board is full' });
+      return false;
+    }
+    this.slots.set(next);
+    return true;
+  }
+
   // Toolbar: set an explicit grid size on a card (cols × rows), any time
   setSlotDims(i: number, cols: 1 | 2, rows: 1 | 2): void {
-    this.slots.update(arr => arr.map((s, idx) =>
+    this.commitSlots(this.slots().map((s, idx) =>
       idx === i ? { ...s, cols, rows, widgetSize: this.dimsToSize(cols, rows) } : s
-    ));
+    ), false);
   }
 
   private dimsToSize(cols: 1 | 2, rows: 1 | 2): SlotSize {
@@ -732,12 +782,11 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
 
   // Toolbar: duplicate a configured card
   duplicateSlot(i: number): void {
-    this.slots.update(arr => {
-      const src = arr[i];
-      if (!src) return arr;
-      const copy: SlotConfig = { ...src, uid: nextUid() };
-      return [...arr.slice(0, i + 1), copy, ...arr.slice(i + 1)];
-    });
+    const arr = this.slots();
+    const src = arr[i];
+    if (!src) return;
+    const copy: SlotConfig = { ...src, uid: nextUid() };
+    this.commitSlots([...arr.slice(0, i + 1), copy, ...arr.slice(i + 1)]);
   }
 
   // Toolbar: go back to type selection (keeps the chosen size)
@@ -784,8 +833,8 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
 
   addEmptySlot(): void {
     // Empty slot defaults to 1×1; type is picked from the drawer, size via toolbar
-    this.slots.update(arr => [
-      ...arr,
+    this.commitSlots([
+      ...this.slots(),
       { uid: nextUid(), widgetType: '', widgetSize: 'S', cols: 1, rows: 1, loading: false },
     ]);
   }
@@ -827,10 +876,10 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
       return;
     }
     const uid = nextUid();
-    this.slots.update(arr => [
-      ...arr,
+    if (!this.commitSlots([
+      ...this.slots(),
       { uid, widgetType, widgetSize: 'S', cols: 1, rows: 1, loading: true },
-    ]);
+    ])) return;
     this.schedule(() => {
       this.slots.update(arr => arr.map(s => s.uid === uid ? { ...s, loading: false } : s));
     }, 700);
@@ -927,13 +976,13 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
     const at = index ?? this.slots().length;
     if (cardId) {
       const newSlot: SlotConfig = { uid: nextUid(), widgetType: cardId, widgetSize: 'S', cols: 1, rows: 1, loading: true };
-      this.slots.update(arr => {
-        const i = Math.max(0, Math.min(at, arr.length));
-        return [...arr.slice(0, i), newSlot, ...arr.slice(i)];
-      });
-      this.schedule(() => {
-        this.slots.update(arr => arr.map(s => s.uid === newSlot.uid ? { ...s, loading: false } : s));
-      }, 700);
+      const arr = this.slots();
+      const i = Math.max(0, Math.min(at, arr.length));
+      if (this.commitSlots([...arr.slice(0, i), newSlot, ...arr.slice(i)])) {
+        this.schedule(() => {
+          this.slots.update(arr => arr.map(s => s.uid === newSlot.uid ? { ...s, loading: false } : s));
+        }, 700);
+      }
     } else if (draggingUid) {
       this.moveToIndex(draggingUid, at);
     }
@@ -942,26 +991,25 @@ export class BuyerSummaryComponent implements OnInit, OnDestroy {
 
   // Move a slot so it lands at `targetIndex` (index in the current array)
   private moveToIndex(uid: string, targetIndex: number): void {
-    this.slots.update(arr => {
-      const from = arr.findIndex(s => s.uid === uid);
-      if (from < 0) return arr;
-      const without = [...arr.slice(0, from), ...arr.slice(from + 1)];
-      // adjust index if we removed an element before the target
-      const at = Math.max(0, Math.min(from < targetIndex ? targetIndex - 1 : targetIndex, without.length));
-      return [...without.slice(0, at), arr[from], ...without.slice(at)];
-    });
+    const arr = this.slots();
+    const from = arr.findIndex(s => s.uid === uid);
+    if (from < 0) return;
+    const without = [...arr.slice(0, from), ...arr.slice(from + 1)];
+    // adjust index if we removed an element before the target
+    const at = Math.max(0, Math.min(from < targetIndex ? targetIndex - 1 : targetIndex, without.length));
+    // Reordering can repack the grid onto a 3rd row: refused like any growth
+    this.commitSlots([...without.slice(0, at), arr[from], ...without.slice(at)]);
   }
 
   // Move an existing slot into an empty placeholder's spot (drops the empty)
   private moveIntoEmpty(uid: string, emptyUid: string): void {
-    this.slots.update(arr => {
-      const src = arr.find(s => s.uid === uid);
-      if (!src) return arr;
-      const without = arr.filter(s => s.uid !== uid);
-      const at = without.findIndex(s => s.uid === emptyUid);
-      if (at < 0) return arr;
-      return [...without.slice(0, at), src, ...without.slice(at + 1)];
-    });
+    const arr = this.slots();
+    const src = arr.find(s => s.uid === uid);
+    if (!src) return;
+    const without = arr.filter(s => s.uid !== uid);
+    const at = without.findIndex(s => s.uid === emptyUid);
+    if (at < 0) return;
+    this.commitSlots([...without.slice(0, at), src, ...without.slice(at + 1)]);
   }
 
   widgetLabel(widgetType: string): string {
