@@ -208,12 +208,20 @@ export class WalkthroughService {
     let missingSince: number | null = null;
     let goneSeen = false;
     let lastIndex: number | undefined;
+    let lastRect = '';
     this.watch = setInterval(() => {
       if (this.waiting) return;
       const i = this.active?.getActiveIndex();
       const s = this.step(i);
-      if (i !== lastIndex) { lastIndex = i; goneSeen = false; missingSince = null; }
+      if (i !== lastIndex) { lastIndex = i; goneSeen = false; missingSince = null; lastRect = ''; }
       if (!s?.element) return;
+
+      // L'élément a bougé ou changé de taille pendant l'étape (contenu chargé, toast,
+      // card redimensionnée) : driver.js ne le suit pas, on recale découpe et bulle.
+      const r = this.active?.getActiveElement()?.getBoundingClientRect();
+      const rect = r ? `${Math.round(r.left)},${Math.round(r.top)},${Math.round(r.width)},${Math.round(r.height)}` : '';
+      if (lastRect && rect && rect !== lastRect) this.active?.refresh();
+      lastRect = rect;
 
       if (s.advance === 'gone' && s.gone) {
         if (document.querySelector(s.gone)) goneSeen = true;

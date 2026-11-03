@@ -53,5 +53,6 @@ test('the buyer summary tour builds a full board, then names it', () => {
   assert.equal(new Set(adds.map(s => s.element)).size, 4);
   assert.deepEqual(w.steps.filter(s => s.title.startsWith('Fill a spot')).map(s => s.title),
     ['Fill a spot · 4 left', 'Fill a spot · 3 left', 'Fill a spot · 2 left', 'Fill a spot · 1 left']);
-  assert.deepEqual(titles.slice(-6), ['Resize a card', 'Save your board', 'Open Manage boards again', 'Rename it', 'Type a name', 'Your board is ready']);
+  assert.deepEqual(titles.slice(-5), ['Save your board', 'Open Manage boards again', 'Rename it', 'Type a name', 'Your board is ready']);
+  assert.ok(!titles.includes('Resize a card'), 'no resize step');
 });

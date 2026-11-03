@@ -68,12 +68,6 @@ export const WALKTHROUGHS: Walkthrough[] = [
       },
       ...fillSteps(),
       {
-        element: '.bs-configure-surface .bs-slot',
-        title: 'Resize a card',
-        description: 'Drag the corner handle of a card to make it wider or taller. Try it, then click Next.',
-        advance: 'next', side: 'right',
-      },
-      {
         element: '.bs-floatbar ds-button[type="primary"]',
         title: 'Save your board',
         description: 'All four spots are filled. Click Save board.',
