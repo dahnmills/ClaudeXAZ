@@ -11,9 +11,15 @@ const STABLE_POLLS = 3;
 const WAIT_MAX_MS = 8000;
 /** Élément de l'étape en cours introuvable au-delà : l'utilisateur est sorti du parcours. */
 const LOST_AFTER_MS = 2500;
-/** Pendant l'attente, la bulle et le voile disparaissent : on voit la page charger
- *  au lieu d'une bulle qui pointe un cadre vide. */
+/** Pendant l'attente, la bulle et le voile s'effacent en fondu : on voit la page
+ *  charger au lieu d'une bulle qui pointe un cadre vide. */
 const WAITING_CLASS = 'qirin-tour--waiting';
+/** Fermeture : même fondu, puis driver.js démonte le tour. */
+const CLOSING_CLASS = 'qirin-tour--closing';
+/** Durée du fondu (aligné sur _walkthrough.scss). */
+const FADE_MS = 260;
+/** Glissement de la découpe du voile d'un élément au suivant. */
+const STAGE_MS = 450;
 
 /**
  * Joue un tour guidé avec driver.js. L'utilisateur fait chaque geste :
@@ -34,7 +40,7 @@ export class WalkthroughService {
   private detachClick: (() => void) | null = null;
 
   start(w: Walkthrough): void {
-    this.stop();
+    this.kill();
     this.tour = w;
     this.active = driver({
       steps: w.steps.map(s => this.toDriveStep(s)),
@@ -49,12 +55,17 @@ export class WalkthroughService {
       // Assez de marge dans la découpe du voile pour que l'onde de la bordure focus se voie
       stagePadding: 14,
       stageRadius: 8,
-      // Le clic est écouté dès le début de la mise en avant : un utilisateur rapide
-      // qui clique pendant l'apparition de la bulle ne doit pas bloquer le tour.
-      onHighlightStarted: el => this.armClick(el),
-      // Fin de mise en avant : la bulle réapparaît, sauf si l'utilisateur a déjà
-      // cliqué et que le tour attend l'étape suivante.
-      onHighlighted: () => { if (!this.waiting) document.body.classList.remove(WAITING_CLASS); },
+      duration: STAGE_MS,
+      // Début de mise en avant : le voile et la bulle reviennent en fondu pendant que
+      // la découpe glisse vers l'élément (driver.js masque l'ancienne bulle dans le
+      // même tick). Le clic est écouté dès maintenant : un utilisateur rapide ne
+      // doit pas bloquer le tour.
+      onHighlightStarted: el => {
+        if (!this.waiting) document.body.classList.remove(WAITING_CLASS);
+        this.armClick(el);
+      },
+      // Croix, Done : on fond le tour avant de le démonter
+      onDestroyStarted: () => this.stop(),
       onDestroyed: () => this.cleanup(),
     });
     this.active.drive();
@@ -62,7 +73,16 @@ export class WalkthroughService {
     document.addEventListener('keydown', this.onKeydown, true);
   }
 
+  /** Ferme le tour en fondu. */
   stop(): void {
+    if (!this.active || document.body.classList.contains(CLOSING_CLASS)) return;
+    document.body.classList.add(CLOSING_CLASS);
+    const closing = this.active;
+    setTimeout(() => { if (this.active === closing) this.kill(); }, FADE_MS);
+  }
+
+  /** Ferme le tour sur-le-champ (remplacement par un autre tour). */
+  private kill(): void {
     this.active?.destroy();
     this.cleanup();
   }
@@ -162,6 +182,9 @@ export class WalkthroughService {
   }
 
   private lost(): void {
+    // Déjà en train de fermer : un seul toast
+    if (!this.active || document.body.classList.contains(CLOSING_CLASS)) return;
+    this.endWait({ keepHidden: true });
     this.stop();
     this.toaster.show('Start it again from the Help menu whenever you like.', { tone: 'info', title: 'Tour stopped' });
   }
@@ -172,6 +195,7 @@ export class WalkthroughService {
     this.detachClick?.();
     this.detachClick = null;
     this.endWait();
+    document.body.classList.remove(CLOSING_CLASS);
     this.active = null;
     this.tour = null;
     document.removeEventListener('keydown', this.onKeydown, true);

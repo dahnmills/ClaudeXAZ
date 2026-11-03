@@ -95,17 +95,32 @@
   }
 }
 
-// ── Attente entre deux étapes ─────────────────────────────────
-// Pendant qu'un drawer s'ouvre ou qu'un board charge, ni bulle ni voile : on voit
-// la page faire son travail, la bulle revient sur l'élément suivant une fois en place.
-body.qirin-tour--waiting {
-  .driver-popover,
-  .driver-overlay { visibility: hidden; }
-
-  .driver-active-element { outline: none; animation: none; }
+// ── Transitions : tout se fond, rien n'apparaît ni ne disparaît d'un coup ──
+// Voile et bulle s'effacent quand le tour attend la page (après un clic) ou se
+// ferme, puis reviennent en fondu ; entre deux étapes, la découpe du voile glisse
+// d'un élément à l'autre (animation de driver.js, durée réglée par le service).
+.driver-overlay,
+.driver-popover.qirin-walkthrough {
+  transition: opacity 260ms ease;
 }
 
-// Mouvement réduit : contour fixe, sans pulsation
+.driver-active .driver-active-element {
+  transition: outline-color 260ms ease;
+}
+
+body.qirin-tour--waiting,
+body.qirin-tour--closing {
+  .driver-overlay,
+  .driver-popover.qirin-walkthrough { opacity: 0; pointer-events: none; }
+
+  .driver-active-element { outline-color: transparent; animation: none; }
+}
+
+// Mouvement réduit : contour fixe, sans pulsation ni fondu
 @media (prefers-reduced-motion: reduce) {
   .driver-active .driver-active-element { animation: none; }
+
+  .driver-overlay,
+  .driver-popover.qirin-walkthrough,
+  .driver-active .driver-active-element { transition: none; }
 }
