@@ -60,11 +60,12 @@ export class WalkthroughService {
       overlayOpacity: 1,
       stageRadius: 8,
       duration: STAGE_MS,
-      // Début de mise en avant : la bulle revient en fondu et le trou se rouvre pendant que
-      // la découpe glisse vers l'élément (driver.js masque l'ancienne bulle dans le
-      // même tick). Le clic est écouté dès maintenant : un utilisateur rapide ne
-      // doit pas bloquer le tour.
+      // Début de mise en avant, pour toute étape : le trou s'ouvre depuis le centre de
+      // l'élément visé (jamais un glissement depuis l'ancien), la bulle revient en
+      // fondu (driver.js masque l'ancienne dans le même tick). Le clic est écouté dès
+      // maintenant : un utilisateur rapide ne doit pas bloquer le tour.
       onHighlightStarted: el => {
+        this.openFrom(el ?? document.getElementById('driver-dummy-element'));
         if (!this.waiting) document.body.classList.remove(WAITING_CLASS);
         this.armClick(el);
       },
@@ -146,7 +147,6 @@ export class WalkthroughService {
         // La bulle reste masquée jusqu'au début de l'étape suivante
         // (onHighlightStarted) : sinon l'ancienne bulle réapparaît un instant.
         this.endWait({ keepHidden: true });
-        this.openFrom(next.element!);
         this.active?.moveNext();
       } else if (Date.now() - started > WAIT_MAX_MS) {
         this.lost();
@@ -167,12 +167,14 @@ export class WalkthroughService {
   }
 
   /**
-   * Fait partir l'ouverture du trou du centre du nouvel élément : driver.js anime la
+   * Fait partir l'ouverture du trou du centre de l'élément : driver.js anime la
    * découpe depuis sa dernière position connue, qu'on ramène à ce point. Le trou
-   * s'ouvre sur place au lieu de glisser depuis l'ancien emplacement.
+   * s'ouvre sur place au lieu de glisser depuis l'ancien emplacement. Bulle centrée
+   * (intro, fin) : l'élément fantôme de driver.js est un point au centre de l'écran,
+   * la découpe se referme donc sans voyager.
    */
-  private openFrom(selector: string): void {
-    const r = document.querySelector(selector)?.getBoundingClientRect();
+  private openFrom(el: Element | null): void {
+    const r = el?.getBoundingClientRect();
     const state = this.active?.getState() as Record<string, unknown> | undefined;
     if (!r || !state) return;
     state['__activeStagePosition'] = { x: r.left + r.width / 2, y: r.top + r.height / 2, width: 0, height: 0 };
