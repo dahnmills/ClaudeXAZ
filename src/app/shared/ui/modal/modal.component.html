@@ -1,6 +1,6 @@
 @if (open()) {
   <div class="ds-modal__backdrop" (click)="onBackdropClick()">
-    <div class="ds-modal__box" (click)="$event.stopPropagation()">
+    <div class="ds-modal__box" dsFocusTrap (click)="$event.stopPropagation()">
       <ds-modal-header [title]="title()" (closeClicked)="closed.emit()" />
       <ds-modal-content [height]="contentHeight()">
         <ng-content />

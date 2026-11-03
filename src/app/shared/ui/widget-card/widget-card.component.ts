@@ -11,6 +11,8 @@ import { IconComponent, type IconName } from '../icon/icon.component';
  *
  * Compose `ds-card` (bg/bordure/radius/padding). Ne réimplémente pas la boîte.
  * Le contenu (chart, properties-panel, liste…) est passé en ng-content.
+ * `slot="title"` remplace le texte du titre (ex. un ds-inline-edit), `title`
+ * reste requis : il sert de repli.
  */
 @Component({
   selector: 'ds-widget-card',

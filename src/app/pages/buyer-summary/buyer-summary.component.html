@@ -98,12 +98,15 @@
                   <div class="bs-toolbar__sizes" role="group" aria-label="Card size">
                     <button class="bs-toolbar__size" type="button"
                       [class.bs-toolbar__size--on]="slot.cols === 1 && slot.rows === 1"
+                      [disabled]="!canSetSlotDims(i, 1, 1)"
                       (click)="setSlotDims(i, 1, 1)" aria-label="1 by 1">1×1</button>
                     <button class="bs-toolbar__size" type="button"
                       [class.bs-toolbar__size--on]="slot.cols === 2 && slot.rows === 1"
+                      [disabled]="!canSetSlotDims(i, 2, 1)"
                       (click)="setSlotDims(i, 2, 1)" aria-label="2 by 1">2×1</button>
                     <button class="bs-toolbar__size" type="button"
                       [class.bs-toolbar__size--on]="slot.cols === 2 && slot.rows === 2"
+                      [disabled]="!canSetSlotDims(i, 2, 2)"
                       (click)="setSlotDims(i, 2, 2)" aria-label="2 by 2">2×2</button>
                   </div>
                   <span class="bs-toolbar__sep" aria-hidden="true"></span>
@@ -160,15 +163,18 @@
             </div>
           }
 
-          <!-- trailing insertion bar when dropping at the very end -->
-          <div class="bs-slot bs-slot--add"
-            [class.bs-slot--insert-before]="dropIndex() === slots().length && !dropOnUid()"
-            (click)="addEmptySlot()" role="button" tabindex="0"
-            (keydown.enter)="addEmptySlot()" aria-label="Add a card"
-            (dragover)="onAddTileDragOver($event)">
-            <ds-icon name="plus" [size]="16" />
-            <span>Add card</span>
-          </div>
+          <!-- trailing insertion bar when dropping at the very end.
+               Hidden once the board fills its 2 rows: never open a 3rd. -->
+          @if (canAddSlot()) {
+            <div class="bs-slot bs-slot--add"
+              [class.bs-slot--insert-before]="dropIndex() === slots().length && !dropOnUid()"
+              (click)="addEmptySlot()" role="button" tabindex="0"
+              (keydown.enter)="addEmptySlot()" aria-label="Add a card"
+              (dragover)="onAddTileDragOver($event)">
+              <ds-icon name="plus" [size]="16" />
+              <span>Add card</span>
+            </div>
+          }
         </div>
         </div><!-- /.bs-configure-surface -->
       }
@@ -290,11 +296,13 @@
               <ds-icon name="plus" [size]="16" />
               Create a new board
             </button>
-            <button class="manage-board__create manage-board__create--alt" type="button"
-              (click)="openCardBuilder()">
-              <ds-icon name="plus-circle" [size]="16" />
-              Create a custom card
-            </button>
+            @if (cardBuilderEnabled) {
+              <button class="manage-board__create manage-board__create--alt" type="button"
+                (click)="openCardBuilder()">
+                <ds-icon name="plus-circle" [size]="16" />
+                Create a custom card
+              </button>
+            }
           </div>
         }
 
@@ -320,10 +328,12 @@
           </div>
           <ds-input-text class="drawer-filter" placeholder="Filter cards…"
             [value]="cardFilter()" (valueChange)="cardFilter.set($event)" />
-          <button class="drawer-build" type="button" (click)="openCardBuilder()">
-            <ds-icon name="plus-circle" [size]="16" />
-            Create a custom card
-          </button>
+          @if (cardBuilderEnabled) {
+            <button class="drawer-build" type="button" (click)="openCardBuilder()">
+              <ds-icon name="plus-circle" [size]="16" />
+              Create a custom card
+            </button>
+          }
           <p class="drawer-hint">
             <ds-icon name="drag-handle" [size]="14" /> Drag onto the board,
             or use <ds-icon name="plus" [size]="14" /> to add.

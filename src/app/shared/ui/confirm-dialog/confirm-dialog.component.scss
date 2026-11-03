@@ -40,6 +40,9 @@
   border-radius:  var(--semantic-border-radius-s);
   box-shadow:     var(--semantic-shadow-modal);
   overflow:       hidden;
+
+  // Reçoit le focus à l'ouverture (dsFocusTrap) : pas d'anneau sur toute la boîte
+  &:focus { outline: none; }
 }
 
 // ── Container (title + content) ──────────────────────────────

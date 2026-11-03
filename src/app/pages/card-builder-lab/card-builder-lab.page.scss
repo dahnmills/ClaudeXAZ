@@ -1,5 +1,5 @@
 // Card builder lab: board + builder modal. Board rows have a fixed height, and
-// the preview cell uses the same slot dimensions, so it clips like the board.
+// the preview uses the same slot dimensions, so it clips like the board.
 
 :host {
   display:    block;
@@ -18,12 +18,6 @@
     padding:         var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-xl);
   }
 
-  &__eyebrow {
-    margin:    0;
-    font-size: var(--semantic-font-text-style-size-s);
-    color:     var(--semantic-color-static-text-main-tertiary);
-  }
-
   &__title {
     margin:      0;
     font-size:   var(--semantic-font-title-size-m);
@@ -35,11 +29,12 @@
     padding:    0 var(--semantic-measurement-spacing-xl) var(--semantic-measurement-spacing-xl);
   }
 
-  // Visually hidden live region
-  &__live {
+  // Visually hidden: live region, board heading, keyboard help
+  &__sr {
     position: absolute;
     width:    var(--semantic-border-size-s);
     height:   var(--semantic-border-size-s);
+    margin:   0;
     overflow: hidden;
     clip:     rect(0 0 0 0);
     white-space: nowrap;
@@ -66,10 +61,45 @@
     &--flash { animation: lab-flash 1200ms ease-out; }
   }
 
+  // In the title row, where a built-in card has its menu: never over a value
   &__edit {
     position: absolute;
-    right:    var(--semantic-measurement-spacing-s);
-    bottom:   var(--semantic-measurement-spacing-s);
+    top:      var(--semantic-measurement-spacing-m);
+    right:    var(--semantic-measurement-spacing-m);
+    display:  flex;
+    gap:      var(--semantic-measurement-spacing-xs);
+  }
+
+  // A free slot: same size as a card, says what clicking it does. On white,
+  // so its blue label keeps AA contrast.
+  &__free {
+    display:         flex;
+    flex-direction:  column;
+    align-items:     center;
+    justify-content: center;
+    gap:             var(--semantic-measurement-spacing-xs);
+    padding:         var(--semantic-measurement-spacing-m);
+    border:          var(--semantic-border-size-s) dashed var(--semantic-color-static-border-subtle-tertiary);
+    background:      var(--semantic-color-static-background-main-primary);
+    font-family:     inherit;
+    color:           var(--semantic-color-interactive-text-strong-default);
+    cursor:          pointer;
+    transition:      border-color 120ms ease, background 120ms ease;
+
+    &:hover {
+      border-color: var(--semantic-color-interactive-border-strong-default);
+      background:   var(--semantic-color-interactive-background-light-default);
+    }
+
+    &:focus-visible {
+      outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+      outline-offset: var(--semantic-border-size-s);
+    }
+  }
+
+  &__free-label {
+    font-size:   var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
   }
 }
 
@@ -79,8 +109,8 @@
 }
 
 // ── Card content (shared by builder and board) ──────────────────────────────
-// Each column is a fixed grid of places: 6 on one line, 3 with labels above
-// values. Nothing can overflow, an item spans the places it takes.
+// Each column is a grid of 6 lines, items packed to the top: a figure or a
+// section title takes one line, a chart five. Nothing can overflow.
 .lab-card {
   display:  grid;
   gap:      var(--semantic-measurement-spacing-m);
@@ -90,16 +120,14 @@
   &--cols-1 { grid-template-columns: minmax(0, 1fr); }
   &--cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-  // Builder: nothing is clipped, so the remove button can sit in the gutter
+  // Builder: the selection outline must not be clipped
   &--live { overflow: visible; }
 
   &__col {
-    display:   grid;
-    min-width: 0;
-    min-height: 0;
-
-    &--places-6 { grid-template-rows: repeat(6, minmax(0, 1fr)); }
-    &--places-3 { grid-template-rows: repeat(3, minmax(0, 1fr)); }
+    display:            grid;
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    min-width:          0;
+    min-height:         0;
   }
 }
 
@@ -110,11 +138,13 @@
   min-width:     0;
   min-height:    0;
   border-radius: var(--semantic-border-radius-s);
-  transition:    box-shadow 120ms ease, background 120ms ease, opacity 120ms ease;
+  transition:    outline-color 120ms ease, opacity 120ms ease;
 
   @for $n from 1 through 6 {
-    &--span-#{$n} { grid-row: span $n; }
+    &--lines-#{$n} { grid-row: span $n; }
   }
+
+  &[draggable='true'] { cursor: grab; }
 
   // The whole item is the hit area: a click selects it, the list then acts on it
   &__hit {
@@ -123,6 +153,8 @@
     align-items:   center;
     align-self:    stretch;
     min-width:     0;
+    padding-inline: var(--semantic-measurement-spacing-xs);
+    margin-inline: calc(-1 * var(--semantic-measurement-spacing-xs));
     border-radius: inherit;
     cursor:        pointer;
 
@@ -130,89 +162,68 @@
 
     &:focus-visible {
       outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
-      outline-offset: var(--semantic-border-size-s);
+      outline-offset: var(--semantic-border-size-none);
     }
   }
 
-  // Selected: the place the list on the right fills or replaces
-  &--on {
-    background: var(--semantic-color-interactive-background-light-default);
-    box-shadow: inset 0 0 0 var(--semantic-border-size-m) var(--semantic-color-interactive-border-strong-default);
+  // Selected: an outline on the hit area, not a fill. It stays visible under
+  // the hover background, clears the text, and keeps grey labels at AA contrast.
+  &--on > &__hit {
+    outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-strong-default);
+    outline-offset: var(--semantic-border-size-none);
   }
 
   &--dragging { opacity: var(--semantic-measurement-opacity-disabled); }
 
-  &--drop {
-    box-shadow: inset 0 0 0 var(--semantic-border-size-m) var(--semantic-color-interactive-border-strong-default);
+  // Drop before this item: a line above it
+  &--drop::before {
+    content:       '';
+    position:      absolute;
+    inset:         calc(-1 * var(--semantic-border-size-m)) 0 auto;
+    height:        var(--semantic-border-size-m);
+    border-radius: var(--semantic-border-radius-round);
+    background:    var(--semantic-color-interactive-border-strong-default);
   }
 
-  // An empty place, drawn at its real height
-  &--empty {
+  // "Add": one line after the last item, the only empty line drawn
+  &--add-wrap { align-items: stretch; }
+
+  &__add {
+    display:         flex;
+    flex:            1;
+    align-items:     center;
     justify-content: center;
     gap:             var(--semantic-measurement-spacing-xxs);
+    min-width:       0;
     margin-block:    var(--semantic-measurement-spacing-xxs);
     padding:         var(--semantic-measurement-spacing-none);
     border:          var(--semantic-border-size-s) dashed var(--semantic-color-static-border-subtle-tertiary);
+    border-radius:   var(--semantic-border-radius-s);
     background:      transparent;
     font-family:     inherit;
     font-size:       var(--semantic-font-text-style-size-s);
     color:           var(--semantic-color-interactive-text-strong-default);
     cursor:          pointer;
+    transition:      border-color 120ms ease;
 
     &:hover { border-color: var(--semantic-color-interactive-border-strong-default); }
 
     &.lab-cell--on,
     &.lab-cell--drop {
+      outline:      none;
       border-style: solid;
       border-color: var(--semantic-color-interactive-border-strong-default);
-      box-shadow:   none;
     }
+    &.lab-cell--drop::before { content: none; }
 
     &:focus-visible {
       outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
       outline-offset: var(--semantic-border-size-s);
     }
   }
-
-  // Sits in the gutter at the right of its item, so it never covers a value
-  &__remove {
-    position:        absolute;
-    top:             50%;
-    right:           calc(-1 * var(--semantic-measurement-sizing-m));
-    display:         flex;
-    align-items:     center;
-    justify-content: center;
-    width:           var(--semantic-measurement-sizing-m);
-    height:          var(--semantic-measurement-sizing-m);
-    padding:         var(--semantic-measurement-spacing-none);
-    border:          var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
-    border-radius:   var(--semantic-border-radius-round);
-    background:      var(--semantic-color-static-background-main-primary);
-    color:           var(--semantic-color-static-text-main-secondary);
-    cursor:          pointer;
-    opacity:         0;
-    transform:       translateY(-50%);
-    transition:      opacity 120ms ease, background 120ms ease, color 120ms ease;
-
-    &:hover {
-      border-color: var(--semantic-color-interactive-background-strong-default);
-      background:   var(--semantic-color-interactive-background-strong-default);
-      color:        var(--semantic-color-static-text-main-reversed);
-    }
-
-    &:focus-visible {
-      opacity:        1;
-      outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
-      outline-offset: var(--semantic-border-size-s);
-    }
-  }
-
-  &:hover &__remove { opacity: 1; }
-
-  &[draggable='true'] { cursor: grab; }
 }
 
-// Item content fills its place
+// Item content fills its line
 .lab-cell ds-properties-panel { flex: 1; min-width: 0; }
 
 .lab-item {
@@ -227,84 +238,362 @@
   &__caption {
     font-size:   var(--semantic-font-text-style-size-s);
     line-height: var(--semantic-font-text-style-line-height-s);
-    color:       var(--semantic-color-static-text-main-tertiary);
+    color:       var(--semantic-color-static-text-main-secondary);
   }
-}
 
-// ── Builder modal ───────────────────────────────────────────────────────────
-// Where the analyst is, above both steps
-.lab-step {
-  margin:      0;
-  font-size:   var(--semantic-font-text-style-size-s);
-  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-  color:       var(--semantic-color-static-text-main-tertiary);
-}
-
-// Wide card width whatever the size, in both steps: changing it moves nothing
-$card-slot: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-measurement-spacing-m));
-
-// Step 1: settings | card
-.lab-format-step {
-  display:               grid;
-  grid-template-columns: minmax(0, 1fr) $card-slot;
-  align-items:           start;
-  gap:                   var(--semantic-measurement-spacing-3xl);
-
-  &__form {
+  // Section title: one line, a rule under it ties it to the figures below
+  &__heading {
     display:        flex;
-    flex-direction: column;
-    gap:            var(--semantic-measurement-spacing-l);
+    flex:           1;
+    align-items:    flex-end;
+    align-self:     stretch;
+    min-width:      0;
+    padding-bottom: var(--semantic-measurement-spacing-xxs);
+    border-bottom:  var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
   }
 
-  &__preview {
+  &__heading-text {
+    overflow:      hidden;
+    font-size:     var(--semantic-font-text-style-size-m);
+    font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
+    color:         var(--semantic-color-static-text-main-primary);
+    white-space:   nowrap;
+    text-overflow: ellipsis;
+
+    &--empty { color: var(--semantic-color-static-text-main-secondary); }
+  }
+}
+
+// ── Builder, step 1: formats, each drawn as the card it makes ──────────────
+// A tile keeps the board's proportions: a small card is square, a wide one
+// two slots and a gap wide. Ready cards are the real card, scaled down.
+$tile-h: calc(var(--semantic-measurement-sizing-3xl) * 1.5);
+$tile-scale: 0.375;
+
+.lab-formats {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xl);
+  overflow-y:     auto;
+
+  &__group {
     display:        flex;
     flex-direction: column;
     gap:            var(--semantic-measurement-spacing-s);
   }
+
+  &__title {
+    margin:      0;
+    font-size:   var(--semantic-font-title-size-xs);
+    font-weight: var(--semantic-font-title-font-weight-m);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__list {
+    display:    flex;
+    flex-wrap:  wrap;
+    gap:        var(--semantic-measurement-spacing-s);
+    margin:     0;
+    padding:    0;
+    list-style: none;
+  }
 }
 
-// Step 2: card | list. The step fills the modal, the list scrolls on its own
-// and the card never moves.
+.lab-tile {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+  padding:        var(--semantic-measurement-spacing-xs);
+  border:         var(--semantic-border-size-s) solid transparent;
+  border-radius:  var(--semantic-border-radius-m);
+  background:     transparent;
+  font-family:    inherit;
+  text-align:     left;
+  cursor:         pointer;
+  transition:     background 120ms ease, border-color 120ms ease;
+
+  &:hover:not([aria-disabled='true']) {
+    background:   var(--semantic-color-interactive-background-light-default);
+    border-color: var(--semantic-color-interactive-border-strong-default);
+  }
+
+  &:focus-visible {
+    outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+    outline-offset: var(--semantic-border-size-s);
+  }
+
+  // What the card is now
+  &--on { border-color: var(--semantic-color-interactive-border-strong-default); }
+
+  &[aria-disabled='true'] { cursor: not-allowed; }
+  &[aria-disabled='true'] &__frame { opacity: var(--semantic-measurement-opacity-disabled); }
+
+  &__frame {
+    position:      relative;
+    display:       block;
+    overflow:      hidden;
+    height:        $tile-h;
+    width:         $tile-h;
+    margin-bottom: var(--semantic-measurement-spacing-xs);
+    border-radius: var(--semantic-border-radius-s);
+
+    &--M { width: calc(#{$tile-h} * 2 + var(--semantic-measurement-spacing-m) * #{$tile-scale}); }
+
+    &--empty {
+      border:     var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+      background: var(--semantic-color-static-background-main-primary);
+    }
+  }
+
+  // The real card at board size, scaled into the frame; never interactive
+  &__scale {
+    position:         absolute;
+    top:              0;
+    left:             0;
+    width:            calc(var(--semantic-measurement-sizing-3xl) * 4);
+    height:           calc(var(--semantic-measurement-sizing-3xl) * 4);
+    transform:        scale(#{$tile-scale});
+    transform-origin: top left;
+    pointer-events:   none;
+
+    &--M { width: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-measurement-spacing-m)); }
+  }
+
+  &__name {
+    font-size:   var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__hint {
+    max-width: calc(#{$tile-h} * 1.6);
+    font-size: var(--semantic-font-text-style-size-s);
+    color:     var(--semantic-color-static-text-main-secondary);
+  }
+}
+
+// An empty format sketched: each figure a label bar and a value bar,
+// side by side or one above the other
+.lab-sketch {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-s);
+  height:  100%;
+  padding: var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-s);
+
+  &__col {
+    display:        flex;
+    flex:           1;
+    flex-direction: column;
+    justify-content: space-around;
+    min-width:      0;
+  }
+
+  &__row {
+    display:     flex;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-xs);
+
+    span {
+      height:        var(--semantic-border-size-m);
+      border-radius: var(--semantic-border-radius-round);
+      background:    var(--semantic-color-static-border-subtle-tertiary);
+    }
+
+    span:first-child { flex: 1.4; }
+    span:last-child  { flex: 1; background: var(--semantic-color-static-text-main-secondary); }
+  }
+
+  &--below &__row {
+    flex-direction: column;
+    align-items:    flex-start;
+
+    span:first-child { width: 60%; flex: none; }
+    span:last-child  { width: 45%; flex: none; }
+  }
+}
+
+// ── Builder, step 2: the card in a workspace, the catalogue beside it ──────
+.lab-notice {
+  display:       block;
+  margin-bottom: var(--semantic-measurement-spacing-m);
+}
+
 .lab-builder {
   display:               grid;
   flex:                  1 1 0;
   min-height:            0;
-  grid-template-columns: $card-slot minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
   gap:                   var(--semantic-measurement-spacing-xl);
 
-  &__card {
+  // Room to work: the card centred on a board-coloured ground
+  &__stage {
     display:        flex;
     flex-direction: column;
-    gap:            var(--semantic-measurement-spacing-s);
+    gap:            var(--semantic-measurement-spacing-m);
+    min-width:      0;
+    padding:        var(--semantic-measurement-spacing-m);
+    border-radius:  var(--semantic-border-radius-m);
+    background:     var(--semantic-color-static-background-main-secondary);
+    overflow:       auto;
+  }
+
+  &__bar {
+    display:     flex;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-s);
+  }
+
+  &__clear { margin-left: auto; }
+}
+
+// The format, said once above the card, with the way back to it
+.lab-chip {
+  padding:       var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-s);
+  border:        var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-round);
+  background:    var(--semantic-color-static-background-main-primary);
+  font-size:     var(--semantic-font-text-style-size-m);
+  color:         var(--semantic-color-static-text-main-primary);
+}
+
+// Same slot as the board: what you see is what lands on the board
+.lab-preview {
+  flex-shrink:   0;
+  align-self:    center;
+  margin-block:  auto;
+  border-radius: var(--semantic-border-radius-m);
+  width:         calc(var(--semantic-measurement-sizing-3xl) * 4);
+  height:        calc(var(--semantic-measurement-sizing-3xl) * 4);
+
+  &--M { width: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-measurement-spacing-m)); }
+}
+
+// An item's actions: a column beside the card's right edge, at the height
+// of the selected item (CSS anchor positioning for the height)
+.lab-preview { position: relative; }
+.lab-cell--on { anchor-name: --lab-sel; }
+
+.lab-tools {
+  position:        absolute;
+  top:             anchor(--lab-sel center);
+  left:            calc(100% + var(--semantic-measurement-spacing-s));
+  z-index:         1;
+  display:         flex;
+  flex-direction:  column;
+  transform:       translateY(-50%);
+  gap:           var(--semantic-measurement-spacing-xxs);
+  padding:       var(--semantic-measurement-spacing-xxs);
+  border-radius: var(--semantic-border-radius-s);
+  background:    var(--semantic-color-static-background-main-primary);
+  box-shadow:    var(--semantic-shadow-modal);
+  animation:     lab-tools-in 140ms ease-out;
+}
+
+@keyframes lab-tools-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.lab-hint {
+  margin:    0;
+  font-size: var(--semantic-font-text-style-size-s);
+  color:     var(--semantic-color-static-text-main-secondary);
+
+  &--row {
+    display:     flex;
+    flex-wrap:   wrap;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-xs);
   }
 }
 
-.lab-format {
-  display: flex;
-  gap:     var(--semantic-measurement-spacing-l);
+// ── Category row ────────────────────────────────────────────────────────────
+// One line that scrolls sideways. An edge with more chips past it fades out;
+// on hover (or keyboard focus inside), a chevron on that edge scrolls to them.
+// Touch screens swipe: no chevrons there.
+$cats-fade: var(--semantic-measurement-sizing-xl);
+
+.lab-cats {
+  position:    relative;
+  flex-shrink: 0;
+
+  &__track {
+    display:          flex;
+    gap:              var(--semantic-measurement-spacing-xs);
+    padding-block:    var(--semantic-measurement-spacing-xxs);
+    overflow-x:       auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width:  none;
+
+    &::-webkit-scrollbar { display: none; }
+
+    ds-chip { flex-shrink: 0; scroll-snap-align: start; }
+  }
+
+  &--more-after &__track  { mask-image: linear-gradient(to right, black calc(100% - #{$cats-fade}), transparent); }
+  &--more-before &__track { mask-image: linear-gradient(to left, black calc(100% - #{$cats-fade}), transparent); }
+  &--more-before.lab-cats--more-after &__track {
+    mask-image: linear-gradient(to right, transparent, black #{$cats-fade}, black calc(100% - #{$cats-fade}), transparent);
+  }
+
+  // The chevron sits on the panel's own ground, faded on its inner side, so
+  // it never lies over half-faded chip text
+  &__nav {
+    position:    absolute;
+    top:         0;
+    bottom:      0;
+    z-index:     1;
+    display:     flex;
+    align-items: center;
+    opacity:     0;
+    transition:  opacity 150ms cubic-bezier(0.25, 1, 0.5, 1);
+
+    &--before {
+      left:          0;
+      padding-right: var(--semantic-measurement-spacing-m);
+      background:    linear-gradient(to right, var(--semantic-color-static-background-main-primary) 60%, transparent);
+    }
+
+    &--after {
+      right:        0;
+      padding-left: var(--semantic-measurement-spacing-m);
+      background:   linear-gradient(to left, var(--semantic-color-static-background-main-primary) 60%, transparent);
+    }
+  }
+
+  &:hover &__nav,
+  &:focus-within &__nav { opacity: 1; }
+
+  @media (hover: none) {
+    &__nav { display: none; }
+  }
 }
 
-// ── List of what can go in the selected place ──────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .lab-cats__nav { transition: none; }
+}
+
+// ── Catalogue ───────────────────────────────────────────────────────────────
 .lab-pick {
   display:        flex;
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-m);
   min-width:      0;
   min-height:     0;
-  padding-left:   var(--semantic-measurement-spacing-xl);
-  border-left:    var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+
+  // What a click does now: add, or replace the selected item
+  &__state {
+    display:        flex;
+    flex-wrap:      wrap;
+    align-items:    baseline;
+    gap:            var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+    min-height:     var(--semantic-measurement-sizing-l);
+  }
 
   &__head {
     display:        flex;
     flex-direction: column;
-    gap:            var(--semantic-measurement-spacing-xs);
-  }
-
-  &__eyebrow {
-    margin:      0;
-    font-size:   var(--semantic-font-text-style-size-s);
-    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-    color:       var(--semantic-color-static-text-main-tertiary);
+    gap:            var(--semantic-measurement-spacing-s);
   }
 
   &__title {
@@ -315,25 +604,12 @@ $card-slot: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-mea
   }
 
   &__actions {
-    display:    flex;
-    flex-wrap:  wrap;
-    gap:        var(--semantic-measurement-spacing-s);
-    margin-top: var(--semantic-measurement-spacing-xs);
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       var(--semantic-measurement-spacing-s);
   }
 
-  &__lead {
-    margin:     var(--semantic-measurement-spacing-s) 0 0;
-    font-size:  var(--semantic-font-text-style-size-m);
-    color:      var(--semantic-color-static-text-main-secondary);
-  }
-
-  &__tools {
-    display:     flex;
-    align-items: center;
-    gap:         var(--semantic-measurement-spacing-m);
-  }
-
-  &__search { flex: 1; min-width: 0; }
+  &__search { display: block; }
 
   // Only the list scrolls: what it acts on and its tools stay in view
   &__groups {
@@ -345,12 +621,27 @@ $card-slot: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-mea
     overflow-y:     auto;
   }
 
+
+
+  // Figures or Charts, inside a category
+  &__kind {
+    margin:      var(--semantic-measurement-spacing-s) 0 var(--semantic-measurement-spacing-xxs);
+    font-size:   var(--semantic-font-text-style-size-s);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__kind-note {
+    margin-left: var(--semantic-measurement-spacing-xs);
+    font-weight: var(--semantic-font-text-style-font-weight-regular);
+    color:       var(--semantic-color-static-text-main-secondary);
+  }
+
   &__group-title {
     margin:         0 0 var(--semantic-measurement-spacing-xs);
     font-size:      var(--semantic-font-text-style-size-s);
     font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
-    color:          var(--semantic-color-static-text-main-tertiary);
-    text-transform: uppercase;
+    color:          var(--semantic-color-static-text-main-secondary);
   }
 
   &__list {
@@ -366,21 +657,70 @@ $card-slot: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-mea
     gap:           var(--semantic-measurement-spacing-xs);
     border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
   }
+}
 
-  &__idle {
+// Template thumbnail: the card it makes, at the board's proportions (a small
+// card is square, a wide one twice as wide). A figure is a line, a section
+// title a darker line, a chart a block.
+.lab-thumb {
+  display:       flex;
+  flex-shrink:   0;
+  gap:           var(--semantic-measurement-spacing-xs);
+  height:        var(--semantic-measurement-sizing-2xl);
+  padding:       var(--semantic-measurement-spacing-xs);
+  border:        var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+  background:    var(--semantic-color-static-background-main-primary);
+
+  // A small card keeps the wide card's room after it: the names line up
+  &--S {
+    width:        var(--semantic-measurement-sizing-2xl);
+    margin-right: calc(var(--semantic-measurement-sizing-2xl) + var(--semantic-measurement-spacing-xs));
+  }
+  &--M { width: calc(var(--semantic-measurement-sizing-2xl) * 2 + var(--semantic-measurement-spacing-xs)); }
+
+  &--blank { border-style: dashed; }
+
+  &__col {
     display:        flex;
+    flex:           1;
     flex-direction: column;
-    align-items:    center;
-    gap:            var(--semantic-measurement-spacing-s);
-    padding:        var(--semantic-measurement-spacing-3xl) var(--semantic-measurement-spacing-l);
-    color:          var(--semantic-color-static-text-main-tertiary);
-    text-align:     center;
+    min-width:      0;
+  }
 
-    p { margin: 0; font-size: var(--semantic-font-text-style-size-l); color: var(--semantic-color-static-text-main-secondary); }
+  &__item {
+    display:     flex;
+    flex:        1 1 0;
+    align-items: center;
+
+    @for $n from 2 through 6 {
+      &--lines-#{$n} { flex-grow: $n; }
+    }
+
+    &--fig::before,
+    &--head::before {
+      content:       '';
+      width:         100%;
+      height:        var(--semantic-border-size-m);
+      border-radius: var(--semantic-border-radius-round);
+      background:    var(--semantic-color-static-border-subtle-tertiary);
+    }
+
+    &--head::before {
+      width:      70%;
+      background: var(--semantic-color-static-text-main-secondary);
+    }
+
+    &--chart {
+      margin-block:  var(--semantic-measurement-spacing-xxs);
+      border-radius: var(--semantic-border-radius-xs);
+      background:    var(--semantic-color-interactive-background-light-default);
+      box-shadow:    inset 0 0 0 var(--semantic-border-size-s) var(--semantic-color-interactive-border-strong-default);
+    }
   }
 }
 
-// One option of the list: the whole row is the hit area, one click places it
+// One option of the list: the whole button is the hit area, one click places it
 .lab-opt {
   display:         flex;
   flex:            1;
@@ -398,26 +738,38 @@ $card-slot: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-mea
   cursor:          pointer;
   transition:      background 120ms ease;
 
-  &:hover:not(:disabled) { background: var(--semantic-color-interactive-background-light-default); }
+  &:hover:not([aria-disabled='true']) { background: var(--semantic-color-interactive-background-light-default); }
 
-  &:disabled { cursor: not-allowed; }
-  // Off because it does not fit: faded. Off because it is on the card: its
-  // text goes grey, its tag stays crisp
-  &:disabled:not(&--used) { opacity: var(--semantic-measurement-opacity-disabled); }
+  // Off: still focusable, so its state is read out. Faded when it does not
+  // fit; when it is already on the card, its text goes grey and its tag stays crisp.
+  &[aria-disabled='true'] { cursor: not-allowed; }
+  &[aria-disabled='true']:not(&--used):not(&--here) { opacity: var(--semantic-measurement-opacity-disabled); }
 
   &--used &__label,
-  &--used &__value { color: var(--semantic-color-static-text-main-tertiary); }
+  &--used &__value { color: var(--semantic-color-static-text-main-secondary); }
 
   &:focus-visible {
     outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
     outline-offset: var(--semantic-border-size-none);
   }
 
-  // What the selected place holds now
+  // What the selected item is now
   &--here {
-    background: var(--semantic-color-interactive-background-light-default);
     box-shadow: inset 0 0 0 var(--semantic-border-size-s) var(--semantic-color-interactive-border-strong-default);
   }
+
+  &--template { padding-block: var(--semantic-measurement-spacing-s); }
+  &--template &__text { flex: 1; }
+
+  // The chart of a figure, on its row: a small button of its own
+  &--chart {
+    flex:            0 0 calc(var(--semantic-measurement-sizing-3xl) * 2);
+    justify-content: center;
+    gap:             var(--semantic-measurement-spacing-xxs);
+  }
+
+  // A chart with no room: still clickable, the click says why and how
+  &--blocked[aria-disabled='true'] { cursor: help; }
 
   &__text {
     display:        flex;
@@ -434,7 +786,7 @@ $card-slot: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-mea
   &__where {
     font-size:   var(--semantic-font-text-style-size-s);
     line-height: var(--semantic-font-text-style-line-height-s);
-    color:       var(--semantic-color-static-text-main-tertiary);
+    color:       var(--semantic-color-static-text-main-secondary);
   }
 
   &__end {
@@ -452,133 +804,38 @@ $card-slot: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-mea
     font-variant-numeric: tabular-nums;
   }
 
-  // Chart row: the curve stands where a figure shows its value
+  &__check { color: var(--semantic-color-static-text-main-secondary); flex-shrink: 0; }
+
   &__spark {
     display:        block;
     flex-shrink:    0;
-    width:          calc(var(--semantic-measurement-sizing-3xl) * 2);
+    width:          calc(var(--semantic-measurement-sizing-3xl) * 1.5);
     pointer-events: none;
   }
 }
 
-// ── Figures display: two choices that draw themselves ──────────────────────
-.lab-look {
-  display:               grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap:                   var(--semantic-measurement-spacing-s);
-
-  &__opt {
-    display:        flex;
-    flex-direction: column;
-    gap:            var(--semantic-measurement-spacing-xxs);
-    padding:        var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-s);
-    border:         var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
-    border-radius:  var(--semantic-border-radius-s);
-    background:     var(--semantic-color-static-background-main-primary);
-    font-family:    inherit;
-    text-align:     left;
-    cursor:         pointer;
-    transition:     border-color 120ms ease, background 120ms ease;
-
-    &:hover:not(:disabled) { border-color: var(--semantic-color-interactive-border-strong-default); }
-
-    &:disabled {
-      cursor:  not-allowed;
-      opacity: var(--semantic-measurement-opacity-disabled);
-    }
-
-    &:focus-visible {
-      outline:        var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
-      outline-offset: var(--semantic-border-size-s);
-    }
-
-    &--on {
-      border-color: var(--semantic-color-interactive-border-strong-default);
-      background:   var(--semantic-color-interactive-background-light-default);
-      box-shadow:   inset 0 0 0 var(--semantic-border-size-s) var(--semantic-color-interactive-border-strong-default);
-    }
-  }
-
-  // A real figure in the chosen layout, so the choice reads at a glance
-  &__sample {
-    display:       flex;
-    gap:           var(--semantic-measurement-spacing-xxs);
-    padding-block: var(--semantic-measurement-spacing-xs);
-    margin-bottom: var(--semantic-measurement-spacing-xxs);
-    border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
-
-    &--stacked { flex-direction: column; }
-    &--inline  { justify-content: space-between; align-items: baseline; }
-  }
-
-  &__label {
-    font-size: var(--semantic-font-text-style-size-s);
-    color:     var(--semantic-color-static-text-main-tertiary);
-  }
-
-  &__value {
-    font-size:            var(--semantic-font-text-style-size-s);
-    font-weight:          var(--semantic-font-text-style-font-weight-bold);
-    color:                var(--semantic-color-static-text-main-primary);
-    font-variant-numeric: tabular-nums;
-  }
-
-  &__name {
-    font-size:   var(--semantic-font-text-style-size-m);
-    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-    color:       var(--semantic-color-static-text-main-primary);
-  }
-
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .lab-cell, .lab-opt { transition: none; }
+  .lab-tools, .lab-tile { animation: none; transition: none; }
+  .lab-cell, .lab-cell__add, .lab-opt, .lab-grid__free { transition: none; }
+  .lab-grid__cell--flash { animation: none; }
 }
 
-// Same slot as the board: 1 column = 4 × sizing-3xl wide, 1 row = 4 × sizing-3xl tall
-.lab-preview__cell {
-  overflow:      hidden;
-  border-radius: var(--semantic-border-radius-m);
-  width:         calc(var(--semantic-measurement-sizing-3xl) * 4);
-  height:        calc(var(--semantic-measurement-sizing-3xl) * 4);
-
-  &--M { width: calc(var(--semantic-measurement-sizing-3xl) * 8 + var(--semantic-measurement-spacing-m)); }
-}
-
-
-.lab-actions {
-  display: flex;
-  gap:     var(--semantic-measurement-spacing-s);
-}
-
-
-.lab-field {
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--semantic-measurement-spacing-s);
-
-  &__label {
-    margin:      0;
-    font-size:   var(--semantic-font-text-style-size-l);
-    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
-    color:       var(--semantic-color-static-text-main-primary);
-  }
-
-  &__hint {
-    margin:    0;
-    font-size: var(--semantic-font-text-style-size-s);
-    color:     var(--semantic-color-static-text-main-tertiary);
-
-    // Hidden, not removed: the line keeps its height and nothing below moves
-    &--off { visibility: hidden; }
-  }
-}
-
-// Custom card title on one line: a wrapped title takes a whole figure row
+// Custom card title on one line: a wrapped title takes a whole figure line
 // from a 1 × 1 card
 .lab-shell ::ng-deep .ds-widget-card__title {
   min-width:     0;
   overflow:      hidden;
   white-space:   nowrap;
   text-overflow: ellipsis;
+}
+
+// Builder: the title is the rename control, set in the title's own type
+.lab-shell--live ::ng-deep {
+  .ds-widget-card__title { flex: 1; overflow: visible; }
+  .ds-inline-edit__value { font-weight: var(--semantic-font-text-style-font-weight-semi-bold); }
+}
+
+.lab-actions {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-s);
 }

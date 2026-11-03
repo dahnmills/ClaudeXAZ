@@ -158,6 +158,13 @@ export class ButtonComponent {
 Les états purement visuels (hover, active, focus) restent en CSS.  
 Les états qui changent le comportement ou la structure (disabled, error, readonly) deviennent des inputs Angular.
 
+### Dialogues et réglages (a11y)
+
+- Toute boîte modale porte `dsFocusTrap` (`shared/ui/focus-trap`) : focus dans la boîte à l'ouverture, Tab bouclé
+  dedans, focus rendu au déclencheur à la fermeture. Déjà posé sur `ds-modal` et `ds-confirm-dialog`.
+- `ds-segmented-control` : `mode="tabs"` (défaut) pour basculer une vue, `mode="radio"` pour un réglage
+  (radiogroup, flèches, option désactivée toujours annoncée, `describedBy` vers la raison).
+
 ### Syntaxe template
 
 ```html
