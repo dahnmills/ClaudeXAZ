@@ -1,0 +1,83 @@
+# Clés Figma des tokens Qirin (librairie Tokens, collection Semantic)
+
+Relevé du 2026-11-03 dans `4TxqgJPVFZc4ZKw4JZ6OAn`. Format `Nom|clé`, à passer à
+`figma.variables.importVariableByKeyAsync(clé)` / `figma.importStyleByKeyAsync(clé)`.
+Note : le token CSS `--semantic-color-static-text-main-reversed` (blanc) n'a pas
+d'équivalent dans Figma ; le libellé du Button primaire utilise
+`Color/Interactive/Text/Neutral/Default`.
+
+## Usuels
+
+Color/Static/Background/Main/Primary|24cbcb33a9a054c76dd9b5ac32456c3cd328475e
+Color/Static/Background/Main/Secondary|8b55565c6709cfaab1f83b315febfa876e7b4c72
+Color/Static/Background/Main/Tertiary|5bb86eaa324409d6f4d0f7f506bcfd782cfef9bf
+Color/Static/Background/Main/Alt/Primary|d2c03af81fdb363aeaba03594ff4e34470f3b8a6
+Color/Static/Background/Brand|1d168f0cb0944fc30ab0c1371b195faf7c6763f7
+Color/Static/Text/Main/Primary|6f31ac24008c58e05a2d8d6837f94a0f6f2b78ad
+Color/Static/Text/Main/Secondary|2cc81c044487da4b2978eca7a1808eec8014a1e8
+Color/Static/Text/Main/Tertiary|7b0873014a9894d41e7ded63d74aa2153db4422a
+Color/Static/Text/Brand|95748ea4ad9544b3384019c21cefd480470eafa0
+Color/Static/Icon/Main/Primary|5375e35ee8a061fb5c084d4d37f861952b5bfa9e
+Color/Static/Icon/Main/Secondary|3756d37e934a68c24a83d09d0199d7ee52b678ee
+Color/Static/Border/Main/Primary|bb7b136bb11b5f197343df9553c2382deec72c67
+Color/Static/Border/Main/Tertiary|92dd05e774c2db7b41449b49465fe9c2d323cac5
+Color/Static/Border/Subtle/Tertiary|c3cdcc4d25564b16eb3a391aacc8d3504c9b6f97
+Color/Interactive/Background/Neutral/Default|f91a61d3a85da02a591404c3239e10a3d8503e8d
+Color/Interactive/Background/Strong/Default|0c163037a079926f22dbf8444765c2d7ffd44838
+Color/Interactive/Background/Light/Default|5ad3d620c30ef9250293b5dd410e1dbcab160b73
+Color/Interactive/Background/Light/Hover|af628c24f88073cbd58db3e49b395a414c6d614c
+Color/Interactive/Background/Muted/Default|6b45a6a48cb5cb4fa1e6ac89d070d7da3966c713
+Color/Interactive/Background/Muted/Hover|c8e02c96677280db0287379997fda4a6791cf015
+Color/Interactive/Text/Neutral/Default|8a297f5b5e461f626e6afbbea7e5a9f4819aee93
+Color/Interactive/Text/Strong/Default|adc21514fe82fb0427aeea1d85a44e5d01fd49cd
+Color/Interactive/Text/Muted/Default|98626201ddbbe78e7c55a59d4b1498b0be9ded6a
+Color/Interactive/Icon/Strong/Default|c0b85e0cb52dfbf0e8ca11da8799ff735f45741c
+Color/Interactive/Icon/Muted/Default|4de36043a5e2e0521edcca941d75b825beb849d0
+Color/Interactive/Icon/Neutral/Default|c31b0d0968bc380d7808cdad590a0b71e35811f2
+Color/Interactive/Border/Strong/Default|62ee7db8395f0d6ee0e60c78dc675f9dcf38e792
+Color/Interactive/Border/Medium/Default|9f36cf7bb19c44c6307fa8df18c2eefa764fbaa1
+Color/Interactive/Border/Muted/Default|ce22b8780456b284ede0b978321a77f1f3902d3e
+Color/Interactive/Border/Focus|6c1338d3c3cbff8113ccddcd3314e6dc4b896a50
+Measurement/Spacing/None|32eb2bee5197c9a9ccdeb09e2b232fc14279720c
+Measurement/Spacing/XXS|a666d33afcb4d465f5d60755a9e1427d3f6f1ea6
+Measurement/Spacing/XS|b6250c69868617b904dfd23af3a5f8cea936abe3
+Measurement/Spacing/S|894733ce94dc5c05bd2a0207c2946417233b5aed
+Measurement/Spacing/M|29937d51fa5c361eeecbfc7e89b7c4e22aa88543
+Measurement/Spacing/L|8ac2c55ed5c8c9d3c04413dc69fd6fc323aa8f3f
+Measurement/Spacing/XL|e09a4861230a33ee49f45f6115e63be3044f2f61
+Measurement/Spacing/2XL|eb1806223fd21cf62e34d2bdcdeb284bca48304a
+Measurement/Spacing/3XL|366f95a654e2ccdcb287bb3d70d918f1055c5bfb
+Measurement/Sizing/XXS|8e1e73885abf0e26c6712b663aa36b15b313cdb4
+Measurement/Sizing/XS|952f84bf949b38dada6b3e909c19a51f1fa8d07e
+Measurement/Sizing/S|7261355c210af5c8b752ad9f89ef95dee47050b3
+Measurement/Sizing/M|41652c0329b14e1916ed3359a7abed2d41b92524
+Measurement/Sizing/L|f07c42f583a93eb9e8f7f9e200cc17d42d71517f
+Border/Radius/XS|41826e090bb8f970a5b4500d003724b3ddcb74b6
+Border/Radius/S|e3eb315fbbeaae1a73d541b74592506826a0dce7
+Border/Radius/M|497d0c150f353b316cf60440005f8969090aa38c
+Border/Radius/L|e2808e745b839997325a27ce23049dcb766f053b
+Border/Radius/Round|c8b27b5282d78b84fc2c1a5871aa59793216e6b3
+Border/Size/S|0502d9d12fe4f7d47d52b833656efd92da3ff3e2
+Border/Size/M|9b7bf82ae2d4835ce29cba79c7af05d9ecfc8dee
+
+## Styles de texte
+
+Title/H1|0d9bbe014e077cda3f8864320c5ccc2d1ba9c699
+Title/H2|eec5ffab3d09eb7e7f9fd61dc28013308719384c
+Title/H3|9c3b2714cd664aad4ed94ad7da280e99cf301160
+Title/H4|8a94d0dded33e1aa4e61ad08eece01f701f177f9
+Body/L/Regular|991a0807bb103fd3cab93f4c80ca0fc63aa70edb
+Body/L/Semi Bold|eccdf8053dde38ca892a5124f29e67b4c1ab2b40
+Body/L/Bold|a49a8f22f97ac1fdd574ff37f7209edfaa4912d9
+Body/M/Regular|338010eda55bb9d5239c47b9a69bc10f41a7d916
+Body/M/Semi Bold|c397ff0cece3e4c6a2e53c567b47c402c06b108e
+Body/M/Bold|67af84b04d5d401fd25f75e77f2c41c35f706e80
+Body/S/Regular|092fa8c4ce222a0d27b4fee53ddb7bd00f80a0ce
+Body/S/Semi Bold|4ae6bade0c1e75923da6dac3926daca1575edd08
+Body/S/Bold|67e4f127b136e622f2b6d42b06b46dfd57e4a2c7
+Display/L/Bold|ce450abc01ec89ea688174a250e9753578652a88
+Display/M/Bold|e7160e20a5a0fe2c19672488416144a434c69720
+Display/S/Bold|46a2661abb6e0a64c8cfb71ac371537bee3a9965
+
+Pour un token absent de cette liste : un `use_figma` en lecture sur le fichier Tokens
+(`getLocalVariablesAsync`, filtre sur le nom) est moins coûteux que `search_design_system`.
