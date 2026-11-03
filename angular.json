@@ -24,7 +24,7 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [{ "glob": "**/*", "input": "public" }],
-            "styles": ["src/styles/styles.scss"],
+            "styles": ["node_modules/driver.js/dist/driver.css", "src/styles/styles.scss"],
             "scripts": [],
             "stylePreprocessorOptions": {
               "includePaths": ["src/styles"]
@@ -61,7 +61,7 @@
             "browserTarget": "design-system:build:development",
             "compodoc": false,
             "port": 6006,
-            "styles": ["src/styles/styles.scss"],
+            "styles": ["node_modules/driver.js/dist/driver.css", "src/styles/styles.scss"],
             "stylePreprocessorOptions": {
               "includePaths": ["src/styles"]
             }
@@ -74,7 +74,7 @@
             "browserTarget": "design-system:build:production",
             "compodoc": false,
             "outputDir": "dist/storybook",
-            "styles": ["src/styles/styles.scss"],
+            "styles": ["node_modules/driver.js/dist/driver.css", "src/styles/styles.scss"],
             "stylePreprocessorOptions": {
               "includePaths": ["src/styles"]
             }

@@ -15,8 +15,9 @@
       <ds-icon name="search" [size]="16" />
     </ds-button-icon>
     <!-- « ? » : même mécanique de dropdown que le compte, à gauche de la barre
-         d'actions. Deux entrées seulement. Le centre d'aide, et l'aide-mémoire
-         clavier, dont le raccourci est affiché DANS l'entrée. -->
+         d'actions. Le centre d'aide, l'aide-mémoire clavier (raccourci affiché
+         DANS l'entrée), puis le tour guidé : même entrée sur toutes les pages,
+         grisée là où la page n'a pas encore de tour. -->
     <div class="ut-help" (click)="$event.stopPropagation()">
       <ds-button-icon
         type="tertiary"
@@ -37,6 +38,11 @@
               [shortcut]="['?']"
               (clicked)="openShortcutsPanel()"
             />
+            <span class="ut-help__tour"
+              [dsTooltip]="pageTour() ? '' : 'No tour for this page yet'" dsTooltipPosition="left">
+              <ds-flyout-menu-item [label]="tourLabel" icon="play"
+                [disabled]="!pageTour()" (clicked)="startTour()" />
+            </span>
           </ds-flyout-menu>
         </div>
       }
