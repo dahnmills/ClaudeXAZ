@@ -95,11 +95,12 @@
   }
 }
 
-// ── Transitions : tout se fond, rien n'apparaît ni ne disparaît d'un coup ──
-// Voile et bulle s'effacent quand le tour attend la page (après un clic) ou se
-// ferme, puis reviennent en fondu ; entre deux étapes, la découpe du voile glisse
-// d'un élément à l'autre (animation de driver.js, durée réglée par le service).
-.driver-overlay,
+// ── Transitions : le voile reste, la bulle se fond ────────────
+// Le voile (backdrop du DS, celui des modales et drawers) reste posé du début à la
+// fin du tour. Après un clic, la bulle s'efface et le service referme le trou du
+// voile : la page réagit sous un voile uniforme, sans cadre clair sur du vide. À
+// l'étape suivante, le trou s'ouvre depuis le centre du nouvel élément et la
+// bulle revient en fondu.
 .driver-popover.qirin-walkthrough {
   transition: opacity 260ms ease;
 }
@@ -108,11 +109,19 @@
   transition: outline-color 260ms ease;
 }
 
-body.qirin-tour--waiting,
+body.qirin-tour--waiting {
+  .driver-popover.qirin-walkthrough { opacity: 0; pointer-events: none; }
+  .driver-active-element { outline-color: transparent; animation: none; transition-duration: 120ms; }
+}
+
+// Fermeture : tout s'efface, voile compris
+.driver-overlay {
+  transition: opacity 260ms ease;
+}
+
 body.qirin-tour--closing {
   .driver-overlay,
   .driver-popover.qirin-walkthrough { opacity: 0; pointer-events: none; }
-
   .driver-active-element { outline-color: transparent; animation: none; }
 }
 
