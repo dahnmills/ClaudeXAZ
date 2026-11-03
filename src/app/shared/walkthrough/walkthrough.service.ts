@@ -46,8 +46,9 @@ export class WalkthroughService {
       allowKeyboardControl: false,
       overlayClickBehavior: 'none',
       popoverClass: 'qirin-walkthrough',
-      stagePadding: 4,
-      stageRadius: 4,
+      // Assez de marge dans la découpe du voile pour que l'onde de la bordure focus se voie
+      stagePadding: 14,
+      stageRadius: 8,
       // Le clic est écouté dès le début de la mise en avant : un utilisateur rapide
       // qui clique pendant l'apparition de la bulle ne doit pas bloquer le tour.
       onHighlightStarted: el => this.armClick(el),

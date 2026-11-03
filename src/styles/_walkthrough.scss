@@ -75,17 +75,24 @@
 }
 
 // ── Élément à toucher : bordure focus qui pulse ───────────────
-// Le contour du DS (border focus) autour de l'élément, qui respire doucement.
-// Seuls outline-offset et l'opacité du contour bougent : pas de reflow, pas de lag.
+// Deux couches : le contour focus du DS, plein et fixe (on sait toujours où
+// cliquer), et une onde de la même couleur qui part du contour et s'efface.
+// Seuls l'ombre portée et son opacité bougent : pas de reflow.
 .driver-active .driver-active-element {
-  outline:        2px solid var(--semantic-color-interactive-border-focus);
+  outline:        3px solid var(--semantic-color-interactive-border-focus);
   outline-offset: var(--semantic-measurement-spacing-xxs);
-  animation:      qirin-tour-pulse 1.6s ease-in-out infinite;
+  animation:      qirin-tour-pulse 1.2s ease-out infinite;
 }
 
 @keyframes qirin-tour-pulse {
-  0%, 100% { outline-offset: var(--semantic-measurement-spacing-xxs); outline-color: var(--semantic-color-interactive-border-focus); }
-  50%      { outline-offset: var(--semantic-measurement-spacing-xs);  outline-color: color-mix(in srgb, var(--semantic-color-interactive-border-focus) 35%, transparent); }
+  0% {
+    box-shadow: 0 0 0 var(--semantic-measurement-spacing-xs)
+                color-mix(in srgb, var(--semantic-color-interactive-border-focus) 80%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 calc(var(--semantic-measurement-spacing-s) + var(--semantic-measurement-spacing-xs) + var(--semantic-measurement-spacing-xxs))
+                color-mix(in srgb, var(--semantic-color-interactive-border-focus) 0%, transparent);
+  }
 }
 
 // ── Attente entre deux étapes ─────────────────────────────────
