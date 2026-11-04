@@ -5,6 +5,8 @@
       @if (optional()) {
         <span class="ds-input-text__optional">(optional)</span>
       }
+      <!-- Aide contextuelle au libellé (ex. icône info + tooltip) -->
+      <ng-content select="[slot=label-info]" />
     </label>
   }
 

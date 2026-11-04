@@ -1,0 +1,185 @@
+<app-topbox-test-shell>
+  <ds-page-header class="rm-header" [topbox]="false" [breadcrumb]="true" [tabs]="true">
+    <ds-breadcrumbs slot="breadcrumbs">
+      <ds-crumb label="Home" href="#" />
+      <ds-crumb label="Tools" href="#" />
+      <ds-crumb label="Reject Management" [currentPage]="true" />
+    </ds-breadcrumbs>
+
+    <ds-page-title slot="title" title="Reject Management">
+      <ds-link slot="actions" href="#" weight="semi-bold">
+        <ds-icon slot="icon-left" name="arrow-right" [size]="16" /> Go to documents
+      </ds-link>
+    </ds-page-title>
+
+    <div slot="tabs" class="rm-tabs">
+      @for (t of tabs; track t.id) {
+        <ds-tab [selected]="activeTab() === t.id" [counter]="totals[t.id]" counterStyle="inline"
+          (clicked)="setTab(t.id)">{{ t.label }}</ds-tab>
+      }
+    </div>
+  </ds-page-header>
+
+  <div class="rm-body">
+    <!-- Barre d'actions, mécanique de la page Filters : le select applique un
+         filtre enregistré, Filter ouvre le drawer ; à droite, les actions sur
+         le tableau -->
+    <div class="rm-actions">
+      <ds-select
+        placeholder="Select your filters"
+        [options]="savedFilterOptions()"
+        [value]="activeSavedFilterId() ?? ''"
+        (selectionChange)="onSavedSelectChange($event)"
+      />
+
+      <div class="rm-actions__buttons">
+        <ds-button type="secondary" tone="default" (clicked)="openDrawer()">
+          Filter@if (activeFiltersCount() > 0) { ({{ activeFiltersCount() }}) }
+        </ds-button>
+        <span class="rm-actions__spacer"></span>
+        <div class="rm-columns">
+          <ds-button type="tertiary" (clicked)="columnsOpen.set(!columnsOpen())">
+            <ds-icon slot="icon-left" name="settings" [size]="16" /> Manage columns
+          </ds-button>
+          @if (columnsOpen()) {
+            <div class="rm-columns__flyout">
+              <ds-flyout-menu>
+                <div class="rm-columns__options">
+                  @for (c of columns; track c.key) {
+                    <ds-checkbox [label]="c.title" [checked]="isShown(c.key)"
+                      (checkedChange)="toggleColumn(c.key, $event)" />
+                  }
+                </div>
+              </ds-flyout-menu>
+            </div>
+          }
+        </div>
+        <!-- Actions sur la sélection : grisées tant que rien n'est coché,
+             chacune s'exécute tout de suite (pas d'étape Validate). Archive et
+             Move to attendent la décision du métier (SHOW_UNDECIDED_ACTIONS) -->
+        @if (showUndecided) {
+          <div class="rm-more">
+            <ds-button type="tertiary" [disabled]="!selectedIds().length" (clicked)="moreOpen.set(!moreOpen())">
+              More actions <ds-icon slot="icon-right" name="chevron-down" [size]="16" />
+            </ds-button>
+            @if (moreOpen() && selectedIds().length) {
+              <div class="rm-more__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="Archive" icon="archive"
+                    (clicked)="archive(selectedIds(), selectionCount()); moreOpen.set(false)" />
+                  <ds-flyout-menu-item label="Move to functional" icon="switch"
+                    [disabled]="!canMoveTo(selectedIds(), 'functional')"
+                    (clicked)="moveTo(selectedIds(), 'functional', selectionCount()); moreOpen.set(false)" />
+                  <ds-flyout-menu-item label="Move to technical" icon="switch"
+                    [disabled]="!canMoveTo(selectedIds(), 'technical')"
+                    (clicked)="moveTo(selectedIds(), 'technical', selectionCount()); moreOpen.set(false)" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
+        }
+        <ds-button type="secondary" [disabled]="!selectedIds().length" (clicked)="askDelete(selectedIds(), selectionCount())">
+          <ds-icon slot="icon-left" name="trash" [size]="16" /> Delete
+        </ds-button>
+        <ds-button type="primary" [disabled]="!selectedIds().length" (clicked)="resubmit(selectedIds(), selectionCount())">
+          <ds-icon slot="icon-left" name="refresh" [size]="16" /> Resubmit
+        </ds-button>
+      </div>
+    </div>
+
+    <!-- Toute la page cochée : proposer d'étendre à tous les rejets de l'onglet,
+         comme « Resubmit all » de l'outil actuel -->
+    @if (showSelectAllNotice()) {
+      <ds-functional-notice status="info" emphasis="low">
+        <span class="rm-select-all">
+          @if (allMatching()) {
+            All {{ matchingLabel() }} are selected.
+            <ds-button type="plain" tone="accent" (clicked)="clearSelection()">Clear selection</ds-button>
+          } @else {
+            {{ selectedIds().length }} rejects on this page are selected.
+            <ds-button type="plain" tone="accent" (clicked)="selectAllMatching()">Select all {{ matchingLabel() }}</ds-button>
+          }
+        </span>
+      </ds-functional-notice>
+    }
+
+    <div class="rm-table">
+      <ds-table-row>
+        <ds-cell-header type="selection"
+          [allSelected]="allSelected()" [allIndeterminate]="someSelected()"
+          (allSelectedChange)="toggleAll($event)" />
+        @for (c of visibleColumns(); track c.key) {
+          <ds-cell-header [class]="'rm-col--' + c.key" type="default" [title]="c.title"
+            [sortable]="true" [sortDirection]="sortDirectionOf(c.key)"
+            (sortClicked)="onSort(c.key)" />
+        }
+        <ds-cell-header type="action" />
+      </ds-table-row>
+
+      @for (row of rows(); track row.id) {
+        <ds-table-row [interactive]="true" (clicked)="openReject(row.id)">
+          <ds-cell-selection control="check" [ariaLabel]="'Select ' + row.type"
+            [checked]="isSelected(row.id)"
+            (checkedChange)="toggleRow(row.id, $event)" />
+          @for (c of visibleColumns(); track c.key) {
+            <ds-cell [class]="'rm-col--' + c.key">{{ cellValue(row, c.key) }}</ds-cell>
+          }
+          <ds-cell-action ariaLabel="Reject actions">
+            <ds-flyout-menu slot="menu">
+              <ds-flyout-menu-item label="View details" icon="eye" (clicked)="openReject(row.id)" />
+              <ds-flyout-menu-item label="Resubmit" icon="refresh" (clicked)="resubmit([row.id])" />
+              @if (showUndecided) {
+                <ds-flyout-menu-item label="Archive" icon="archive" (clicked)="archive([row.id])" />
+                <ds-flyout-menu-item label="Move to functional" icon="switch"
+                  [disabled]="!canMoveTo([row.id], 'functional')" (clicked)="moveTo([row.id], 'functional')" />
+                <ds-flyout-menu-item label="Move to technical" icon="switch"
+                  [disabled]="!canMoveTo([row.id], 'technical')" (clicked)="moveTo([row.id], 'technical')" />
+              }
+              <ds-flyout-menu-item label="Delete" icon="trash" (clicked)="askDelete([row.id])" />
+            </ds-flyout-menu>
+          </ds-cell-action>
+        </ds-table-row>
+      } @empty {
+        <p class="rm-table__empty">No reject matches these filters</p>
+      }
+    </div>
+  </div>
+
+  <rm-reject-correction-modal slot="modals"
+    [open]="openedId() !== null"
+    [reject]="openedReject()"
+    [record]="openedRecord()"
+    [resolution]="openedResolution()"
+    [suspended]="pendingDeleteIds().length > 0"
+    (closed)="openedId.set(null)"
+    (resubmitted)="onResubmitted($event)"
+    (deleteRequested)="askDelete([$event])" />
+
+  <ds-confirm-dialog slot="modals"
+    [open]="pendingDeleteIds().length > 0"
+    [title]="'Delete ' + pendingDeleteLabel() + '?'"
+    tone="danger"
+    confirmLabel="Delete"
+    (confirmed)="confirmDelete()"
+    (cancelled)="pendingDeleteIds.set([])"
+    (closed)="pendingDeleteIds.set([])">
+    <span>The {{ pendingDeleteIds().length > 1 ? 'rejects are' : 'reject is' }} removed for good and can't be resubmitted later.</span>
+  </ds-confirm-dialog>
+</app-topbox-test-shell>
+
+<ds-filter-drawer
+  [open]="drawerOpen()"
+  title="Filters"
+  [filters]="filters"
+  [savedFilters]="savedFilters()"
+  [currentFilters]="currentFilters()"
+  [activeSavedFilterId]="activeSavedFilterId()"
+  (currentFiltersChange)="currentFilters.set($event)"
+  [currentTab]="currentTab()"
+  (currentTabChange)="currentTab.set($event)"
+  (savedFiltersChange)="savedFilters.set($event)"
+  (savedFilterApplied)="onSavedFilterApplied($event)"
+  (savedFilterCreated)="onSavedFilterCreated($event)"
+  (closed)="drawerOpen.set(false)"
+  (applied)="onApplied($event)"
+/>

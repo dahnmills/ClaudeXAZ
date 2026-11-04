@@ -1,0 +1,265 @@
+// =============================================================
+// Correction d'un rejet par un écran carrefour : la carte Errors (toutes les
+// erreurs), puis une carte par bloc du message ; chaque carte ouvre son écran
+// dans la même modale.
+// =============================================================
+
+:host {
+  font-family: var(--semantic-font-family);
+}
+
+// ── Carrefour ──────────────────────────────────────────────────────────────
+.rc__group {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+}
+
+.rc__group-title {
+  margin:      var(--semantic-measurement-spacing-none);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+// Carte cliquable en entier : statut, titre et compteur, indication, chevron
+.rc__card {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m);
+  // Resserrée : le carrefour tient dans la hauteur du wizard sans défiler
+  padding:     var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  cursor:      pointer;
+  transition:  background 0.15s ease;
+
+  &:hover {
+    background: var(--semantic-color-interactive-background-light-alt-hover);
+  }
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: -2px;
+  }
+}
+
+.rc__card-status {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-icon-main-functional-negative);
+
+  &--done {
+    color: var(--semantic-color-static-icon-main-functional-positive);
+  }
+}
+
+.rc__card-text {
+  display:        flex;
+  flex:           1 1 0;
+  flex-direction: column;
+  min-width:      0;
+}
+
+.rc__card-title {
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.rc__card-count {
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-functional-negative);
+
+  &--done {
+    color: var(--semantic-color-static-text-main-functional-positive);
+  }
+}
+
+.rc__card-hint {
+  flex-shrink: 0;
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+.rc__card-chevron {
+  flex-shrink: 0;
+  color:       var(--semantic-color-interactive-text-strong-default);
+}
+
+// ── Écran d'une carte : retour au carrefour par le Back du footer ──────────
+.rc__screen-title {
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+// Panneau gris du wizard de création de société : il défile seul dans la
+// hauteur fixe de la modale ; une famille = un titre en capitales + une carte
+// blanche qui porte les champs
+.rc__panel {
+  flex:           1 1 0;
+  min-height:     0;
+  overflow-y:     auto;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        var(--semantic-measurement-spacing-l);
+  background:     var(--semantic-color-static-background-main-secondary);
+  border-radius:  var(--semantic-border-radius-s);
+}
+
+.rc__family {
+  font-size:      var(--semantic-font-text-style-size-s);
+  font-weight:    var(--semantic-font-text-style-font-weight-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+  text-transform: uppercase;
+  color:          var(--semantic-color-static-text-main-tertiary);
+}
+
+.rc__card-white {
+  padding:       var(--semantic-measurement-spacing-m);
+  background:    var(--semantic-color-static-background-main-primary);
+  border-radius: var(--semantic-border-radius-s);
+}
+
+// « i » à côté du libellé : nom technique du champ au survol et au focus
+.rc__info {
+  display:     inline-flex;
+  color:       var(--semantic-color-static-icon-main-tertiary);
+  cursor:      help;
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+    border-radius:  var(--semantic-border-radius-round);
+  }
+}
+
+// Un libellé long prend deux colonnes plutôt que deux lignes
+.rc__fields {
+  display:               grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:                   var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-l);
+}
+
+.rc__field {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+  min-width:      0;
+
+  &--wide {
+    grid-column: span 2;
+  }
+}
+
+.rc__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+
+// ── Résolution : pourquoi le rejet, comment en sortir ──────────────────────
+.rc__group-head {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+}
+
+.rc__group-note {
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+.rc__why {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+}
+
+.rc__text {
+  margin:      var(--semantic-measurement-spacing-none);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-primary);
+
+  &--secondary {
+    color: var(--semantic-color-static-text-main-secondary);
+  }
+}
+
+.rc__strong {
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+}
+
+.rc__steps {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  margin:         var(--semantic-measurement-spacing-none);
+  padding:        var(--semantic-measurement-spacing-none);
+  list-style:     none;
+}
+
+.rc__step {
+  display:     flex;
+  align-items: flex-start;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+
+// Numéro d'étape en pastille neutre, coche verte une fois l'étape faite
+.rc__step-index {
+  display:         inline-flex;
+  flex-shrink:     0;
+  align-items:     center;
+  justify-content: center;
+  width:           var(--semantic-measurement-spacing-l);
+  height:          var(--semantic-measurement-spacing-l);
+  border-radius:   var(--semantic-border-radius-round);
+  background:      var(--semantic-color-static-background-main-tertiary);
+  font-size:       var(--semantic-font-text-style-size-s);
+  font-weight:     var(--semantic-font-text-style-font-weight-semi-bold);
+  color:           var(--semantic-color-static-text-main-secondary);
+
+  &--done {
+    background: transparent;
+    color:      var(--semantic-color-static-icon-main-functional-positive);
+  }
+}
+
+.rc__step-body {
+  display:        flex;
+  flex:           1 1 0;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  min-width:      0;
+  // Aligne la première ligne de texte sur le centre de la pastille
+  padding-top:    var(--semantic-measurement-spacing-xxs);
+}
+
+.rc__step-actions {
+  display:     flex;
+  flex-wrap:   wrap;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m);
+}
+
+// Valeur reçue sous une liste dataref : la liste ne montre pas un code inconnu
+.rc__hint {
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+.rc__sr-only {
+  position:    absolute;
+  width:       1px;
+  height:      1px;
+  overflow:    hidden;
+  clip:        rect(0 0 0 0);
+  white-space: nowrap;
+}

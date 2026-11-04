@@ -9,6 +9,8 @@ export interface Screen {
   label: string;
   hint: string;
   version: ScreenVersion;
+  /** Catégorie de la feature : les écrans d'une même catégorie sont groupés sous son titre. */
+  category?: string;
 }
 
 const V1: ScreenVersion = { major: 1, minor: 0, patch: 0 };
@@ -33,6 +35,7 @@ export const SCREENS: Screen[] = [
   { path: 'card-builder-lab', label: 'Card Builder Lab', hint: 'Custom card builder redesign', version: { ...V1 } },
   { path: 'coverbook/buyer/4421706', label: 'Coverbook - Buyer', hint: 'Buyer covers: credit limits and grade based covers', version: { ...V1 } },
   { path: 'coverbook/policy/2590417133', label: 'Coverbook - Policy', hint: 'Policy covers: credit limits and grade based covers', version: { ...V1 } },
+  { path: 'reject-management', label: 'Reject Management', hint: 'Rejects by category, in a table', version: { ...V1 }, category: 'Reject Management' },
 ];
 
 export function versionLabel(v: ScreenVersion): string {

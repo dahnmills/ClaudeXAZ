@@ -1,5 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { InputTextComponent } from './input-text.component';
+import { IconComponent } from '../icon/icon.component';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 const meta: Meta<InputTextComponent> = {
   title: 'Design System/Data Entry/Input Text',
@@ -82,6 +84,23 @@ export const WithError: Story = {
           [error]="error"
           [errorMessage]="errorMessage"
         ></ds-input-text>
+      </div>
+    `,
+  }),
+};
+
+/** Aide au libellé : le slot label-info reçoit par exemple un « i » avec tooltip. */
+export const WithLabelInfo: Story = {
+  decorators: [moduleMetadata({ imports: [IconComponent, TooltipDirective] })],
+  args: { label: 'External identifier number value', value: '047707224' },
+  render: (args) => ({
+    props: args,
+    template: `
+      <div style="max-width:320px;padding-top:40px;">
+        <ds-input-text [label]="label" [value]="value">
+          <span slot="label-info" tabindex="0" dsTooltip="#36 · QAJA01-THD-ID-N-A-2-IN · max 20" [dsTooltipDelay]="200"
+            aria-label="#36 · QAJA01-THD-ID-N-A-2-IN · max 20"><ds-icon name="info-circle" [size]="16" /></span>
+        </ds-input-text>
       </div>
     `,
   }),

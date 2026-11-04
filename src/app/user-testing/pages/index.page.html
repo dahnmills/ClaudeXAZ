@@ -13,18 +13,33 @@
     </p>
   </header>
 
+  <ng-template #screenItem let-s>
+    <li class="ix__item">
+      <a class="ix__open" [routerLink]="s.path">
+        <span class="ix__label-row">
+          <span class="ix__label">{{ s.label }}</span>
+          <span class="ix__version">{{ versionLabel(s.version) }}</span>
+        </span>
+        <span class="ix__hint">{{ s.hint }}</span>
+        <code class="ix__url">/{{ s.path }}</code>
+      </a>
+    </li>
+  </ng-template>
+
   <ul class="ix__list">
     @for (s of screens; track s.path) {
-      <li class="ix__item">
-        <a class="ix__open" [routerLink]="s.path">
-          <span class="ix__label-row">
-            <span class="ix__label">{{ s.label }}</span>
-            <span class="ix__version">{{ versionLabel(s.version) }}</span>
-          </span>
-          <span class="ix__hint">{{ s.hint }}</span>
-          <code class="ix__url">/{{ s.path }}</code>
-        </a>
-      </li>
+      <ng-container [ngTemplateOutlet]="screenItem" [ngTemplateOutletContext]="{ $implicit: s }" />
     }
   </ul>
+
+  @for (c of categories; track c.name) {
+    <section class="ix__group">
+      <h2 class="ix__group-title">{{ c.name }}</h2>
+      <ul class="ix__list">
+        @for (s of c.screens; track s.path) {
+          <ng-container [ngTemplateOutlet]="screenItem" [ngTemplateOutletContext]="{ $implicit: s }" />
+        }
+      </ul>
+    </section>
+  }
 </main>

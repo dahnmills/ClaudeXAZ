@@ -1,0 +1,109 @@
+:host {
+  display:     block;
+  font-family: var(--semantic-font-family);
+}
+
+// Figma : 24 de gouttière latérale, en-tête de page compris
+.rm-header {
+  --ds-page-header-gutter: var(--semantic-measurement-spacing-l);
+}
+
+.rm-tabs {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-xl); // Figma 32
+}
+
+// Corps : même gouttière que l'en-tête, 24 au-dessus de la barre d'actions,
+// 16 entre la barre et le tableau (Figma)
+.rm-body {
+  padding:        var(--semantic-measurement-spacing-l);
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+}
+
+// Barre d'actions, proportions Figma : le champ de filtres (356) puis la
+// rangée de boutons (804), Filter collé au champ, les actions sur le tableau
+// poussées à droite
+.rm-actions {
+  display:               grid;
+  grid-template-columns: minmax(0, 356fr) minmax(0, 804fr);
+  align-items:           center;
+  gap:                   var(--semantic-measurement-spacing-m);
+
+  &__buttons {
+    display:     flex;
+    align-items: center;
+    gap:         var(--semantic-measurement-spacing-m);
+  }
+
+  &__spacer {
+    flex: 1 1 0;
+  }
+}
+
+// Gestion des colonnes : le panneau s'ouvre sous le bouton, aligné à gauche
+.rm-columns {
+  position: relative;
+
+  &__flyout {
+    position: absolute;
+    top:      calc(100% + var(--semantic-measurement-spacing-xs));
+    left:     0;
+    z-index:  10;
+  }
+
+  &__options {
+    display:        flex;
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-s);
+    padding:        var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  }
+}
+
+.rm-select-all {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+}
+
+// More actions : même panneau que les colonnes, aligné à droite du bouton
+.rm-more {
+  position: relative;
+
+  &__flyout {
+    position: absolute;
+    top:      calc(100% + var(--semantic-measurement-spacing-xs));
+    right:    0;
+    z-index:  10;
+  }
+}
+
+// Rangées collées
+.rm-table {
+  display:        flex;
+  flex-direction: column;
+
+  &__empty {
+    margin:     var(--semantic-measurement-spacing-none);
+    padding:    var(--semantic-measurement-spacing-m);
+    text-align: center;
+    font-size:  var(--semantic-font-text-style-size-m);
+    font-style: italic;
+    color:      var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+// Largeurs de colonnes : proportions des largeurs Figma (Type 321, BU 68,
+// Prov ID 120, Buyer ID 120, ID Type 99, ID value 155, Date 103, Ctry 78), 20
+// passés de Type à ID value : avec le padding des cellules, « CBNL 200004400/ »
+// était coupé. En-tête et cellules partagent la classe, ils ne peuvent pas se
+// désaligner.
+.rm-col--type    { flex: 301; }
+.rm-col--bu      { flex: 68; }
+.rm-col--provId  { flex: 120; }
+.rm-col--buyerId { flex: 120; }
+.rm-col--idType  { flex: 99; }
+.rm-col--idValue { flex: 175; }
+.rm-col--date    { flex: 103; }
+.rm-col--country { flex: 78; }

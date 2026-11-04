@@ -1,0 +1,227 @@
+<ds-modal [open]="open()" size="large" [title]="reject()?.type ?? 'Reject'"
+  [contentHeight]="contentHeight" (closed)="closed.emit()"
+  [suspended]="suspended() || confirmOpen() || stubOpen() !== null"
+  [showBack]="screen() !== 'hub'" (backClicked)="go('hub')">
+
+  <ng-template #card let-title="title" let-open="open" let-count="count" let-hint="hint" let-target="target">
+    <ds-card [noPadding]="true">
+      <div class="rc__card" role="button" tabindex="0"
+        [attr.aria-label]="title + ', ' + count"
+        (click)="go(target)" (keydown.enter)="go(target)" (keydown.space)="$event.preventDefault(); go(target)">
+        <ds-icon class="rc__card-status" [class.rc__card-status--done]="!open"
+          [name]="open ? 'error-circle' : 'check-circle'" [size]="24" />
+        <span class="rc__card-text">
+          <span class="rc__card-title">{{ title }}</span>
+          <span class="rc__card-count" [class.rc__card-count--done]="!open">{{ count }}</span>
+        </span>
+        @if (hint) {
+          <span class="rc__card-hint">{{ hint }}</span>
+        }
+        <ds-icon class="rc__card-chevron" name="chevron-right" [size]="24" />
+      </div>
+    </ds-card>
+  </ng-template>
+
+  <!-- Un champ du message : liste dataref quand la valeur se choisit, sinon
+       saisie libre ; en lecture seule quand la cause se règle hors du rejet -->
+  <ng-template #fieldTpl let-f let-prefix="prefix">
+    <div class="rc__field" [class.rc__field--wide]="isWide(f)" [id]="prefix + f.n">
+      @if (isChoice(f)) {
+        <ds-select [label]="f.label" placeholder="Choose a region from dataref"
+          [options]="datarefOptions(f)" [value]="values()[f.n]"
+          (selectionChange)="setValue(f.n, $event)"
+          [error]="isShownInError(f)" [errorMessage]="f.error ?? ''" />
+        <span class="rc__hint">Received: {{ f.value || 'empty' }}</span>
+      } @else {
+        <ds-input-text [label]="f.label" [value]="values()[f.n]" (valueChange)="setValue(f.n, $event)"
+          [readonly]="!isEditable(f)"
+          [error]="isShownInError(f)" [errorMessage]="f.error ?? ''">
+          <span slot="label-info" class="rc__info" tabindex="0" [dsTooltip]="techInfo(f)" [dsTooltipDelay]="200"
+            [attr.aria-label]="techInfo(f)"><ds-icon name="info-circle" [size]="16" /></span>
+        </ds-input-text>
+      }
+    </div>
+  </ng-template>
+
+  @if (screen() === 'hub') {
+    @if (resolution(); as res) {
+      <!-- Résolution connue : pourquoi, puis comment en sortir -->
+      <section class="rc__group">
+        <h3 class="rc__group-title">Why it was rejected</h3>
+        <ds-card>
+          <div class="rc__why">
+            <p class="rc__text">{{ res.reason }}</p>
+            @if (res.likelyCause) {
+              <p class="rc__text rc__text--secondary">Likely cause: {{ res.likelyCause }}</p>
+            }
+            @if (res.conflictingCompany; as c) {
+              <p class="rc__text">
+                <span class="rc__strong">Company that already has it:</span>
+                {{ c.name }}, ID {{ c.id }} ({{ c.country }})
+              </p>
+            }
+          </div>
+        </ds-card>
+      </section>
+
+      <section class="rc__group">
+        <div class="rc__group-head">
+          <h3 class="rc__group-title">How to resolve</h3>
+          <ds-badge [label]="suggestedLabel()" status="info" />
+        </div>
+        <ds-card>
+          <ol class="rc__steps">
+            @for (step of res.steps; track $index; let i = $index) {
+              <li class="rc__step">
+                <span class="rc__step-index" [class.rc__step-index--done]="doneSteps().has(i)" aria-hidden="true">
+                  @if (doneSteps().has(i)) {
+                    <ds-icon name="check-circle" [size]="20" />
+                  } @else {
+                    {{ i + 1 }}
+                  }
+                </span>
+                <span class="rc__step-body">
+                  <span class="rc__text">
+                    <span class="rc__sr-only">Step {{ i + 1 }}{{ doneSteps().has(i) ? ', done' : '' }}: </span>{{ step.text }}
+                  </span>
+                  @if (step.link || step.stub || step.goToFields) {
+                    <span class="rc__step-actions">
+                      @if (step.stub; as stub) {
+                        <ds-button type="secondary" [disabled]="doneSteps().has(i)"
+                          (clicked)="stubOpen.set({ index: i, stub: stub })">
+                          <ds-icon slot="icon-left" name="duplicate" [size]="16" /> {{ stub.label }}
+                        </ds-button>
+                      }
+                      @if (step.goToFields) {
+                        <ds-button type="secondary" (clicked)="goToFields()">
+                          {{ goToFieldsLabel() }}
+                          <ds-icon slot="icon-right" name="arrow-right" [size]="16" />
+                        </ds-button>
+                      }
+                      @if (step.link; as link) {
+                        <ds-link [href]="link.href" [external]="true" weight="semi-bold">
+                          {{ link.label }} <ds-icon slot="icon-right" name="launch" [size]="16" />
+                        </ds-link>
+                      }
+                    </span>
+                  }
+                </span>
+              </li>
+            }
+          </ol>
+        </ds-card>
+      </section>
+    }
+
+    <!-- Carrefour : toutes les erreurs d'un coup, ou un bloc dans son contexte -->
+    @if (errors().length) {
+      <section class="rc__group">
+        @if (hasEditableErrors()) {
+          <h3 class="rc__group-title">Things to correct</h3>
+          <ng-container [ngTemplateOutlet]="card"
+            [ngTemplateOutletContext]="{ title: 'Errors', open: openCount(), count: openCount() ? errorsLabel(openCount()) : 'No error to correct', hint: 'All blocks', target: 'errors' }" />
+        } @else {
+          <h3 class="rc__group-title">Things to check</h3>
+          <ng-container [ngTemplateOutlet]="card"
+            [ngTemplateOutletContext]="{ title: 'Fields in cause', open: errors().length, count: causeLabel(), hint: 'Read only', target: 'errors' }" />
+        }
+      </section>
+    }
+
+    <section class="rc__group">
+      <div class="rc__group-head">
+        <h3 class="rc__group-title">Categories</h3>
+        @if (hiddenCount()) {
+          <span class="rc__group-note">{{ hiddenCount() }} fields no longer used in Qirin are hidden</span>
+        }
+      </div>
+      @for (b of blockCards(); track b.index) {
+        <ng-container [ngTemplateOutlet]="card"
+          [ngTemplateOutletContext]="{ title: b.name, open: b.open, count: b.open ? errorsLabel(b.open) : 'No error to correct', hint: b.filled + ' of ' + b.total + ' fields filled', target: b.index }" />
+      }
+    </section>
+  } @else {
+    <span class="rc__screen-title">{{ screenTitle() }}</span>
+
+    <!-- Panneau gris du wizard de création : une famille = un titre + une carte blanche de champs -->
+    <div class="rc__panel">
+      @if (screen() === 'errors') {
+        @if (!hasEditableErrors()) {
+          <p class="rc__text rc__text--secondary">Read only: the cause is fixed outside the reject.</p>
+        }
+        @for (g of errorGroups(); track g.where) {
+          <div class="rc__group">
+            <span class="rc__family">{{ g.where }}</span>
+            <div class="rc__card-white">
+              <div class="rc__fields">
+                @for (e of g.items; track e.field.n) {
+                  <ng-container [ngTemplateOutlet]="fieldTpl"
+                    [ngTemplateOutletContext]="{ $implicit: e.field, prefix: 'rc-err-' }" />
+                }
+              </div>
+            </div>
+          </div>
+        }
+      } @else {
+        @for (s of blockSections(); track s.key) {
+          <div class="rc__group">
+            <span class="rc__family">{{ s.name }}</span>
+            <div class="rc__card-white">
+              <div class="rc__fields">
+                @for (f of s.fields; track f.n) {
+                  <ng-container [ngTemplateOutlet]="fieldTpl"
+                    [ngTemplateOutletContext]="{ $implicit: f, prefix: 'rc-field-' }" />
+                }
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  }
+
+  <!-- Action suggérée en principal : Delete quand le rejet est devenu caduc,
+       sinon Resubmit -->
+  <div slot="actions" class="rc__actions">
+    @if (suggestsDelete()) {
+      <ds-button type="tertiary" (clicked)="resubmit()">
+        <ds-icon slot="icon-left" name="refresh" [size]="16" /> Resubmit
+      </ds-button>
+      <ds-button type="secondary" (clicked)="closed.emit()">Cancel</ds-button>
+      <ds-button type="primary" tone="negative" (clicked)="requestDelete()">
+        <ds-icon slot="icon-left" name="trash" [size]="16" /> Delete
+      </ds-button>
+    } @else {
+      <ds-button type="tertiary" (clicked)="requestDelete()">
+        <ds-icon slot="icon-left" name="trash" [size]="16" /> Delete
+      </ds-button>
+      <ds-button type="secondary" (clicked)="closed.emit()">Cancel</ds-button>
+      <ds-button type="primary" (clicked)="resubmit()">{{ resubmitLabel() }}</ds-button>
+    }
+  </div>
+</ds-modal>
+
+<ds-confirm-dialog
+  [open]="confirmOpen()"
+  title="Resubmit without changes?"
+  tone="warning"
+  confirmLabel="Resubmit"
+  secondaryLabel="Review errors"
+  (confirmed)="confirmResubmit()"
+  (secondary)="confirmOpen.set(false); go('errors')"
+  (cancelled)="confirmOpen.set(false)"
+  (closed)="confirmOpen.set(false)">
+  <span>{{ openCount() === 1 ? '1 field is' : openCount() + ' fields are' }} still in error and unchanged. Resubmit if the cause was fixed elsewhere.</span>
+</ds-confirm-dialog>
+
+<!-- Action faite ailleurs dans Qirin (fusion des doublons), simulée ici -->
+<ds-confirm-dialog
+  [open]="stubOpen() !== null"
+  [title]="stubOpen()?.stub?.title ?? ''"
+  tone="warning"
+  [confirmLabel]="stubOpen()?.stub?.confirmLabel ?? 'Confirm'"
+  (confirmed)="confirmStub()"
+  (cancelled)="stubOpen.set(null)"
+  (closed)="stubOpen.set(null)">
+  <span>{{ stubOpen()?.stub?.body }}</span>
+</ds-confirm-dialog>
