@@ -1,4 +1,5 @@
-import { Component, input } from '@angular/core';
+import { Component, TemplateRef, input } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { IconComponent, type IconName } from '../icon/icon.component';
 import { FlagComponent, type FlagCode } from '../flag/flag.component';
 import { TagComponent } from '../tag/tag.component';
@@ -22,7 +23,9 @@ export type PropertyValue =
   | { kind: 'text';    value: string | null }
   | { kind: 'tags';    tags: PropertyTag[] }
   | { kind: 'bullets'; items: (string | PropertyBullet)[] }
-  | { kind: 'link';    label: string; href: string };
+  | { kind: 'link';    label: string; href: string }
+  /** Valeur composée par la page (ex. pastille + texte) : le panneau ne fixe que la place. */
+  | { kind: 'template'; template: TemplateRef<unknown> };
 
 export interface PropertyRow {
   label:      string;
@@ -43,7 +46,7 @@ export interface PropertySection {
 @Component({
   selector: 'ds-properties-panel',
   standalone: true,
-  imports: [IconComponent, FlagComponent, TagComponent, LinkComponent],
+  imports: [IconComponent, FlagComponent, TagComponent, LinkComponent, NgTemplateOutlet],
   templateUrl: './properties-panel.component.html',
   styleUrl: './properties-panel.component.scss',
   host: {
@@ -52,7 +55,7 @@ export interface PropertySection {
 })
 export class PropertiesPanelComponent {
   sections = input.required<PropertySection[]>();
-  columns  = input<1 | 2 | 3 | 4>(2);
+  columns  = input<1 | 2 | 3 | 4 | 5>(2);
   variant  = input<'card' | 'flat'>('card');
   layout   = input<'inline' | 'stacked'>('inline');
   /** compact : rows plus serrées, pour les widget cards où chaque ligne compte. */
@@ -66,6 +69,9 @@ export class PropertiesPanelComponent {
   }
   isBullets(v: PropertyValue): v is { kind: 'bullets'; items: (string | PropertyBullet)[] } {
     return typeof v === 'object' && v !== null && (v as { kind?: string }).kind === 'bullets';
+  }
+  isTemplate(v: PropertyValue): v is { kind: 'template'; template: TemplateRef<unknown> } {
+    return typeof v === 'object' && v !== null && (v as { kind?: string }).kind === 'template';
   }
   isLink(v: PropertyValue): v is { kind: 'link'; label: string; href: string } {
     return typeof v === 'object' && v !== null && (v as { kind?: string }).kind === 'link';

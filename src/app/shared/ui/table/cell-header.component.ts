@@ -29,6 +29,9 @@ export class CellHeaderComponent {
   sortable      = input<boolean>(false);
   sortDirection = input<SortDirection>(null);
   align         = input<CellHeaderAlign>('left');
+  /** Titre sur deux lignes au plus (colonnes étroites : « Request amount », « LOB / Segment »).
+   *  Figma Coverbook : interligne 20px, le titre passe à la ligne au lieu d'être tronqué. */
+  multiline     = input<boolean>(false);
 
   allSelected      = input<boolean>(false);
   allIndeterminate = input<boolean>(false);
@@ -40,6 +43,7 @@ export class CellHeaderComponent {
     'ds-cell-header',
     `ds-cell-header--type-${this.type()}`,
     `ds-cell-header--align-${this.align()}`,
+    this.multiline() ? 'ds-cell-header--multiline' : '',
     this.sortable() && this.type() === 'default' ? 'ds-cell-header--sortable' : '',
     this.sortDirection() === 'asc' ? 'ds-cell-header--sorted-asc' : '',
     this.sortDirection() === 'desc' ? 'ds-cell-header--sorted-desc' : '',

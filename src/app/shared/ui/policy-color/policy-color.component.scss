@@ -1,0 +1,84 @@
+// =============================================================
+// Policy color : pastille ronde à une lettre (R, O, Y, G, N, U)
+// Source : Figma [CU] Coverbook 2026 > Policy color (S 20px / M 24px)
+// La maquette emprunte les fonds de grade (ex. Y = grade #4) : on fait pareil.
+// =============================================================
+
+:host {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  font-family: var(--semantic-font-family);
+  flex-shrink: 0;
+}
+
+.ds-policy-color__pill {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  box-sizing:      border-box;
+  border-radius:   var(--semantic-border-radius-round);
+  border:          1px solid transparent;
+  font-weight:     var(--semantic-font-text-style-font-weight-semi-bold);
+  color:           var(--semantic-color-static-text-main-primary);
+}
+
+.ds-policy-color__name {
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-primary);
+  white-space: nowrap;
+}
+
+.ds-policy-color__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// ── Sizes ───────────────────────────────────────────────────
+:host.ds-policy-color--size-s .ds-policy-color__pill {
+  width:          calc(var(--semantic-measurement-sizing-m) + var(--semantic-measurement-sizing-xs)); // 20px
+  height:         calc(var(--semantic-measurement-sizing-m) + var(--semantic-measurement-sizing-xs));
+  font-size:      var(--semantic-font-text-style-size-m);
+  line-height:    var(--semantic-font-text-style-line-height-m);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+}
+
+:host.ds-policy-color--size-m .ds-policy-color__pill {
+  width:       var(--semantic-measurement-sizing-l); // 24px
+  height:      var(--semantic-measurement-sizing-l);
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+}
+
+// ── Couleurs ────────────────────────────────────────────────
+:host.ds-policy-color--red .ds-policy-color__pill {
+  background: var(--semantic-color-static-background-grade-7);
+  color:      var(--semantic-color-static-text-subtle-primary);
+}
+
+:host.ds-policy-color--orange .ds-policy-color__pill {
+  background: var(--semantic-color-static-background-grade-6);
+}
+
+:host.ds-policy-color--yellow .ds-policy-color__pill {
+  background: var(--semantic-color-static-background-grade-4);
+}
+
+:host.ds-policy-color--green .ds-policy-color__pill {
+  background: var(--semantic-color-static-background-grade-2);
+  color:      var(--semantic-color-static-text-subtle-primary);
+}
+
+:host.ds-policy-color--none .ds-policy-color__pill {
+  background:   var(--semantic-color-static-background-main-primary);
+  border-color: var(--semantic-color-static-background-accent-primary);
+}
+
+:host.ds-policy-color--unknown .ds-policy-color__pill {
+  background: var(--semantic-color-static-background-grade-none);
+}

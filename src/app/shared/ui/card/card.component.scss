@@ -42,4 +42,10 @@
     background:   var(--semantic-color-static-background-functional-subtle-negative);
     border-color: var(--semantic-color-static-border-main-functional-negative);
   }
+
+  // Encart de contexte : fond bleuté, sans bordure (Figma Coverbook, panneau police).
+  &.ds-card--tone-subtle {
+    background:   var(--semantic-color-static-background-main-alt-primary);
+    border-color: transparent;
+  }
 }
