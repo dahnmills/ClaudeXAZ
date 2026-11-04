@@ -61,6 +61,24 @@
   }
 }
 
+.rm-select-all {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+}
+
+// More actions : même panneau que les colonnes, aligné à droite du bouton
+.rm-more {
+  position: relative;
+
+  &__flyout {
+    position: absolute;
+    top:      calc(100% + var(--semantic-measurement-spacing-xs));
+    right:    0;
+    z-index:  10;
+  }
+}
+
 // Rangées collées
 .rm-table {
   display:        flex;

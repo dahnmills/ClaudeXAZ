@@ -17,6 +17,8 @@ import {
   CellSelectionComponent,
   FlyoutMenuComponent,
   FlyoutMenuItemComponent,
+  ConfirmDialogComponent,
+  FunctionalNoticeComponent,
   ToasterService,
 } from '../../shared/ui';
 import type { SelectOption } from '../../shared/ui/select/select.component';
@@ -29,11 +31,12 @@ import {
 } from '../../shared/ui/filter-drawer/filter-drawer.component';
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
 import { RejectCorrectionModalComponent } from './components/reject-correction-modal.component';
-import { REJECT_RECORDS } from './reject-records.data';
+import { REJECT_CASES } from './reject-cases.data';
 import {
   REJECTS,
   REJECT_COLUMNS,
   REJECT_TOTALS,
+  SHOW_UNDECIDED_ACTIONS,
   type Reject,
   type RejectCategory,
   type RejectColumn,
@@ -58,10 +61,23 @@ function inList(value: string, filter: FilterValue | undefined): boolean {
 
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
+/** Sort d'un rejet traité depuis le tableau : il quitte la liste. */
+type RemovalAction = 'resubmitted' | 'archived' | 'deleted';
+
+/** « 1 reject », « 3 rejects ». */
+function rejectsLabel(count: number): string {
+  return `${count} reject${count > 1 ? 's' : ''}`;
+}
+
 /**
  * Reject Management (Figma Transverse 6001:1073). Rejets en tableau : un onglet
- * par catégorie, une barre d'actions (filtres, gestion des colonnes), sélection
- * de lignes, tri par colonne et menu d'actions par ligne.
+ * par catégorie, une barre d'actions (filtres, gestion des colonnes, actions sur
+ * la sélection), sélection de lignes, tri par colonne et menu d'actions par ligne.
+ *
+ * Actions : on coche les rejets puis on choisit l'action, qui s'exécute tout de
+ * suite (retour métier : plus de radio par ligne ni de bouton Validate). Resubmit
+ * et Delete sont actées ; Archive et Move to sont à confirmer côté métier, elles
+ * restent derrière SHOW_UNDECIDED_ACTIONS (masquées) en attendant la décision.
  */
 @Component({
   selector: 'app-reject-management',
@@ -86,6 +102,8 @@ const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', '
     CellSelectionComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
+    ConfirmDialogComponent,
+    FunctionalNoticeComponent,
     RejectCorrectionModalComponent,
   ],
   templateUrl: './reject-management.component.html',
@@ -100,10 +118,19 @@ export class RejectManagementComponent {
   /** Rejets resoumis : ils sortent de la liste. */
   private readonly resolvedIds = signal<Set<string>>(new Set());
 
+  /** Rejets passés d'une catégorie à l'autre (Move to). */
+  private readonly movedTo = signal<Map<string, RejectCategory>>(new Map());
+
   readonly openedReject = computed(() => REJECTS.find(r => r.id === this.openedId()) ?? null);
   readonly openedRecord = computed(() => {
     const row = this.openedReject();
-    return row ? REJECT_RECORDS.find(rec => rec.id === row.recordId) ?? null : null;
+    return row ? REJECT_CASES.find(rec => rec.id === row.recordId) ?? null : null;
+  });
+  /** La résolution n'appartient qu'au rejet de référence : un rejet factice qui
+   *  emprunte son message ne la reprend pas. */
+  readonly openedResolution = computed(() => {
+    const rec = this.openedRecord();
+    return rec && rec.id === this.openedId() ? rec.resolution ?? null : null;
   });
 
   openReject(id: string): void {
@@ -115,6 +142,79 @@ export class RejectManagementComponent {
     this.selectedIds.update(list => list.filter(other => other !== id));
     this.openedId.set(null);
     this.toaster.show('Reject resubmitted', { tone: 'success' });
+  }
+
+  // ── Actions sur les rejets ──────────────────────────────────────────────────
+  readonly showUndecided = SHOW_UNDECIDED_ACTIONS;
+  readonly moreOpen = signal(false);
+  /** Rejets en attente de confirmation de suppression, et leur nombre affiché. */
+  readonly pendingDeleteIds = signal<string[]>([]);
+  private readonly pendingDeleteCount = signal(0);
+  readonly pendingDeleteLabel = computed(() => rejectsLabel(this.pendingDeleteCount()));
+
+  // `count` : nombre annoncé dans le toaster, plus grand que la page quand on a
+  // choisi « Select all » sur tous les rejets de l'onglet
+  resubmit(ids: string[], count = ids.length): void {
+    this.remove(ids, 'resubmitted', count);
+  }
+
+  archive(ids: string[], count = ids.length): void {
+    this.remove(ids, 'archived', count);
+  }
+
+  /** Delete est irréversible : on confirme avant. */
+  askDelete(ids: string[], count = ids.length): void {
+    this.pendingDeleteIds.set(ids);
+    this.pendingDeleteCount.set(count);
+  }
+
+  confirmDelete(): void {
+    const ids = this.pendingDeleteIds();
+    this.remove(ids, 'deleted', this.pendingDeleteCount());
+    this.pendingDeleteIds.set([]);
+    // Supprimé depuis la modale : elle n'a plus de rejet à montrer
+    if (ids.includes(this.openedId() ?? '')) this.openedId.set(null);
+  }
+
+  moveTo(ids: string[], category: RejectCategory, count = ids.length): void {
+    // Seuls les rejets d'une autre catégorie bougent
+    const moving = ids.filter(id => this.categoryOf(id) !== category);
+    if (!moving.length) return;
+    const before = new Map(this.movedTo());
+    this.movedTo.update(map => {
+      const next = new Map(map);
+      moving.forEach(id => next.set(id, category));
+      return next;
+    });
+    this.dropFromSelection(moving);
+    const moved = moving.length === ids.length ? count : moving.length;
+    this.toaster.show(`${rejectsLabel(moved)} moved to ${category}`,
+      { tone: 'success', actionLabel: 'Undo' }, () => this.movedTo.set(before));
+  }
+
+  /** Move to est grisé quand tous les rejets visés sont déjà dans la catégorie. */
+  canMoveTo(ids: string[], category: RejectCategory): boolean {
+    return ids.some(id => this.categoryOf(id) !== category);
+  }
+
+  private remove(ids: string[], action: RemovalAction, count: number): void {
+    if (!ids.length) return;
+    const before = new Set(this.resolvedIds());
+    this.resolvedIds.update(set => new Set([...set, ...ids]));
+    this.dropFromSelection(ids);
+    const text = `${rejectsLabel(count)} ${action}`;
+    // Seul l'archivage se rattrape : un rejet resoumis est déjà reparti au back,
+    // un rejet supprimé n'existe plus
+    if (action === 'archived') this.toaster.show(text, { tone: 'success', actionLabel: 'Undo' }, () => this.resolvedIds.set(before));
+    else this.toaster.show(text, { tone: 'success' });
+  }
+
+  private dropFromSelection(ids: string[]): void {
+    this.selectedIds.update(list => list.filter(id => !ids.includes(id)));
+  }
+
+  private categoryOf(id: string): RejectCategory | undefined {
+    return this.movedTo().get(id) ?? REJECTS.find(r => r.id === id)?.category;
   }
 
   readonly totals = REJECT_TOTALS;
@@ -204,9 +304,13 @@ export class RejectManagementComponent {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    if (!this.columnsOpen()) return;
-    const panel = (this.elRef.nativeElement as HTMLElement).querySelector('.rm-columns');
-    if (panel && !panel.contains(event.target as Node)) this.columnsOpen.set(false);
+    const host = this.elRef.nativeElement as HTMLElement;
+    const outside = (selector: string) => {
+      const panel = host.querySelector(selector);
+      return !!panel && !panel.contains(event.target as Node);
+    };
+    if (this.columnsOpen() && outside('.rm-columns')) this.columnsOpen.set(false);
+    if (this.moreOpen() && outside('.rm-more')) this.moreOpen.set(false);
   }
 
   // ── Lignes : onglet, filtres, tri ─────────────────────────────────────────
@@ -220,9 +324,10 @@ export class RejectManagementComponent {
     const key = this.sortKey();
     const way = this.sortDir() === 'asc' ? 1 : -1;
     const resolved = this.resolvedIds();
+    const moved = this.movedTo();
     const list = REJECTS
       .filter(r => !resolved.has(r.id))
-      .filter(r => tab === 'all' || r.category === tab)
+      .filter(r => tab === 'all' || (moved.get(r.id) ?? r.category) === tab)
       .filter(r => matchesText(r.type, f['type']) && matchesText(r.buyerId, f['buyerId']))
       .filter(r => inList(r.bu, f['bu']) && inList(r.idType, f['idType']) && inList(r.country, f['country']));
     if (!key) return list;
@@ -257,11 +362,39 @@ export class RejectManagementComponent {
   // ── Sélection ───────────────────────────────────────────────────────────────
   readonly selectedIds = signal<string[]>([]);
 
+  /** Rejets de l'onglet au-delà de la page : le total de l'onglet, ou ce que
+   *  les filtres laissent quand il y en a. */
+  readonly matchingTotal = computed(() =>
+    this.activeFiltersCount() > 0 ? this.rows().length : this.totals[this.activeTab()]);
+
+  /** « Select all 154 functional rejects » : choisi dans le bandeau, tient tant
+   *  que toute la page reste cochée. */
+  private readonly allMatchingChosen = signal(false);
+  readonly allMatching = computed(() => this.allMatchingChosen() && this.allSelected());
+  readonly showSelectAllNotice = computed(() => this.allSelected() && this.matchingTotal() > this.rows().length);
+  readonly matchingLabel = computed(() => {
+    const tab = this.activeTab();
+    return `${this.matchingTotal()} ${tab === 'all' ? '' : tab + ' '}rejects`;
+  });
+
+  readonly selectionCount = computed(() =>
+    this.allMatching() ? this.matchingTotal() : this.selectedIds().length);
+
+  selectAllMatching(): void {
+    this.allMatchingChosen.set(true);
+  }
+
+  clearSelection(): void {
+    this.allMatchingChosen.set(false);
+    this.selectedIds.set([]);
+  }
+
   isSelected(id: string): boolean {
     return this.selectedIds().includes(id);
   }
 
   toggleRow(id: string, checked: boolean): void {
+    this.allMatchingChosen.set(false);
     this.selectedIds.update(list => checked ? [...list, id] : list.filter(other => other !== id));
   }
 
@@ -277,6 +410,7 @@ export class RejectManagementComponent {
   });
 
   toggleAll(checked: boolean): void {
+    this.allMatchingChosen.set(false);
     this.selectedIds.set(checked ? this.rows().map(r => r.id) : []);
   }
 }

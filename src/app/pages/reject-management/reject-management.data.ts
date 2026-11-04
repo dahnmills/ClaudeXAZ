@@ -1,6 +1,14 @@
-/** Données de Reject Management : les 3 rejets réels de l'extraction en tête,
- *  puis des rejets factices qui réutilisent leur contenu comme modèle. */
-import { REJECT_RECORDS } from './reject-records.data';
+/** Données de Reject Management : les rejets de référence en tête (voir
+ *  reject-cases.data.ts), puis des rejets factices qui réutilisent leur contenu
+ *  comme modèle. Un rejet factice emprunte le message, jamais la résolution. */
+import { REJECT_CASES } from './reject-cases.data';
+
+/**
+ * Actions pas encore tranchées par le métier (Archive, Move to functional /
+ * technical). Resubmit et Delete sont actées. Passer à true pour les montrer ;
+ * à supprimer avec le code qu'elles gardent une fois la décision prise.
+ */
+export const SHOW_UNDECIDED_ACTIONS = false;
 
 export type RejectCategory = 'functional' | 'technical' | 'maintenance';
 
@@ -50,8 +58,8 @@ function r(category: RejectCategory, type: string, bu: string, provId: string, b
   return { id: `rej-${++n}`, category, type, bu, provId, buyerId, idType, idValue, date, country, recordId };
 }
 
-/** Une ligne par rejet réel, lue dans l'en-tête de l'extraction. */
-const REAL: Reject[] = REJECT_RECORDS.map(rec => {
+/** Une ligne par rejet de référence, lue dans l'en-tête de l'extraction. */
+const REAL: Reject[] = REJECT_CASES.map(rec => {
   const m = rec.meta;
   const [d, mo, y] = (m['Date'] ?? '').split('/');
   return {

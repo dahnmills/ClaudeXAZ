@@ -54,10 +54,54 @@
             </div>
           }
         </div>
-        <ds-button type="secondary">Secondary</ds-button>
-        <ds-button type="primary">Primary</ds-button>
+        <!-- Actions sur la sélection : grisées tant que rien n'est coché,
+             chacune s'exécute tout de suite (pas d'étape Validate). Archive et
+             Move to attendent la décision du métier (SHOW_UNDECIDED_ACTIONS) -->
+        @if (showUndecided) {
+          <div class="rm-more">
+            <ds-button type="tertiary" [disabled]="!selectedIds().length" (clicked)="moreOpen.set(!moreOpen())">
+              More actions <ds-icon slot="icon-right" name="chevron-down" [size]="16" />
+            </ds-button>
+            @if (moreOpen() && selectedIds().length) {
+              <div class="rm-more__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="Archive" icon="archive"
+                    (clicked)="archive(selectedIds(), selectionCount()); moreOpen.set(false)" />
+                  <ds-flyout-menu-item label="Move to functional" icon="switch"
+                    [disabled]="!canMoveTo(selectedIds(), 'functional')"
+                    (clicked)="moveTo(selectedIds(), 'functional', selectionCount()); moreOpen.set(false)" />
+                  <ds-flyout-menu-item label="Move to technical" icon="switch"
+                    [disabled]="!canMoveTo(selectedIds(), 'technical')"
+                    (clicked)="moveTo(selectedIds(), 'technical', selectionCount()); moreOpen.set(false)" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
+        }
+        <ds-button type="secondary" [disabled]="!selectedIds().length" (clicked)="askDelete(selectedIds(), selectionCount())">
+          <ds-icon slot="icon-left" name="trash" [size]="16" /> Delete
+        </ds-button>
+        <ds-button type="primary" [disabled]="!selectedIds().length" (clicked)="resubmit(selectedIds(), selectionCount())">
+          <ds-icon slot="icon-left" name="refresh" [size]="16" /> Resubmit
+        </ds-button>
       </div>
     </div>
+
+    <!-- Toute la page cochée : proposer d'étendre à tous les rejets de l'onglet,
+         comme « Resubmit all » de l'outil actuel -->
+    @if (showSelectAllNotice()) {
+      <ds-functional-notice status="info" emphasis="low">
+        <span class="rm-select-all">
+          @if (allMatching()) {
+            All {{ matchingLabel() }} are selected.
+            <ds-button type="plain" tone="accent" (clicked)="clearSelection()">Clear selection</ds-button>
+          } @else {
+            {{ selectedIds().length }} rejects on this page are selected.
+            <ds-button type="plain" tone="accent" (clicked)="selectAllMatching()">Select all {{ matchingLabel() }}</ds-button>
+          }
+        </span>
+      </ds-functional-notice>
+    }
 
     <div class="rm-table">
       <ds-table-row>
@@ -83,7 +127,15 @@
           <ds-cell-action ariaLabel="Reject actions">
             <ds-flyout-menu slot="menu">
               <ds-flyout-menu-item label="View details" icon="eye" (clicked)="openReject(row.id)" />
-              <ds-flyout-menu-item label="Edit" icon="edit" />
+              <ds-flyout-menu-item label="Resubmit" icon="refresh" (clicked)="resubmit([row.id])" />
+              @if (showUndecided) {
+                <ds-flyout-menu-item label="Archive" icon="archive" (clicked)="archive([row.id])" />
+                <ds-flyout-menu-item label="Move to functional" icon="switch"
+                  [disabled]="!canMoveTo([row.id], 'functional')" (clicked)="moveTo([row.id], 'functional')" />
+                <ds-flyout-menu-item label="Move to technical" icon="switch"
+                  [disabled]="!canMoveTo([row.id], 'technical')" (clicked)="moveTo([row.id], 'technical')" />
+              }
+              <ds-flyout-menu-item label="Delete" icon="trash" (clicked)="askDelete([row.id])" />
             </ds-flyout-menu>
           </ds-cell-action>
         </ds-table-row>
@@ -97,8 +149,22 @@
     [open]="openedId() !== null"
     [reject]="openedReject()"
     [record]="openedRecord()"
+    [resolution]="openedResolution()"
+    [suspended]="pendingDeleteIds().length > 0"
     (closed)="openedId.set(null)"
-    (resubmitted)="onResubmitted($event)" />
+    (resubmitted)="onResubmitted($event)"
+    (deleteRequested)="askDelete([$event])" />
+
+  <ds-confirm-dialog slot="modals"
+    [open]="pendingDeleteIds().length > 0"
+    [title]="'Delete ' + pendingDeleteLabel() + '?'"
+    tone="danger"
+    confirmLabel="Delete"
+    (confirmed)="confirmDelete()"
+    (cancelled)="pendingDeleteIds.set([])"
+    (closed)="pendingDeleteIds.set([])">
+    <span>The {{ pendingDeleteIds().length > 1 ? 'rejects are' : 'reject is' }} removed for good and can't be resubmitted later.</span>
+  </ds-confirm-dialog>
 </app-topbox-test-shell>
 
 <ds-filter-drawer
