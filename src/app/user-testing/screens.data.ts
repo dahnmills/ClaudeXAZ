@@ -31,6 +31,8 @@ export const SCREENS: Screen[] = [
   { path: 'loading', label: 'Loading', hint: 'Initial app loading state', version: { ...V1 } },
   { path: 'keyboard-shortcuts', label: 'Keyboard Shortcuts', hint: 'Shortcut reference panel', version: { ...V1 } },
   { path: 'card-builder-lab', label: 'Card Builder Lab', hint: 'Custom card builder redesign', version: { ...V1 } },
+  { path: 'coverbook/buyer/4421706', label: 'Coverbook - Buyer', hint: 'Buyer covers: credit limits and grade based covers', version: { ...V1 } },
+  { path: 'coverbook/policy/2590417133', label: 'Coverbook - Policy', hint: 'Policy covers: credit limits and grade based covers', version: { ...V1 } },
 ];
 
 export function versionLabel(v: ScreenVersion): string {

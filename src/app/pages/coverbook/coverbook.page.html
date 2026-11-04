@@ -1,0 +1,285 @@
+<app-topbox-test-shell>
+  @if (side() === 'buyer') {
+    <ds-topbox
+      slot="topbox"
+      dataType="buyer"
+      icon="buyers"
+      [label]="buyer().name"
+      [id]="buyer().id"
+      [grade]="gradeLabel(buyer().grade)"
+      [gradeColor]="gradeColor(buyer().grade)"
+      [highRisk]="buyer().highRisk"
+      [sru]="buyer().sru"
+      [sanction]="buyer().sanction"
+      actionLabel="View full details"
+      actionIcon="info-circle"
+    />
+  } @else {
+    <ds-topbox
+      slot="topbox"
+      dataType="policy"
+      icon="file-text"
+      [label]="policy().name"
+      [id]="policy().id"
+      [grade]="policyLetter(policy().color)"
+      [gradeColor]="policyGradeColor(policy().color)"
+      actionType="chevron"
+      actionLabel="Policies"
+      [expanded]="policiesMenuOpen()"
+      (actionClicked)="togglePoliciesMenu()"
+    />
+  }
+
+  <div class="cb-page">
+    @if (side() === 'policy' && policiesMenuOpen()) {
+      <div class="cb-policies">
+        <ds-flyout-menu>
+          <ds-flyout-menu-title label="You are viewing" />
+          <ds-flyout-menu-item [label]="'Policy ' + policy().id" [attr.title]="policy().name" [selectable]="true" [selected]="true" />
+          <ds-flyout-menu-title label="Parents" />
+          @for (p of relatives().parents; track p.id) {
+            <ds-flyout-menu-item [label]="p.name" [attr.title]="p.name + ', ' + p.id" icon="arrow-up" (clicked)="closeFlyouts()" />
+          }
+          <ds-flyout-menu-title [label]="'Siblings (' + relatives().siblings.length + ')'" />
+          @for (p of relatives().siblings; track p.id) {
+            <ds-flyout-menu-item [label]="p.name" [attr.title]="p.name + ', ' + p.id" (clicked)="closeFlyouts()">
+              @if (p.badge) {
+                <ds-badge slot="icon" [label]="p.badge" status="neutral" size="s" />
+              }
+            </ds-flyout-menu-item>
+          }
+        </ds-flyout-menu>
+      </div>
+    }
+
+    <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="true">
+      <ds-breadcrumbs slot="breadcrumbs">
+        <ds-crumb label="Home" />
+        @if (side() === 'buyer') {
+          <ds-crumb label="Buyer Summary" />
+        } @else {
+          <ds-crumb label="Policy Search" />
+          <ds-crumb label="Policy Summary" />
+        }
+        <ds-crumb [label]="currentCrumb()" [currentPage]="true" />
+      </ds-breadcrumbs>
+
+      <ds-page-title slot="title" [title]="pageTitle()">
+        <ds-link slot="actions" href="#" weight="semi-bold"
+          (click)="$event.preventDefault(); goToDocuments()">
+          <ds-icon slot="icon-left" name="arrow-right" [size]="16" />
+          {{ side() === 'buyer' ? 'Go to documents' : 'Go to PAF 360' }}
+        </ds-link>
+      </ds-page-title>
+
+      <div slot="tabs" class="cb-tabs" role="tablist" [attr.aria-label]="pageTitle()">
+        @for (tab of tabs(); track tab.id) {
+          <ds-tab [selected]="tab.id === activeTab()" (clicked)="selectTab(tab.id)">{{ tab.label }}</ds-tab>
+        }
+      </div>
+    </ds-page-header>
+
+    <div class="cb-body" role="tabpanel" [attr.aria-label]="activeTabLabel()">
+      @if (coversTab(); as covers) {
+
+        <!-- ── Résumé de la police (côté policy) ───────────────────────── -->
+        @if (side() === 'policy') {
+          <ds-card tone="subtle" class="cb-policy-summary">
+            <ds-properties-panel [sections]="policySections()" [columns]="5" variant="flat" layout="stacked" />
+          </ds-card>
+        }
+
+        <!-- ── Barre d'actions (Figma action-bar--coverbook) ───────────── -->
+        <div class="cb-toolbar">
+          <div class="cb-toolbar__filters">
+            <ds-multi-select
+              class="cb-toolbar__filter-field"
+              placeholder="Select your filters"
+              [options]="filterOptions()"
+              [(value)]="draftFilters"
+              [maxVisible]="2"
+            />
+            <ds-button type="secondary" (clicked)="applyFilters()">Filter</ds-button>
+            @if (appliedFilters().length) {
+              <ds-button type="plain" (clicked)="resetFilters()">Clear</ds-button>
+            }
+          </div>
+
+          <div class="cb-toolbar__actions">
+            <div class="cb-columns">
+              <ds-button type="tertiary" (clicked)="toggleColumnsMenu()">
+                <ds-icon slot="icon-left" name="settings" [size]="16" />
+                Manage columns
+              </ds-button>
+              @if (columnsMenuOpen()) {
+                <div class="cb-columns__flyout">
+                  <ds-flyout-menu>
+                    <ds-flyout-menu-title label="Visible columns" />
+                    @for (col of manageableColumns(); track col.key) {
+                      <ds-flyout-menu-item
+                        [label]="col.title"
+                        [selectable]="true"
+                        [selected]="!hiddenColumns().has(col.key)"
+                        (clicked)="toggleColumn(col.key)"
+                      />
+                    }
+                  </ds-flyout-menu>
+                </div>
+              }
+            </div>
+            <ds-button type="secondary" (clicked)="exportCovers()">Export</ds-button>
+            <ds-button type="primary" (clicked)="updateCoverInformation()">Update cover information</ds-button>
+            <ds-select
+              class="cb-toolbar__currency"
+              [options]="currencyOptions"
+              [value]="currencyMode()"
+              (selectionChange)="setCurrency($event)"
+            />
+          </div>
+        </div>
+
+        <!-- ── Tableau ─────────────────────────────────────────────────── -->
+        <div class="cb-table-scroll">
+          <div class="cb-table" role="table" [class.cb-table--wide]="wideTable()" [class.cb-table--wide-policy]="wideTable() && side() === 'policy'"
+            [attr.aria-label]="pageTitle() + ', ' + activeTabLabel()"
+            [attr.aria-rowcount]="visibleRows().length + 1">
+            <ds-table-row>
+              @for (col of columns(); track col.key) {
+                <ds-cell-header
+                  [class]="'cb-col cb-col--' + col.key"
+                  [title]="col.title"
+                  [multiline]="!!col.multiline"
+                  [sortable]="col.sortable"
+                  [sortDirection]="sortDirectionFor(col)"
+                  (sortClicked)="toggleSort(col)"
+                />
+              }
+              <ds-cell-header type="action" />
+            </ds-table-row>
+
+            @for (row of visibleRows(); track row.id) {
+              <ds-table-row [interactive]="true" (clicked)="openDetails(row)">
+                @for (col of columns(); track col.key) {
+                  @switch (col.kind) {
+                    @case ('policy-id') {
+                      <ds-cell [class]="'cb-col cb-col--' + col.key">
+                        <span class="cb-inline">
+                          <ds-icon name="globe" [size]="24" />
+                          <span class="cb-text" [attr.title]="col.text!(row)">{{ col.text!(row) }}</span>
+                        </span>
+                      </ds-cell>
+                    }
+                    @case ('stacked') {
+                      <ds-cell [class]="'cb-col cb-col--stacked cb-col--' + col.key">
+                        <span class="cb-text cb-text--line" [attr.title]="col.lines!(row)[0]">{{ col.lines!(row)[0] }}</span>
+                        <span class="cb-text cb-text--line" [attr.title]="col.lines!(row)[1]">{{ col.lines!(row)[1] }}</span>
+                      </ds-cell>
+                    }
+                    @case ('color-name') {
+                      <ds-cell [class]="'cb-col cb-col--' + col.key">
+                        <span class="cb-inline">
+                          <ds-policy-color [color]="col.color!(row)" size="s" />
+                          <span class="cb-text" [attr.title]="col.text!(row)">{{ col.text!(row) }}</span>
+                        </span>
+                      </ds-cell>
+                    }
+                    @case ('color') {
+                      <ds-cell [class]="'cb-col cb-col--' + col.key">
+                        <ds-policy-color [color]="col.color!(row)" size="s" />
+                      </ds-cell>
+                    }
+                    @case ('policy-name') {
+                      <ds-cell [class]="'cb-col cb-col--stacked cb-col--' + col.key">
+                        <span class="cb-inline">
+                          <span class="cb-text cb-text--line cb-text--strong" [attr.title]="row.policyName">{{ row.policyName }}</span>
+                          @if (asGrade(row).verified) {
+                            <ds-icon class="cb-verified" name="check-circle" [size]="16" aria-label="Verified policy" />
+                          }
+                        </span>
+                        <span class="cb-text cb-text--line cb-text--muted" [attr.title]="row.productName">{{ row.productName }}</span>
+                      </ds-cell>
+                    }
+                    @case ('amount') {
+                      @if (currencyMode() === 'original' && col.amount!(row); as a) {
+                        <ds-cell [class]="'cb-col cb-col--stacked cb-col--' + col.key">
+                          <span class="cb-text cb-text--line cb-text--num" [attr.title]="formatAmount(a)">{{ formatNumber(a.original) }}</span>
+                          <span class="cb-text cb-text--line cb-text--muted">{{ a.currency }}</span>
+                        </ds-cell>
+                      } @else {
+                        <ds-cell [class]="'cb-col cb-col--' + col.key">
+                          <span class="cb-text cb-text--num" [attr.title]="formatAmount(col.amount!(row))">{{ formatAmount(col.amount!(row)) }}</span>
+                        </ds-cell>
+                      }
+                    }
+                    @case ('grade') {
+                      <ds-cell [class]="'cb-col cb-col--' + col.key">
+                        <ds-grade [type]="col.grade!(row).type" [grade]="col.grade!(row).grade" size="s" />
+                      </ds-cell>
+                    }
+                    @case ('date') {
+                      <ds-cell [class]="'cb-col cb-col--' + col.key">
+                        <span class="cb-text">{{ col.date!(row) ? (col.date!(row) | date: 'MMM d, y') : '-' }}</span>
+                      </ds-cell>
+                    }
+                    @case ('cover-code') {
+                      <ds-cell [class]="'cb-col cb-col--' + col.key">
+                        @if (col.text!(row) === 'Cover') {
+                          <ds-badge label="Cover" status="success" size="s" />
+                        } @else {
+                          <ds-link href="#" weight="semi-bold"
+                            (click)="$event.preventDefault(); $event.stopPropagation(); side() === 'buyer' ? openRelated(row) : openDetails(row)">Check policy</ds-link>
+                        }
+                      </ds-cell>
+                    }
+                    @default {
+                      <ds-cell [class]="'cb-col cb-col--' + col.key + (col.wrap ? ' cb-col--stacked' : '')">
+                        <span class="cb-text" [class.cb-text--wrap]="col.wrap" [attr.title]="col.text!(row)">{{ col.text!(row) }}</span>
+                      </ds-cell>
+                    }
+                  }
+                }
+                <ds-cell-action ariaLabel="Cover actions">
+                  <ds-flyout-menu slot="menu">
+                    <ds-flyout-menu-item label="View details" icon="eye" (clicked)="openDetails(row)" />
+                    @if (side() === 'buyer') {
+                      <ds-flyout-menu-item label="Go to policy covers" icon="shield" (clicked)="openRelated(row)" />
+                    } @else {
+                      <ds-flyout-menu-item label="Go to buyer covers" icon="buyers" (clicked)="openRelated(row)" />
+                    }
+                  </ds-flyout-menu>
+                </ds-cell-action>
+              </ds-table-row>
+            } @empty {
+              <p class="cb-table__empty" role="status">No cover matches these filters.</p>
+            }
+          </div>
+        </div>
+
+      } @else {
+        <div class="cb-empty" role="status">
+          <ds-icon name="file-text" [size]="32" />
+          <p class="cb-empty__title">{{ activeTabLabel() }}</p>
+          <p class="cb-empty__text">This view is not part of the Coverbook prototype. Open Credit Limits or Grade based covers.</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <ds-modal
+    [open]="detailRow() !== null"
+    title="View details"
+    size="large"
+    contentHeight="auto"
+    (closed)="closeDetails()"
+  >
+    <ds-properties-panel [sections]="detailSections()" [columns]="3" variant="flat" layout="stacked" />
+    <ds-button slot="actions" type="primary" (clicked)="closeDetails()">Close</ds-button>
+  </ds-modal>
+
+  <ng-template #policyColorTpl>
+    <ds-policy-color [color]="policy().color" size="m" [showName]="true" />
+  </ng-template>
+  <ng-template #customerSegmentTpl>
+    <ds-badge [label]="policy().customerSegment" status="info" size="m" />
+  </ng-template>
+</app-topbox-test-shell>
