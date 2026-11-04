@@ -1,0 +1,219 @@
+// =============================================================
+// Coverbook : Buyer covers / Policy covers
+// Source : Figma [CU] Coverbook 2026, 6032:6969 (buyer) / 6359:3002 (policy)
+//
+//   • Corps : padding 32px, résumé police puis barre d'actions puis tableau
+//   • Barre d'actions : filtres à gauche, actions + devise à droite, gap 16px
+//   • Tableau : rangées de 56px, largeurs de colonnes en proportions Figma
+// =============================================================
+
+:host {
+  display:     block;
+  font-family: var(--semantic-font-family);
+}
+
+.cb-page {
+  position: relative;
+}
+
+.cb-tabs {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-xl);
+}
+
+.cb-body {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-l);
+  padding:        var(--semantic-measurement-spacing-xl);
+}
+
+// ── Menu « Policies » de la topbox police ────────────────────
+.cb-policies {
+  position: absolute;
+  top:      var(--semantic-measurement-spacing-none);
+  right:    var(--semantic-measurement-spacing-m);
+  z-index:  10;
+  width:    calc(var(--semantic-measurement-sizing-3xl) * 5.5);
+}
+
+// ── Résumé police ────────────────────────────────────────────
+.cb-policy-summary {
+  padding: var(--semantic-measurement-spacing-m);
+}
+
+// ── Barre d'actions ──────────────────────────────────────────
+.cb-toolbar {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+  margin-bottom:   calc(var(--semantic-measurement-spacing-s) * -1); // 16px sous la barre (Figma), le gap du corps en donne 24
+}
+
+.cb-toolbar__filters,
+.cb-toolbar__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-m);
+}
+
+.cb-toolbar__filters {
+  flex:      1;
+  min-width: 0;
+}
+
+.cb-toolbar__filter-field {
+  flex:      1;
+  min-width: 0;
+  max-width: calc(var(--semantic-measurement-sizing-3xl) * 5.25); // 336px
+}
+
+.cb-toolbar__currency {
+  // Figma : 128px pour « EUR (default) » ; élargi pour « Original currency ».
+  width: calc(var(--semantic-measurement-sizing-3xl) * 2.5); // 160px
+}
+
+.cb-columns {
+  position: relative;
+}
+
+.cb-columns__flyout {
+  position:   absolute;
+  top:        calc(100% + var(--semantic-measurement-spacing-xs));
+  right:      var(--semantic-measurement-spacing-none);
+  z-index:    10;
+  min-width:  calc(var(--semantic-measurement-sizing-3xl) * 3.5);
+}
+
+// ── Tableau ──────────────────────────────────────────────────
+.cb-table-scroll {
+  overflow-x: auto;
+}
+
+.cb-table {
+  display:        flex;
+  flex-direction: column;
+  width:          100%;
+}
+
+// 12 colonnes (Grade based covers) : défilement horizontal plutôt que des
+// colonnes illisibles.
+.cb-table--wide {
+  min-width: calc(var(--semantic-measurement-sizing-3xl) * 28); // 1792px, 12 colonnes
+}
+
+.cb-table--wide-policy {
+  min-width: calc(var(--semantic-measurement-sizing-3xl) * 22); // 1408px, 9 colonnes
+}
+
+.cb-table__empty {
+  margin:      0;
+  padding:     var(--semantic-measurement-spacing-l) var(--semantic-measurement-spacing-s);
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  color:       var(--semantic-color-static-text-main-tertiary);
+  border-bottom: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+}
+
+// Largeurs : proportions des colonnes Figma (px / 10), sans valeur absolue.
+.cb-col                 { flex: 13 1 0; min-width: 0; }
+.cb-col--policyId       { flex-grow: 18; }
+.cb-col--inforceBu      { flex-grow: 13; }
+.cb-col--lobSegment     { flex-grow: 12; }
+.cb-col--colorName      { flex-grow: 14.5; }
+.cb-col--request        { flex-grow: 13; }
+.cb-col--answer         { flex-grow: 13.2; }
+.cb-col--decisionCode   { flex-grow: 13; }
+.cb-col--underwriter    { flex-grow: 15.4; }
+.cb-col--buyerId        { flex-grow: 12; }
+.cb-col--buyerName      { flex-grow: 22; }
+.cb-col--grade          { flex-grow: 10; }
+.cb-col--ibus           { flex-grow: 13; }
+.cb-col--policyName     { flex-grow: 20; }
+.cb-col--color          { flex-grow: 8; }
+.cb-col--requestDate    { flex-grow: 13; }
+.cb-col--lastUpdate     { flex-grow: 13; }
+.cb-col--decisionGrade  { flex-grow: 10; }
+.cb-col--expirationDate { flex-grow: 14; }
+.cb-col--coverCode      { flex-grow: 14; }
+.cb-col--type           { flex-grow: 21; }
+
+// Cellule sur deux lignes : interligne 20px, padding vertical 8px pour tenir
+// dans la rangée de 56px.
+ds-cell.cb-col--stacked {
+  padding-top:    var(--semantic-measurement-spacing-s);
+  padding-bottom: var(--semantic-measurement-spacing-s);
+}
+
+.cb-inline {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  min-width:   0;
+}
+
+.cb-text {
+  display:       block;
+  min-width:     0;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+}
+
+.cb-text--wrap {
+  display:            -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp:         2;
+  white-space:        normal;
+  line-height:        var(--semantic-font-text-style-line-height-m);
+}
+
+.cb-text--line {
+  line-height: var(--semantic-font-text-style-line-height-m);
+}
+
+.cb-text--strong {
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+}
+
+.cb-text--muted {
+  font-size: var(--semantic-font-text-style-size-m);
+  color:     var(--semantic-color-static-text-main-tertiary);
+}
+
+.cb-text--num {
+  font-variant-numeric: tabular-nums;
+}
+
+.cb-verified {
+  flex-shrink: 0;
+  color:       var(--semantic-color-static-icon-main-functional-positive);
+}
+
+// ── Onglet non branché ───────────────────────────────────────
+.cb-empty {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--semantic-measurement-spacing-s);
+  padding:        var(--semantic-measurement-spacing-3xl) var(--semantic-measurement-spacing-l);
+  color:          var(--semantic-color-static-text-main-tertiary);
+  text-align:     center;
+}
+
+.cb-empty__title {
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.cb-empty__text {
+  margin:      0;
+  max-width:   65ch;
+  font-size:   var(--semantic-font-text-style-size-l);
+  line-height: var(--semantic-font-text-style-line-height-l);
+}

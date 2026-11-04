@@ -23,6 +23,7 @@
 :host.ds-properties-panel--cols-2 { grid-template-columns: repeat(2, 1fr); }
 :host.ds-properties-panel--cols-3 { grid-template-columns: repeat(3, 1fr); }
 :host.ds-properties-panel--cols-4 { grid-template-columns: repeat(4, 1fr); }
+:host.ds-properties-panel--cols-5 { grid-template-columns: repeat(5, 1fr); }
 
 // ── Section ───────────────────────────────────────────────────
 .ds-properties-panel__section {

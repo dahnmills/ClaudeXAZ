@@ -90,6 +90,7 @@ export * from './segmented-control/segmented-control.component';
 export * from './pagination/pagination.component';
 export * from './accordion/accordion.component';
 export * from './grade/grade.component';
+export * from './policy-color/policy-color.component';
 export * from './timeline/timeline.component';
 export * from './timeline/timeline-event.component';
 export * from './collapsible-table/collapsible-table.component';

@@ -38,6 +38,10 @@
                 </li>
               }
             </ul>
+          } @else if (isTemplate(row.value)) {
+            <span class="ds-properties-panel__value">
+              <ng-container [ngTemplateOutlet]="$any(row.value).template" />
+            </span>
           } @else if (isLink(row.value)) {
             <ds-link class="ds-properties-panel__value" [href]="$any(row.value).href">{{ $any(row.value).label }}</ds-link>
           }

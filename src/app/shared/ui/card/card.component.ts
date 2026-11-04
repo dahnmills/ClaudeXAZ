@@ -1,7 +1,8 @@
 import { Component, input } from '@angular/core';
 
-/** Teinte de la carte. `positive` / `negative` marquent un changement en attente. */
-export type CardTone = 'default' | 'positive' | 'negative';
+/** Teinte de la carte. `positive` / `negative` marquent un changement en attente.
+ *  `subtle` : fond bleuté sans bordure, pour un encart de contexte (ex. résumé de police du Coverbook). */
+export type CardTone = 'default' | 'positive' | 'negative' | 'subtle';
 
 @Component({
   selector: 'ds-card',
@@ -15,6 +16,7 @@ export type CardTone = 'default' | 'positive' | 'negative';
     '[class.ds-card--elevated]':       'elevated()',
     '[class.ds-card--tone-positive]':  'tone() === "positive"',
     '[class.ds-card--tone-negative]':  'tone() === "negative"',
+    '[class.ds-card--tone-subtle]':    'tone() === "subtle"',
     '[attr.aria-busy]':         'loading() || null',
   },
 })

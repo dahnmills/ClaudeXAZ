@@ -103,3 +103,13 @@
   flex-shrink: 0;
   color:       var(--semantic-color-static-text-main-tertiary);
 }
+
+// ── Multiline : titre sur deux lignes au plus ──────────────────
+:host.ds-cell-header--multiline .ds-cell-header__title {
+  display:            -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp:         2;
+  white-space:        normal;
+  line-height:        var(--semantic-font-text-style-line-height-m);
+}
