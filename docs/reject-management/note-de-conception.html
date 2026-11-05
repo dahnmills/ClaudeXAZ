@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Reject Management : note de conception</title>
+<style>
+@page { size: A4; margin: 18mm 16mm; }
+* { box-sizing: border-box; }
+body { font-family: "Segoe UI", Arial, sans-serif; color: #1f2933; font-size: 10.5pt; line-height: 1.5; margin: 0; }
+.cover { border-left: 6px solid #003781; padding: 6mm 0 6mm 8mm; margin-bottom: 8mm; }
+.cover small { color: #5b6b7c; letter-spacing: .08em; text-transform: uppercase; font-size: 8.5pt; }
+h1 { font-size: 22pt; margin: 2mm 0 1mm; color: #003781; }
+.sub { color: #5b6b7c; margin: 0; }
+h2 { font-size: 13.5pt; color: #003781; margin: 9mm 0 3mm; padding-bottom: 1.5mm; border-bottom: 1px solid #d5dde6; page-break-after: avoid; }
+p { margin: 0 0 3mm; }
+ul { margin: 0 0 3mm; padding-left: 5mm; } li { margin-bottom: 1.2mm; }
+table { width: 100%; border-collapse: collapse; margin: 2mm 0 5mm; font-size: 9.5pt; }
+tr { page-break-inside: avoid; }
+th { background: #003781; color: #fff; text-align: left; padding: 2mm 2.5mm; font-weight: 600; }
+td { padding: 2mm 2.5mm; border-bottom: 1px solid #e3e9ef; vertical-align: top; }
+tr:nth-child(even) td { background: #f6f8fb; }
+.tag { display: inline-block; font-size: 8pt; padding: 0 2mm; border-radius: 3px; background: #e6eefb; color: #003781; margin-right: 1mm; }
+.warn { background: #fff6e5; border-left: 4px solid #e08a00; padding: 3mm 4mm; margin: 3mm 0 5mm; }
+.ok { background: #eaf6ee; border-left: 4px solid #2f8f4e; padding: 3mm 4mm; margin: 3mm 0 5mm; }
+ol.questions { padding-left: 5mm; } ol.questions li { margin-bottom: 2.5mm; }
+footer { margin-top: 10mm; color: #7a8896; font-size: 8.5pt; border-top: 1px solid #d5dde6; padding-top: 2mm; }
+</style></head><body>
+
+<div class="cover">
+  <small>Qirin · Prototype · Note de conception</small>
+  <h1>Reject Management</h1>
+  <p class="sub">Les choix faits, pourquoi, et ce qui reste à trancher. Version du 4 novembre 2026.</p>
+</div>
+
+<p>Cette note rassemble les décisions prises sur la page Reject Management, avec leur origine : retours du métier, jeu de données v3, et recherche UX menée en octobre. Elle sert à justifier le prototype auprès de ceux qui n'ont pas suivi les échanges, et à lister ce qu'il faut encore valider.</p>
+
+<h2>1. Ce que le métier a demandé</h2>
+<table>
+<tr><th style="width:26%">Retour</th><th>Contenu</th></tr>
+<tr><td>22 octobre 2026</td><td>L'outil actuel utilise un radio button par rejet (resubmit ou delete). « Resubmit all » et « Delete all » ne font que présélectionner ces radios, et un seul bouton « Validate » lance les traitements. Le métier juge plus ergonomique de <strong>cocher les rejets</strong>, puis de choisir <strong>l'action à lancer</strong> sur la sélection. Le bouton « Validate » devient inutile.</td></tr>
+<tr><td>Actions</td><td>« Resubmit » et « Delete » sont certaines. Un archivage ou un « Move to technical / functional » sont à évaluer, ainsi que d'autres actions plus spécifiques.</td></tr>
+<tr><td>4 novembre 2026</td><td>Trois rejets de référence, avec leur cause et leur résolution, et le jeu de données <em>Rejects_extracted_data_v3</em> : les champs <strong>en rouge</strong> provoquent le rejet, les champs <strong>barrés</strong> n'ont plus de sens dans Qirin.</td></tr>
+</table>
+
+<h2>2. Décisions de conception</h2>
+<table>
+<tr><th style="width:24%">Décision</th><th>Pourquoi</th><th style="width:19%">Origine</th></tr>
+<tr><td><strong>Cases à cocher + un bouton par action.</strong> Plus de radio par ligne, plus de « Validate ».</td><td>Le choix de l'action se fait une seule fois, sur la sélection, au lieu d'une fois par ligne puis d'une validation finale. Moins de clics, et on voit tout de suite ce qui va être traité.</td><td><span class="tag">Métier</span> 22 oct.</td></tr>
+<tr><td><strong>Seulement Resubmit et Delete.</strong> Archive et Move sont masqués derrière un drapeau.</td><td>Seules ces deux actions sont validées. Le reste reste dans le code, facile à réactiver ou à supprimer une fois la décision prise.</td><td><span class="tag">Métier</span> actions à trancher</td></tr>
+<tr><td><strong>Un clic sur une ligne ouvre la correction d'un rejet</strong> dans une modale.</td><td>On corrige un rejet sans quitter le tableau. Le tableau garde sa position, ses filtres et sa sélection.</td><td><span class="tag">UX</span></td></tr>
+<tr><td><strong>La modale s'ouvre sur un carrefour</strong> : une carte « Errors » qui réunit tous les champs en cause, puis une carte par bloc du message (COMPANY, COMMON DATA…) avec son nombre d'erreurs ou une coche verte. Le bouton « Next » enchaîne vers le bloc suivant en erreur, sans repasser par le carrefour.</td><td>Un rejet compte 60 à 127 champs. Le carrefour donne la vue d'ensemble, et la carte « Errors » permet de tout traiter d'une traite. Il reprend la maquette du métier.<br><em>Écart assumé avec la recherche UX, voir section 5.</em></td><td><span class="tag">Maquette</span> <span class="tag">UX</span></td></tr>
+<tr><td><strong>Les champs en cause sont en rouge</strong> et le message est affiché sur le champ.</td><td>C'est ce que le métier avait surligné dans son jeu de données. Le message reste à côté du champ, pas seulement dans un résumé : l'utilisateur n'a pas à le mémoriser.</td><td><span class="tag">Métier</span> v3 <span class="tag">UX</span></td></tr>
+<tr><td><strong>Seuls les champs à corriger sont modifiables.</strong> Les autres champs en cause restent en rouge, en lecture seule.</td><td>Dans le cas du doublon d'identifiant ou de l'activité principale, la cause ne se corrige pas dans le rejet. Laisser le champ éditable inviterait à une fausse correction.</td><td>Scénarios 1 et 3</td></tr>
+<tr><td><strong>Les champs barrés du v3 sont masqués</strong> (80 champs sur 127), avec leur nombre indiqué. Les blocs entièrement barrés (BRANCH) disparaissent.</td><td>Ils n'ont plus de sens dans Qirin. Les montrer noie les champs utiles dans le bruit. Le nombre masqué reste visible, pour qu'on sache que rien n'est caché sans le dire.</td><td><span class="tag">Métier</span> v3</td></tr>
+<tr><td><strong>Chaque rejet de référence explique</strong> : la raison en mots simples, la cause probable, les étapes, puis l'action suggérée, mise en avant dans le pied de la modale.</td><td>L'analyste voit d'emblée quoi faire, avec quelle action. Les trois cas du métier le montrent : la bonne réponse n'est pas toujours « resubmit ».</td><td><span class="tag">Métier</span> 4 nov.</td></tr>
+<tr><td><strong>« Resubmit » n'est jamais grisé.</strong> S'il reste des erreurs non corrigées, il demande confirmation. « Delete » demande toujours confirmation.</td><td>Un bouton grisé sans explication est un piège pour l'utilisateur. La confirmation dit ce qui reste à corriger. Delete est irréversible.</td><td><span class="tag">UX</span></td></tr>
+<tr><td><strong>Le nom technique du champ</strong> (numéro, nom QA, longueur max) est dans une info-bulle à côté du libellé.</td><td>L'analyste lit le libellé métier. Le détail technique reste disponible sans occuper une ligne sous chaque champ.</td><td><span class="tag">UX</span></td></tr>
+</table>
+
+<h2>3. Les trois rejets de référence</h2>
+<p>Ils couvrent les trois façons de sortir d'un rejet : corriger puis resoumettre, supprimer, ou resoumettre tel quel après une correction faite ailleurs.</p>
+<table>
+<tr><th style="width:17%">Rejet</th><th style="width:25%">Motif et cause probable</th><th>Résolution</th><th style="width:16%">Action suggérée</th></tr>
+<tr><td><strong>1. Identifiant en doublon</strong></td><td>Un identifiant censé être unique est déjà porté par une autre company. Souvent, la company elle-même a été créée en double.</td><td>Faire un « duplicate removal » (fusion des deux companies) <em>en dehors du rejet</em>, puis supprimer le rejet devenu obsolète. Le prototype affiche la company en conflit, avec une étape « Start duplicate removal » et un lien pour l'ouvrir.</td><td><strong>Delete</strong><br>(Resubmit reste possible)</td></tr>
+<tr><td><strong>2. Code région inconnu</strong></td><td>Le code reçu n'existe pas dans la dataref de Qirin pour ce pays : il vient d'un référentiel externe qui n'est pas iso.</td><td>Chercher le bon code dans la dataref, <em>le corriger directement dans le rejet</em>, puis resoumettre. Le champ Région propose les codes valides du pays. Le code pays reste en lecture seule.</td><td><strong>Resubmit</strong></td></tr>
+<tr><td><strong>3. Activité principale</strong></td><td>On ne peut clôturer que des activités secondaires. L'activité existe souvent en double (principale et secondaire, sous deux nomenclatures).</td><td>Sur la company, intervertir l'activité principale et la secondaire, puis <em>resoumettre le rejet tel quel</em>. Aucun champ à modifier dans le rejet : l'explication et le lien vers les activités suffisent.</td><td><strong>Resubmit as is</strong></td></tr>
+</table>
+
+<h2>4. Ce qui est simulé dans le prototype</h2>
+<div class="warn">
+<ul>
+<li>Le <strong>duplicate removal</strong> est une étape simulée : une confirmation, puis la mention « fait ».</li>
+<li>La <strong>liste des régions</strong> est un échantillon de codes ISO 3166-2 pour le Royaume-Uni, à la place de la vraie dataref.</li>
+<li>Les liens « Open company » et « Open company activities » ouvrent des pages génériques du prototype, pas la company concernée.</li>
+<li>Les <strong>textes de cause et de raison</strong> sont reformulés à partir des explications du métier.</li>
+<li>Les <strong>noms, identifiants et adresses</strong> sont fictifs. La structure des champs, les codes et les listes de valeurs viennent du jeu v3.</li>
+</ul>
+</div>
+
+<h2>5. Un écart assumé avec la recherche UX</h2>
+<p>La recherche menée le 21 octobre (34 produits regardés, une trentaine de guidelines lues) recommandait de <strong>supprimer l'écran carrefour</strong> : un récapitulatif suivi d'un aller-retour entre catégories oblige à mémoriser et allonge le parcours. Elle préconisait un seul formulaire avec un résumé d'erreurs et une barre d'ancres.</p>
+<p>Le prototype garde pourtant le carrefour, parce que la maquette du métier le prévoit. Pour en limiter le coût, il reprend deux idées de la recherche : la carte « Errors » réunit tous les champs en cause d'un coup, et le bouton « Next » enchaîne les blocs en erreur sans revenir en arrière.</p>
+<div class="ok"><strong>À tester avec les analystes :</strong> le carrefour est-il utile, ou veulent-ils ouvrir directement le premier champ en erreur ? La recherche l'avait déjà classé comme point à valider (confiance moyenne).</div>
+
+<h2>6. Questions ouvertes pour le métier</h2>
+<ol class="questions">
+<li>Dans le cas du code région, le <strong>code pays</strong> doit-il aussi pouvoir être corrigé, ou sert-il seulement de référence pour valider la région ? (Le prototype fait la seconde hypothèse.)</li>
+<li>Dans le cas du doublon, faut-il <strong>masquer ou bloquer Resubmit</strong>, puisque Delete est la sortie attendue ?</li>
+<li>Avant « Resubmit as is » (activité principale), faut-il demander à l'utilisateur de <strong>confirmer</strong> qu'il a bien interverti les activités ?</li>
+<li>Qui détient la <strong>vraie liste des régions</strong> par pays, et sous quel format ?</li>
+<li>Archive et « Move to technical / functional » : <strong>les garde-t-on</strong> ? Si oui, avec quelle règle ?</li>
+<li>Faut-il un <strong>nouveau jeu de données</strong> pour d'autres types de rejets (le Payment History n'est pas couvert par le v3) ?</li>
+</ol>
+
+<h2>7. Pour aller plus loin</h2>
+<ul>
+<li>Recherche UX : <code>docs/benchmark-2026-10-21-reject-correction/ux-research.md</code> (principes, sources, recommandations).</li>
+<li>Benchmark visuel de 34 produits : <code>docs/benchmark-2026-10-21-reject-correction/products.md</code>.</li>
+<li>Prototype : page <code>#/reject-management</code> (branche <code>main</code>).</li>
+</ul>
+
+<footer>Qirin · Reject Management · note de conception · 4 novembre 2026</footer>
+</body></html>

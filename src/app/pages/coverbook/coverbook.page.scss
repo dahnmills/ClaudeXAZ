@@ -118,7 +118,8 @@
 
 // Largeurs : proportions des colonnes Figma (px / 10), sans valeur absolue.
 .cb-col                 { flex: 13 1 0; min-width: 0; }
-.cb-col--policyId       { flex-grow: 18; }
+// L'identifiant d'une police ne se tronque pas : colonne plancher
+.cb-col--policyId       { flex-grow: 18; min-width: calc(var(--semantic-measurement-sizing-3xl) * 3.25); }
 .cb-col--inforceBu      { flex-grow: 13; }
 .cb-col--lobSegment     { flex-grow: 12; }
 .cb-col--colorName      { flex-grow: 14.5; }

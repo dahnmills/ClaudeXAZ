@@ -60,3 +60,63 @@ Plan : `docs/superpowers/plans/2026-11-03-figma-sync-search.md`
   - Ruling : carte ouverte en alerte J-30 : pas de variante Open + Alert dans Policy Result Card ; date passée en couleur warning par surcharge, sans l'icône. Variante à ajouter en librairie.
 - Task 13 : Overview avec vignettes (copies réduites des écrans) et liens vers les écrans ; couverture « Ready for dev » ; Changelog v1.0 mis à jour. Version nommée et vignette du fichier : à faire à la main (API non disponible).
 - Retour utilisateur : les annotations débordaient sur l'écran suivant. Écart entre écrans passé de 120 à 560 px (sections Buyers, Policies, History), marge de fin de section 480 px. Contrôle par script : 584 px libres à droite de chaque nœud annoté, aucun nœud hors de son écran, aucun chevauchement.
+
+## Refonte « maîtres + slots » (demande utilisateur, 2026-11-03)
+
+Principe : les librairies gardent des maîtres génériques (structure, règles, états) avec des slots ; les contenus propres à une fonctionnalité sont des composants locaux du fichier, posés dans les slots. Vérifier l'existant avant de créer.
+
+Relevé de l'existant (Data Display) :
+- Card › `.Columns` (415:2129) : panneau label/valeur, `# Columns` 1-4, `Layout` Vertical / Horizontal / Mixed, `Loading` (skeleton). Fait ce que faisait 🆕 Properties Panel → Properties Panel et `.Property Row` retirés, remplacés par `.Columns`.
+- Card (1325:10443) : composant avec `Slot` + `Button` ; Card set (354:4525) a une variante `Type=Slot`. Base du Widget Card de Buyer Summary.
+- Horizontal Card (680:6820, `Type` Select | Collapsible) bâti sur Row (679:5381, colonne d'ordre, données en colonnes, actions séparées) : dessin différent du résultat de recherche → extension par une variante `Type=Slot` plutôt qu'un nouveau composant.
+
+Cible :
+1. Horizontal Card `Type=Slot` (+ `Open`, `Size`, `Favorited`) : slots Leading, Content, Trailing, Extra actions, Details ; actions communes Favorite + Toggle dans le maître.
+2. Contenus locaux du fichier Search : Buyer content (Exists), Policy content (Kind), Buyer trailing (score), Policy trailing (badge, date, Alert), détails en `.Columns`.
+3. Search Bar maître à slots (Data Entry) ; compositions Buyers / Policies locales. Search Bar Scoped retiré après migration.
+4. Migration des 13 écrans + States, puis retrait de Result Card, Policy Result Card, Properties Panel, Property Row, Search Bar Scoped ; republication.
+- Fait : Horizontal Card étendu (Data Display, set 680:6820) : nouvelles propriétés de variante Open / Size / Favorited (valeurs par défaut = rendu actuel des variantes Select et Collapsible) et 6 variantes `Type=Slot` ; slots Leading, Content, Trailing, Extra actions, Details, décrits ; note de doc 2046:1393. Slots en « hug » vertical (sinon le contenu est coupé). Test de remplissage OK (tuile, textes, `.Columns` # Columns=3 Horizontal en Details, en-tête de `.Columns` masqué).
+- Fait : `🆕 Search Bar` (Data Entry, page 3047:93, set 3047:427) : Filled False/True, slots Filters et Options, champ et bouton Search dans le maître, prop Query.
+- ARRÊT publication 3 : Data Display (Horizontal Card) et Data Entry (Search Bar), avant les contenus locaux et la migration du fichier Search.
+- Publication 3 faite. Contenus locaux du fichier Search (page 1:7) : section « Result contents » (Result / Buyer content 49:2986, Policy content 49:3127, Score 49:3128, Date 49:3145, Meta 49:3146, Action spacer 49:3148, Create action 49:3149, Buyer details 49:3159, Policy details 49:4047) et section « Search Bar compositions » (Buyer filters 53:1174, Buyer options 53:1226, Policy filters 53:1227, Policy options 53:1373).
+  - `.Columns` est privé (préfixe « . », non publié) : les détails passent par Card `Type=Default` (publié), dont on règle `# Columns` et `Layout` sur l'instance ; bordure et fond retirés, padding lié à Spacing/None. Pas de variante 4 colonnes Horizontal : 4 Cards d'une colonne.
+  - Slot vide = 100 × 100 : booléen `Show extra actions` ajouté au maître (défaut off) ; slots vides masqués dans le fichier en attendant.
+  - Spacer d'action = 24 px (largeur d'un Button Icon Size M), pas 32.
+- Migration : 40 cartes et 10 barres sur Screens, 4 cartes et 4 barres sur States ; vignettes de l'Overview régénérées (copies réduites : leurs liaisons de tokens ne survivent pas à la réduction, exclues de l'audit). Contrôle : 0 instance des anciens composants, audit vide, aucun débordement visible.
+- Retirés des librairies : pages 🆕 Result Card, 🆕 Policy Result Card, 🆕 Properties Panel (Data Display ; glyphes Contract / File Text / File New déplacés sur 🆕 Icon Tile), 🆕 Search Bar Scoped (Data Entry ; glyphe Tenant déplacé sur 🆕 Search Bar, copies Hash / Contract / File Text supprimées).
+- Changelog du fichier Search : entrée v1.1 (63:77).
+- ARRÊT publication 4 : Data Display (retraits, Show extra actions) et Data Entry (retrait). Après : passer `Show extra actions` à on sur les cartes buyer (spacer / + Create), sinon le slot disparaît.
+- Publication 4 faite. Instances du fichier Search mises à la dernière version (39 Screens, 8 States, 14 Overview) ; Show extra actions activé sur les 10 cartes buyer qui ont un spacer ou + Create. Refonte Search terminée.
+
+## Buyer Summary (fichier suivant)
+- Relevé librairies pour Buyer Summary : Card set (Default = carte de chiffres avec `.Columns` et `.Action`, Empty State, Key Info, Company Profile), Card avec Slot (1325:10443), Side Navigation (Layout, Open=False = rail), Page Header (Topbox Data Type=Buyer + Breadcrumb), Drawer, Modal (slots), Dropdown, Tab, Input Search, Radio Card (déjà un Slot + Display Slot). Task (Layout) = case à cocher, inutilisable pour les listes.
+- Fait (librairies) :
+  - Card (slot) : booléen `Header` (défaut off) + en-tête `.Title` exposé et séparateur repris de Card Default ; kebab existant gardé.
+  - `🆕 List Item` (Data Display, page 2059:47, composant 2059:394) : Tags (slot + Show tags), Title (Link neutre souligné, exposé), Date (+ Date icon), Badge (exposé), Excerpt.
+  - `🆕 Chart` (Data Display, page 2060:47, set 2060:338) : Grid Vertical / Both, Y axis ; slots Y labels, Series, X labels ; lignes de grille dans le maître.
+  - Radio Card (Data Entry 2093:217) : `Show selector`, `Show label` (défaut on ; le séparateur du slot suit Show label) pour le sélecteur de grille.
+- Fichier `Qirin · Buyer Summary` : `0ZjZu0OjHdzGowm3hliM2M`, pages Cover 0:1 (cover 1:209), Changelog 1:2 (entrée 2:85, composant 2:49), Overview 1:3 (3:38), Screens 1:4, States 1:5, Specs 1:6, Local components 1:7.
+- ARRÊT publication 5 : Data Display (Card header, List Item, Chart) et Data Entry (Radio Card).
+
+## Buyer Summary (`0ZjZu0OjHdzGowm3hliM2M`), livré v1.0 le 2026-11-04
+
+Cadres en **1280** (règle utilisateur : jamais 1440). Pages : Cover 1:209 (Ready for dev, main · 9f6736de), Changelog entrée 2:85, Overview 3:38 (vignettes par étape), Screens 1:4, States 1:5 (section 94:25), Specs 1:6 (section 95:25, 6 écrans annotés), Local components 1:7.
+
+**Locaux** : shell `Buyer Summary shell` 15:5169 (Mode Default / Editing, slot Content, voile Background/Main/Primary × Opacity/Disabled), `Board actions` 19:1820, `Board slot` 34:1629 (Empty / Targeted), `Slot toolbar` 34:1630, `Board editor bar` 34:1645, `Card content / Loading` 27:1597, `Modal content / Full properties` 37:1641, `Drawer content / Cards` 43:2470, `Drawer tabs / Cards & layouts` 45:2764, `Layout preview` 62:2757 (6 grilles), `Drawer content / New board` 71:1886 (Radio Card), `Board row` 84:2062 (Horizontal Card + `Board row / Label` 84:1762 + `Board row / Actions` 84:1812), `Create board` 63:3269, `Drawer content / Boards` 85:2354 (List / Renaming / With custom board). Contenus de cards `Card content / *` dans la section 9:858.
+
+**Sections Screens** : Default boards 21:25 (21:26, 21:3115, 21:4371), Board interactions 28:3080 (loading 28:3081, sélecteur 28:4111, menu 28:6265, Full properties 38:4753), New board 55:5596 (pick 73:5682, ciblé + drawer 74:6506, première card 55:5597, rempli 76:7498, placing 77:7944, enregistré 79:10875, abandon 90:10830), Manage boards 86:8741 (liste 86:8742, renommage 88:9478, board perso 88:11585).
+
+Rulings :
+- Sets Widget (12 Type) et Catalog card supprimés : variantes de contenu. Les écrans posent Card (slot) ou Card Default + contenu local. Coût si faux : un set à recréer.
+- Identifiant de la topbox en JetBrains Mono : Menlo indisponible là où tournent les scripts.
+- Rail de la Side Navigation : `Frame 172` à hauteur fixe masqué, trait droit relié à `foundation/color/grey/100` sur l'instance (défaut librairie).
+- Discard en Primary Default : Button n'a pas de ton Negative (écart librairie).
+- Board row repose sur Horizontal Card (padding M unique depuis la suppression de Size) : 58 px au lieu de 48 dans l'app.
+
+## Refactor des librairies (2026-11-04)
+
+- Horizontal Card : 8 → 4 variantes (Type × Open), `.Favorite` (2074:1404, clé `382c158f…`) exposé, Size supprimée. Publié.
+- Standalone Dropdown : 12 → 8 (Tone × State), `.Chevron` (3067:232, Tone × Open) exposé, Focus booléen. Publié.
+- Identifier : 4 → 2 (State), Copyable et Focus booléens. **À republier.**
+- 30 propriétés inutilisées supprimées (Data Entry, Data Display). Collection Density créée puis supprimée (refus utilisateur : 2 niveaux de tokens seulement).
+- Fichier Search recâblé : 96 instances.

@@ -11,6 +11,7 @@ import {
   SelectComponent,
   LinkComponent,
   BadgeComponent,
+  FunctionalNoticeComponent,
   ToasterService,
 } from '../../../shared/ui';
 import type { SelectOption } from '../../../shared/ui/select/select.component';
@@ -54,7 +55,7 @@ interface BlockSection {
   selector: 'rm-reject-correction-modal',
   standalone: true,
   imports: [NgTemplateOutlet, ModalComponent, ButtonComponent, CardComponent, IconComponent, InputTextComponent,
-    ConfirmDialogComponent, TooltipDirective, SelectComponent, LinkComponent, BadgeComponent],
+    ConfirmDialogComponent, TooltipDirective, SelectComponent, LinkComponent, BadgeComponent, FunctionalNoticeComponent],
   templateUrl: './reject-correction-modal.component.html',
   styleUrl: './reject-correction-modal.component.scss',
 })

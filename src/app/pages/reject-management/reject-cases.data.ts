@@ -92,13 +92,13 @@ const DUPLICATE_ID = adminReject('rec-1', {
   37: { value: '061234578', error: DUP_ERROR },
 }, {
   kind: 'delete',
-  reason: 'The integration adds DUN 061234578 to this company, but a DUN is unique and another company already has it.',
-  likelyCause: 'The company was created twice in Qirin: both records are the same buyer.',
+  reason: 'DUN 061234578 already belongs to another company.',
+  likelyCause: 'The company was probably created twice in Qirin: both records are the same buyer.',
   conflictingCompany: { name: 'Brazos Lab Supply Inc.', id: '120734688', country: 'US' },
   fieldsToCorrect: [],
   steps: [
     {
-      text: 'Check that both companies are the same buyer, then merge them with duplicate removal. The merged company keeps DUN 061234578.',
+      text: 'Merge the two companies.',
       link: { label: 'Open company 120734688', href: '#/buyer-summary/120734688' },
       stub: {
         label: 'Start duplicate removal',
@@ -108,7 +108,7 @@ const DUPLICATE_ID = adminReject('rec-1', {
         done: 'Companies merged. This reject is now obsolete.',
       },
     },
-    { text: 'Delete this reject: the identifier is already on the merged company.' },
+    { text: 'Delete this reject, now obsolete.' },
   ],
 });
 
@@ -141,12 +141,12 @@ const UNKNOWN_REGION = adminReject('rec-4', {
   99: 'NORTHGATE ROOFING LTD', 101: '25/07/2022',
 }, {
   kind: 'correct-and-resubmit',
-  reason: 'The region code NM received for this company does not exist in Qirin dataref for Great Britain.',
-  likelyCause: 'The provider takes its region codes from an external reference base that is not aligned with Qirin dataref.',
+  reason: 'Region code NM does not exist in Qirin dataref for Great Britain.',
+  likelyCause: 'The provider takes its region codes from an external base that is not aligned with Qirin dataref.',
   fieldsToCorrect: [16],
   steps: [
-    { text: 'Choose the right region code from Qirin dataref in the Region field.', goToFields: true },
-    { text: 'Resubmit the reject with the corrected region.' },
+    { text: 'Choose the right region code.', goToFields: true },
+    { text: 'Resubmit.' },
   ],
 });
 
@@ -175,15 +175,15 @@ const MAIN_ACTIVITY = adminReject('rec-5', {
   48: { value: '6430', error: ACTIVITY_ERROR },
 }, {
   kind: 'resubmit-as-is',
-  reason: 'The message closes activity 6430 (SBI), but it is the main activity of this company. Only secondary activities can be closed.',
-  likelyCause: 'The activity exists twice on the company, once as main activity and once as secondary activity, under two different nomenclatures. The integration removes one of the two.',
+  reason: 'Activity 6430 (SBI) is the main activity: only a secondary one can be closed.',
+  likelyCause: 'The activity exists twice on the company, as main and as secondary, under two nomenclatures. The integration removes one of them.',
   fieldsToCorrect: [],
   steps: [
     {
-      text: 'On the company, swap the main and the secondary activity, so that 6430 (SBI) becomes the secondary one.',
+      text: 'Swap the main and the secondary activity.',
       link: { label: 'Open company activities', href: '#/admin-data' },
     },
-    { text: 'Resubmit the reject as is: it now closes a secondary activity and goes through.' },
+    { text: 'Resubmit as is.' },
   ],
 });
 
@@ -204,10 +204,10 @@ const CREATION_DATE: RejectRecord = {
   })),
   resolution: {
     kind: 'correct-and-resubmit',
-    reason: 'The creation date of the company (01/12/2026) is after the date the reject was received.',
+    reason: 'The creation date (01/12/2026) is after the date the reject was received.',
     steps: [
-      { text: 'Enter the real creation date in the Creation date field.', goToFields: true },
-      { text: 'Resubmit the reject with the corrected date.' },
+      { text: 'Enter the real creation date.', goToFields: true },
+      { text: 'Resubmit.' },
     ],
   },
 };

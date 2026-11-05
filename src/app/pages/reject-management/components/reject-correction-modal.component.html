@@ -45,31 +45,16 @@
 
   @if (screen() === 'hub') {
     @if (resolution(); as res) {
-      <!-- Résolution connue : pourquoi, puis comment en sortir -->
-      <section class="rc__group">
-        <h3 class="rc__group-title">Why it was rejected</h3>
-        <ds-card>
-          <div class="rc__why">
-            <p class="rc__text">{{ res.reason }}</p>
+      <!-- Résolution connue : une seule notice, la raison en titre, les étapes dessous -->
+      <ds-functional-notice status="info" emphasis="medium" [title]="res.reason">
+        <div class="rc__notice">
+          <div class="rc__notice-head">
+            <ds-badge [label]="suggestedLabel()" status="info" />
             @if (res.likelyCause) {
-              <p class="rc__text rc__text--secondary">Likely cause: {{ res.likelyCause }}</p>
-            }
-            @if (res.conflictingCompany; as c) {
-              <p class="rc__text">
-                <span class="rc__strong">Company that already has it:</span>
-                {{ c.name }}, ID {{ c.id }} ({{ c.country }})
-              </p>
+              <span class="rc__info" tabindex="0" [dsTooltip]="'Likely cause: ' + res.likelyCause" [dsTooltipDelay]="200"
+                aria-label="Likely cause"><ds-icon name="info-circle" [size]="16" /></span>
             }
           </div>
-        </ds-card>
-      </section>
-
-      <section class="rc__group">
-        <div class="rc__group-head">
-          <h3 class="rc__group-title">How to resolve</h3>
-          <ds-badge [label]="suggestedLabel()" status="info" />
-        </div>
-        <ds-card>
           <ol class="rc__steps">
             @for (step of res.steps; track $index; let i = $index) {
               <li class="rc__step">
@@ -109,32 +94,27 @@
               </li>
             }
           </ol>
-        </ds-card>
-      </section>
+        </div>
+      </ds-functional-notice>
     }
 
     <!-- Carrefour : toutes les erreurs d'un coup, ou un bloc dans son contexte -->
-    @if (errors().length) {
-      <section class="rc__group">
-        @if (hasEditableErrors()) {
-          <h3 class="rc__group-title">Things to correct</h3>
-          <ng-container [ngTemplateOutlet]="card"
-            [ngTemplateOutletContext]="{ title: 'Errors', open: openCount(), count: openCount() ? errorsLabel(openCount()) : 'No error to correct', hint: 'All blocks', target: 'errors' }" />
-        } @else {
-          <h3 class="rc__group-title">Things to check</h3>
-          <ng-container [ngTemplateOutlet]="card"
-            [ngTemplateOutletContext]="{ title: 'Fields in cause', open: errors().length, count: causeLabel(), hint: 'Read only', target: 'errors' }" />
-        }
-      </section>
-    }
-
     <section class="rc__group">
       <div class="rc__group-head">
-        <h3 class="rc__group-title">Categories</h3>
+        <h3 class="rc__group-title">{{ hasEditableErrors() ? 'To correct' : 'Message content' }}</h3>
         @if (hiddenCount()) {
           <span class="rc__group-note">{{ hiddenCount() }} fields no longer used in Qirin are hidden</span>
         }
       </div>
+      @if (errors().length) {
+        @if (hasEditableErrors()) {
+          <ng-container [ngTemplateOutlet]="card"
+            [ngTemplateOutletContext]="{ title: 'Errors', open: openCount(), count: openCount() ? errorsLabel(openCount()) : 'No error to correct', hint: 'All blocks', target: 'errors' }" />
+        } @else {
+          <ng-container [ngTemplateOutlet]="card"
+            [ngTemplateOutletContext]="{ title: 'Fields in cause', open: errors().length, count: causeLabel(), hint: 'Read only', target: 'errors' }" />
+        }
+      }
       @for (b of blockCards(); track b.index) {
         <ng-container [ngTemplateOutlet]="card"
           [ngTemplateOutletContext]="{ title: b.name, open: b.open, count: b.open ? errorsLabel(b.open) : 'No error to correct', hint: b.filled + ' of ' + b.total + ' fields filled', target: b.index }" />

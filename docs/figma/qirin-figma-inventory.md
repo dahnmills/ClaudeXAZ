@@ -105,13 +105,35 @@ Divider (doc et cartes) : `9498f5f558f5f6c87dcaced34d9f08d1a1435a69` (variantes 
 |-----------|-----------|-----|
 | Identifier | Data Display | `53c3ac2707ece794a631ff38fb720f3daf55c38f` |
 | Icon Tile | Data Display | `d0deb1323d2cc6e2c4cd3a946361b71774b697ec` |
-| Properties Panel | Data Display | `a37a8c12aee36625980ba6fa9bc585865cc16127` |
-| .Property Row | Data Display | `0c34093a84fe832646dbfbb65569a90e7444afdf` |
 | Progress Bar | Data Display | `4df39ca608325e342d59fce52895ba277b0acb05` |
-| Result Card | Data Display | `7395a882c7308b41cfb315d7839a42c719216e34` |
-| Policy Result Card | Data Display | `582b7697a6ba25004ae3a09b0a94a430bd0f46f4` |
 | Standalone Dropdown | Data Entry | `c8b538b2c02d49f7811cbed28cff4cdcf7c7606e` |
-| Search Bar Scoped | Data Entry | `08bf7174b80acfbbeaa2af9f142ca54fc3612550` |
 | Glyphes Data Display (composants) | Hash `931c5930…4f30`, Grid `4e1e1993…5165`, Contract `ab403cca…c31a`, File Text `cb8968ae…3323`, File New `2bcf031d…6e32` | |
 | Header (Layout) | Layout | set `39e53ceff3e27048d193a6a0e8d87a6337f410d5` |
 | Tag | Action | set `0543a49f706402ccaf894754b854424cea08cab6` |
+
+## Maîtres à slots (2026-11-03, après refonte)
+
+| Maître | Librairie | Clé | Slots / props |
+|--------|-----------|-----|---------------|
+| Horizontal Card (variante Type=Slot) | Data Display | set `f217735ceefb49b06f599e5ae35a6239dcc80d57` | Leading, Content, Trailing, Extra actions (+ Show extra actions), Details ; Open, Size, Favorited |
+| Search Bar | Data Entry | set `b084316c812d814b121583b538e770364979098c` | Filters, Options ; Query ; Filled |
+| Card (Type=Default, contient `.Columns`) | Data Display | set `1d68f1804fb8a066557949eb3a00d267ecbbff95` | `.Columns` : # Columns, Layout, Loading (réglables sur l'instance) |
+| Card (composant avec Slot) | Data Display | `987bbbe7989deb275ffaddf597d7930ef5560401` | Slot, Button |
+
+Retirés : Result Card, Policy Result Card, Properties Panel, .Property Row, Search Bar Scoped.
+
+## Clés complètes (Buyer Summary, 2026-11-04)
+
+| Composant | Clé |
+|-----------|-----|
+| Dropdown (Data Entry) | `9274a067572ab011d011923afe655c8ede781f25` |
+| Drawer (Layout) | `413684a36328011d3e9d4a452107c914f8440d5b` |
+| Modal (Layout) | `c81f6a2d522228de5c1ba82eb0240bc02fa658c4` |
+| Radio Card (Data Entry) | `50c847daec5c6553ab40d2d83a94aa7baea693b4` |
+| Logo Qirin | `d4206ee4062b4521ca7005e17b172f4c2d925029` |
+| Spinner | `d19dd496d14564251acf7492ec0b97fde810da81` |
+| Effet `Shadows/Bottom/400` | `3aa40b207e3dbeb82e7947cc955316d69a750a41` |
+| Opacity `Measurement/Opacity/Disabled` | `635452a78f88f38f12a7db3e3aa46feb80d4d5ff` (Overlay `ad43f78e3ae00bf22accc617d33951dc9065d269`) |
+
+Police : l'identifiant de la topbox est en Menlo dans la librairie et le code ; Menlo n'est
+pas installé là où les scripts tournent, le texte est passé en JetBrains Mono dans les fichiers de synchro.
