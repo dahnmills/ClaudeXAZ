@@ -241,11 +241,6 @@
                 <ds-cell-action ariaLabel="Cover actions">
                   <ds-flyout-menu slot="menu">
                     <ds-flyout-menu-item label="View details" icon="eye" (clicked)="openDetails(row)" />
-                    @if (side() === 'buyer') {
-                      <ds-flyout-menu-item label="Go to policy covers" icon="shield" (clicked)="openRelated(row)" />
-                    } @else {
-                      <ds-flyout-menu-item label="Go to buyer covers" icon="buyers" (clicked)="openRelated(row)" />
-                    }
                   </ds-flyout-menu>
                 </ds-cell-action>
               </ds-table-row>
