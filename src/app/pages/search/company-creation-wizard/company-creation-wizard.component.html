@@ -54,11 +54,9 @@
               @case (0) {
                 <div class="wizard__card">
                   <div class="wizard__row">
-                    <ds-select label="Country *" placeholder="Choose the country of the company" [options]="countryOptions"
+                    <ds-select label="Country ID *" placeholder="" [options]="countryOptions"
                       [value]="fieldVal('country')" (valueChange)="setCountry($event)"
                       [error]="!!errorOf('country')" [errorMessage]="errorOf('country')" />
-                  </div>
-                  <div class="wizard__row">
                     <ds-select label="Company status *" placeholder="" [options]="companyStatusOptions"
                       [value]="fieldVal('companyStatus')" (valueChange)="setField('companyStatus', $event)"
                       [error]="!!errorOf('companyStatus')" [errorMessage]="errorOf('companyStatus')" />
@@ -205,7 +203,7 @@
                   <div class="wizard__row">
                     <ds-select [label]="rule()?.areaLabel ?? 'Administrative area'" placeholder="" [options]="areaOptions()" [disabled]="!hasCountry()"
                       [value]="fieldVal('area')" (valueChange)="setField('area', $event)" />
-                    <ds-input-text label="Country" [value]="rule()?.label ?? ''" [readonly]="true" />
+                    <ds-input-text label="Country ID" [value]="rule()?.label ?? ''" [readonly]="true" />
                   </div>
                 </div>
 
