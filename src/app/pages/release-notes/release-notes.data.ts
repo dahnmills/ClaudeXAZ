@@ -23,6 +23,23 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'company-creation-country-first',
+    date: '2026-11-05',
+    category: 'feature',
+    screens: ['search', 'search-v2', 'admin-data'],
+    title: 'Creating a company starts with its country, which filters the rest of the form',
+    description:
+      'A German company cannot be an SARL. The country is now the first field of the Identity step, and it decides which legal forms, identifier types, administrative areas and activity nomenclatures are offered.',
+    changes: [
+      'Country is the first field of the Identity step; the legal form, the identifier types and the administrative area stay disabled until a country is chosen',
+      'Eight countries are covered with plausible lists (France, Germany, United Kingdom, Spain, Italy, Netherlands, Belgium, United States)',
+      'Changing the country clears the legal form, the area and the identifier types that no longer apply, and resets the activity nomenclature',
+      'The Address step shows the country as a read-only field, since it is set on the first step',
+      'Editing a company (Admin Data) offers the same filtered lists; its country is already set and cannot be changed there',
+    ],
+  },
+
+  {
     id: 'coverbook-buyer-and-policy-covers',
     date: '2026-11-05',
     category: 'feature',

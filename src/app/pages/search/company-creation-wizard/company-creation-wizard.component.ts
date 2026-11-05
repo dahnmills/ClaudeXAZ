@@ -14,6 +14,7 @@ import {
   TooltipDirective,
   type SelectOption,
 } from '../../../shared/ui';
+import { COUNTRY_OPTIONS, countryRule } from '../../../shared/country-rules/country-rules.data';
 import { BuyerSummaryStore, type BuyerCompany } from '../../buyer-summary/buyer-summary.store';
 
 /** Champs du bloc adresse non latine. */
@@ -86,6 +87,24 @@ export class CompanyCreationWizardComponent {
   fieldVal(key: string): string { return this.form()[key] ?? ''; }
   setField(key: string, val: string) { this.form.update(f => ({ ...f, [key]: val })); }
 
+  // ── Pays : il filtre formes juridiques, identifiants, zone et nomenclature ──
+  readonly countryOptions = COUNTRY_OPTIONS;
+  readonly rule = computed(() => countryRule(this.form()['country']));
+  readonly hasCountry = computed(() => !!this.rule());
+  readonly legalFormOptions = computed<SelectOption[]>(() => this.rule()?.legalForms ?? []);
+  readonly identifierTypeOptions = computed<SelectOption[]>(() => this.rule()?.identifierTypes ?? []);
+  readonly areaOptions = computed<SelectOption[]>(() => this.rule()?.areas ?? []);
+  readonly activityTypeOptions = computed<SelectOption[]>(() => this.rule()?.activityTypes ?? []);
+  /** Choisir un autre pays vide ce qui dépendait du précédent. */
+  setCountry(code: string) {
+    if (code === this.form()['country']) return;
+    this.form.update(f => ({ ...f, country: code, legalForm: '', area: '' }));
+    this.identifiers.update(l => l.map(r => ({ ...r, type: '' })));
+    const type = countryRule(code)?.activityTypes[0]?.value ?? '';
+    this.mainActivity.update(a => ({ ...a, type }));
+    this.secondaryActivities.update(l => l.map(a => ({ ...a, type })));
+  }
+
   publicBuyer    = signal<boolean>(false);
 
   /** Adresse non latine : repliée par défaut, ouverte par le bouton sous l'adresse. */
@@ -114,7 +133,7 @@ export class CompanyCreationWizardComponent {
     const num  = (k: string) => { if (f[k] && !/^\d+$/.test(f[k])) e[k] = 'Numbers only'; };
     switch (this.currentStep()) {
       case 0:
-        ['companyStatus', 'legalForm', 'companyName'].forEach(required);
+        ['country', 'companyStatus', 'legalForm', 'companyName'].forEach(required);
         ['workforceMin', 'workforceMax'].forEach(num);
         if (!e['workforceMin'] && !e['workforceMax'] && f['workforceMin'] && f['workforceMax']
           && +f['workforceMax'] < +f['workforceMin']) e['workforceMax'] = 'Below the minimum';
@@ -187,25 +206,12 @@ export class CompanyCreationWizardComponent {
   readonly companyStatusOptions: SelectOption[] = [
     { value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }, { value: 'ceased', label: 'Ceased' },
   ];
-  readonly legalFormOptions: SelectOption[] = [
-    { value: 'sarl', label: 'SARL' }, { value: 'sas', label: 'SAS' }, { value: 'sa', label: 'SA' },
-    { value: 'gmbh', label: 'GmbH' }, { value: 'ltd', label: 'LTD' }, { value: 'other', label: 'OTHER' },
-  ];
   readonly yesNoOptions: SelectOption[] = [{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }];
-  readonly identifierTypeOptions: SelectOption[] = [
-    { value: 'siren', label: 'SIREN' }, { value: 'siret', label: 'SIRET' }, { value: 'duns', label: 'DUNS' }, { value: 'vat', label: 'VAT' },
-  ];
-  readonly areaOptions: SelectOption[] = [
-    { value: 'idf', label: 'Île-de-France' }, { value: 'ara', label: 'Auvergne-Rhône-Alpes' }, { value: 'paca', label: "Provence-Alpes-Côte d'Azur" },
-  ];
   readonly currencyOptions: SelectOption[] = [
     { value: 'eur', label: 'EUR' }, { value: 'usd', label: 'USD' }, { value: 'gbp', label: 'GBP' }, { value: 'chf', label: 'CHF' },
   ];
   readonly turnoverTypeOptions: SelectOption[] = [
     { value: 'estimated', label: 'Estimated' }, { value: 'declared', label: 'Declared' }, { value: 'audited', label: 'Audited' },
-  ];
-  readonly activityTypeOptions: SelectOption[] = [
-    { value: 'naf', label: 'NAF' }, { value: 'nace', label: 'NACE' }, { value: 'sic', label: 'SIC' },
   ];
 
   // ── Navigation ────────────────────────────────────────────────────────

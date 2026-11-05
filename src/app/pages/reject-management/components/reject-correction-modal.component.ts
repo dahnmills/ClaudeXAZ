@@ -161,7 +161,7 @@ export class RejectCorrectionModalComponent {
 
   readonly causeLabel = computed(() => {
     const n = this.errors().length;
-    return `${n} ${n === 1 ? 'field' : 'fields'} in cause, nothing to edit here`;
+    return `${n} ${n === 1 ? 'field' : 'fields'} in cause, read only`;
   });
 
   errorsLabel(n: number): string {
@@ -220,7 +220,7 @@ export class RejectCorrectionModalComponent {
   /** Titre de l'écran courant, à côté du retour au carrefour. */
   readonly screenTitle = computed(() => {
     const s = this.screen();
-    if (s === 'errors') return this.hasEditableErrors() ? 'Errors' : 'Fields in cause';
+    if (s === 'errors') return 'Errors';
     if (typeof s === 'number') return this.record()?.blocks[s]?.name ?? '';
     return '';
   });
@@ -251,10 +251,17 @@ export class RejectCorrectionModalComponent {
 
   // ── Résolution ───────────────────────────────────────────────────────────
   /** Delete suggéré : il passe en action principale du footer. */
+  /** Toujours une résolution à montrer : à défaut de cas connu, corriger les champs puis resoumettre. */
+  readonly effective = computed<RejectResolution>(() => this.resolution() ?? {
+    kind: 'correct-and-resubmit',
+    reason: this.errors().length === 1 ? 'One field was rejected.' : `${this.errors().length} fields were rejected.`,
+    steps: [{ text: 'Correct the fields in error.', goToFields: true }, { text: 'Resubmit.' }],
+  });
+
   readonly suggestsDelete = computed(() => this.resolution()?.kind === 'delete');
 
   readonly suggestedLabel = computed(() => {
-    switch (this.resolution()?.kind) {
+    switch (this.effective().kind) {
       case 'delete':               return 'Suggested: Delete';
       case 'resubmit-as-is':       return 'Suggested: Resubmit as is';
       case 'correct-and-resubmit': return 'Suggested: Correct, then Resubmit';

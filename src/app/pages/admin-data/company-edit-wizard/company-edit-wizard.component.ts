@@ -1,3 +1,4 @@
+import { countryRule } from '../../../shared/country-rules/country-rules.data';
 import { Component, computed, input, OnChanges, output, signal } from '@angular/core';
 import {
   ModalComponent,
@@ -67,7 +68,7 @@ export class CompanyEditWizardComponent implements OnChanges {
     postCode:          'LU2 9LY',
     town:              'Luton',
     area:              '',
-    country:           'United Kingdom',
+    country:           'gb',
     // Info & Contacts
     phone:             '+44 1582 525252',
     fax:               '',
@@ -114,30 +115,22 @@ export class CompanyEditWizardComponent implements OnChanges {
   }
 
   // ── Options selects ────────────────────────────────────────────
+  // ── Pays : déjà choisi à la création, il filtre les listes ─────────────
+  readonly rule = computed(() => countryRule(this.form()['country']));
+  readonly legalFormOptions = computed<SelectOption[]>(() => this.rule()?.legalForms ?? []);
+  readonly identifierTypeOptions = computed<SelectOption[]>(() => [...(this.rule()?.identifierTypes ?? []), { value: 'other', label: 'Other' }]);
+  readonly areaOptions = computed<SelectOption[]>(() => this.rule()?.areas ?? []);
+  readonly activityTypeOptions = computed<SelectOption[]>(() => this.rule()?.activityTypes ?? []);
+
   readonly companyStatusOptions: SelectOption[] = [
     { value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }, { value: 'ceased', label: 'Ceased' },
   ];
-  readonly legalFormOptions: SelectOption[] = [
-    { value: 'sarl', label: 'SARL' }, { value: 'sas', label: 'SAS' }, { value: 'sa', label: 'SA' },
-    { value: 'gmbh', label: 'GmbH' }, { value: 'ltd', label: 'LTD' }, { value: 'other', label: 'OTHER' },
-  ];
   readonly yesNoOptions: SelectOption[] = [{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }];
-  readonly identifierTypeOptions: SelectOption[] = [
-    { value: 'siren', label: 'SIREN' }, { value: 'siret', label: 'SIRET' }, { value: 'duns', label: 'DUNS' },
-    { value: 'vat', label: 'VAT' }, { value: 'other', label: 'Other' },
-  ];
-  readonly areaOptions: SelectOption[] = [
-    { value: 'idf', label: 'Île-de-France' }, { value: 'ara', label: 'Auvergne-Rhône-Alpes' },
-    { value: 'paca', label: "Provence-Alpes-Côte d'Azur" },
-  ];
   readonly currencyOptions: SelectOption[] = [
     { value: 'eur', label: 'EUR' }, { value: 'usd', label: 'USD' }, { value: 'gbp', label: 'GBP' }, { value: 'chf', label: 'CHF' },
   ];
   readonly turnoverTypeOptions: SelectOption[] = [
     { value: 'estimated', label: 'Estimated' }, { value: 'declared', label: 'Declared' }, { value: 'audited', label: 'Audited' },
-  ];
-  readonly activityTypeOptions: SelectOption[] = [
-    { value: 'naf', label: 'NAF' }, { value: 'nace', label: 'NACE' }, { value: 'sic', label: 'SIC' },
   ];
 
   // ── Navigation ─────────────────────────────────────────────────

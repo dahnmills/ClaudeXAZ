@@ -54,10 +54,15 @@
               @case (0) {
                 <div class="wizard__card">
                   <div class="wizard__row">
+                    <ds-select label="Country *" placeholder="Choose the country of the company" [options]="countryOptions"
+                      [value]="fieldVal('country')" (valueChange)="setCountry($event)"
+                      [error]="!!errorOf('country')" [errorMessage]="errorOf('country')" />
+                  </div>
+                  <div class="wizard__row">
                     <ds-select label="Company status *" placeholder="" [options]="companyStatusOptions"
                       [value]="fieldVal('companyStatus')" (valueChange)="setField('companyStatus', $event)"
                       [error]="!!errorOf('companyStatus')" [errorMessage]="errorOf('companyStatus')" />
-                    <ds-select label="Legal form *" placeholder="" [options]="legalFormOptions"
+                    <ds-select label="Legal form *" placeholder="" [options]="legalFormOptions()" [disabled]="!hasCountry()"
                       [value]="fieldVal('legalForm')" (valueChange)="setField('legalForm', $event)"
                       [error]="!!errorOf('legalForm')" [errorMessage]="errorOf('legalForm')" />
                     <ds-select label="Protected Buyer" placeholder="" [options]="yesNoOptions"
@@ -107,7 +112,7 @@
                     <div class="wizard__card">
                       @for (id of identifiers(); track $index) {
                         <div class="wizard__row wizard__row--removable">
-                          <ds-select label="Identifier type" placeholder="" [options]="identifierTypeOptions"
+                          <ds-select label="Identifier type" placeholder="" [options]="identifierTypeOptions()" [disabled]="!hasCountry()"
                             [value]="id.type" (valueChange)="setIdentifier($index, 'type', $event)"
                             [error]="!!errorOf('idType' + $index)" [errorMessage]="errorOf('idType' + $index)" />
                           <ds-input-text label="Identifier" placeholder=""
@@ -198,10 +203,9 @@
                       [error]="!!errorOf('town')" [errorMessage]="errorOf('town')" />
                   </div>
                   <div class="wizard__row">
-                    <ds-select label="Administrative area" placeholder="Placeholder" [options]="areaOptions"
+                    <ds-select [label]="rule()?.areaLabel ?? 'Administrative area'" placeholder="" [options]="areaOptions()" [disabled]="!hasCountry()"
                       [value]="fieldVal('area')" (valueChange)="setField('area', $event)" />
-                    <ds-input-text label="Country" placeholder="FRANCE"
-                      [value]="fieldVal('country')" (valueChange)="setField('country', $event)" />
+                    <ds-input-text label="Country" [value]="rule()?.label ?? ''" [readonly]="true" />
                   </div>
                 </div>
 
@@ -325,7 +329,7 @@
                   <span class="wizard__group-title">Main activity</span>
                   <div class="wizard__card">
                     <div class="wizard__row">
-                      <ds-select label="Type" placeholder="NAF" [options]="activityTypeOptions"
+                      <ds-select label="Type" placeholder="NAF" [options]="activityTypeOptions()"
                         [value]="mainActivity().type" (valueChange)="setMainActivity('type', $event)" />
                       <ds-input-text label="Code" placeholder="Placeholder"
                         [value]="mainActivity().code" (valueChange)="setMainActivity('code', $event)" />
@@ -346,7 +350,7 @@
                   <div class="wizard__card">
                     @for (a of secondaryActivities(); track $index) {
                       <div class="wizard__row wizard__row--removable">
-                        <ds-select label="Type" placeholder="NAF" [options]="activityTypeOptions"
+                        <ds-select label="Type" placeholder="NAF" [options]="activityTypeOptions()"
                           [value]="a.type" (valueChange)="setActivity($index, 'type', $event)" />
                         <ds-input-text label="Code" placeholder="Placeholder"
                           [value]="a.code" (valueChange)="setActivity($index, 'code', $event)" />

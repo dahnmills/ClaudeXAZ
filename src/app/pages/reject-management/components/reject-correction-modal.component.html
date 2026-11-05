@@ -44,7 +44,7 @@
   </ng-template>
 
   @if (screen() === 'hub') {
-    @if (resolution(); as res) {
+    @if (effective(); as res) {
       <!-- Résolution connue : une seule notice, la raison en titre, les étapes dessous -->
       <ds-functional-notice status="info" emphasis="medium" [title]="res.reason">
         <div class="rc__notice">
@@ -101,10 +101,7 @@
     <!-- Carrefour : toutes les erreurs d'un coup, ou un bloc dans son contexte -->
     <section class="rc__group">
       <div class="rc__group-head">
-        <h3 class="rc__group-title">{{ hasEditableErrors() ? 'To correct' : 'Message content' }}</h3>
-        @if (hiddenCount()) {
-          <span class="rc__group-note">{{ hiddenCount() }} fields no longer used in Qirin are hidden</span>
-        }
+        <h3 class="rc__group-title">Message content</h3>
       </div>
       @if (errors().length) {
         @if (hasEditableErrors()) {
@@ -112,7 +109,7 @@
             [ngTemplateOutletContext]="{ title: 'Errors', open: openCount(), count: openCount() ? errorsLabel(openCount()) : 'No error to correct', hint: 'All blocks', target: 'errors' }" />
         } @else {
           <ng-container [ngTemplateOutlet]="card"
-            [ngTemplateOutletContext]="{ title: 'Fields in cause', open: errors().length, count: causeLabel(), hint: 'Read only', target: 'errors' }" />
+            [ngTemplateOutletContext]="{ title: 'Errors', open: errors().length, count: causeLabel(), hint: 'All blocks', target: 'errors' }" />
         }
       }
       @for (b of blockCards(); track b.index) {
