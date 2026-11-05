@@ -11,7 +11,6 @@ import { AdminDataComponent } from './pages/admin-data/admin-data.component';
 import { BuyerSummaryComponent } from './pages/buyer-summary/buyer-summary.component';
 import { TagConfigurationComponent } from './pages/tag-configuration/tag-configuration.component';
 import { PortfolioManagementComponent } from './pages/portfolio-management/portfolio-management.component';
-import { RejectManagementComponent } from './pages/reject-management/reject-management.component';
 import { GradeStoryComponent } from './pages/grade-story/grade-story.component';
 import { SpotlightPage } from './pages/spotlight/spotlight.page';
 import { NotificationModuleComponent } from './pages/notification-module/notification-module.component';
@@ -19,7 +18,6 @@ import { MaintenanceComponent } from './pages/maintenance/maintenance.component'
 import { LoadingComponent } from './pages/loading/loading.component';
 import { KeyboardShortcutsPage } from './pages/keyboard-shortcuts/keyboard-shortcuts.page';
 import { CardBuilderLabPage } from './pages/card-builder-lab/card-builder-lab.page';
-import { CoverbookPage } from './pages/coverbook/coverbook.page';
 import { ReviewShellComponent } from './shared/feedback/review-shell.component';
 import { ResultsComponent } from './pages/results/results.component';
 import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
@@ -48,7 +46,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'buyer-summary/:id', component: BuyerSummaryComponent },
   { path: 'tag-configuration', component: TagConfigurationComponent },
   { path: 'portfolio-management', component: PortfolioManagementComponent },
-  { path: 'reject-management', component: RejectManagementComponent },
+  { path: 'reject-management', loadComponent: () => import('./pages/reject-management/reject-management.component').then(m => m.RejectManagementComponent) },
   { path: 'grade-story', component: GradeStoryComponent },
   { path: 'spotlight', component: SpotlightPage },
   { path: 'notification-module', component: NotificationModuleComponent },
@@ -56,8 +54,8 @@ const PROTO_PAGES: Route[] = [
   { path: 'loading', component: LoadingComponent },
   { path: 'keyboard-shortcuts', component: KeyboardShortcutsPage },
   { path: 'card-builder-lab', component: CardBuilderLabPage },
-  { path: 'coverbook/buyer/:id', component: CoverbookPage, data: { side: 'buyer' } },
-  { path: 'coverbook/policy/:id', component: CoverbookPage, data: { side: 'policy' } },
+  { path: 'coverbook/buyer/:id', loadComponent: () => import('./pages/coverbook/coverbook.page').then(m => m.CoverbookPage), data: { side: 'buyer' } },
+  { path: 'coverbook/policy/:id', loadComponent: () => import('./pages/coverbook/coverbook.page').then(m => m.CoverbookPage), data: { side: 'policy' } },
 ];
 
 export const appRoutes: Routes = [
