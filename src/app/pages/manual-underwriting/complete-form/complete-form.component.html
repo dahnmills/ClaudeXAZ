@@ -1,0 +1,86 @@
+<div class="mu-form">
+  @if (!rights()) {
+    <ds-functional-notice status="info" emphasis="medium"
+      message="You cannot complete this request. You can send it to someone who can." />
+  }
+
+  <div class="mu-form__panel">
+    <div class="mu-form__group">
+      <span class="mu-form__group-title">Decision</span>
+      <div class="mu-form__card">
+        <div class="mu-form__row">
+          <ds-select label="Answer *" placeholder="Choose an answer" [options]="answerOptions" [disabled]="!rights()"
+            [value]="get('answer')" (valueChange)="set('answer', $event)"
+            [error]="!!errorOf('answer')" [errorMessage]="errorOf('answer')" />
+          <ds-select label="Reason *" placeholder="Choose a reason code" [options]="reasonOptions" [disabled]="!rights()"
+            [value]="get('reason')" (valueChange)="set('reason', $event)"
+            [error]="!!errorOf('reason')" [errorMessage]="errorOf('reason')" />
+        </div>
+      </div>
+    </div>
+
+    <div class="mu-form__group">
+      <span class="mu-form__group-title">Permanent limit</span>
+      <div class="mu-form__card">
+        <div class="mu-form__row">
+          <ds-input-text label="Amount" placeholder="0" inputmode="decimal" [disabled]="!rights()"
+            [value]="get('permanentAmount')" (valueChange)="set('permanentAmount', $event)"
+            [error]="!!errorOf('permanentAmount')" [errorMessage]="errorOf('permanentAmount')" />
+          <ds-select label="Currency" placeholder="" [options]="currencyOptions" [disabled]="!rights()"
+            [value]="get('permanentCurrency')" (valueChange)="set('permanentCurrency', $event)" />
+          <ds-input-text label="Limited to" placeholder="DD/MM/YYYY" [disabled]="!rights()"
+            [value]="get('permanentUntil')" (valueChange)="set('permanentUntil', $event)"
+            [error]="!!errorOf('permanentUntil')" [errorMessage]="errorOf('permanentUntil')" />
+          <ds-input-text label="With days" placeholder="0" inputmode="numeric" [disabled]="!rights()"
+            [value]="get('permanentDays')" (valueChange)="set('permanentDays', $event)"
+            [error]="!!errorOf('permanentDays')" [errorMessage]="errorOf('permanentDays')" />
+          <ds-input-text label="Invoice date" placeholder="DD/MM/YYYY" [disabled]="!rights()"
+            [value]="get('invoiceDate')" (valueChange)="set('invoiceDate', $event)"
+            [error]="!!errorOf('invoiceDate')" [errorMessage]="errorOf('invoiceDate')" />
+        </div>
+      </div>
+    </div>
+
+    <div class="mu-form__group">
+      <span class="mu-form__group-title">Temporary increase</span>
+      <div class="mu-form__card">
+        <div class="mu-form__row">
+          <ds-input-text label="Amount" placeholder="0" inputmode="decimal" [disabled]="!rights()"
+            [value]="get('temporaryAmount')" (valueChange)="set('temporaryAmount', $event)"
+            [error]="!!errorOf('temporaryAmount')" [errorMessage]="errorOf('temporaryAmount')" />
+          <ds-input-text label="With days" placeholder="0" inputmode="numeric" [disabled]="!rights()"
+            [value]="get('temporaryDays')" (valueChange)="set('temporaryDays', $event)"
+            [error]="!!errorOf('temporaryDays')" [errorMessage]="errorOf('temporaryDays')" />
+          <ds-input-text label="Limited to" placeholder="DD/MM/YYYY" [disabled]="!rights()"
+            [value]="get('temporaryUntil')" (valueChange)="set('temporaryUntil', $event)"
+            [error]="!!errorOf('temporaryUntil')" [errorMessage]="errorOf('temporaryUntil')" />
+        </div>
+      </div>
+    </div>
+
+    <div class="mu-form__group">
+      <span class="mu-form__group-title">Notifications and invoice</span>
+      <div class="mu-form__card">
+        <div class="mu-form__row">
+          <ds-select label="Notifications" placeholder="" [options]="notificationOptions" [disabled]="!rights()"
+            [value]="get('notifications')" (valueChange)="set('notifications', $event)" />
+          <ds-select label="Invoice" placeholder="" [options]="invoiceOptions" [disabled]="!rights()"
+            [value]="get('invoice')" (valueChange)="set('invoice', $event)" />
+          <div class="mu-form__check">
+            <ds-checkbox label="Provisionally" [disabled]="!rights()"
+              [checked]="draft().provisionally" (checkedChange)="setProvisionally($event)" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mu-form__group">
+      <span class="mu-form__group-title">Comment</span>
+      <div class="mu-form__card mu-form__card--comment">
+        <ds-textarea label="Internal comment" placeholder="Visible to underwriters only" [rows]="3"
+          [disabled]="!rights()" [value]="get('comment')" (valueChange)="set('comment', $event)" />
+        <span class="mu-form__counter">{{ commentLength() }} / {{ commentMax }}</span>
+      </div>
+    </div>
+  </div>
+</div>
