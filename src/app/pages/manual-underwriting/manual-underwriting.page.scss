@@ -146,3 +146,5 @@
 .mu-send__count { font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary); &--over { color: var(--semantic-color-static-text-main-functional-negative); } }
 
 .mu-endorsement { margin: 0; font-size: var(--semantic-font-text-style-size-l); line-height: var(--semantic-font-text-style-line-height-l); color: var(--semantic-color-static-text-main-primary); }
+
+.mu-stack > ds-badge { align-self: flex-start; }
