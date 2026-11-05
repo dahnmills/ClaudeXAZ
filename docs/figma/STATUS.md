@@ -115,3 +115,7 @@ Synchro de la librairie Action OK. Page Button (9166118, masquée) : 4 blocs `<r
 ## Figma en parallèle (2026-11-05 10:30)
 Fichiers créés dans le dossier MCP (projet 683452905), 7 pages chacun : **Qirin · Coverbook** `NflKzgx17mOn2JPoFaqnjW`, **Qirin · Reject Management** `zUzOSE77EjbShM9u7yLthB`, **Qirin · Manual Underwriting** `9EXkGvyk2yGF9qFpRpV0Ey` (attend la fin de la page). Playbook technique pour les agents : `docs/figma/PLAYBOOK.md`.
 Étape 1 (4 agents en cours) : composants locaux + shell, et Cover / Changelog / Overview, pour Coverbook et pour Reject Management. Étape 2 à lancer ensuite : écrans (plusieurs agents par fichier, une section chacun), States, Specs annotées, vignettes de l'Overview, contrôles débordement, couverture « Ready for dev ».
+- 11:30 Reject Management Figma : Cover (3:2), Changelog (5:128, composant local 5:98) et Overview (8:25, 6 vignettes vides 8:52 à 8:85) faits. Dates et source de la v1.0 du changelog prises dans l'historique git (2026-10-21, f22b2841) : à relire.
+- 11:35 Coverbook Figma : Cover (3:287), Changelog (7:85, composant local 7:60) et Overview (8:48, vignettes vides 8:65 à 8:96) faits. Textes « Purpose » et « Users » génériques, à relire.
+
+- 2026-11-05 12:30 Manual Underwriting Figma (9EXkGvyk2yGF9qFpRpV0Ey): Cover 4:287, Changelog 11:74 (+ local 11:49), Overview 14:39 done. Overflow check by script still to run. Locals in progress, Screens/States/Specs wait for page validation.
