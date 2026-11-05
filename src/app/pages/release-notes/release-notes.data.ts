@@ -23,6 +23,18 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'coverbook-row-menu-view-details-only',
+    date: '2026-11-05',
+    category: 'design',
+    screens: ['coverbook/buyer/4421706', 'coverbook/policy/2590417133'],
+    title: 'Coverbook: the row menu keeps only View details',
+    description:
+      'The Go to policy covers and Go to buyer covers entries were not backed by a real need, so the row menu now offers View details only.',
+    changes: [
+      'Row menu of the Buyer covers and Policy covers tables: View details is the only action',
+    ],
+  },
+  {
     id: 'manual-underwriting-credit-limit-request',
     date: '2026-11-05',
     category: 'feature',
