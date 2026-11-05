@@ -119,3 +119,5 @@ Fichiers créés dans le dossier MCP (projet 683452905), 7 pages chacun : **Qiri
 - 11:35 Coverbook Figma : Cover (3:287), Changelog (7:85, composant local 7:60) et Overview (8:48, vignettes vides 8:65 à 8:96) faits. Textes « Purpose » et « Users » génériques, à relire.
 
 - 2026-11-05 12:30 Manual Underwriting Figma (9EXkGvyk2yGF9qFpRpV0Ey): Cover 4:287, Changelog 11:74 (+ local 11:49), Overview 14:39 done. Overflow check by script still to run. Locals in progress, Screens/States/Specs wait for page validation.
+
+- 2026-11-05 17:35 Figma: Coverbook (NflKzgx17mOn2JPoFaqnjW), Reject Management (zUzOSE77EjbShM9u7yLthB), Manual Underwriting (9EXkGvyk2yGF9qFpRpV0Ey) : 7 pages each, final QA done, covers "Ready for dev" v1.0. Left manual: named version and thumbnail in Figma. Exposure Card file 5OVzA6FZD7o8aGtfK5qo7g built (component has sample content in variants, to rework if user agrees). Code exposure card on branch feat/exposure-cards (337befb7), not merged. ZeroHeight deferred (connect Feedback and Layout libraries, validate Button page).
