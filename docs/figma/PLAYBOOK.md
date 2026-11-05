@@ -40,3 +40,6 @@ Header Layout `39e53ceff3e27048d193a6a0e8d87a6337f410d5` (variante `Menu Open=Fa
 
 ## Publication des librairies
 Elle est faite à la main par l'utilisateur. Ne jamais modifier les fichiers de librairie dans ce lot. Un composant manquant en librairie devient un composant local du fichier, noté dans le rapport.
+
+## Annotations (Specs)
+Figma empile les callouts au y du noeud annoté : des notes longues sur des noeuds proches se superposent (constaté sur Coverbook). Règle : annotation COURTE (numéro + titre, 12 mots max) et au moins 300 px verticaux entre deux noeuds annotés d'un même écran, sinon une seule annotation sur le parent. Le détail va dans un cadre « Notes » en vrai texte (liste numérotée, largeur 480) à droite de l'écran, 560 px avant l'écran suivant. Contrôle par script du chevauchement estimé des callouts (hauteur ~ 24 px + 18 px par 40 caractères, largeur 360).
