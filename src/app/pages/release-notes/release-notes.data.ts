@@ -23,6 +23,38 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'coverbook-buyer-and-policy-covers',
+    date: '2026-11-05',
+    category: 'feature',
+    screens: ['coverbook/buyer/4421706', 'coverbook/policy/2590417133'],
+    title: 'Coverbook: the covers of a buyer and of a policy',
+    description:
+      'New pages that list the credit limits and the grade based covers attached to a buyer, and the buyers covered by a policy.',
+    changes: [
+      'Buyer side and policy side, each with its tabs, its summary and a table of covers',
+      'Filters, column choice, sort on every column and a currency switch between the reference and the original currency',
+      'A row opens its details; the row menu jumps from the buyer covers to the policy covers and back',
+      'Policy IDs are no longer cut off in the first column',
+    ],
+  },
+
+  {
+    id: 'reject-management-resolution-hub',
+    date: '2026-11-05',
+    category: 'design',
+    screens: ['reject-management'],
+    title: 'Reject Management: the correction screen says what to do, then shows the fields',
+    description:
+      'The correction modal used to stack a reason, a how-to and a check block before the fields. It now opens on one notice, then the errors and the blocks of the message.',
+    changes: [
+      'One notice states the reason on a single line, with the steps and their buttons beneath it; the likely cause moves to a tooltip',
+      'Three reference rejects (duplicate identifier, unknown region code, closed main activity), each with a suggested action: Delete, Resubmit after a correction, or Resubmit as is',
+      'Fields at fault are in red; only the ones that can be corrected in the reject are editable; fields no longer used in Qirin are hidden',
+      'Rejects are selected with checkboxes and one button per action; the Validate button is gone',
+    ],
+  },
+
+  {
     id: 'search-company-creation-leave-confirm',
     date: '2026-10-08',
     category: 'feature',
