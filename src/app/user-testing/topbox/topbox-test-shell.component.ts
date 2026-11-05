@@ -7,6 +7,8 @@ import { ButtonIconComponent } from '../../shared/ui/button-icon/button-icon.com
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { SideNavComponent } from '../../shared/ui/side-nav/side-nav.component';
 import { SideNavItemComponent } from '../../shared/ui/side-nav/side-nav-item.component';
+import { DividerComponent } from '../../shared/ui/divider/divider.component';
+import { HelpMenuExtrasService } from '../../shared/help-menu/help-menu-extras.service';
 import { FlyoutMenuComponent } from '../../shared/ui/flyout-menu/flyout-menu.component';
 import { FlyoutMenuItemComponent } from '../../shared/ui/flyout-menu/flyout-menu-item.component';
 import { WalkthroughService } from '../../shared/walkthrough/walkthrough.service';
@@ -56,6 +58,7 @@ const ZONE_PREFIXES = ['/review', '/prototype', '/user-testing'];
     IconComponent,
     SideNavComponent,
     SideNavItemComponent,
+    DividerComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
     TooltipDirective,
@@ -84,6 +87,7 @@ export class TopboxTestShellComponent {
   pageTour          = signal<Walkthrough | null>(null);
   readonly tourLabel = TOUR_MENU_LABEL;
   private walkthrough = inject(WalkthroughService);
+  readonly helpExtras = inject(HelpMenuExtrasService);
 
   readonly shortcutGroups = SHORTCUT_GROUPS;
 

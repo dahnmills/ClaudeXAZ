@@ -35,6 +35,7 @@ export const SCREENS: Screen[] = [
   { path: 'card-builder-lab', label: 'Card Builder Lab', hint: 'Custom card builder redesign', version: { ...V1 } },
   { path: 'coverbook/buyer/4421706', label: 'Coverbook - Buyer', hint: 'Buyer covers: credit limits and grade based covers', version: { ...V1 } },
   { path: 'coverbook/policy/2590417133', label: 'Coverbook - Policy', hint: 'Policy covers: credit limits and grade based covers', version: { ...V1 } },
+  { path: 'manual-underwriting/4421706', label: 'Manual Underwriting', hint: 'Answer a credit limit request: cards, completion and sending', version: { ...V1 } },
   { path: 'reject-management', label: 'Reject Management', hint: 'Rejects by category, in a table', version: { major: 1, minor: 1, patch: 0 }, category: 'Reject Management' },
 ];
 

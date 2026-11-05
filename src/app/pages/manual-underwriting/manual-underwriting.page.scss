@@ -1,0 +1,134 @@
+// Manual Underwriting: buyer-level page, grid of cards like Buyer Summary.
+:host { display: block; font-family: var(--semantic-font-family); }
+
+.mu-page {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding-bottom: var(--semantic-measurement-spacing-xl);
+}
+
+// Page actions on the title row (right aligned by ds-page-title)
+.mu-actions-bar {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+
+// Prototype controls: floating, bottom left, outside the page flow
+.mu-proto {
+  position:       fixed;
+  left:           var(--semantic-measurement-spacing-3xl);
+  bottom:         var(--semantic-measurement-spacing-m);
+  z-index:        1000;
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--semantic-measurement-spacing-s);
+}
+.mu-proto__panel {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--semantic-measurement-spacing-s);
+}
+.mu-proto__label {
+  font-size: var(--semantic-font-text-style-size-m);
+  color:     var(--semantic-color-static-text-main-secondary);
+}
+
+// Card menu (kebab): same placement as the Buyer Summary board cards
+.mu-card-menu {
+  position: absolute;
+  top:      var(--semantic-measurement-spacing-l);
+  right:    var(--semantic-measurement-spacing-l);
+  z-index:  3;
+}
+.mu-card-menu__flyout {
+  position: absolute;
+  top:      calc(100% + var(--semantic-measurement-spacing-xs));
+  right:    0;
+  z-index:  10;
+}
+
+.mu-grid {
+  display:               grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap:                   var(--semantic-measurement-spacing-m);
+  padding:               0 var(--semantic-measurement-spacing-xl);
+}
+.mu-grid__cell { position: relative; display: flex; min-width: 0; &--wide { grid-column: span 2; } > ds-widget-card { width: 100%; } }
+.mu-grid__skeleton {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  min-height:     calc(var(--semantic-measurement-sizing-3xl) * 3);
+}
+.mu-grid__skeleton.mu-grid__cell--wide { grid-column: span 2; }
+
+.mu-stack {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+}
+
+.mu-narrative { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-xs); align-items: flex-start; }
+.mu-narrative__label { font-size: var(--semantic-font-text-style-size-m); color: var(--semantic-color-static-text-main-tertiary); }
+.mu-narrative__text {
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-primary);
+  // Fixed number of lines: the card never changes size. Full text in View details.
+  display:            -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow:           hidden;
+}
+
+.mu-empty {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--semantic-measurement-spacing-s);
+}
+.mu-empty__title { margin: 0; font-size: var(--semantic-font-text-style-size-l); font-weight: var(--semantic-font-text-style-font-weight-semi-bold); color: var(--semantic-color-static-text-main-primary); }
+.mu-empty__text  { margin: 0; font-size: var(--semantic-font-text-style-size-m); color: var(--semantic-color-static-text-main-secondary); }
+
+
+// Modals
+.mu-modal-actions { display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s); }
+
+.mu-form {
+  display:               grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:                   var(--semantic-measurement-spacing-m);
+  align-content:         start;
+  &--single { grid-template-columns: minmax(0, 1fr); }
+}
+.mu-form__full { grid-column: 1 / -1; }
+.mu-form__section {
+  margin:      var(--semantic-measurement-spacing-s) 0 0;
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.mu-send__recipient { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-xs); }
+.mu-send__person { margin: 0; font-size: var(--semantic-font-text-style-size-m); color: var(--semantic-color-static-text-main-secondary); }
+.mu-send__name { font-weight: var(--semantic-font-text-style-font-weight-semi-bold); color: var(--semantic-color-static-text-main-primary); }
+.mu-send__meta {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  margin-top:      var(--semantic-measurement-spacing-xs);
+}
+.mu-send__count { font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary); &--over { color: var(--semantic-color-static-text-main-functional-negative); } }
+
+.mu-endorsement { margin: 0; font-size: var(--semantic-font-text-style-size-l); line-height: var(--semantic-font-text-style-line-height-l); color: var(--semantic-color-static-text-main-primary); }
+
+.mu-stack > ds-badge { align-self: flex-start; }
+
+// The header has no tabs row here: give the title row the same clearance below
+// as the gap above it, so the actions never sit on the bottom border.
+.mu-page ds-page-header { padding-bottom: var(--semantic-measurement-spacing-m); }

@@ -54,6 +54,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'loading', component: LoadingComponent },
   { path: 'keyboard-shortcuts', component: KeyboardShortcutsPage },
   { path: 'card-builder-lab', component: CardBuilderLabPage },
+  { path: 'manual-underwriting/:id', loadComponent: () => import('./pages/manual-underwriting/manual-underwriting.page').then(m => m.ManualUnderwritingPage) },
   { path: 'coverbook/buyer/:id', loadComponent: () => import('./pages/coverbook/coverbook.page').then(m => m.CoverbookPage), data: { side: 'buyer' } },
   { path: 'coverbook/policy/:id', loadComponent: () => import('./pages/coverbook/coverbook.page').then(m => m.CoverbookPage), data: { side: 'policy' } },
 ];

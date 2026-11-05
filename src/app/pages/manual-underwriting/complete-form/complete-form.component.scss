@@ -1,0 +1,101 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.mu-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Grey scrolling panel, same as the company creation wizard */
+.mu-form__panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-m);
+  padding: var(--semantic-measurement-spacing-l);
+  background: var(--semantic-color-static-background-main-secondary);
+  border-radius: var(--semantic-border-radius-s);
+}
+
+.mu-form__group {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: var(--semantic-measurement-spacing-s);
+}
+
+.mu-form__group-title {
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-s);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  letter-spacing: var(--semantic-font-text-style-letter-spacing-s);
+  text-transform: uppercase;
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+/* Room for one error line under each field: an error never shifts the layout */
+$error-line: calc(var(--semantic-font-text-style-line-height-m) + var(--semantic-measurement-spacing-xxs));
+
+.mu-form__card {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--semantic-measurement-spacing-s) + #{$error-line});
+  padding: var(--semantic-measurement-spacing-m);
+  padding-bottom: calc(var(--semantic-measurement-spacing-xs) + #{$error-line});
+  background: var(--semantic-color-static-background-main-primary);
+  border-radius: var(--semantic-border-radius-s);
+}
+
+.mu-form__card--comment {
+  gap: var(--semantic-measurement-spacing-xs);
+  padding-bottom: var(--semantic-measurement-spacing-m);
+}
+
+.mu-form__row {
+  display: flex;
+  gap: var(--semantic-measurement-spacing-m);
+  align-items: flex-end;
+
+  ds-input-text,
+  ds-select {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  ::ng-deep .ds-input-text__error-msg,
+  ::ng-deep .ds-select__error-msg {
+    position: absolute;
+    top: calc(100% + var(--semantic-measurement-spacing-xxs));
+    left: 0;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Same height as a field box, so the checkbox lines up with its neighbours */
+.mu-form__check {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: var(--semantic-measurement-spacing-xl);
+}
+
+.mu-form__counter {
+  align-self: flex-end;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-s);
+  color: var(--semantic-color-static-text-main-tertiary);
+}

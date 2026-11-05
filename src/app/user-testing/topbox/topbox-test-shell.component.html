@@ -43,6 +43,21 @@
               <ds-flyout-menu-item [label]="tourLabel" icon="play"
                 [disabled]="!pageTour()" (clicked)="startTour()" />
             </span>
+            @for (section of helpExtras.sections(); track section.id) {
+              <ds-divider class="ut-help__sep" />
+              <p class="ut-help__title">{{ section.title }}</p>
+              @for (item of section.items; track item.id; let i = $index) {
+                @if (item.group && (i === 0 || item.group !== section.items[i - 1].group)) {
+                  <p class="ut-help__group">{{ item.group }}</p>
+                }
+                <ds-flyout-menu-item
+                  [label]="item.label"
+                  [selectable]="true"
+                  [selected]="item.selected"
+                  (clicked)="item.select()"
+                />
+              }
+            }
           </ds-flyout-menu>
         </div>
       }

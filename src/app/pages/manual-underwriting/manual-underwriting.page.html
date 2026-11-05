@@ -1,0 +1,320 @@
+<app-topbox-test-shell>
+  <ds-topbox
+    slot="topbox"
+    dataType="buyer"
+    icon="buyers"
+    [label]="buyer.name"
+    [id]="buyerId()"
+    [grade]="buyer.grade"
+    [gradeColor]="buyer.gradeColor"
+    [highRisk]="true"
+    [sru]="true"
+    [sanction]="true"
+    actionLabel="View full details"
+    actionIcon="info-circle"
+    (actionClicked)="openDetails('buyer')"
+  />
+
+  <div class="mu-page">
+    <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="false">
+      <ds-breadcrumbs slot="breadcrumbs">
+        <ds-crumb label="Home" />
+        <ds-crumb label="Buyers" />
+        <ds-crumb [label]="buyer.name" />
+        <ds-crumb label="Manual Underwriting" [currentPage]="true" />
+      </ds-breadcrumbs>
+
+      <ds-page-title slot="title" title="Manual Underwriting" [id]="ref"
+        [badgeLabel]="statusLabel()" [badgeStatus]="statusBadge()">
+        <div slot="actions" class="mu-actions-bar">
+          <ds-button type="secondary" (clicked)="openSend()">
+            <ds-icon slot="icon-left" name="mail" [size]="16" />
+            Send
+          </ds-button>
+          <span [dsTooltip]="validateReason()" dsTooltipPosition="bottom-center">
+            <ds-button type="secondary" [disabled]="!!validateReason()" (clicked)="openValidate()">Validate or reject</ds-button>
+          </span>
+          <span [dsTooltip]="status() === 'validated' ? 'This request is already validated' : ''" dsTooltipPosition="bottom-center">
+            <ds-button type="primary" [disabled]="status() === 'validated'" (clicked)="openComplete()">Complete</ds-button>
+          </span>
+        </div>
+      </ds-page-title>
+    </ds-page-header>
+
+    @if (loading()) {
+      <div class="mu-grid" role="status" aria-live="polite" aria-label="Loading the request">
+        @for (_ of skeletons; track $index) {
+          <ds-card class="mu-grid__skeleton" [class.mu-grid__cell--wide]="$index === 1 || $index === 3">
+            <ds-skeleton-item width="40%" height="16px" />
+            <ds-skeleton-item width="100%" height="12px" />
+            <ds-skeleton-item width="90%" height="12px" />
+            <ds-skeleton-item width="70%" height="12px" />
+          </ds-card>
+        }
+      </div>
+    } @else {
+      <div class="mu-grid">
+
+        <!-- 1. Buyer -->
+        <div class="mu-grid__cell">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Buyer card options" (clicked)="toggleMenu('buyer')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'buyer') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('buyer')" />
+                  <ds-flyout-menu-item label="Documents" icon="file-text" (clicked)="menuDo(noop)" />
+                  <ds-flyout-menu-item label="Financial statements" icon="chart" (clicked)="menuDo(noop)" />
+                  <ds-flyout-menu-item label="Add third party" icon="plus" (clicked)="menuDo(noop)" />
+                  <ds-flyout-menu-item label="Notepad" icon="edit-compose" (clicked)="menuDo(noop)" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
+          <ds-widget-card title="Buyer" [externalLink]="false">
+            <ds-properties-panel [sections]="buyerFace" [columns]="1" variant="flat" density="compact" />
+          </ds-widget-card>
+        </div>
+
+        <!-- 2. Insured / Policy -->
+        <div class="mu-grid__cell mu-grid__cell--wide">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Insured and policy card options" (clicked)="toggleMenu('insured')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'insured') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('insured')" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
+          <ds-widget-card title="Insured and policy" [externalLink]="false">
+            <ds-properties-panel [sections]="insuredFace" [columns]="2" variant="flat" density="compact" />
+          </ds-widget-card>
+        </div>
+
+        <!-- 3. Current limit -->
+        <div class="mu-grid__cell">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Current limit card options" (clicked)="toggleMenu('limit')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'limit') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('limit')" />
+                  <ds-flyout-menu-item label="View limit history" icon="history" (clicked)="menuDo(noop)" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
+          <ds-widget-card title="Current limit" [externalLink]="false">
+            <ds-properties-panel [sections]="limitFace" [columns]="1" variant="flat" density="compact" />
+          </ds-widget-card>
+        </div>
+
+        <!-- 4. Request -->
+        <div class="mu-grid__cell mu-grid__cell--wide">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Request card options" (clicked)="toggleMenu('request')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'request') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('request')" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
+          <ds-widget-card title="Request" [externalLink]="false">
+            <div class="mu-stack">
+              <ds-functional-notice status="warning" emphasis="medium" title="Negative buyer information"
+                message="A payment delay of 18 days was reported by another insurer on 14 Sep 2026." />
+              <ds-properties-panel [sections]="requestFace" [columns]="2" variant="flat" density="compact" />
+              <div class="mu-narrative">
+                <span class="mu-narrative__label">Narrative</span>
+                <p class="mu-narrative__text">{{ narrative }}</p>
+              </div>
+            </div>
+          </ds-widget-card>
+        </div>
+
+        <!-- 5. Answer / Decision (read-only summary, edited in the Complete window) -->
+        <div class="mu-grid__cell" [class.mu-grid__cell--wide]="!showValidation()">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Answer card options" (clicked)="toggleMenu('answer')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'answer') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  @if (decision()) {
+                    <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('answer')" />
+                  }
+                  <ds-flyout-menu-item label="Enter conditions" icon="edit-compose" (clicked)="menuDo(openConditions)" />
+                  <ds-flyout-menu-item label="Preview endorsement text" icon="eye" (clicked)="menuDo(openEndorsement)" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
+          <ds-widget-card title="Answer" [externalLink]="false">
+            @if (decision()) {
+              <div class="mu-stack">
+                <ds-badge [label]="status() === 'draft' ? 'Draft decision' : 'Submitted'"
+                  [status]="status() === 'draft' ? 'neutral' : 'info'" />
+                <ds-properties-panel [sections]="answerFace()" [columns]="showValidation() ? 1 : 2" variant="flat" density="compact" />
+              </div>
+            } @else {
+              @if (canComplete()) {
+                <ds-functional-notice status="warning" emphasis="medium" title="No answer yet"
+                  message="Use Complete at the top of the page to answer this request." />
+              } @else {
+                <ds-functional-notice status="warning" emphasis="medium" title="You cannot complete this request"
+                  message="Use Send to pass it to someone who can." />
+              }
+            }
+          </ds-widget-card>
+        </div>
+
+        <!-- 6. Validation (read-only: the decision made by another user) -->
+        @if (showValidation()) {
+          <div class="mu-grid__cell">
+            <div class="mu-card-menu" (click)="$event.stopPropagation()">
+              <ds-button-icon type="plain" ariaLabel="Validation card options" (clicked)="toggleMenu('validation')">
+                <ds-icon name="context-vertical" [size]="20" />
+              </ds-button-icon>
+              @if (openMenu() === 'validation') {
+                <div class="mu-card-menu__flyout">
+                  <ds-flyout-menu>
+                    <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('validation')" />
+                    <ds-flyout-menu-item label="See conditions" icon="eye" (clicked)="menuDo(openConditions)" />
+                  </ds-flyout-menu>
+                </div>
+              }
+            </div>
+            <ds-widget-card title="Validation" [externalLink]="false">
+              <ds-properties-panel [sections]="validationFace()" [columns]="1" variant="flat" density="compact" />
+            </ds-widget-card>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <ng-container slot="modals">
+    <!-- View details -->
+    @if (detailsModal(); as m) {
+      <ds-modal [title]="m.title" size="medium" [open]="true" contentHeight="auto" (closed)="closeDetails()">
+        <ds-properties-panel [sections]="m.sections" [columns]="2" variant="card" />
+        <ds-button slot="actions" type="primary" (clicked)="closeDetails()">Close</ds-button>
+      </ds-modal>
+    }
+
+    <!-- Validate or reject -->
+    <ds-modal title="Validate or reject" size="medium" [open]="validateOpen()" contentHeight="60vh"
+      (closed)="validateOpen.set(false)">
+      <div class="mu-form mu-form--single">
+        @if (!canComplete()) {
+          <ds-functional-notice status="warning" emphasis="medium"
+            title="You cannot validate this request" message="You can send it to someone who can." />
+        } @else if (!canValidate()) {
+          <ds-functional-notice status="info" emphasis="medium"
+            title="Four eyes principle" message="A different underwriter must validate this decision." />
+        }
+        @if (validationFace().length) {
+          <ds-properties-panel [sections]="validationFace()" [columns]="1" variant="card" />
+        }
+        <ds-textarea label="Remark" [rows]="3" [value]="remark()"
+          placeholder="Required to reject"
+          [error]="remarkError()" errorMessage="Add a remark to reject this decision."
+          [readonly]="!canComplete() || !canValidate()"
+          (valueChange)="remark.set($event); remarkError.set(false)" />
+      </div>
+      <div slot="actions" class="mu-modal-actions">
+        <ds-button type="tertiary" (clicked)="validateOpen.set(false)">Cancel</ds-button>
+        @if (canComplete()) {
+          <ds-button type="secondary" tone="negative" [disabled]="!canValidate()" (clicked)="reject()">Reject</ds-button>
+          <ds-button type="primary" [disabled]="!canValidate()" (clicked)="validate()">Validate</ds-button>
+        } @else {
+          <ds-button type="primary" (clicked)="validateOpen.set(false); openSend()">Send to complete</ds-button>
+        }
+      </div>
+    </ds-modal>
+
+    <!-- Complete -->
+    <ds-modal title="Complete the request" size="large" [open]="completeOpen()" contentHeight="560px"
+      [suspended]="sendOpen()" (closed)="closeComplete()">
+      <app-mu-complete-form #completeForm [rights]="canComplete()" [returnsToDraft]="status() === 'to-be-validated'" [value]="formValue()"
+        (saved)="saveDraft($event)" (submitted)="submit($event)" />
+      <div slot="actions" class="mu-modal-actions">
+        <ds-button type="tertiary" (clicked)="closeComplete()">Cancel</ds-button>
+        @if (canComplete()) {
+          <ds-button type="tertiary" (clicked)="completeForm.save()">Save as draft</ds-button>
+          <ds-button type="primary" (clicked)="completeForm.submit()">Submit</ds-button>
+        } @else {
+          <ds-button type="primary" (clicked)="openSend()">Send to complete</ds-button>
+        }
+      </div>
+    </ds-modal>
+
+    <!-- Send -->
+    <ds-modal title="Send" size="medium" [open]="sendOpen()" contentHeight="auto" (closed)="closeSend()">
+      <div class="mu-form mu-form--single">
+        <div class="mu-send__recipient">
+          <ds-multi-select label="Recipient" placeholder="Select people who can complete this request"
+            [options]="recipientOptions" [maxVisible]="2"
+            [error]="recipientError()" errorMessage="Select at least one recipient."
+            [value]="recipients()" (valueChange)="recipients.set($event)" />
+          @for (p of selectedPeople(); track p.id) {
+            <p class="mu-send__person"><span class="mu-send__name">{{ p.name }}</span> {{ p.email }}</p>
+          }
+        </div>
+        <div>
+          <ds-textarea label="Message" [rows]="7" [value]="message()"
+            [error]="messageError() || messageTooLong()"
+            [errorMessage]="messageTooLong() ? 'The message is too long.' : 'Write a message.'"
+            (valueChange)="message.set($event)" />
+          <div class="mu-send__meta">
+            <ds-link href="#" size="s" (click)="$event.preventDefault(); copyLink()">
+              <ds-icon slot="icon-left" name="link" [size]="16" />Copy link
+            </ds-link>
+            <span class="mu-send__count" [class.mu-send__count--over]="messageTooLong()">{{ message().length }} / {{ messageMax }}</span>
+          </div>
+        </div>
+      </div>
+      <div slot="actions" class="mu-modal-actions">
+        <ds-button type="tertiary" (clicked)="closeSend()">Cancel</ds-button>
+        <ds-button type="primary" (clicked)="send()">Send</ds-button>
+      </div>
+    </ds-modal>
+
+    <!-- Enter conditions -->
+    <ds-modal title="Enter conditions" size="small" [open]="conditionsOpen()" contentHeight="auto"
+      (closed)="conditionsOpen.set(false)">
+      <div class="mu-form mu-form--single">
+        <ds-textarea label="Special conditions" [rows]="2" [value]="conditions().special"
+          (valueChange)="setCondition('special', $event)" />
+        <ds-textarea label="Internal comment" [rows]="2" [value]="conditions().internal"
+          (valueChange)="setCondition('internal', $event)" />
+        <ds-textarea label="External comment" [rows]="2" [value]="conditions().external"
+          (valueChange)="setCondition('external', $event)" />
+      </div>
+      <div slot="actions" class="mu-modal-actions">
+        <ds-button type="tertiary" (clicked)="conditionsOpen.set(false)">Cancel</ds-button>
+        <ds-button type="primary" (clicked)="saveConditions()">Save</ds-button>
+      </div>
+    </ds-modal>
+
+    <!-- Preview endorsement text -->
+    <ds-modal title="Endorsement text" size="small" [open]="endorsementOpen()" contentHeight="auto"
+      (closed)="endorsementOpen.set(false)">
+      <p class="mu-endorsement">{{ endorsementText() }}</p>
+      <ds-button slot="actions" type="primary" (clicked)="endorsementOpen.set(false)">Close</ds-button>
+    </ds-modal>
+  </ng-container>
+</app-topbox-test-shell>
