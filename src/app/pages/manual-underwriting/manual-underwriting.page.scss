@@ -1,0 +1,148 @@
+// Manual Underwriting: buyer-level page, grid of cards like Buyer Summary.
+:host { display: block; font-family: var(--semantic-font-family); }
+
+.mu-page {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding-bottom: var(--semantic-measurement-spacing-xl);
+}
+
+// Prototype controls: discreet strip, right aligned
+.mu-proto {
+  display:         flex;
+  align-items:     center;
+  justify-content: flex-end;
+  flex-wrap:       wrap;
+  gap:             var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  margin:          0 var(--semantic-measurement-spacing-xl);
+  padding:         var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  background:      var(--semantic-color-static-background-main-secondary);
+  border:          1px dashed var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-s);
+}
+.mu-proto__title {
+  font-size:      var(--semantic-font-text-style-size-s);
+  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
+  color:          var(--semantic-color-static-text-main-tertiary);
+  text-transform: uppercase;
+}
+.mu-proto__label {
+  font-size: var(--semantic-font-text-style-size-m);
+  color:     var(--semantic-color-static-text-main-secondary);
+}
+
+.mu-toolbar {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-m);
+  padding:         0 var(--semantic-measurement-spacing-xl);
+}
+.mu-toolbar__info, .mu-toolbar__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+.mu-toolbar__ref {
+  font-size: var(--semantic-font-text-style-size-m);
+  color:     var(--semantic-color-static-text-main-secondary);
+}
+
+.mu-grid {
+  display:               grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap:                   var(--semantic-measurement-spacing-m);
+  padding:               0 var(--semantic-measurement-spacing-xl);
+}
+.mu-grid__cell { min-width: 0; &--wide { grid-column: span 2; } }
+.mu-grid__skeleton {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  min-height:     calc(var(--semantic-measurement-sizing-3xl) * 3);
+}
+.mu-grid__skeleton.mu-grid__cell--wide { grid-column: span 2; }
+
+.mu-stack {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+}
+
+.mu-foot {
+  display:     flex;
+  flex-wrap:   wrap;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  margin-top:  var(--semantic-measurement-spacing-m);
+  padding-top: var(--semantic-measurement-spacing-m);
+  border-top:  1px solid var(--semantic-color-static-border-subtle-tertiary);
+}
+
+.mu-links {
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+  margin:     var(--semantic-measurement-spacing-m) 0 0;
+  padding:    0;
+  list-style: none;
+}
+
+.mu-narrative { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-xs); align-items: flex-start; }
+.mu-narrative__label { font-size: var(--semantic-font-text-style-size-m); color: var(--semantic-color-static-text-main-tertiary); }
+.mu-narrative__text {
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-primary);
+  &--clamped {
+    display:            -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow:           hidden;
+  }
+}
+
+.mu-empty {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--semantic-measurement-spacing-s);
+}
+.mu-empty__title { margin: 0; font-size: var(--semantic-font-text-style-size-l); font-weight: var(--semantic-font-text-style-font-weight-semi-bold); color: var(--semantic-color-static-text-main-primary); }
+.mu-empty__text  { margin: 0; font-size: var(--semantic-font-text-style-size-m); color: var(--semantic-color-static-text-main-secondary); }
+
+.mu-actions { display: flex; gap: var(--semantic-measurement-spacing-s); justify-content: flex-end; }
+.mu-hint { margin: 0; font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-secondary); }
+
+// Modals
+.mu-modal-actions { display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s); }
+
+.mu-form {
+  display:               grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:                   var(--semantic-measurement-spacing-m);
+  align-content:         start;
+  &--single { grid-template-columns: minmax(0, 1fr); }
+}
+.mu-form__full { grid-column: 1 / -1; }
+.mu-form__section {
+  margin:      var(--semantic-measurement-spacing-s) 0 0;
+  font-size:   var(--semantic-font-text-style-size-l);
+  font-weight: var(--semantic-font-text-style-font-weight-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+}
+
+.mu-send__recipient { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-xs); }
+.mu-send__person { margin: 0; font-size: var(--semantic-font-text-style-size-m); color: var(--semantic-color-static-text-main-secondary); }
+.mu-send__name { font-weight: var(--semantic-font-text-style-font-weight-semi-bold); color: var(--semantic-color-static-text-main-primary); }
+.mu-send__meta {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  margin-top:      var(--semantic-measurement-spacing-xs);
+}
+.mu-send__count { font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-tertiary); &--over { color: var(--semantic-color-static-text-main-functional-negative); } }
+
+.mu-endorsement { margin: 0; font-size: var(--semantic-font-text-style-size-l); line-height: var(--semantic-font-text-style-line-height-l); color: var(--semantic-color-static-text-main-primary); }

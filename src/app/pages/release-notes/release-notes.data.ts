@@ -23,6 +23,23 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'manual-underwriting-credit-limit-request',
+    date: '2026-11-05',
+    category: 'feature',
+    screens: ['manual-underwriting/4421706'],
+    title: 'Manual Underwriting: answer a credit limit request from one page',
+    description:
+      'New buyer page that gathers the buyer, the policy, the current limit and the request in cards, and lets an underwriter complete, send or validate the decision.',
+    changes: [
+      'Six cards built from the underwriter survey, each with a View details window',
+      'Complete window with answer, reason, permanent limit, temporary increase, notifications, invoice and comment',
+      'Without the right to complete, the window is read-only and offers to send the request to someone who can',
+      'Send window with recipients, an editable message prefilled from the request and a copy link action',
+      'Validation card to validate or reject (with a remark) a decision made by another user',
+    ],
+  },
+
+  {
     id: 'company-creation-country-first',
     date: '2026-11-05',
     category: 'feature',

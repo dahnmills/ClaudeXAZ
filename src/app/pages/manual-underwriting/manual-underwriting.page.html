@@ -1,0 +1,316 @@
+<app-topbox-test-shell>
+  <ds-topbox
+    slot="topbox"
+    dataType="buyer"
+    icon="buyers"
+    [label]="buyer.name"
+    [id]="buyerId()"
+    [grade]="buyer.grade"
+    [gradeColor]="buyer.gradeColor"
+    [highRisk]="true"
+    [sru]="true"
+    [sanction]="true"
+    actionLabel="View full details"
+    actionIcon="info-circle"
+    (actionClicked)="openDetails('buyer')"
+  />
+
+  <div class="mu-page">
+    <ds-page-header [topbox]="false" [breadcrumb]="true" [tabs]="false">
+      <ds-breadcrumbs slot="breadcrumbs">
+        <ds-crumb label="Home" />
+        <ds-crumb label="Buyers" />
+        <ds-crumb [label]="buyer.name" />
+        <ds-crumb label="Manual Underwriting" [currentPage]="true" />
+      </ds-breadcrumbs>
+      <ds-page-title slot="title" title="Manual Underwriting" />
+    </ds-page-header>
+
+    <!-- Prototype controls: not part of the product -->
+    <div class="mu-proto" role="group" aria-label="Prototype controls">
+      <span class="mu-proto__title">Prototype</span>
+      <span class="mu-proto__label" id="mu-rights-label">Your rights</span>
+      <ds-segmented-control mode="radio" ariaLabel="Your rights" [options]="rightsOptions"
+        [selected]="rights()" (selectedChange)="setRights($event)" />
+      <span class="mu-proto__label">Request status</span>
+      <ds-segmented-control mode="radio" ariaLabel="Request status" [options]="statusOptions"
+        [selected]="status()" (selectedChange)="setStatus($event)" />
+    </div>
+
+    <div class="mu-toolbar">
+      <div class="mu-toolbar__info">
+        <ds-badge [label]="statusLabel()" [status]="statusBadge()" size="m" />
+        <span class="mu-toolbar__ref">Request {{ ref }}</span>
+      </div>
+      <div class="mu-toolbar__actions">
+        <ds-button type="secondary" (clicked)="openSend()">
+          <ds-icon slot="icon-left" name="mail" [size]="16" />
+          Send
+        </ds-button>
+        <ds-button type="primary" [disabled]="status() === 'validated'" (clicked)="openComplete()">
+          Complete
+        </ds-button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="mu-grid" role="status" aria-live="polite" aria-label="Loading the request">
+        @for (_ of skeletons; track $index) {
+          <ds-card class="mu-grid__skeleton" [class.mu-grid__cell--wide]="$index === 1 || $index === 3">
+            <ds-skeleton-item width="40%" height="16px" />
+            <ds-skeleton-item width="100%" height="12px" />
+            <ds-skeleton-item width="90%" height="12px" />
+            <ds-skeleton-item width="70%" height="12px" />
+          </ds-card>
+        }
+      </div>
+    } @else {
+      <div class="mu-grid">
+
+        <!-- 1. Buyer -->
+        <div class="mu-grid__cell">
+          <ds-widget-card title="Buyer" [externalLink]="false">
+            <ds-properties-panel [sections]="[{ rows: [
+              { label: 'Name', value: buyer.name },
+              { label: 'Company ID', value: buyerId() },
+              { label: 'Legal form', value: buyer.legalForm },
+              { label: 'Sector', value: buyer.sector },
+              { label: 'Address', value: buyer.address }
+            ] }]" [columns]="1" variant="flat" density="compact" />
+            <ul class="mu-links" aria-label="Quick links">
+              <li><ds-link href="#" size="s" (click)="$event.preventDefault()"><ds-icon slot="icon-left" name="file-text" [size]="16" />Documents</ds-link></li>
+              <li><ds-link href="#" size="s" (click)="$event.preventDefault()"><ds-icon slot="icon-left" name="chart" [size]="16" />Financial statements</ds-link></li>
+              <li><ds-link href="#" size="s" (click)="$event.preventDefault()"><ds-icon slot="icon-left" name="plus" [size]="16" />Add third party</ds-link></li>
+              <li><ds-link href="#" size="s" (click)="$event.preventDefault()"><ds-icon slot="icon-left" name="edit-compose" [size]="16" />Notepad</ds-link></li>
+            </ul>
+            <div class="mu-foot">
+              <ds-link href="#" weight="semi-bold" (click)="openDetails('buyer', $event)">View details</ds-link>
+            </div>
+          </ds-widget-card>
+        </div>
+
+        <!-- 2. Insured / Policy -->
+        <div class="mu-grid__cell mu-grid__cell--wide">
+          <ds-widget-card title="Insured and policy" [externalLink]="false">
+            <ds-properties-panel [sections]="insuredFace" [columns]="2" variant="flat" density="compact" />
+            <div class="mu-foot">
+              <ds-link href="#" weight="semi-bold" (click)="openDetails('insured', $event)">View details</ds-link>
+            </div>
+          </ds-widget-card>
+        </div>
+
+        <!-- 3. Current limit -->
+        <div class="mu-grid__cell">
+          <ds-widget-card title="Current limit" [externalLink]="false">
+            <ds-properties-panel [sections]="limitFace" [columns]="1" variant="flat" density="compact" />
+            <div class="mu-foot">
+              <ds-link href="#" weight="semi-bold" (click)="openDetails('limit', $event)">View details</ds-link>
+              <ds-link href="#" (click)="$event.preventDefault()">View limit history</ds-link>
+            </div>
+          </ds-widget-card>
+        </div>
+
+        <!-- 4. Request -->
+        <div class="mu-grid__cell mu-grid__cell--wide">
+          <ds-widget-card title="Request" [externalLink]="false">
+            <div class="mu-stack">
+              <ds-functional-notice status="warning" emphasis="medium" title="Negative buyer information"
+                message="A payment delay of 18 days was reported by another insurer on 14 Sep 2026." />
+              <ds-properties-panel [sections]="requestFace" [columns]="2" variant="flat" density="compact" />
+              <div class="mu-narrative">
+                <span class="mu-narrative__label">Narrative</span>
+                <p class="mu-narrative__text" [class.mu-narrative__text--clamped]="!narrativeOpen()">{{ narrative }}</p>
+                <ds-link href="#" size="s" (click)="$event.preventDefault(); narrativeOpen.set(!narrativeOpen())">
+                  {{ narrativeOpen() ? 'Read less' : 'Read more' }}
+                </ds-link>
+              </div>
+            </div>
+            <div class="mu-foot">
+              <ds-link href="#" weight="semi-bold" (click)="openDetails('request', $event)">View details</ds-link>
+            </div>
+          </ds-widget-card>
+        </div>
+
+        <!-- 5. Answer / Decision -->
+        <div class="mu-grid__cell" [class.mu-grid__cell--wide]="!showValidation()">
+          <ds-widget-card title="Answer" [externalLink]="false">
+            @if (decision(); as d) {
+              <div class="mu-stack">
+                <ds-badge [label]="status() === 'draft' ? 'Draft decision' : 'Submitted'"
+                  [status]="status() === 'draft' ? 'neutral' : 'info'" />
+                <ds-properties-panel [sections]="answerFace()" [columns]="showValidation() ? 1 : 2" variant="flat" density="compact" />
+              </div>
+            } @else {
+              <div class="mu-empty">
+                <p class="mu-empty__title">No answer yet</p>
+                <p class="mu-empty__text">Complete the request to record the decision.</p>
+                <ds-button type="primary" (clicked)="openComplete()">Complete</ds-button>
+              </div>
+            }
+            <div class="mu-foot">
+              @if (decision()) {
+                <ds-link href="#" weight="semi-bold" (click)="openDetails('answer', $event)">View details</ds-link>
+              }
+              <ds-link href="#" (click)="$event.preventDefault(); conditionsOpen.set(true)">Enter conditions</ds-link>
+              <ds-link href="#" (click)="$event.preventDefault(); endorsementOpen.set(true)">Preview endorsement text</ds-link>
+            </div>
+          </ds-widget-card>
+        </div>
+
+        <!-- 6. Validation -->
+        @if (showValidation()) {
+          <div class="mu-grid__cell">
+            <ds-widget-card title="Validation" [externalLink]="false">
+              <div class="mu-stack">
+                <ds-properties-panel [sections]="validationFace()" [columns]="1" variant="flat" density="compact" />
+                @if (status() === 'to-validate') {
+                  <ds-textarea label="Remark" [rows]="2" [value]="remark()"
+                    placeholder="Required to reject"
+                    [error]="remarkError()" errorMessage="Add a remark to reject this decision."
+                    [readonly]="!canComplete()"
+                    (valueChange)="remark.set($event); remarkError.set(false)" />
+                  <div class="mu-actions">
+                    <ds-button type="secondary" tone="negative" [disabled]="!canComplete()" (clicked)="reject()">Reject</ds-button>
+                    <ds-button type="primary" [disabled]="!canComplete()" (clicked)="validate()">Validate</ds-button>
+                  </div>
+                  @if (!canComplete()) {
+                    <p class="mu-hint">You do not have the right to validate.</p>
+                  }
+                } @else {
+                  <ds-badge label="Validated" status="success" />
+                }
+              </div>
+              <div class="mu-foot">
+                <ds-link href="#" weight="semi-bold" (click)="openDetails('validation', $event)">View details</ds-link>
+                <ds-link href="#" (click)="$event.preventDefault(); conditionsOpen.set(true)">See conditions</ds-link>
+              </div>
+            </ds-widget-card>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <ng-container slot="modals">
+    <!-- View details -->
+    @if (detailsModal(); as m) {
+      <ds-modal [title]="m.title" size="medium" [open]="true" contentHeight="auto" (closed)="closeDetails()">
+        <ds-properties-panel [sections]="m.sections" [columns]="2" variant="card" />
+        <ds-button slot="actions" type="primary" (clicked)="closeDetails()">Close</ds-button>
+      </ds-modal>
+    }
+
+    <!-- Complete -->
+    <ds-modal title="Complete the request" size="medium" [open]="completeOpen()" contentHeight="560px"
+      [suspended]="sendOpen()" (closed)="closeComplete()">
+      <div class="mu-form">
+        @if (!canComplete()) {
+          <ds-functional-notice class="mu-form__full" status="warning" emphasis="medium"
+            title="You cannot complete this request"
+            message="You can send it to someone who can." />
+        } @else if (submitted() && hasErrors()) {
+          <ds-functional-notice class="mu-form__full" status="error" emphasis="medium"
+            title="Some fields need your attention" message="Check the fields marked below." />
+        }
+        <ds-select label="Answer" placeholder="Select an answer" [options]="answerOptions"
+          [value]="form().answer" [disabled]="!canComplete()"
+          [error]="showErr('answer')" [errorMessage]="err('answer')"
+          (valueChange)="setField('answer', $event)" />
+        <ds-select label="Reason" placeholder="Select a reason" [options]="reasonOptions"
+          [value]="form().reason" [disabled]="!canComplete()"
+          [error]="showErr('reason')" [errorMessage]="err('reason')"
+          (valueChange)="setField('reason', $event)" />
+
+        <h3 class="mu-form__section mu-form__full">Permanent limit</h3>
+        <ds-input-text label="Permanent amount (EUR)" inputmode="numeric" [value]="form().permAmount"
+          [disabled]="!canComplete()" [error]="showErr('permAmount')" [errorMessage]="err('permAmount')"
+          (valueChange)="setField('permAmount', $event)" />
+        <ds-input-text label="Limited to (EUR)" inputmode="numeric" [value]="form().permLimited"
+          [disabled]="!canComplete()" [error]="showErr('permLimited')" [errorMessage]="err('permLimited')"
+          (valueChange)="setField('permLimited', $event)" />
+        <ds-input-text label="With (days)" inputmode="numeric" [value]="form().permDays"
+          [disabled]="!canComplete()" [error]="showErr('permDays')" [errorMessage]="err('permDays')"
+          (valueChange)="setField('permDays', $event)" />
+
+        <h3 class="mu-form__section mu-form__full">Temporary increase</h3>
+        <ds-input-text label="Temporary amount (EUR)" inputmode="numeric" [value]="form().tempAmount"
+          [disabled]="!canComplete()" [error]="showErr('tempAmount')" [errorMessage]="err('tempAmount')"
+          (valueChange)="setField('tempAmount', $event)" />
+        <ds-input-text label="With (days)" inputmode="numeric" [value]="form().tempDays"
+          [disabled]="!canComplete()" [error]="showErr('tempDays')" [errorMessage]="err('tempDays')"
+          (valueChange)="setField('tempDays', $event)" />
+
+        <ds-select label="Notifications" [options]="notificationOptions" [value]="form().notifications"
+          [disabled]="!canComplete()" (valueChange)="setField('notifications', $event)" />
+        <ds-select label="Invoice" [options]="invoiceOptions" [value]="form().invoice"
+          [disabled]="!canComplete()" (valueChange)="setField('invoice', $event)" />
+        <ds-textarea class="mu-form__full" label="Internal comment" [optional]="true" [rows]="3"
+          [value]="form().comment" [readonly]="!canComplete()" (valueChange)="setField('comment', $event)" />
+      </div>
+      <div slot="actions" class="mu-modal-actions">
+        <ds-button type="tertiary" (clicked)="closeComplete()">Cancel</ds-button>
+        @if (canComplete()) {
+          <ds-button type="tertiary" (clicked)="saveDraft()">Save as draft</ds-button>
+          <ds-button type="primary" (clicked)="submit()">Submit</ds-button>
+        } @else {
+          <ds-button type="primary" (clicked)="openSend()">Send to...</ds-button>
+        }
+      </div>
+    </ds-modal>
+
+    <!-- Send -->
+    <ds-modal title="Send" size="medium" [open]="sendOpen()" contentHeight="auto" (closed)="closeSend()">
+      <div class="mu-form mu-form--single">
+        <div class="mu-send__recipient">
+          <ds-multi-select label="Recipient" placeholder="Select people who can complete this request"
+            [options]="recipientOptions" [maxVisible]="2"
+            [error]="recipientError()" errorMessage="Select at least one recipient."
+            [value]="recipients()" (valueChange)="recipients.set($event)" />
+          @for (p of selectedPeople(); track p.id) {
+            <p class="mu-send__person"><span class="mu-send__name">{{ p.name }}</span> {{ p.email }}</p>
+          }
+        </div>
+        <div>
+          <ds-textarea label="Message" [rows]="7" [value]="message()"
+            [error]="messageError() || messageTooLong()"
+            [errorMessage]="messageTooLong() ? 'The message is too long.' : 'Write a message.'"
+            (valueChange)="message.set($event)" />
+          <div class="mu-send__meta">
+            <ds-link href="#" size="s" (click)="$event.preventDefault(); copyLink()">
+              <ds-icon slot="icon-left" name="link" [size]="16" />Copy link
+            </ds-link>
+            <span class="mu-send__count" [class.mu-send__count--over]="messageTooLong()">{{ message().length }} / {{ messageMax }}</span>
+          </div>
+        </div>
+      </div>
+      <div slot="actions" class="mu-modal-actions">
+        <ds-button type="tertiary" (clicked)="closeSend()">Cancel</ds-button>
+        <ds-button type="primary" (clicked)="send()">Send</ds-button>
+      </div>
+    </ds-modal>
+
+    <!-- Enter conditions -->
+    <ds-modal title="Enter conditions" size="small" [open]="conditionsOpen()" contentHeight="auto"
+      (closed)="conditionsOpen.set(false)">
+      <div class="mu-form mu-form--single">
+        <ds-textarea label="Special conditions" [rows]="2" [value]="conditions().special"
+          (valueChange)="setCondition('special', $event)" />
+        <ds-textarea label="Internal comment" [rows]="2" [value]="conditions().internal"
+          (valueChange)="setCondition('internal', $event)" />
+        <ds-textarea label="External comment" [rows]="2" [value]="conditions().external"
+          (valueChange)="setCondition('external', $event)" />
+      </div>
+      <div slot="actions" class="mu-modal-actions">
+        <ds-button type="tertiary" (clicked)="conditionsOpen.set(false)">Cancel</ds-button>
+        <ds-button type="primary" (clicked)="saveConditions()">Save</ds-button>
+      </div>
+    </ds-modal>
+
+    <!-- Preview endorsement text -->
+    <ds-modal title="Endorsement text" size="small" [open]="endorsementOpen()" contentHeight="auto"
+      (closed)="endorsementOpen.set(false)">
+      <p class="mu-endorsement">{{ endorsementText() }}</p>
+      <ds-button slot="actions" type="primary" (clicked)="endorsementOpen.set(false)">Close</ds-button>
+    </ds-modal>
+  </ng-container>
+</app-topbox-test-shell>
