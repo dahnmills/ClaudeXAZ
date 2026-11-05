@@ -140,10 +140,7 @@
               <ds-properties-panel [sections]="requestFace" [columns]="2" variant="flat" density="compact" />
               <div class="mu-narrative">
                 <span class="mu-narrative__label">Narrative</span>
-                <p class="mu-narrative__text" [class.mu-narrative__text--clamped]="!narrativeOpen()">{{ narrative }}</p>
-                <ds-link href="#" size="s" (click)="$event.preventDefault(); narrativeOpen.set(!narrativeOpen())">
-                  {{ narrativeOpen() ? 'Read less' : 'Read more' }}
-                </ds-link>
+                <p class="mu-narrative__text">{{ narrative }}</p>
               </div>
             </div>
           </ds-widget-card>
@@ -175,13 +172,13 @@
                 <ds-properties-panel [sections]="answerFace()" [columns]="showValidation() ? 1 : 2" variant="flat" density="compact" />
               </div>
             } @else {
-              <div class="mu-empty">
-                <p class="mu-empty__title">No answer yet</p>
-                <p class="mu-empty__text">Complete the request to record the decision.</p>
-                @if (status() !== 'validated') {
-                  <ds-button type="primary" (clicked)="openComplete()">Complete</ds-button>
-                }
-              </div>
+              @if (canComplete()) {
+                <ds-functional-notice status="warning" emphasis="medium" title="No answer yet"
+                  message="Use Complete at the top of the page to answer this request." />
+              } @else {
+                <ds-functional-notice status="warning" emphasis="medium" title="You cannot complete this request"
+                  message="Use Send to pass it to someone who can." />
+              }
             }
           </ds-widget-card>
         </div>

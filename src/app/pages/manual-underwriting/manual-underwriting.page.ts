@@ -107,7 +107,6 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   sendOpen = signal(false);
   conditionsOpen = signal(false);
   endorsementOpen = signal(false);
-  narrativeOpen = signal(false);
   validateOpen = signal(false);
   protoOpen = signal(false);
 
