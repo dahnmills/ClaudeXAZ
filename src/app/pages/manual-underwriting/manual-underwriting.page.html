@@ -26,20 +26,18 @@
 
       <ds-page-title slot="title" title="Manual Underwriting" [id]="ref"
         [badgeLabel]="statusLabel()" [badgeStatus]="statusBadge()">
-        @if (status() !== 'validated') {
-          <div slot="actions" class="mu-actions-bar">
-            <ds-button type="secondary" (clicked)="openSend()">
-              <ds-icon slot="icon-left" name="mail" [size]="16" />
-              Send
-            </ds-button>
-            @if (status() === 'to-validate') {
-              <ds-button type="secondary" (clicked)="openComplete()">Complete</ds-button>
-              <ds-button type="primary" (clicked)="openValidate()">Validate or reject</ds-button>
-            } @else {
-              <ds-button type="primary" (clicked)="openComplete()">Complete</ds-button>
-            }
-          </div>
-        }
+        <div slot="actions" class="mu-actions-bar">
+          <ds-button type="secondary" (clicked)="openSend()">
+            <ds-icon slot="icon-left" name="mail" [size]="16" />
+            Send
+          </ds-button>
+          <span [dsTooltip]="status() !== 'to-be-validated' ? 'Available once a decision is waiting for validation' : ''" dsTooltipPosition="bottom-center">
+            <ds-button type="secondary" [disabled]="status() !== 'to-be-validated'" (clicked)="openValidate()">Validate or reject</ds-button>
+          </span>
+          <span [dsTooltip]="status() === 'validated' ? 'This request is already validated' : ''" dsTooltipPosition="bottom-center">
+            <ds-button type="primary" [disabled]="status() === 'validated'" (clicked)="openComplete()">Complete</ds-button>
+          </span>
+        </div>
       </ds-page-title>
     </ds-page-header>
 
@@ -194,8 +192,8 @@
                 <div class="mu-card-menu__flyout">
                   <ds-flyout-menu>
                     <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('validation')" />
-                    @if (status() === 'to-validate') {
-                      <ds-flyout-menu-item label="Validate or reject..." icon="check-circle" (clicked)="menuDo(openValidate)" />
+                    @if (status() === 'to-be-validated') {
+                      <ds-flyout-menu-item label="Validate or reject" icon="check-circle" (clicked)="menuDo(openValidate)" />
                     }
                     <ds-flyout-menu-item label="See conditions" icon="eye" (clicked)="menuDo(openConditions)" />
                   </ds-flyout-menu>
@@ -211,24 +209,6 @@
     }
   </div>
 
-  <!-- Prototype controls: floating, outside the page flow, not part of the product -->
-  <div class="mu-proto">
-    @if (protoOpen()) {
-      <ds-card class="mu-proto__panel" [elevated]="true" role="group" aria-label="Prototype controls">
-        <span class="mu-proto__label">Your rights</span>
-        <ds-segmented-control mode="radio" ariaLabel="Your rights" [options]="rightsOptions"
-          [selected]="rights()" (selectedChange)="setRights($event)" />
-        <span class="mu-proto__label">Request status</span>
-        <ds-segmented-control mode="radio" ariaLabel="Request status" [options]="statusOptions"
-          [selected]="status()" (selectedChange)="setStatus($event)" />
-      </ds-card>
-    }
-    <ds-button type="secondary" (clicked)="protoOpen.set(!protoOpen())">
-      <ds-icon slot="icon-left" name="sliders" [size]="16" />
-      Prototype
-    </ds-button>
-  </div>
-
   <ng-container slot="modals">
     <!-- View details -->
     @if (detailsModal(); as m) {
@@ -239,7 +219,7 @@
     }
 
     <!-- Validate or reject -->
-    <ds-modal title="Validate or reject" size="medium" [open]="validateOpen()" contentHeight="auto"
+    <ds-modal title="Validate or reject" size="medium" [open]="validateOpen()" contentHeight="60vh"
       (closed)="validateOpen.set(false)">
       <div class="mu-form mu-form--single">
         @if (!canComplete()) {
@@ -247,7 +227,7 @@
             title="You cannot validate this request" message="You can send it to someone who can." />
         }
         @if (validationFace().length) {
-          <ds-properties-panel [sections]="validationFace()" [columns]="2" variant="card" />
+          <ds-properties-panel [sections]="validationFace()" [columns]="1" variant="card" />
         }
         <ds-textarea label="Remark" [rows]="3" [value]="remark()"
           placeholder="Required to reject"
@@ -261,65 +241,23 @@
           <ds-button type="secondary" tone="negative" (clicked)="reject()">Reject</ds-button>
           <ds-button type="primary" (clicked)="validate()">Validate</ds-button>
         } @else {
-          <ds-button type="primary" (clicked)="validateOpen.set(false); openSend()">Send to...</ds-button>
+          <ds-button type="primary" (clicked)="validateOpen.set(false); openSend()">Send to complete</ds-button>
         }
       </div>
     </ds-modal>
 
     <!-- Complete -->
-    <ds-modal title="Complete the request" size="medium" [open]="completeOpen()" contentHeight="560px"
+    <ds-modal title="Complete the request" size="large" [open]="completeOpen()" contentHeight="560px"
       [suspended]="sendOpen()" (closed)="closeComplete()">
-      <div class="mu-form">
-        @if (!canComplete()) {
-          <ds-functional-notice class="mu-form__full" status="warning" emphasis="medium"
-            title="You cannot complete this request"
-            message="You can send it to someone who can." />
-        } @else if (submitted() && hasErrors()) {
-          <ds-functional-notice class="mu-form__full" status="error" emphasis="medium"
-            title="Some fields need your attention" message="Check the fields marked below." />
-        }
-        <ds-select label="Answer" placeholder="Select an answer" [options]="answerOptions"
-          [value]="form().answer" [disabled]="!canComplete()"
-          [error]="showErr('answer')" [errorMessage]="err('answer')"
-          (valueChange)="setField('answer', $event)" />
-        <ds-select label="Reason" placeholder="Select a reason" [options]="reasonOptions"
-          [value]="form().reason" [disabled]="!canComplete()"
-          [error]="showErr('reason')" [errorMessage]="err('reason')"
-          (valueChange)="setField('reason', $event)" />
-
-        <h3 class="mu-form__section mu-form__full">Permanent limit</h3>
-        <ds-input-text label="Permanent amount (EUR)" inputmode="numeric" [value]="form().permAmount"
-          [disabled]="!canComplete()" [error]="showErr('permAmount')" [errorMessage]="err('permAmount')"
-          (valueChange)="setField('permAmount', $event)" />
-        <ds-input-text label="Limited to (EUR)" inputmode="numeric" [value]="form().permLimited"
-          [disabled]="!canComplete()" [error]="showErr('permLimited')" [errorMessage]="err('permLimited')"
-          (valueChange)="setField('permLimited', $event)" />
-        <ds-input-text label="With (days)" inputmode="numeric" [value]="form().permDays"
-          [disabled]="!canComplete()" [error]="showErr('permDays')" [errorMessage]="err('permDays')"
-          (valueChange)="setField('permDays', $event)" />
-
-        <h3 class="mu-form__section mu-form__full">Temporary increase</h3>
-        <ds-input-text label="Temporary amount (EUR)" inputmode="numeric" [value]="form().tempAmount"
-          [disabled]="!canComplete()" [error]="showErr('tempAmount')" [errorMessage]="err('tempAmount')"
-          (valueChange)="setField('tempAmount', $event)" />
-        <ds-input-text label="With (days)" inputmode="numeric" [value]="form().tempDays"
-          [disabled]="!canComplete()" [error]="showErr('tempDays')" [errorMessage]="err('tempDays')"
-          (valueChange)="setField('tempDays', $event)" />
-
-        <ds-select label="Notifications" [options]="notificationOptions" [value]="form().notifications"
-          [disabled]="!canComplete()" (valueChange)="setField('notifications', $event)" />
-        <ds-select label="Invoice" [options]="invoiceOptions" [value]="form().invoice"
-          [disabled]="!canComplete()" (valueChange)="setField('invoice', $event)" />
-        <ds-textarea class="mu-form__full" label="Internal comment" [optional]="true" [rows]="3"
-          [value]="form().comment" [readonly]="!canComplete()" (valueChange)="setField('comment', $event)" />
-      </div>
+      <app-mu-complete-form #completeForm [rights]="canComplete()" [value]="formValue()"
+        (saved)="saveDraft($event)" (submitted)="submit($event)" />
       <div slot="actions" class="mu-modal-actions">
         <ds-button type="tertiary" (clicked)="closeComplete()">Cancel</ds-button>
         @if (canComplete()) {
-          <ds-button type="tertiary" (clicked)="saveDraft()">Save as draft</ds-button>
-          <ds-button type="primary" (clicked)="submit()">Submit</ds-button>
+          <ds-button type="tertiary" (clicked)="completeForm.save()">Save as draft</ds-button>
+          <ds-button type="primary" (clicked)="completeForm.submit()">Submit</ds-button>
         } @else {
-          <ds-button type="primary" (clicked)="openSend()">Send to...</ds-button>
+          <ds-button type="primary" (clicked)="openSend()">Send to complete</ds-button>
         }
       </div>
     </ds-modal>

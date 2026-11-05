@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, computed, effect, inject, signal, untracked } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
@@ -19,27 +19,26 @@ import { FlyoutMenuComponent } from '../../shared/ui/flyout-menu/flyout-menu.com
 import { FlyoutMenuItemComponent } from '../../shared/ui/flyout-menu/flyout-menu-item.component';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { BadgeComponent, type BadgeStatus } from '../../shared/ui/badge/badge.component';
-import { SelectComponent } from '../../shared/ui/select/select.component';
 import { MultiSelectComponent } from '../../shared/ui/multi-select/multi-select.component';
 import { TextareaComponent } from '../../shared/ui/textarea/textarea.component';
-import { InputTextComponent } from '../../shared/ui/input-text/input-text.component';
 import { FunctionalNoticeComponent } from '../../shared/ui/functional-notice/functional-notice.component';
-import { SegmentedControlComponent, type SegmentedOption } from '../../shared/ui/segmented-control/segmented-control.component';
+import { TooltipDirective } from '../../shared/ui/tooltip/tooltip.directive';
 import { ToasterService } from '../../shared/ui/toaster/toaster.service';
 
+import { CompleteFormComponent, ANSWER_OPTIONS, REASON_OPTIONS, NOTIFICATION_OPTIONS, INVOICE_OPTIONS, type CompleteFormValue } from './complete-form/complete-form.component';
+import { MuPrototypeService } from './mu-prototype.service';
 import {
-  ANSWER_OPTIONS, BUYER, CURRENT_USER, INVOICE_OPTIONS, NOTIFICATION_OPTIONS, OTHER_USER_DECISION,
-  PEOPLE, RECIPIENT_OPTIONS, REASON_OPTIONS, REQUEST_REF, label, money,
-  type Decision, type RequestStatus, type Rights,
+  BUYER, CURRENT_USER, OTHER_USER_DECISION, PEOPLE, RECIPIENT_OPTIONS, REQUEST_REF, label, money,
+  type Decision, type RequestStatus,
 } from './manual-underwriting.mock';
 
 type CardId = 'buyer' | 'insured' | 'limit' | 'request' | 'answer' | 'validation';
 
 const STATUS_LABEL: Record<RequestStatus, string> = {
-  'draft': 'Draft', 'to-validate': 'To be validated', 'validated': 'Validated',
+  'draft': 'Draft', 'to-be-validated': 'To be validated', 'validated': 'Validated',
 };
 const STATUS_BADGE: Record<RequestStatus, BadgeStatus> = {
-  'draft': 'neutral', 'to-validate': 'warning', 'validated': 'success',
+  'draft': 'neutral', 'to-be-validated': 'warning', 'validated': 'success',
 };
 const MESSAGE_MAX = 600;
 const NARRATIVE =
@@ -47,20 +46,16 @@ const NARRATIVE =
   'retail chain. Deliveries start in January and are invoiced at 60 days. The buyer paid its last twelve ' +
   'invoices within terms, but a payment delay of 18 days was reported by another insurer in September.';
 
-const BLANK: Decision = {
-  answer: '', reason: '', permAmount: '', permLimited: '', permDays: '', tempAmount: '', tempDays: '',
-  notifications: 'policyholder', invoice: 'any', comment: '', preparedBy: '', date: '',
-};
-
 @Component({
   selector: 'app-manual-underwriting',
   standalone: true,
   imports: [
     TopboxTestShellComponent, TopboxComponent, PageHeaderComponent, PageTitleComponent, BreadcrumbsComponent,
     CrumbComponent, WidgetCardComponent, CardComponent, SkeletonItemComponent, PropertiesPanelComponent,
-    ModalComponent, ButtonComponent, LinkComponent, IconComponent, BadgeComponent, SelectComponent,
-    MultiSelectComponent, TextareaComponent, InputTextComponent, FunctionalNoticeComponent,
-    SegmentedControlComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent,
+    ModalComponent, ButtonComponent, LinkComponent, IconComponent, BadgeComponent,
+    MultiSelectComponent, TextareaComponent, FunctionalNoticeComponent,
+    ButtonIconComponent, CompleteFormComponent, FlyoutMenuComponent, FlyoutMenuItemComponent,
+    TooltipDirective,
   ],
   templateUrl: './manual-underwriting.page.html',
   styleUrl: './manual-underwriting.page.scss',
@@ -68,14 +63,11 @@ const BLANK: Decision = {
 export class ManualUnderwritingPage implements OnInit, OnDestroy {
   private route   = inject(ActivatedRoute);
   private toaster = inject(ToasterService);
+  private proto   = inject(MuPrototypeService);
   private timers  = new Set<ReturnType<typeof setTimeout>>();
 
   readonly buyer = BUYER;
   readonly ref = REQUEST_REF;
-  readonly answerOptions = ANSWER_OPTIONS;
-  readonly reasonOptions = REASON_OPTIONS;
-  readonly notificationOptions = NOTIFICATION_OPTIONS;
-  readonly invoiceOptions = INVOICE_OPTIONS;
   readonly recipientOptions = RECIPIENT_OPTIONS;
   readonly messageMax = MESSAGE_MAX;
   readonly skeletons = Array.from({ length: 6 });
@@ -84,21 +76,23 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   buyerId = signal(BUYER.id);
   loading = signal(true);
 
-  // Prototype controls
-  rights = signal<Rights>('can');
-  status = signal<RequestStatus>('draft');
-  readonly rightsOptions: SegmentedOption[] = [
-    { value: 'can', label: 'Can complete' }, { value: 'cannot', label: 'Cannot complete' },
-  ];
-  readonly statusOptions: SegmentedOption[] = [
-    { value: 'draft', label: 'Draft' }, { value: 'to-validate', label: 'To be validated' },
-    { value: 'validated', label: 'Validated' },
-  ];
+  // Prototype controls live in the "?" menu of the header (MuPrototypeService)
+  readonly rights = this.proto.rights;
+  readonly status = this.proto.status;
 
   decision = signal<Decision | null>(null);
   statusLabel = computed(() => STATUS_LABEL[this.status()]);
   statusBadge = computed(() => STATUS_BADGE[this.status()]);
   canComplete = computed(() => this.rights() === 'can');
+
+  constructor() {
+    // A request that is waiting for validation always has a decision to show
+    effect(() => {
+      if (this.status() !== 'draft' && !untracked(this.decision)) {
+        this.decision.set({ ...OTHER_USER_DECISION });
+      }
+    });
+  }
   showValidation = computed(() => this.status() !== 'draft' && this.decision() !== null);
 
   // Modals
@@ -108,7 +102,6 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   conditionsOpen = signal(false);
   endorsementOpen = signal(false);
   validateOpen = signal(false);
-  protoOpen = signal(false);
 
   // Card menu (kebab), same behaviour as the Buyer Summary board cards
   openMenu = signal<CardId | null>(null);
@@ -116,31 +109,12 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   @HostListener('document:click')
   onDocumentClick(): void { if (this.openMenu() !== null) this.openMenu.set(null); }
   @HostListener('document:keydown.escape')
-  onEscape(): void { this.openMenu.set(null); this.protoOpen.set(false); }
+  onEscape(): void { this.openMenu.set(null); }
   menuDetails(id: CardId): void { this.openMenu.set(null); this.detailsFor.set(id); }
   menuDo(fn: () => void): void { this.openMenu.set(null); fn(); }
 
-  // Complete form
-  form = signal<Decision>({ ...BLANK });
-  submitted = signal(false);
-  errors = computed(() => {
-    const f = this.form();
-    const e: Record<string, string> = {};
-    if (!f.answer) e['answer'] = 'Select an answer.';
-    if (!f.reason) e['reason'] = 'Select a reason.';
-    if (f.answer === 'agreement' || f.answer === 'restrictive') {
-      if (!f.permAmount && !f.tempAmount) e['permAmount'] = 'Enter a permanent limit or a temporary increase.';
-    }
-    for (const k of ['permAmount', 'permLimited', 'permDays', 'tempAmount', 'tempDays'] as const) {
-      if (f[k] && !/^\d+$/.test(f[k].replace(/\s/g, ''))) e[k] = 'Digits only.';
-    }
-    return e;
-  });
-  hasErrors = computed(() => Object.keys(this.errors()).length > 0);
-  showErr = (k: string): boolean => this.submitted() && !!this.errors()[k];
-  err = (k: string): string => (this.submitted() ? this.errors()[k] ?? '' : '');
-
-  setField(k: keyof Decision, v: string): void { this.form.update(f => ({ ...f, [k]: v })); }
+  // Complete form (own component, see complete-form/)
+  formValue = signal<Partial<CompleteFormValue> | null>(null);
 
   // Conditions
   conditions = signal({ special: '', internal: '', external: '' });
@@ -268,21 +242,25 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   ];
 
   decisionSections(d: Decision): PropertySection[] {
+    const cur = d.permanentCurrency || 'EUR';
     return [{ rows: [
       { label: 'Answer', value: label(ANSWER_OPTIONS, d.answer) || '-' },
       { label: 'Reason', value: label(REASON_OPTIONS, d.reason) || '-' },
-      { label: 'Permanent', value: money(d.permAmount) },
-      { label: 'Limited to', value: money(d.permLimited) },
+      { label: 'Permanent', value: money(d.permanentAmount, cur) },
+      { label: 'Limited to', value: d.permanentUntil || '-' },
     ] }, { rows: [
-      { label: 'With (days)', value: d.permDays || '-' },
-      { label: 'Temporary increase', value: money(d.tempAmount) },
-      { label: 'Temporary with (days)', value: d.tempDays || '-' },
+      { label: 'With (days)', value: d.permanentDays || '-' },
+      { label: 'Temporary increase', value: money(d.temporaryAmount, cur) },
+      { label: 'Temporary with (days)', value: d.temporaryDays || '-' },
     ] }];
   }
   decisionDetails(d: Decision): PropertySection[] {
     return [
       ...this.decisionSections(d),
       { rows: [
+        { label: 'Temporary limited to', value: d.temporaryUntil || '-' },
+        { label: 'Invoice date', value: d.invoiceDate || '-' },
+        { label: 'Provisionally', value: d.provisionally ? 'Yes' : 'No' },
         { label: 'Notifications', value: label(NOTIFICATION_OPTIONS, d.notifications) || '-' },
         { label: 'Invoice', value: label(INVOICE_OPTIONS, d.invoice) || '-' },
         { label: 'Prepared by', value: d.preparedBy || '-' },
@@ -313,35 +291,26 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
     }
   });
   endorsementText = computed(() => {
-    const d = this.decision() ?? this.form();
-    const a = label(ANSWER_OPTIONS, d.answer);
+    const d = this.decision();
+    const a = d ? label(ANSWER_OPTIONS, d.answer) : '';
+    if (!d || !a) return 'No decision yet. Complete the request to preview the endorsement text.';
     const r = label(REASON_OPTIONS, d.reason);
-    if (!a) return 'Complete the answer to preview the endorsement text.';
+    const cur = d.permanentCurrency || 'EUR';
     return `Credit limit on ${BUYER.name}: ${a}. ` +
-      (d.permAmount ? `Permanent limit ${money(d.permAmount)}${d.permLimited ? `, limited to ${money(d.permLimited)}` : ''}${d.permDays ? ` for ${d.permDays} days` : ''}. ` : '') +
-      (d.tempAmount ? `Temporary increase ${money(d.tempAmount)}${d.tempDays ? ` for ${d.tempDays} days` : ''}. ` : '') +
+      (d.permanentAmount ? `Permanent limit ${money(d.permanentAmount, cur)}${d.permanentUntil ? `, limited to ${d.permanentUntil}` : ''}${d.permanentDays ? ` for ${d.permanentDays} days` : ''}. ` : '') +
+      (d.temporaryAmount ? `Temporary increase ${money(d.temporaryAmount, cur)}${d.temporaryDays ? ` for ${d.temporaryDays} days` : ''}. ` : '') +
       (r ? `Reason: ${r}.` : '');
   });
 
   ngOnInit(): void {
     this.buyerId.set(this.route.snapshot.paramMap.get('id') ?? BUYER.id);
     this.later(() => this.loading.set(false), 1200);
+    this.proto.activate();
   }
-  ngOnDestroy(): void { this.timers.forEach(clearTimeout); }
+  ngOnDestroy(): void { this.timers.forEach(clearTimeout); this.proto.deactivate(); }
   private later(fn: () => void, ms: number): void {
     const id = setTimeout(() => { this.timers.delete(id); fn(); }, ms);
     this.timers.add(id);
-  }
-
-  // Prototype switches
-  setRights(v: string): void { this.rights.set(v as Rights); }
-  setStatus(v: string): void {
-    const s = v as RequestStatus;
-    this.status.set(s);
-    if (s !== 'draft' && !this.decision()) {
-      this.decision.set({ ...OTHER_USER_DECISION });
-    }
-    this.remark.set(''); this.remarkError.set(false);
   }
 
   // Actions
@@ -349,34 +318,30 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   closeDetails(): void { this.detailsFor.set(null); }
 
   openComplete(): void {
-    const d = this.decision();
-    this.form.set(d ? { ...d } : { ...BLANK });
-    this.submitted.set(false);
+    this.formValue.set({ ...(this.decision() ?? {}) });
     this.completeOpen.set(true);
   }
   closeComplete(): void { this.completeOpen.set(false); }
 
-  private snapshot(): Decision {
-    return { ...this.form(), preparedBy: CURRENT_USER, date: '05 Nov 2026' };
+  private snapshot(v: CompleteFormValue): Decision {
+    return { ...v, preparedBy: CURRENT_USER, date: '05 Nov 2026' };
   }
-  saveDraft(): void {
-    this.decision.set(this.snapshot());
+  saveDraft(v: CompleteFormValue): void {
+    this.decision.set(this.snapshot(v));
     this.status.set('draft');
     this.completeOpen.set(false);
     this.toaster.show('Your draft decision is saved', { tone: 'success', title: 'Draft saved' });
   }
-  submit(): void {
-    this.submitted.set(true);
-    if (this.hasErrors()) return;
-    this.decision.set(this.snapshot());
-    this.status.set('to-validate');
+  submit(v: CompleteFormValue): void {
+    this.decision.set(this.snapshot(v));
+    this.status.set('to-be-validated');
     this.completeOpen.set(false);
     this.toaster.show(`Request ${REQUEST_REF} is waiting for validation`, { tone: 'success', title: 'Decision submitted' });
   }
 
   openSend(): void {
     const d = this.decision();
-    const amount = d?.permAmount ? money(d.permAmount) : money(750000);
+    const amount = d?.permanentAmount ? money(d.permanentAmount, d.permanentCurrency) : money(750000);
     this.recipients.set([]);
     this.sendSubmitted.set(false);
     this.message.set(
@@ -398,7 +363,7 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
     const text = names.length > 2 ? `${names[0]} and ${names.length - 1} others` : names.join(' and ');
     this.sendOpen.set(false);
     this.completeOpen.set(false);
-    if (this.status() === 'draft') this.status.set('to-validate');
+    if (this.status() === 'draft') this.status.set('to-be-validated');
     this.toaster.show(`Request sent to ${text}`, { tone: 'success', title: 'Request sent' });
   }
 

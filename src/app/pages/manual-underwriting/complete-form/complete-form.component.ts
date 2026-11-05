@@ -53,6 +53,45 @@ const REQUIRED: TextKey[] = ['answer', 'reason'];
 const NUMERIC: TextKey[] = ['permanentAmount', 'permanentDays', 'temporaryAmount', 'temporaryDays'];
 const DATES: TextKey[] = ['permanentUntil', 'invoiceDate', 'temporaryUntil'];
 
+export const ANSWER_OPTIONS: SelectOption[] = [
+  { value: 'agreement', label: 'Agreement' },
+  { value: 'refusal', label: 'Refusal' },
+  { value: 'restrictive', label: 'Restrictive answer' },
+  { value: 'maintain', label: 'Maintain' },
+  { value: 'withdrawal', label: 'Risk withdrawal' },
+];
+
+export const REASON_OPTIONS: SelectOption[] = [
+  { value: '101', label: '101 - Insufficient financial information' },
+  { value: '102', label: '102 - Negative equity' },
+  { value: '103', label: '103 - Payment incidents reported' },
+  { value: '104', label: '104 - Sector under surveillance' },
+  { value: '105', label: '105 - Group guarantee missing' },
+  { value: '106', label: '106 - Recent change of management' },
+  { value: '107', label: '107 - Insolvency proceedings opened' },
+  { value: '108', label: '108 - Exposure above country limit' },
+  { value: '109', label: '109 - Buyer unknown or not traceable' },
+  { value: '110', label: '110 - Favourable financial review' },
+];
+
+export const CURRENCY_OPTIONS: SelectOption[] = [
+  { value: 'EUR', label: 'EUR' }, { value: 'USD', label: 'USD' },
+  { value: 'GBP', label: 'GBP' }, { value: 'CHF', label: 'CHF' },
+];
+
+export const NOTIFICATION_OPTIONS: SelectOption[] = [
+  { value: 'none', label: 'None' },
+  { value: 'policyholder', label: 'Policyholder' },
+  { value: 'broker', label: 'Broker' },
+  { value: 'both', label: 'Policyholder and broker' },
+];
+
+export const INVOICE_OPTIONS: SelectOption[] = [
+  { value: 'none', label: 'No invoice' },
+  { value: 'standard', label: 'Standard invoice' },
+  { value: 'pro-forma', label: 'Pro forma' },
+];
+
 @Component({
   selector: 'app-mu-complete-form',
   standalone: true,
@@ -70,40 +109,11 @@ export class CompleteFormComponent {
 
   readonly commentMax = 500;
 
-  readonly answerOptions: SelectOption[] = [
-    { value: 'agreement', label: 'Agreement' },
-    { value: 'refusal', label: 'Refusal' },
-    { value: 'restrictive', label: 'Restrictive answer' },
-    { value: 'maintain', label: 'Maintain' },
-    { value: 'withdrawal', label: 'Risk withdrawal' },
-  ];
-  readonly reasonOptions: SelectOption[] = [
-    { value: '101', label: '101 - Insufficient financial information' },
-    { value: '102', label: '102 - Negative equity' },
-    { value: '103', label: '103 - Payment incidents reported' },
-    { value: '104', label: '104 - Sector under surveillance' },
-    { value: '105', label: '105 - Group guarantee missing' },
-    { value: '106', label: '106 - Recent change of management' },
-    { value: '107', label: '107 - Insolvency proceedings opened' },
-    { value: '108', label: '108 - Exposure above country limit' },
-    { value: '109', label: '109 - Buyer unknown or not traceable' },
-    { value: '110', label: '110 - Favourable financial review' },
-  ];
-  readonly currencyOptions: SelectOption[] = [
-    { value: 'EUR', label: 'EUR' }, { value: 'USD', label: 'USD' },
-    { value: 'GBP', label: 'GBP' }, { value: 'CHF', label: 'CHF' },
-  ];
-  readonly notificationOptions: SelectOption[] = [
-    { value: 'none', label: 'None' },
-    { value: 'policyholder', label: 'Policyholder' },
-    { value: 'broker', label: 'Broker' },
-    { value: 'both', label: 'Policyholder and broker' },
-  ];
-  readonly invoiceOptions: SelectOption[] = [
-    { value: 'none', label: 'No invoice' },
-    { value: 'standard', label: 'Standard invoice' },
-    { value: 'pro-forma', label: 'Pro forma' },
-  ];
+  readonly answerOptions = ANSWER_OPTIONS;
+  readonly reasonOptions = REASON_OPTIONS;
+  readonly currencyOptions = CURRENCY_OPTIONS;
+  readonly notificationOptions = NOTIFICATION_OPTIONS;
+  readonly invoiceOptions = INVOICE_OPTIONS;
 
   readonly draft = signal<CompleteFormValue>({ ...EMPTY_COMPLETE_FORM_VALUE });
   readonly attempted = signal(false);
@@ -136,7 +146,7 @@ export class CompleteFormComponent {
 
   setProvisionally(v: boolean): void { this.draft.update(d => ({ ...d, provisionally: v })); }
 
-  errorOf(k: TextKey): string { return this.attempted() ? (this.errors()[k] ?? '') : ''; }
+  errorOf(k: TextKey): string { return this.rights() && this.attempted() ? (this.errors()[k] ?? '') : ''; }
 
   save(): void {
     if (!this.rights()) return;
