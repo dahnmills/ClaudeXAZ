@@ -103,3 +103,11 @@ Cause du problème : mes paires Do / Don't en colonnes remplaçaient le bloc `<r
 
 ## ZeroHeight : Button, vrais do / don't (2026-11-04 20:10)
 Synchro de la librairie Action OK. Page Button (9166118, masquée) : 4 blocs `<rules>` natifs (une Primary, hiérarchie, loading/disabled, libellés et icône) avec images Figma (`item-id` 647197887 à 647197899), schéma d'anatomie dans l'onglet Specs (version 991880171). Les `version-id` des designs de l'Overview ont été mis à jour automatiquement par ZeroHeight (nouvelle synchro). À valider par l'utilisateur avant de démasquer et de décliner sur les autres pages.
+
+## 2026-11-05 : push, création de buyer par pays, Manual Underwriting (matin)
+
+- **GitHub** : main poussé (40a9f428 puis 5929db5b). Le hook pre-push exige une entrée dans `release-notes.data.ts` et la version de l'écran modifié quand `src/app/pages/` change. Build de production : Coverbook et Reject Management passés en `loadComponent` (bundle initial 1,89 Mo, budget 2 Mo).
+- **Création de buyer (Search)** : le pays est le premier champ de l'étape Identity (`shared/country-rules/country-rules.data.ts`, 8 pays, échantillon plausible). Il filtre formes juridiques, types d'identifiant, zone administrative et nomenclature d'activité ; champs désactivés tant qu'aucun pays n'est choisi ; l'étape Address affiche le pays en lecture seule. Édition (Admin Data, `company-edit-wizard`) : pays déjà fixé (gb), mêmes listes filtrées. Commit 5351eac5 local, **non poussé**.
+- **Reject Management** : carrefour uniforme (notice toujours présente, carte « Errors » toujours nommée ainsi, plus de mention des champs masqués), panneau gris qui s'adapte au contenu.
+- **Manual Underwriting** : analyse Useberry faite (`docs/manual-underwriting/useberry-analysis.md`, 197 sessions, 6 cartes proposées). Agent de construction en cours sur `feat/manual-underwriting` (worktree `C:\Users\JDAHAN\documents\qirin-manual-underwriting`, port 4460) : page `manual-underwriting/:id`, cartes avec « View details », modale Complete, modale Send (transfert de la demande) d'après le Figma ManA (SbtOWQeRBaqzPyRr6e4Eas, nœud 5:8014).
+- **À venir sur Figma** (après validation par l'utilisateur) : un fichier par fonctionnalité dans le dossier MCP : Coverbook (buyer + policy ensemble), Reject Management, Manual Underwriting, même gabarit que Search et Buyer Summary, cadres en 1280.
