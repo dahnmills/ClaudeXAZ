@@ -8,45 +8,47 @@
   padding-bottom: var(--semantic-measurement-spacing-xl);
 }
 
-// Prototype controls: discreet strip, right aligned
-.mu-proto {
-  display:         flex;
-  align-items:     center;
-  justify-content: flex-end;
-  flex-wrap:       wrap;
-  gap:             var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
-  margin:          0 var(--semantic-measurement-spacing-xl);
-  padding:         var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
-  background:      var(--semantic-color-static-background-main-secondary);
-  border:          1px dashed var(--semantic-color-static-border-subtle-tertiary);
-  border-radius:   var(--semantic-border-radius-s);
+// Page actions on the title row (right aligned by ds-page-title)
+.mu-actions-bar {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
 }
-.mu-proto__title {
-  font-size:      var(--semantic-font-text-style-size-s);
-  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold);
-  color:          var(--semantic-color-static-text-main-tertiary);
-  text-transform: uppercase;
+
+// Prototype controls: floating, bottom left, outside the page flow
+.mu-proto {
+  position:       fixed;
+  left:           var(--semantic-measurement-spacing-3xl);
+  bottom:         var(--semantic-measurement-spacing-m);
+  z-index:        1000;
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--semantic-measurement-spacing-s);
+}
+.mu-proto__panel {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--semantic-measurement-spacing-s);
 }
 .mu-proto__label {
   font-size: var(--semantic-font-text-style-size-m);
   color:     var(--semantic-color-static-text-main-secondary);
 }
 
-.mu-toolbar {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  gap:             var(--semantic-measurement-spacing-m);
-  padding:         0 var(--semantic-measurement-spacing-xl);
+// Card menu (kebab): same placement as the Buyer Summary board cards
+.mu-card-menu {
+  position: absolute;
+  top:      var(--semantic-measurement-spacing-l);
+  right:    var(--semantic-measurement-spacing-l);
+  z-index:  3;
 }
-.mu-toolbar__info, .mu-toolbar__actions {
-  display:     flex;
-  align-items: center;
-  gap:         var(--semantic-measurement-spacing-s);
-}
-.mu-toolbar__ref {
-  font-size: var(--semantic-font-text-style-size-m);
-  color:     var(--semantic-color-static-text-main-secondary);
+.mu-card-menu__flyout {
+  position: absolute;
+  top:      calc(100% + var(--semantic-measurement-spacing-xs));
+  right:    0;
+  z-index:  10;
 }
 
 .mu-grid {
@@ -55,7 +57,7 @@
   gap:                   var(--semantic-measurement-spacing-m);
   padding:               0 var(--semantic-measurement-spacing-xl);
 }
-.mu-grid__cell { min-width: 0; &--wide { grid-column: span 2; } }
+.mu-grid__cell { position: relative; display: flex; min-width: 0; &--wide { grid-column: span 2; } > ds-widget-card { width: 100%; } }
 .mu-grid__skeleton {
   display:        flex;
   flex-direction: column;
@@ -68,25 +70,6 @@
   display:        flex;
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-m);
-}
-
-.mu-foot {
-  display:     flex;
-  flex-wrap:   wrap;
-  align-items: center;
-  gap:         var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
-  margin-top:  var(--semantic-measurement-spacing-m);
-  padding-top: var(--semantic-measurement-spacing-m);
-  border-top:  1px solid var(--semantic-color-static-border-subtle-tertiary);
-}
-
-.mu-links {
-  display:    flex;
-  flex-wrap:  wrap;
-  gap:        var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
-  margin:     var(--semantic-measurement-spacing-m) 0 0;
-  padding:    0;
-  list-style: none;
 }
 
 .mu-narrative { display: flex; flex-direction: column; gap: var(--semantic-measurement-spacing-xs); align-items: flex-start; }
@@ -113,8 +96,6 @@
 .mu-empty__title { margin: 0; font-size: var(--semantic-font-text-style-size-l); font-weight: var(--semantic-font-text-style-font-weight-semi-bold); color: var(--semantic-color-static-text-main-primary); }
 .mu-empty__text  { margin: 0; font-size: var(--semantic-font-text-style-size-m); color: var(--semantic-color-static-text-main-secondary); }
 
-.mu-actions { display: flex; gap: var(--semantic-measurement-spacing-s); justify-content: flex-end; }
-.mu-hint { margin: 0; font-size: var(--semantic-font-text-style-size-s); color: var(--semantic-color-static-text-main-secondary); }
 
 // Modals
 .mu-modal-actions { display: flex; align-items: center; gap: var(--semantic-measurement-spacing-s); }

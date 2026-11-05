@@ -23,35 +23,25 @@
         <ds-crumb [label]="buyer.name" />
         <ds-crumb label="Manual Underwriting" [currentPage]="true" />
       </ds-breadcrumbs>
-      <ds-page-title slot="title" title="Manual Underwriting" />
+
+      <ds-page-title slot="title" title="Manual Underwriting" [id]="ref"
+        [badgeLabel]="statusLabel()" [badgeStatus]="statusBadge()">
+        @if (status() !== 'validated') {
+          <div slot="actions" class="mu-actions-bar">
+            <ds-button type="secondary" (clicked)="openSend()">
+              <ds-icon slot="icon-left" name="mail" [size]="16" />
+              Send
+            </ds-button>
+            @if (status() === 'to-validate') {
+              <ds-button type="secondary" (clicked)="openComplete()">Complete</ds-button>
+              <ds-button type="primary" (clicked)="openValidate()">Validate or reject</ds-button>
+            } @else {
+              <ds-button type="primary" (clicked)="openComplete()">Complete</ds-button>
+            }
+          </div>
+        }
+      </ds-page-title>
     </ds-page-header>
-
-    <!-- Prototype controls: not part of the product -->
-    <div class="mu-proto" role="group" aria-label="Prototype controls">
-      <span class="mu-proto__title">Prototype</span>
-      <span class="mu-proto__label" id="mu-rights-label">Your rights</span>
-      <ds-segmented-control mode="radio" ariaLabel="Your rights" [options]="rightsOptions"
-        [selected]="rights()" (selectedChange)="setRights($event)" />
-      <span class="mu-proto__label">Request status</span>
-      <ds-segmented-control mode="radio" ariaLabel="Request status" [options]="statusOptions"
-        [selected]="status()" (selectedChange)="setStatus($event)" />
-    </div>
-
-    <div class="mu-toolbar">
-      <div class="mu-toolbar__info">
-        <ds-badge [label]="statusLabel()" [status]="statusBadge()" size="m" />
-        <span class="mu-toolbar__ref">Request {{ ref }}</span>
-      </div>
-      <div class="mu-toolbar__actions">
-        <ds-button type="secondary" (clicked)="openSend()">
-          <ds-icon slot="icon-left" name="mail" [size]="16" />
-          Send
-        </ds-button>
-        <ds-button type="primary" [disabled]="status() === 'validated'" (clicked)="openComplete()">
-          Complete
-        </ds-button>
-      </div>
-    </div>
 
     @if (loading()) {
       <div class="mu-grid" role="status" aria-live="polite" aria-label="Loading the request">
@@ -69,49 +59,80 @@
 
         <!-- 1. Buyer -->
         <div class="mu-grid__cell">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Buyer card options" (clicked)="toggleMenu('buyer')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'buyer') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('buyer')" />
+                  <ds-flyout-menu-item label="Documents" icon="file-text" (clicked)="menuDo(noop)" />
+                  <ds-flyout-menu-item label="Financial statements" icon="chart" (clicked)="menuDo(noop)" />
+                  <ds-flyout-menu-item label="Add third party" icon="plus" (clicked)="menuDo(noop)" />
+                  <ds-flyout-menu-item label="Notepad" icon="edit-compose" (clicked)="menuDo(noop)" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
           <ds-widget-card title="Buyer" [externalLink]="false">
-            <ds-properties-panel [sections]="[{ rows: [
-              { label: 'Name', value: buyer.name },
-              { label: 'Company ID', value: buyerId() },
-              { label: 'Legal form', value: buyer.legalForm },
-              { label: 'Sector', value: buyer.sector },
-              { label: 'Address', value: buyer.address }
-            ] }]" [columns]="1" variant="flat" density="compact" />
-            <ul class="mu-links" aria-label="Quick links">
-              <li><ds-link href="#" size="s" (click)="$event.preventDefault()"><ds-icon slot="icon-left" name="file-text" [size]="16" />Documents</ds-link></li>
-              <li><ds-link href="#" size="s" (click)="$event.preventDefault()"><ds-icon slot="icon-left" name="chart" [size]="16" />Financial statements</ds-link></li>
-              <li><ds-link href="#" size="s" (click)="$event.preventDefault()"><ds-icon slot="icon-left" name="plus" [size]="16" />Add third party</ds-link></li>
-              <li><ds-link href="#" size="s" (click)="$event.preventDefault()"><ds-icon slot="icon-left" name="edit-compose" [size]="16" />Notepad</ds-link></li>
-            </ul>
-            <div class="mu-foot">
-              <ds-link href="#" weight="semi-bold" (click)="openDetails('buyer', $event)">View details</ds-link>
-            </div>
+            <ds-properties-panel [sections]="buyerFace" [columns]="1" variant="flat" density="compact" />
           </ds-widget-card>
         </div>
 
         <!-- 2. Insured / Policy -->
         <div class="mu-grid__cell mu-grid__cell--wide">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Insured and policy card options" (clicked)="toggleMenu('insured')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'insured') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('insured')" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
           <ds-widget-card title="Insured and policy" [externalLink]="false">
             <ds-properties-panel [sections]="insuredFace" [columns]="2" variant="flat" density="compact" />
-            <div class="mu-foot">
-              <ds-link href="#" weight="semi-bold" (click)="openDetails('insured', $event)">View details</ds-link>
-            </div>
           </ds-widget-card>
         </div>
 
         <!-- 3. Current limit -->
         <div class="mu-grid__cell">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Current limit card options" (clicked)="toggleMenu('limit')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'limit') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('limit')" />
+                  <ds-flyout-menu-item label="View limit history" icon="history" (clicked)="menuDo(noop)" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
           <ds-widget-card title="Current limit" [externalLink]="false">
             <ds-properties-panel [sections]="limitFace" [columns]="1" variant="flat" density="compact" />
-            <div class="mu-foot">
-              <ds-link href="#" weight="semi-bold" (click)="openDetails('limit', $event)">View details</ds-link>
-              <ds-link href="#" (click)="$event.preventDefault()">View limit history</ds-link>
-            </div>
           </ds-widget-card>
         </div>
 
         <!-- 4. Request -->
         <div class="mu-grid__cell mu-grid__cell--wide">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Request card options" (clicked)="toggleMenu('request')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'request') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('request')" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
           <ds-widget-card title="Request" [externalLink]="false">
             <div class="mu-stack">
               <ds-functional-notice status="warning" emphasis="medium" title="Negative buyer information"
@@ -125,16 +146,29 @@
                 </ds-link>
               </div>
             </div>
-            <div class="mu-foot">
-              <ds-link href="#" weight="semi-bold" (click)="openDetails('request', $event)">View details</ds-link>
-            </div>
           </ds-widget-card>
         </div>
 
-        <!-- 5. Answer / Decision -->
+        <!-- 5. Answer / Decision (read-only summary, edited in the Complete window) -->
         <div class="mu-grid__cell" [class.mu-grid__cell--wide]="!showValidation()">
+          <div class="mu-card-menu" (click)="$event.stopPropagation()">
+            <ds-button-icon type="plain" ariaLabel="Answer card options" (clicked)="toggleMenu('answer')">
+              <ds-icon name="context-vertical" [size]="20" />
+            </ds-button-icon>
+            @if (openMenu() === 'answer') {
+              <div class="mu-card-menu__flyout">
+                <ds-flyout-menu>
+                  @if (decision()) {
+                    <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('answer')" />
+                  }
+                  <ds-flyout-menu-item label="Enter conditions" icon="edit-compose" (clicked)="menuDo(openConditions)" />
+                  <ds-flyout-menu-item label="Preview endorsement text" icon="eye" (clicked)="menuDo(openEndorsement)" />
+                </ds-flyout-menu>
+              </div>
+            }
+          </div>
           <ds-widget-card title="Answer" [externalLink]="false">
-            @if (decision(); as d) {
+            @if (decision()) {
               <div class="mu-stack">
                 <ds-badge [label]="status() === 'draft' ? 'Draft decision' : 'Submitted'"
                   [status]="status() === 'draft' ? 'neutral' : 'info'" />
@@ -144,51 +178,58 @@
               <div class="mu-empty">
                 <p class="mu-empty__title">No answer yet</p>
                 <p class="mu-empty__text">Complete the request to record the decision.</p>
-                <ds-button type="primary" (clicked)="openComplete()">Complete</ds-button>
+                @if (status() !== 'validated') {
+                  <ds-button type="primary" (clicked)="openComplete()">Complete</ds-button>
+                }
               </div>
             }
-            <div class="mu-foot">
-              @if (decision()) {
-                <ds-link href="#" weight="semi-bold" (click)="openDetails('answer', $event)">View details</ds-link>
-              }
-              <ds-link href="#" (click)="$event.preventDefault(); conditionsOpen.set(true)">Enter conditions</ds-link>
-              <ds-link href="#" (click)="$event.preventDefault(); endorsementOpen.set(true)">Preview endorsement text</ds-link>
-            </div>
           </ds-widget-card>
         </div>
 
-        <!-- 6. Validation -->
+        <!-- 6. Validation (read-only: the decision made by another user) -->
         @if (showValidation()) {
           <div class="mu-grid__cell">
+            <div class="mu-card-menu" (click)="$event.stopPropagation()">
+              <ds-button-icon type="plain" ariaLabel="Validation card options" (clicked)="toggleMenu('validation')">
+                <ds-icon name="context-vertical" [size]="20" />
+              </ds-button-icon>
+              @if (openMenu() === 'validation') {
+                <div class="mu-card-menu__flyout">
+                  <ds-flyout-menu>
+                    <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('validation')" />
+                    @if (status() === 'to-validate') {
+                      <ds-flyout-menu-item label="Validate or reject..." icon="check-circle" (clicked)="menuDo(openValidate)" />
+                    }
+                    <ds-flyout-menu-item label="See conditions" icon="eye" (clicked)="menuDo(openConditions)" />
+                  </ds-flyout-menu>
+                </div>
+              }
+            </div>
             <ds-widget-card title="Validation" [externalLink]="false">
-              <div class="mu-stack">
-                <ds-properties-panel [sections]="validationFace()" [columns]="1" variant="flat" density="compact" />
-                @if (status() === 'to-validate') {
-                  <ds-textarea label="Remark" [rows]="2" [value]="remark()"
-                    placeholder="Required to reject"
-                    [error]="remarkError()" errorMessage="Add a remark to reject this decision."
-                    [readonly]="!canComplete()"
-                    (valueChange)="remark.set($event); remarkError.set(false)" />
-                  <div class="mu-actions">
-                    <ds-button type="secondary" tone="negative" [disabled]="!canComplete()" (clicked)="reject()">Reject</ds-button>
-                    <ds-button type="primary" [disabled]="!canComplete()" (clicked)="validate()">Validate</ds-button>
-                  </div>
-                  @if (!canComplete()) {
-                    <p class="mu-hint">You do not have the right to validate.</p>
-                  }
-                } @else {
-                  <ds-badge label="Validated" status="success" />
-                }
-              </div>
-              <div class="mu-foot">
-                <ds-link href="#" weight="semi-bold" (click)="openDetails('validation', $event)">View details</ds-link>
-                <ds-link href="#" (click)="$event.preventDefault(); conditionsOpen.set(true)">See conditions</ds-link>
-              </div>
+              <ds-properties-panel [sections]="validationFace()" [columns]="1" variant="flat" density="compact" />
             </ds-widget-card>
           </div>
         }
       </div>
     }
+  </div>
+
+  <!-- Prototype controls: floating, outside the page flow, not part of the product -->
+  <div class="mu-proto">
+    @if (protoOpen()) {
+      <ds-card class="mu-proto__panel" [elevated]="true" role="group" aria-label="Prototype controls">
+        <span class="mu-proto__label">Your rights</span>
+        <ds-segmented-control mode="radio" ariaLabel="Your rights" [options]="rightsOptions"
+          [selected]="rights()" (selectedChange)="setRights($event)" />
+        <span class="mu-proto__label">Request status</span>
+        <ds-segmented-control mode="radio" ariaLabel="Request status" [options]="statusOptions"
+          [selected]="status()" (selectedChange)="setStatus($event)" />
+      </ds-card>
+    }
+    <ds-button type="secondary" (clicked)="protoOpen.set(!protoOpen())">
+      <ds-icon slot="icon-left" name="sliders" [size]="16" />
+      Prototype
+    </ds-button>
   </div>
 
   <ng-container slot="modals">
@@ -199,6 +240,34 @@
         <ds-button slot="actions" type="primary" (clicked)="closeDetails()">Close</ds-button>
       </ds-modal>
     }
+
+    <!-- Validate or reject -->
+    <ds-modal title="Validate or reject" size="medium" [open]="validateOpen()" contentHeight="auto"
+      (closed)="validateOpen.set(false)">
+      <div class="mu-form mu-form--single">
+        @if (!canComplete()) {
+          <ds-functional-notice status="warning" emphasis="medium"
+            title="You cannot validate this request" message="You can send it to someone who can." />
+        }
+        @if (validationFace().length) {
+          <ds-properties-panel [sections]="validationFace()" [columns]="2" variant="card" />
+        }
+        <ds-textarea label="Remark" [rows]="3" [value]="remark()"
+          placeholder="Required to reject"
+          [error]="remarkError()" errorMessage="Add a remark to reject this decision."
+          [readonly]="!canComplete()"
+          (valueChange)="remark.set($event); remarkError.set(false)" />
+      </div>
+      <div slot="actions" class="mu-modal-actions">
+        <ds-button type="tertiary" (clicked)="validateOpen.set(false)">Cancel</ds-button>
+        @if (canComplete()) {
+          <ds-button type="secondary" tone="negative" (clicked)="reject()">Reject</ds-button>
+          <ds-button type="primary" (clicked)="validate()">Validate</ds-button>
+        } @else {
+          <ds-button type="primary" (clicked)="validateOpen.set(false); openSend()">Send to...</ds-button>
+        }
+      </div>
+    </ds-modal>
 
     <!-- Complete -->
     <ds-modal title="Complete the request" size="medium" [open]="completeOpen()" contentHeight="560px"

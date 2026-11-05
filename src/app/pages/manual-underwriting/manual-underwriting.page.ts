@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { TopboxTestShellComponent } from '../../user-testing/topbox/topbox-test-shell.component';
@@ -14,6 +14,9 @@ import { PropertiesPanelComponent, type PropertySection } from '../../shared/ui/
 import { ModalComponent } from '../../shared/ui/modal/modal.component';
 import { ButtonComponent } from '../../shared/ui/button/button.component';
 import { LinkComponent } from '../../shared/ui/link/link.component';
+import { ButtonIconComponent } from '../../shared/ui/button-icon/button-icon.component';
+import { FlyoutMenuComponent } from '../../shared/ui/flyout-menu/flyout-menu.component';
+import { FlyoutMenuItemComponent } from '../../shared/ui/flyout-menu/flyout-menu-item.component';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { BadgeComponent, type BadgeStatus } from '../../shared/ui/badge/badge.component';
 import { SelectComponent } from '../../shared/ui/select/select.component';
@@ -57,7 +60,7 @@ const BLANK: Decision = {
     CrumbComponent, WidgetCardComponent, CardComponent, SkeletonItemComponent, PropertiesPanelComponent,
     ModalComponent, ButtonComponent, LinkComponent, IconComponent, BadgeComponent, SelectComponent,
     MultiSelectComponent, TextareaComponent, InputTextComponent, FunctionalNoticeComponent,
-    SegmentedControlComponent,
+    SegmentedControlComponent, ButtonIconComponent, FlyoutMenuComponent, FlyoutMenuItemComponent,
   ],
   templateUrl: './manual-underwriting.page.html',
   styleUrl: './manual-underwriting.page.scss',
@@ -105,6 +108,18 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   conditionsOpen = signal(false);
   endorsementOpen = signal(false);
   narrativeOpen = signal(false);
+  validateOpen = signal(false);
+  protoOpen = signal(false);
+
+  // Card menu (kebab), same behaviour as the Buyer Summary board cards
+  openMenu = signal<CardId | null>(null);
+  toggleMenu(id: CardId): void { this.openMenu.update(cur => cur === id ? null : id); }
+  @HostListener('document:click')
+  onDocumentClick(): void { if (this.openMenu() !== null) this.openMenu.set(null); }
+  @HostListener('document:keydown.escape')
+  onEscape(): void { this.openMenu.set(null); this.protoOpen.set(false); }
+  menuDetails(id: CardId): void { this.openMenu.set(null); this.detailsFor.set(id); }
+  menuDo(fn: () => void): void { this.openMenu.set(null); fn(); }
 
   // Complete form
   form = signal<Decision>({ ...BLANK });
@@ -165,6 +180,19 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
       { label: '28 Jan 2026', value: 'Sector review, no change' },
     ] },
   ];
+
+  readonly noop = (): void => { /* prototype: opens another module */ };
+  openConditions = (): void => this.conditionsOpen.set(true);
+  openEndorsement = (): void => this.endorsementOpen.set(true);
+  openValidateFn = (): void => this.openValidate();
+
+  readonly buyerFace: PropertySection[] = [{ rows: [
+    { label: 'Name', value: BUYER.name },
+    { label: 'Company ID', value: BUYER.id },
+    { label: 'Legal form', value: BUYER.legalForm },
+    { label: 'Sector', value: BUYER.sector },
+    { label: 'Address', value: BUYER.address },
+  ] }];
 
   readonly insuredFace: PropertySection[] = [{ rows: [
     { label: 'Insured name', value: 'Valdora Distribution Services SL' },
@@ -383,12 +411,15 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
     this.conditions.update(c => ({ ...c, [k]: v }));
   }
 
+  openValidate(): void { this.remark.set(''); this.remarkError.set(false); this.validateOpen.set(true); }
   validate(): void {
+    this.validateOpen.set(false);
     this.status.set('validated');
     this.toaster.show(`Request ${REQUEST_REF} is validated`, { tone: 'success', title: 'Decision validated' });
   }
   reject(): void {
     if (!this.remark().trim()) { this.remarkError.set(true); return; }
+    this.validateOpen.set(false);
     this.status.set('draft');
     this.remark.set(''); this.remarkError.set(false);
     this.toaster.show('The decision goes back to the underwriter as a draft', { tone: 'warning', title: 'Decision rejected' });
