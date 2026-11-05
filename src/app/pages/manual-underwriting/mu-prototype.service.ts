@@ -2,6 +2,7 @@ import { Injectable, effect, signal } from '@angular/core';
 import { HelpMenuExtrasService } from '../../shared/help-menu/help-menu-extras.service';
 
 export type MuRights = 'can' | 'cannot';
+export type MuUser = 'author' | 'other';
 export type MuStatus = 'draft' | 'to-be-validated' | 'validated';
 
 const SECTION_ID = 'mu-prototype';
@@ -15,6 +16,8 @@ const SECTION_ID = 'mu-prototype';
 export class MuPrototypeService {
   readonly rights = signal<MuRights>('can');
   readonly status = signal<MuStatus>('draft');
+  /** Who is looking at the page: the author of the decision (four eyes: cannot validate) or another underwriter. */
+  readonly user = signal<MuUser>('other');
   /** Posé par la page : true à l'init, false à la destruction. */
   readonly active = signal(false);
 
@@ -26,6 +29,7 @@ export class MuPrototypeService {
       }
       const rights = this.rights();
       const status = this.status();
+      const user = this.user();
       extras.set({
         id: SECTION_ID,
         title: 'Prototype',
@@ -35,6 +39,8 @@ export class MuPrototypeService {
           { id: 'status-draft', group: 'Request status', label: 'Draft', selected: status === 'draft', select: () => this.status.set('draft') },
           { id: 'status-tbv', group: 'Request status', label: 'To be validated', selected: status === 'to-be-validated', select: () => this.status.set('to-be-validated') },
           { id: 'status-validated', group: 'Request status', label: 'Validated', selected: status === 'validated', select: () => this.status.set('validated') },
+          { id: 'user-other', group: 'Current user', label: 'Another underwriter', selected: user === 'other', select: () => this.user.set('other') },
+          { id: 'user-author', group: 'Current user', label: 'Decision author', selected: user === 'author', select: () => this.user.set('author') },
         ],
       });
     });

@@ -36,6 +36,9 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       'Without the right to complete, the window is read-only and offers to send the request to someone who can',
       'Send window with recipients, an editable message prefilled from the request and a copy link action',
       'Validation card to validate or reject (with a remark) a decision made by another user',
+      'Assumption, to be confirmed with the business: Validate or reject is only available from the page header, not from the card menu',
+      'Assumption, to be confirmed with the business: four eyes principle, the underwriter who submitted a decision cannot validate it',
+      'Assumption, to be confirmed with the business: editing a request that is waiting for validation returns it to Draft, and it must be submitted again',
     ],
   },
 

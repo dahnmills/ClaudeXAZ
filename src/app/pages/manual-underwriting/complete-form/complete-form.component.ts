@@ -101,6 +101,8 @@ export const INVOICE_OPTIONS: SelectOption[] = [
 })
 export class CompleteFormComponent {
   readonly rights = input<boolean>(true);
+  /** Editing a request that is waiting for validation: saving returns it to Draft. */
+  readonly returnsToDraft = input<boolean>(false);
   readonly value = input<Partial<CompleteFormValue> | null>(null);
 
   readonly saved = output<CompleteFormValue>();

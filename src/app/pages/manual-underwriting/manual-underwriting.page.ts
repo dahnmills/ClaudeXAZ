@@ -84,6 +84,14 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   statusLabel = computed(() => STATUS_LABEL[this.status()]);
   statusBadge = computed(() => STATUS_BADGE[this.status()]);
   canComplete = computed(() => this.rights() === 'can');
+  /** Four eyes: the author of the decision (the current user once they submit via Complete) cannot validate it. */
+  canValidate = computed(() => this.rights() === 'can' && this.proto.user() === 'other');
+  validateReason = computed(() => {
+    if (this.status() !== 'to-be-validated') return 'Available once a decision is waiting for validation';
+    if (this.rights() !== 'can') return 'You do not have the right to validate';
+    if (!this.canValidate()) return 'A different underwriter must validate this decision';
+    return '';
+  });
 
   constructor() {
     // A request that is waiting for validation always has a decision to show
@@ -334,6 +342,7 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   }
   submit(v: CompleteFormValue): void {
     this.decision.set(this.snapshot(v));
+    this.proto.user.set('author');
     this.status.set('to-be-validated');
     this.completeOpen.set(false);
     this.toaster.show(`Request ${REQUEST_REF} is waiting for validation`, { tone: 'success', title: 'Decision submitted' });

@@ -4,6 +4,11 @@
       message="You cannot complete this request. You can send it to someone who can." />
   }
 
+  @if (rights() && returnsToDraft()) {
+    <ds-functional-notice status="info" emphasis="medium"
+      message="Saving will return this request to Draft. It must be submitted again to be validated." />
+  }
+
   <div class="mu-form__panel">
     <div class="mu-form__group">
       <span class="mu-form__group-title">Decision</span>

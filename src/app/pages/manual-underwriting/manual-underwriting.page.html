@@ -31,8 +31,8 @@
             <ds-icon slot="icon-left" name="mail" [size]="16" />
             Send
           </ds-button>
-          <span [dsTooltip]="status() !== 'to-be-validated' ? 'Available once a decision is waiting for validation' : ''" dsTooltipPosition="bottom-center">
-            <ds-button type="secondary" [disabled]="status() !== 'to-be-validated'" (clicked)="openValidate()">Validate or reject</ds-button>
+          <span [dsTooltip]="validateReason()" dsTooltipPosition="bottom-center">
+            <ds-button type="secondary" [disabled]="!!validateReason()" (clicked)="openValidate()">Validate or reject</ds-button>
           </span>
           <span [dsTooltip]="status() === 'validated' ? 'This request is already validated' : ''" dsTooltipPosition="bottom-center">
             <ds-button type="primary" [disabled]="status() === 'validated'" (clicked)="openComplete()">Complete</ds-button>
@@ -192,9 +192,6 @@
                 <div class="mu-card-menu__flyout">
                   <ds-flyout-menu>
                     <ds-flyout-menu-item label="View details" icon="info-circle" (clicked)="menuDetails('validation')" />
-                    @if (status() === 'to-be-validated') {
-                      <ds-flyout-menu-item label="Validate or reject" icon="check-circle" (clicked)="menuDo(openValidate)" />
-                    }
                     <ds-flyout-menu-item label="See conditions" icon="eye" (clicked)="menuDo(openConditions)" />
                   </ds-flyout-menu>
                 </div>
@@ -225,6 +222,9 @@
         @if (!canComplete()) {
           <ds-functional-notice status="warning" emphasis="medium"
             title="You cannot validate this request" message="You can send it to someone who can." />
+        } @else if (!canValidate()) {
+          <ds-functional-notice status="info" emphasis="medium"
+            title="Four eyes principle" message="A different underwriter must validate this decision." />
         }
         @if (validationFace().length) {
           <ds-properties-panel [sections]="validationFace()" [columns]="1" variant="card" />
@@ -232,14 +232,14 @@
         <ds-textarea label="Remark" [rows]="3" [value]="remark()"
           placeholder="Required to reject"
           [error]="remarkError()" errorMessage="Add a remark to reject this decision."
-          [readonly]="!canComplete()"
+          [readonly]="!canComplete() || !canValidate()"
           (valueChange)="remark.set($event); remarkError.set(false)" />
       </div>
       <div slot="actions" class="mu-modal-actions">
         <ds-button type="tertiary" (clicked)="validateOpen.set(false)">Cancel</ds-button>
         @if (canComplete()) {
-          <ds-button type="secondary" tone="negative" (clicked)="reject()">Reject</ds-button>
-          <ds-button type="primary" (clicked)="validate()">Validate</ds-button>
+          <ds-button type="secondary" tone="negative" [disabled]="!canValidate()" (clicked)="reject()">Reject</ds-button>
+          <ds-button type="primary" [disabled]="!canValidate()" (clicked)="validate()">Validate</ds-button>
         } @else {
           <ds-button type="primary" (clicked)="validateOpen.set(false); openSend()">Send to complete</ds-button>
         }
@@ -249,7 +249,7 @@
     <!-- Complete -->
     <ds-modal title="Complete the request" size="large" [open]="completeOpen()" contentHeight="560px"
       [suspended]="sendOpen()" (closed)="closeComplete()">
-      <app-mu-complete-form #completeForm [rights]="canComplete()" [value]="formValue()"
+      <app-mu-complete-form #completeForm [rights]="canComplete()" [returnsToDraft]="status() === 'to-be-validated'" [value]="formValue()"
         (saved)="saveDraft($event)" (submitted)="submit($event)" />
       <div slot="actions" class="mu-modal-actions">
         <ds-button type="tertiary" (clicked)="closeComplete()">Cancel</ds-button>
