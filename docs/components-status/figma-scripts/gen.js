@@ -66,9 +66,9 @@ if(!TID){
  wrap=af('Component Status / '+TITLE,'VERTICAL',{px:'xl',py:'x3',g:'l',fill:'bgMain'});wrap.layoutSizingHorizontal='FIXED';wrap.resize(TW+64,wrap.height);wrap.x=200;wrap.y=200;
  const hd=af('Heading','VERTICAL',{g:'xs'});wrap.appendChild(hd);hd.layoutSizingHorizontal='FILL';
  hd.appendChild(await tx(TITLE,'h2','tPri',{name:'Title'}));hd.appendChild(await tx(COUNT+' components, sorted by name.','lR','tSec',{name:'Subtitle'}));
- const vp=af('Table viewport','VERTICAL',{fill:'bgMain',bd:'bdr',r:'rM'});wrap.appendChild(vp);vp.layoutSizingHorizontal='FILL';
+ const vp=af('Table outline','VERTICAL',{p:'bsz',fill:'bgMain',bd:'bdr',r:'rM'});wrap.appendChild(vp);vp.clipsContent=true;vp.layoutSizingHorizontal='HUG';
  table=af('Table','VERTICAL');vp.appendChild(table);table.layoutSizingHorizontal='FIXED';table.resize(TW,table.height);
- await mkHeader(table,COLS);
+ const hr=await mkHeader(table,COLS);{const w=hr.findOne(n=>n.name==='Wrapper');w.layoutSizingHorizontal='FILL';hr.findOne(n=>n.type==='SLOT').layoutSizingHorizontal='FILL';}wrap.resize(vp.width+64,wrap.height);
 }else{table=await figma.getNodeByIdAsync(TID);}
 const ids=[];
 for(const r of ROWS){if(typeof r==='string'){ids.push((await mkGroup(table,r)).id)}else{ids.push((await mkRow(table,COLS,r,PSETS,fails)).id)}}
