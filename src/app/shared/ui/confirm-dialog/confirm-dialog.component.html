@@ -30,7 +30,7 @@
         @if (secondaryLabel()) {
           <ds-button type="secondary" (clicked)="onSecondary()">{{ secondaryLabel() }}</ds-button>
         }
-        <ds-button type="primary" (clicked)="onConfirm()">{{ confirmLabel() }}</ds-button>
+        <ds-button type="primary" [tone]="tone() === 'danger' ? 'negative' : 'default'" (clicked)="onConfirm()">{{ confirmLabel() }}</ds-button>
       </div>
     </div>
   </div>

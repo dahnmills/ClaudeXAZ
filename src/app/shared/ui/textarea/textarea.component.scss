@@ -74,6 +74,10 @@
 }
 
 .ds-textarea__error-msg {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  font-family: var(--semantic-font-family);
   font-size:   var(--semantic-font-text-style-size-m);
   line-height: var(--semantic-font-text-style-line-height-m);
   color:       var(--semantic-color-interactive-text-strong-negative-default);

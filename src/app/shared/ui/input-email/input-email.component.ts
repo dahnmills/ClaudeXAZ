@@ -1,10 +1,11 @@
 import { Component, input, computed, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'ds-input-email',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, IconComponent],
   templateUrl: './input-email.component.html',
   styleUrl: './input-email.component.scss',
 })

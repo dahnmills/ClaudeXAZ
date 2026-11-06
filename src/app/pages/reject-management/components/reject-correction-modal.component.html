@@ -30,7 +30,10 @@
         <ds-select [label]="f.label" placeholder="Choose a region from dataref"
           [options]="datarefOptions(f)" [value]="values()[f.n]"
           (selectionChange)="setValue(f.n, $event)"
-          [error]="isShownInError(f)" [errorMessage]="f.error ?? ''" />
+          [error]="isShownInError(f)" [errorMessage]="f.error ?? ''">
+          <span slot="label-info" class="rc__info" tabindex="0" [dsTooltip]="techInfo(f)" [dsTooltipDelay]="200"
+            [attr.aria-label]="techInfo(f)"><ds-icon name="info-circle" [size]="16" /></span>
+        </ds-select>
         <span class="rc__hint">Received: {{ f.value || 'empty' }}</span>
       } @else {
         <ds-input-text [label]="f.label" [value]="values()[f.n]" (valueChange)="setValue(f.n, $event)"

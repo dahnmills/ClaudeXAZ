@@ -1,5 +1,9 @@
 @if (label()) {
-  <label class="ds-select__label" [for]="inputId()">{{ label() }}</label>
+  <label class="ds-select__label" [for]="inputId()">
+    {{ label() }}
+    <!-- Aide contextuelle au libellé (ex. icône info + tooltip) -->
+    <ng-content select="[slot=label-info]" />
+  </label>
 }
 
 <div class="ds-select__container">
@@ -42,5 +46,7 @@
 </div>
 
 @if (error() && errorMessage()) {
-  <span class="ds-select__error-msg" role="alert">{{ errorMessage() }}</span>
+  <span class="ds-select__error-msg" role="alert">
+      <ds-icon name="error-circle" [size]="16" /> {{ errorMessage() }}
+    </span>
 }

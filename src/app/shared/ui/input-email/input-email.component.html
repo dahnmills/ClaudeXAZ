@@ -26,6 +26,8 @@
   </div>
 
   @if (error() && errorMessage()) {
-    <span class="ds-input-email__error-msg" role="alert">{{ errorMessage() }}</span>
+    <span class="ds-input-email__error-msg" role="alert">
+      <ds-icon name="error-circle" [size]="16" /> {{ errorMessage() }}
+    </span>
   }
 </div>

@@ -23,6 +23,22 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'ds-atoms-consistency-2026-11-06',
+    date: '2026-11-06',
+    category: 'design',
+    screens: ['reject-management', 'search', 'admin-data', 'buyer-summary/137381425', 'manual-underwriting/4421706', 'card-builder-lab'],
+    title: 'Design system: consistent confirm buttons, field info icons and error lines',
+    description:
+      'Four small inconsistencies are gone: a destructive confirmation is red, every select can carry an info icon, error lines look the same everywhere, and the correction modal panel has an even margin.',
+    changes: [
+      'Confirm dialog: the confirm button follows the tone, so a Delete confirmation is red like the Delete in the modal footer',
+      'Select: supports the same info icon next to the label as the text fields (Region in the Reject Management correction modal)',
+      'Form fields: all error lines use the same red, the same size and the same error icon (text, email, date, search, textarea, select, multi-select, search bars)',
+      'Reject Management correction modal: the grey panel keeps the same margin below as on its sides, the modal is not taller',
+      'Widget card: the header action button and the title share the same centre line',
+    ],
+  },
+  {
     id: 'reject-management-field-balance',
     date: '2026-11-06',
     category: 'design',

@@ -106,6 +106,9 @@
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-m);
   padding:        var(--semantic-measurement-spacing-l);
+  // Le contenu de la modale apporte 24 px sous le panneau ; on complète pour
+  // retrouver les 32 px des côtés, sans allonger la modale (le panneau défile)
+  margin-bottom:  var(--semantic-measurement-spacing-s);
   background:     var(--semantic-color-static-background-main-secondary);
   border-radius:  var(--semantic-border-radius-s);
 }

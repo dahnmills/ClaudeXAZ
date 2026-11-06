@@ -1,10 +1,11 @@
 import { Component, input, output, computed, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'ds-input-text',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, IconComponent],
   templateUrl: './input-text.component.html',
   styleUrl: './input-text.component.scss',
 })
