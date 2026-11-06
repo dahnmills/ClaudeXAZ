@@ -18,6 +18,7 @@ import type { SelectOption } from '../../../shared/ui/select/select.component';
 import type { RejectField, RejectRecord, RejectResolution, RejectStepStub } from '../reject-record.model';
 import type { Reject } from '../reject-management.data';
 import { REGION_DATAREF } from '../reject-cases.data';
+import { layoutFields, type LaidOutField } from './reject-field-layout';
 
 /** Carrefour, vue spéciale des erreurs, ou un bloc du message (son index). */
 type Screen = 'hub' | 'errors' | number;
@@ -33,6 +34,8 @@ interface BlockSection {
   key: string;
   name: string;
   fields: RejectField[];
+  /** Les champs en rangées pleines, avec leur largeur. */
+  laid: LaidOutField<RejectField>[];
 }
 
 /**
@@ -139,12 +142,13 @@ export class RejectCorrectionModalComponent {
 
   /** Vue Errors : les erreurs groupées par emplacement, une famille par sous-section. */
   readonly errorGroups = computed(() => {
-    const groups: { where: string; items: ErrorItem[] }[] = [];
+    const groups: { where: string; items: ErrorItem[]; laid: LaidOutField<RejectField>[] }[] = [];
     for (const e of this.errors()) {
       const last = groups.at(-1);
       if (last?.where === e.where) last.items.push(e);
-      else groups.push({ where: e.where, items: [e] });
+      else groups.push({ where: e.where, items: [e], laid: [] });
     }
+    for (const g of groups) g.laid = layoutFields(g.items.map(i => i.field));
     return groups;
   });
 
@@ -236,18 +240,10 @@ export class RejectCorrectionModalComponent {
       const atFault = used.filter(f => f.error);
       const filled = used.filter(f => !f.error && this.isFilled(f));
       const empty = used.filter(f => !f.error && !this.isFilled(f));
-      return {
-        key,
-        name: sec.name,
-        fields: [...atFault, ...filled, ...empty],
-      };
+      const fields = [...atFault, ...filled, ...empty];
+      return { key, name: sec.name, fields, laid: layoutFields(fields) };
     }).filter(sec => sec.fields.length > 0);
   });
-
-  /** Les champs longs prennent deux colonnes : un libellé ne passe jamais sur deux lignes. */
-  isWide(f: RejectField): boolean {
-    return f.label.length > 30 || f.length >= 70;
-  }
 
   // ── Résolution ───────────────────────────────────────────────────────────
   /** Delete suggéré : il passe en action principale du footer. */

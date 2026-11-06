@@ -99,11 +99,17 @@
 // passés de Type à ID value : avec le padding des cellules, « CBNL 200004400/ »
 // était coupé. En-tête et cellules partagent la classe, ils ne peuvent pas se
 // désaligner.
-.rm-col--type    { flex: 301; }
+// Les colonnes de valeurs courtes ne descendent jamais sous leur contenu (une
+// date ou un identifiant coupé est illisible) : c'est Type, le texte long, qui
+// absorbe le manque de place et se tronque avec des points de suspension.
+// Plancher (dates et numéros) = largeur des chiffres + padding de la cellule.
+$rm-cell-padding: calc(var(--semantic-measurement-spacing-s) + var(--semantic-measurement-spacing-l));
+
+.rm-col--type    { flex: 289; }
 .rm-col--bu      { flex: 68; }
-.rm-col--provId  { flex: 120; }
-.rm-col--buyerId { flex: 120; }
+.rm-col--provId  { flex: 120; min-width: calc(11ch + #{$rm-cell-padding}); }
+.rm-col--buyerId { flex: 120; min-width: calc(11ch + #{$rm-cell-padding}); }
 .rm-col--idType  { flex: 99; }
 .rm-col--idValue { flex: 175; }
-.rm-col--date    { flex: 103; }
+.rm-col--date    { flex: 115; min-width: calc(11ch + #{$rm-cell-padding}); }
 .rm-col--country { flex: 78; }

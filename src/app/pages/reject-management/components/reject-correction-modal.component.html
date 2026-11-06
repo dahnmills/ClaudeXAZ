@@ -24,8 +24,8 @@
 
   <!-- Un champ du message : liste dataref quand la valeur se choisit, sinon
        saisie libre ; en lecture seule quand la cause se règle hors du rejet -->
-  <ng-template #fieldTpl let-f let-prefix="prefix">
-    <div class="rc__field" [class.rc__field--wide]="isWide(f)" [id]="prefix + f.n">
+  <ng-template #fieldTpl let-f let-prefix="prefix" let-span="span">
+    <div class="rc__field" [class]="'rc__field--span-' + span" [id]="prefix + f.n">
       @if (isChoice(f)) {
         <ds-select [label]="f.label" placeholder="Choose a region from dataref"
           [options]="datarefOptions(f)" [value]="values()[f.n]"
@@ -131,9 +131,9 @@
             <span class="rc__family">{{ g.where }}</span>
             <div class="rc__card-white">
               <div class="rc__fields">
-                @for (e of g.items; track e.field.n) {
+                @for (l of g.laid; track l.field.n) {
                   <ng-container [ngTemplateOutlet]="fieldTpl"
-                    [ngTemplateOutletContext]="{ $implicit: e.field, prefix: 'rc-err-' }" />
+                    [ngTemplateOutletContext]="{ $implicit: l.field, span: l.span, prefix: 'rc-err-' }" />
                 }
               </div>
             </div>
@@ -145,9 +145,9 @@
             <span class="rc__family">{{ s.name }}</span>
             <div class="rc__card-white">
               <div class="rc__fields">
-                @for (f of s.fields; track f.n) {
+                @for (l of s.laid; track l.field.n) {
                   <ng-container [ngTemplateOutlet]="fieldTpl"
-                    [ngTemplateOutletContext]="{ $implicit: f, prefix: 'rc-field-' }" />
+                    [ngTemplateOutletContext]="{ $implicit: l.field, span: l.span, prefix: 'rc-field-' }" />
                 }
               </div>
             </div>

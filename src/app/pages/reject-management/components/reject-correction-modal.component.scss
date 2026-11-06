@@ -137,10 +137,12 @@
   }
 }
 
-// Un libellé long prend deux colonnes plutôt que deux lignes
+// Rangées de 6 unités, toujours pleines (voir reject-field-layout.ts) : un champ
+// normal en prend 2, un champ large 4, et les champs d'une rangée incomplète
+// s'élargissent pour la remplir. Un libellé long reçoit plus de place, jamais deux lignes.
 .rc__fields {
   display:               grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap:                   var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-l);
 }
 
@@ -150,8 +152,10 @@
   gap:            var(--semantic-measurement-spacing-xxs);
   min-width:      0;
 
-  &--wide {
-    grid-column: span 2;
+  @for $n from 2 through 6 {
+    &--span-#{$n} {
+      grid-column: span $n;
+    }
   }
 }
 

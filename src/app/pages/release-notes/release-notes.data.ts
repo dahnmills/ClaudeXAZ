@@ -23,6 +23,20 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'reject-management-field-balance',
+    date: '2026-11-06',
+    category: 'design',
+    screens: ['reject-management'],
+    title: 'Reject Management: balanced field grid and readable columns',
+    description:
+      'The correction modal lays its fields out in full rows: no empty space beside a field, same width for fields of the same row.',
+    changes: [
+      'Correction modal: fields keep their order and fill each row completely, a lone or leftover field expands to the row instead of leaving a hole',
+      'Long labels get a wider field rather than wrapping on two lines',
+      'Table: dates and identifiers are no longer cut, the Type column absorbs the lack of space',
+    ],
+  },
+  {
     id: 'coverbook-row-menu-view-details-only',
     date: '2026-11-05',
     category: 'design',
