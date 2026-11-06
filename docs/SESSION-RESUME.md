@@ -2,7 +2,7 @@
 
 Ce fichier est injecté automatiquement au démarrage et après chaque compaction (hook SessionStart). Il est court et à jour : le mettre à jour après CHAQUE décision de l'utilisateur, chaque jalon et chaque rapport d'agent. Détail long : `docs/figma/STATUS.md`, `docs/figma/progress.md`, `docs/figma/PLAYBOOK.md`. Règles durables : dossier mémoire `~/.claude/projects/C--Users-JDAHAN-Documents-Qirin-Claude/memory/` (index MEMORY.md).
 
-Dernière mise à jour : 2026-11-06 11:00.
+Dernière mise à jour : 2026-11-06 11:05.
 
 ## Code (dépôt dahnmills/ClaudeXAZ, branche main)
 - Tout est fusionné et poussé sur main (dernier push 2f378648, Pages OK) : Search pays en premier, Reject Management, Coverbook, Manual Underwriting, passe de qualité visuelle, atomes partagés corrigés, `docs/components-status/`. Commits locaux non poussés possibles : voir `git log origin/main..main`.
@@ -20,6 +20,12 @@ Dernière mise à jour : 2026-11-06 11:00.
 ## ZeroHeight (reporté par l'utilisateur)
 - Serveur MCP `allianz-trade` rajouté (`claude mcp add --transport http allianz-trade https://mcp.zeroheight.com/mcp`) : visible seulement après redémarrage de session puis `/mcp` > Authenticate.
 - 78 pages Markdown dans `docs/zeroheight/`, page Button pilote masquée (9166118). Bloqueurs : valider le Button, connecter les librairies Feedback et Layout dans ZeroHeight, supprimer à la main les pages de test 8352976 et 9167232. Toujours créer en masqué.
+
+## Au prochain démarrage (redémarrage prévu le 2026-11-06 vers 11:05)
+1. Vérifier que le serveur MCP `allianz-trade` est visible (`/mcp` > Authenticate si besoin) : tester `list-pages`.
+2. Reprendre ZeroHeight : d'abord relire `zeroheight://editor-instructions` et la page Button pilote (9166118, masquée) ; l'utilisateur doit la valider avant les 77 autres pages (docs/zeroheight/). Prévoir environ 2 agents, pages créées MASQUÉES, maillage, mots-clés, cartes do/don't vert/rouge avec visuels Figma (get-designs). Librairies Feedback et Layout à connecter côté ZeroHeight par l'utilisateur.
+3. Construire ensuite le tableau de composants dans ZeroHeight à partir de `docs/components-status/components.json` (106 composants, sans locaux).
+4. Pousser les commits locaux si l'utilisateur le demande (`git log origin/main..main`).
 
 ## Décisions en attente de l'utilisateur
 1. Valider la card d'exposition et fusionner `feat/exposure-cards`. Composant Figma Exposure Card : garder le contenu d'exemple dans les variantes ou le refaire avec de vrais slots. Contraste jaune/orange/gris sous 3:1.
