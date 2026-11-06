@@ -127,6 +127,19 @@
   color:       var(--semantic-color-static-text-main-tertiary);
 }
 
+// Valeur projetée (badge, pastille, composant) : la boîte de ligne reste celle d'un
+// texte (20px) et un contenu plus haut déborde à parts égales. Toutes les colonnes
+// gardent ainsi la même hauteur de ligne et la même ligne de base.
+.ds-properties-panel__value--template {
+  display:     flex;
+  align-items: center;
+  height:      var(--semantic-font-text-style-line-height-m);
+}
+
+:host.ds-properties-panel--layout-inline .ds-properties-panel__value--template {
+  justify-content: flex-end;
+}
+
 .ds-properties-panel__value--tags {
   display:    inline-flex;
   flex-wrap:  wrap;

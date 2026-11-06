@@ -23,6 +23,21 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'visual-details-2026-11-06',
+    date: '2026-11-06',
+    category: 'design',
+    screens: ['coverbook/policy/2590417133', 'manual-underwriting/4421706', 'buyer-summary/137381425', 'reject-management', 'search', 'admin-data'],
+    title: 'Visual details: aligned property values, policy colour name, wrapped field errors',
+    description:
+      'Three leftover details: a pill value no longer pushes its neighbour down, the policy colour is written in capitals like elsewhere, and a long error message wraps instead of being cut.',
+    changes: [
+      'Properties panel: every value keeps the same line height whatever it holds (text, badge, pill, link), so Customer segment lines up with Policy color and the panel height is unchanged',
+      'Coverbook: the policy colour reads Yellow, not yellow, next to its letter pill',
+      'Form fields (text, select, date, email, textarea, multi-select): an error message wraps onto a second line instead of ending with an ellipsis, and the icon stays on the first line',
+      'Company creation and edit wizards: fields in a row align at the top and the error line sits below, so a longer message grows the field without shifting its neighbours',
+    ],
+  },
+  {
     id: 'visual-qa-pass-2026-11-06',
     date: '2026-11-06',
     category: 'design',

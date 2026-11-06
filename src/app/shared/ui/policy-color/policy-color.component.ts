@@ -9,7 +9,7 @@ const LETTER: Record<PolicyColorValue, string> = {
 };
 
 const NAME: Record<PolicyColorValue, string> = {
-  red: 'red', orange: 'orange', yellow: 'yellow', green: 'green', none: 'no color', unknown: 'unknown',
+  red: 'Red', orange: 'Orange', yellow: 'Yellow', green: 'Green', none: 'No color', unknown: 'Unknown',
 };
 
 /**
@@ -18,7 +18,7 @@ const NAME: Record<PolicyColorValue, string> = {
  * (Size S dans les cellules de tableau, M dans les panneaux).
  *
  * La lettre double toujours la couleur (jamais la couleur seule) ; `showName`
- * ajoute le nom en clair à droite (« Y yellow » du panneau police).
+ * ajoute le nom en clair à droite (« Y Yellow » du panneau police).
  */
 @Component({
   selector: 'ds-policy-color',

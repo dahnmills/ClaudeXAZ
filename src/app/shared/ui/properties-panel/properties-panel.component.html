@@ -39,7 +39,7 @@
               }
             </ul>
           } @else if (isTemplate(row.value)) {
-            <span class="ds-properties-panel__value">
+            <span class="ds-properties-panel__value ds-properties-panel__value--template">
               <ng-container [ngTemplateOutlet]="$any(row.value).template" />
             </span>
           } @else if (isLink(row.value)) {

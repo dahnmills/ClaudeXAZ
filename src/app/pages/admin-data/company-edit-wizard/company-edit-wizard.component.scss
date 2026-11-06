@@ -90,7 +90,7 @@
 .wizard__row {
   display: flex;
   gap: var(--semantic-measurement-spacing-m);
-  align-items: flex-end;
+  align-items: flex-start;
 
   ds-input-text,
   ds-select {
@@ -105,13 +105,13 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: var(--semantic-measurement-spacing-m);
-    align-items: end;
+    align-items: start;
   }
 }
 
 .wizard__row--removable ds-button-icon {
   flex-shrink: 0;
-  margin-bottom: var(--semantic-measurement-spacing-xxs);
+  margin-top: calc(var(--semantic-font-text-style-line-height-l) + 2 * var(--semantic-measurement-spacing-xxs));
 }
 
 .wizard__footer {
