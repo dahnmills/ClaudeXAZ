@@ -13,6 +13,8 @@ node docs/components-status/scripts/extract-code.js      # scans shared/ui, stor
 node docs/components-status/scripts/build-components.js   # writes components.json
 ```
 
+Scope of the Figma dashboard (file wqlQIlGhJmMCfgc2XD1Umm): the 63 records with category `local` stay in components.json but are filtered out at build time (`category !== 'local'`, 106 design system components). Feature-specific local components are tracked in their own Figma files.
+
 The record table (names, categories, levels, comments, Figma keys) lives in `build-components.js`.
 Figma node ids and variant axes are read from `docs/zeroheight/**` (the `Figma:` line and the
 "Variants and properties" table); component keys come from `docs/figma/qirin-figma-inventory.md`,

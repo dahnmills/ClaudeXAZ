@@ -144,3 +144,11 @@ Audit final : tokens liés (fills de sections, paddings, gaps, rayons), aucun ti
 - Écarts : pas de ton Negative sur Button (Reject en secondary), Menlo remplacé par JetBrains Mono, destinataire multi-sélection (la maquette ManA est un select simple), séparateur de carte en longueur fixe, libellés de champ en semi-bold dans le code (regular dans la librairie). Détail dans le cadre Deviations 71:13178.
 - Audit final : 0 tiret cadratin, 0 valeur non liée hors chrome des sets de composants, libellés du rail replié de la side nav tolérés ; sections et notes liées à Background/Main/Primary ou sans fond.
 - Reste à faire à la main : version nommée dans l'historique Figma, vignette du fichier, republication si les composants locaux migrent en librairie.
+
+## Component Status (`wqlQIlGhJmMCfgc2XD1Umm`), livré 2026-11-06
+- Source : docs/components-status/components.json, filtré `category !== 'local'` (106 composants du design system ; les 63 locaux restent dans le JSON mais ne sont pas dessinés, ils vivent dans leurs fichiers).
+- Pages : Cover 0:1 (cadre 25:93), Dashboard 6:2 (28:1366), Action 6:3 (19 lignes), Data entry 6:4 (24), Data display 6:5 (27), Feedback 6:6 (10), Layout 6:7 (10), Navigation and overlay 6:8 (16), Legend and how to refresh 6:10 (26:984).
+- Tables : instances Table Header Row / Table Row / Cell, Badge, Link de la librairie, aperçus réels (35 clés, 0 échec d'import), lignes de 96 px, tableau de 2358 à 2374 px dans un viewport de 1280 à défilement horizontal.
+- Audit : 0 valeur non liée (Dashboard, Action, Data display), 0 tiret cadratin, un cadre par page à (200, 200), aucun chevauchement.
+- Rafraîchir : `node docs/components-status/scripts/extract-code.js` puis `build-components.js`, puis relancer les scripts use_figma (Cover, Dashboard, une page par catégorie).
+- Écarts : Layout sans lien Figma (clé de fichier inconnue), 65 composants sans clé en icône vide, description tronquée à 2 lignes et commentaire à 3, Badge/Link sans leur icône.
