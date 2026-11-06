@@ -127,3 +127,10 @@
 .ds-tooltip--right.ds-tooltip--reversed .ds-tooltip__indicator {
   border-right-color: var(--semantic-color-static-background-main-primary);
 }
+
+// Pastille décalée pour rester dans l'écran : la flèche garde la verticale du déclencheur
+.ds-tooltip[data-arrow-anchored] .ds-tooltip__indicator {
+  align-self: flex-start;
+  margin-left: calc(var(--ds-tooltip-arrow-x) - 4px);
+  margin-right: 0;
+}

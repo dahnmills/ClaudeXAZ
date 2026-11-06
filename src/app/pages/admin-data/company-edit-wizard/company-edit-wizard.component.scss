@@ -13,7 +13,7 @@
 }
 
 .wizard__steps {
-  width: 200px;
+  width: calc(var(--semantic-measurement-sizing-3xl) * 3.125); // 200px
   flex-shrink: 0;
 }
 
@@ -78,6 +78,7 @@
 }
 
 .wizard__card {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--semantic-measurement-spacing-m);
@@ -98,9 +99,19 @@
   }
 }
 
+/* Carte étroite (1024px) : une rangée de 4 champs passe en 2 x 2 */
+@container (max-width: 40rem) {
+  .wizard__row:not(.wizard__row--removable):has(> :nth-child(4)) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--semantic-measurement-spacing-m);
+    align-items: end;
+  }
+}
+
 .wizard__row--removable ds-button-icon {
   flex-shrink: 0;
-  margin-bottom: 2px;
+  margin-bottom: var(--semantic-measurement-spacing-xxs);
 }
 
 .wizard__footer {

@@ -3,7 +3,7 @@
   size="xlarge"
   [open]="open()"
   [footer]="false"
-  contentHeight="520px"
+  contentHeight="calc(var(--semantic-measurement-sizing-3xl) * 8.125)"
   (closed)="close()"
 >
   <div class="wizard">
@@ -35,6 +35,7 @@
             @case (0) {
               <div class="wizard__card">
                 <div class="wizard__row">
+                  <ds-input-text label="Country ID *" [value]="rule()?.label ?? ''" [readonly]="true" />
                   <ds-select label="Company status *" placeholder="" [options]="companyStatusOptions"
                     [value]="fieldVal('companyStatus')" (valueChange)="setField('companyStatus', $event)" />
                   <ds-select label="Legal form *" placeholder="" [options]="legalFormOptions()"
@@ -94,7 +95,7 @@
                 <div class="wizard__row">
                   <ds-select [label]="rule()?.areaLabel ?? 'Administrative area'" placeholder="" [options]="areaOptions()"
                     [value]="fieldVal('area')" (valueChange)="setField('area', $event)" />
-                  <ds-input-text label="Country" [value]="rule()?.label ?? ''" [readonly]="true" />
+                  <ds-input-text label="Country ID" [value]="rule()?.label ?? ''" [readonly]="true" />
                 </div>
               </div>
             }

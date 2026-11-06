@@ -45,6 +45,7 @@
 // ── Barre d'actions ──────────────────────────────────────────
 .cb-toolbar {
   display:         flex;
+  flex-wrap:       wrap; // 1024px : les actions passent sous les filtres, le champ ne s'écrase pas
   align-items:     center;
   justify-content: space-between;
   gap:             var(--semantic-measurement-spacing-m);
@@ -59,13 +60,18 @@
 }
 
 .cb-toolbar__filters {
-  flex:      1;
+  flex:      1 1 calc(var(--semantic-measurement-sizing-3xl) * 5.5);
   min-width: 0;
+}
+
+// Reste calé à droite quand la barre passe sur deux lignes
+.cb-toolbar__actions {
+  margin-left: auto;
 }
 
 .cb-toolbar__filter-field {
   flex:      1;
-  min-width: 0;
+  min-width: calc(var(--semantic-measurement-sizing-3xl) * 3.5); // 224px, le placeholder reste lisible
   max-width: calc(var(--semantic-measurement-sizing-3xl) * 5.25); // 336px
 }
 
@@ -95,6 +101,8 @@
   display:        flex;
   flex-direction: column;
   width:          100%;
+  // Plancher : à 1024px le tableau défile au lieu de tronquer les en-têtes et les identifiants
+  min-width:      calc(var(--semantic-measurement-sizing-3xl) * 15); // 960px
 }
 
 // 12 colonnes (Grade based covers) : défilement horizontal plutôt que des
@@ -123,13 +131,13 @@
 .cb-col--inforceBu      { flex-grow: 13; }
 .cb-col--lobSegment     { flex-grow: 12; }
 .cb-col--colorName      { flex-grow: 14.5; }
-.cb-col--request        { flex-grow: 13; }
-.cb-col--answer         { flex-grow: 13.2; }
-.cb-col--decisionCode   { flex-grow: 13; }
-.cb-col--underwriter    { flex-grow: 15.4; }
-.cb-col--buyerId        { flex-grow: 12; }
+.cb-col--request        { flex-grow: 13; min-width: calc(var(--semantic-measurement-sizing-3xl) * 1.75); }
+.cb-col--answer         { flex-grow: 13.2; min-width: calc(var(--semantic-measurement-sizing-3xl) * 1.75); }
+.cb-col--decisionCode   { flex-grow: 13; min-width: calc(var(--semantic-measurement-sizing-3xl) * 2.25); }
+.cb-col--underwriter    { flex-grow: 15.4; min-width: calc(var(--semantic-measurement-sizing-3xl) * 2.25); } // l'en-tête et son tri tiennent
+.cb-col--buyerId        { flex-grow: 12; min-width: calc(var(--semantic-measurement-sizing-3xl) * 2); } // identifiant à 9 chiffres, jamais tronqué
 .cb-col--buyerName      { flex-grow: 22; }
-.cb-col--grade          { flex-grow: 10; }
+.cb-col--grade          { flex-grow: 10; min-width: calc(var(--semantic-measurement-sizing-3xl) * 1.25); }
 .cb-col--ibus           { flex-grow: 13; }
 .cb-col--policyName     { flex-grow: 20; }
 .cb-col--color          { flex-grow: 8; }

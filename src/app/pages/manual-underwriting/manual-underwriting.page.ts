@@ -70,7 +70,8 @@ export class ManualUnderwritingPage implements OnInit, OnDestroy {
   readonly ref = REQUEST_REF;
   readonly recipientOptions = RECIPIENT_OPTIONS;
   readonly messageMax = MESSAGE_MAX;
-  readonly skeletons = Array.from({ length: 6 });
+  // Même nombre de cartes que la vraie page (5 sans validation, 6 avec) : pas de saut à la fin du chargement
+  readonly skeletons = computed(() => Array.from({ length: this.showValidation() ? 6 : 5 }));
   readonly narrative = NARRATIVE;
 
   buyerId = signal(BUYER.id);

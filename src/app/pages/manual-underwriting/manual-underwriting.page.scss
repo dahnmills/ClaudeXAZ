@@ -57,6 +57,10 @@
   gap:                   var(--semantic-measurement-spacing-m);
   padding:               0 var(--semantic-measurement-spacing-xl);
 }
+// 1024px : deux colonnes. Les petites cartes remontent à côté de la première (dense), aucune rangée à trou.
+@media (max-width: 1100px) {
+  .mu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row dense; }
+}
 .mu-grid__cell { position: relative; display: flex; min-width: 0; &--wide { grid-column: span 2; } > ds-widget-card { width: 100%; } }
 .mu-grid__skeleton {
   display:        flex;

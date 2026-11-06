@@ -23,6 +23,22 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'visual-qa-pass-2026-11-06',
+    date: '2026-11-06',
+    category: 'design',
+    screens: ['coverbook/buyer/4421706', 'coverbook/policy/2590417133', 'manual-underwriting/4421706', 'search', 'search-v2', 'admin-data'],
+    title: 'Visual QA pass: Coverbook, Manual Underwriting, company wizards',
+    description:
+      'A sweep for unbalanced grids, clipped labels and misdirected tooltip arrows on three prototypes.',
+    changes: [
+      'Company creation and edit wizards: on a narrow window a row of four fields becomes two by two, no label wraps on two lines',
+      'Edit company: Country ID is now shown first on the Identity step, as in the creation wizard, and the Address step uses the same label',
+      'Manual Underwriting: two-column grid on a narrow window, and the loading skeleton shows as many cards as the real page',
+      'Coverbook: the filter field keeps a readable width (actions move under it), identifiers and column headers are no longer cut, the table scrolls sideways instead',
+      'Tooltips: the arrow points up when the tip opens below its trigger, and stays on the trigger when the tip is pushed back inside the window',
+    ],
+  },
+  {
     id: 'ds-atoms-consistency-2026-11-06',
     date: '2026-11-06',
     category: 'design',

@@ -100,14 +100,34 @@ export class TooltipDirective implements OnDestroy {
     // repère. On borne en x et on bascule de l'autre côté en y quand la place
     // manque, plutôt que de peindre hors champ.
     const pos = this.dsTooltipPosition();
-    if (pos.startsWith('top') && top < gap) top = trigger.bottom + gap;
-    else if (pos.startsWith('bottom') && top + tip.height > window.innerHeight - gap) {
+    let shown: TooltipPosition = pos;
+    if (pos.startsWith('top') && top < gap) {
+      top = trigger.bottom + gap;
+      shown = pos.replace('top', 'bottom') as TooltipPosition;
+    } else if (pos.startsWith('bottom') && top + tip.height > window.innerHeight - gap) {
       top = trigger.top - tip.height - gap;
+      shown = pos.replace('bottom', 'top') as TooltipPosition;
+    }
+    // La flèche suit le côté réellement choisi : pastille passée sous le
+    // déclencheur, la flèche pointe vers le haut (et inversement).
+    if (shown !== pos) {
+      this.ref?.setInput('position', shown);
+      this.ref?.changeDetectorRef.detectChanges();
     }
     // `left` et `right` restent de leur côté : les basculer verticalement les
     // décrocherait de leur déclencheur. Un simple bornage suffit.
     top  = Math.min(Math.max(top,  gap), window.innerHeight - tip.height - gap);
+    const wantedLeft = left;
     left = Math.min(Math.max(left, gap), window.innerWidth  - tip.width  - gap);
+
+    // Pastille décalée par le bornage : la flèche reste sous (ou sur) le centre
+    // du déclencheur au lieu de pointer à côté de lui.
+    const arrowInset = 12; // 4px de demi-flèche + 8px de rayon d'angle
+    if (Math.round(left) !== Math.round(wantedLeft) && (shown.startsWith('top') || shown.startsWith('bottom'))) {
+      const x = trigger.left + trigger.width / 2 - left;
+      el.dataset['arrowAnchored'] = '';
+      el.style.setProperty('--ds-tooltip-arrow-x', `${Math.round(Math.min(Math.max(x, arrowInset), tip.width - arrowInset))}px`);
+    }
 
     el.style.top = `${Math.round(top)}px`;
     el.style.left = `${Math.round(left)}px`;

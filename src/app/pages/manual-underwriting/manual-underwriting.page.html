@@ -43,12 +43,12 @@
 
     @if (loading()) {
       <div class="mu-grid" role="status" aria-live="polite" aria-label="Loading the request">
-        @for (_ of skeletons; track $index) {
-          <ds-card class="mu-grid__skeleton" [class.mu-grid__cell--wide]="$index === 1 || $index === 3">
-            <ds-skeleton-item width="40%" height="16px" />
-            <ds-skeleton-item width="100%" height="12px" />
-            <ds-skeleton-item width="90%" height="12px" />
-            <ds-skeleton-item width="70%" height="12px" />
+        @for (_ of skeletons(); track $index) {
+          <ds-card class="mu-grid__skeleton" [class.mu-grid__cell--wide]="$index === 1 || $index === 3 || ($index === 4 && !showValidation())">
+            <ds-skeleton-item width="40%" height="var(--semantic-measurement-spacing-m)" />
+            <ds-skeleton-item width="100%" height="calc(var(--semantic-measurement-spacing-m) - var(--semantic-measurement-spacing-xs))" />
+            <ds-skeleton-item width="90%" height="calc(var(--semantic-measurement-spacing-m) - var(--semantic-measurement-spacing-xs))" />
+            <ds-skeleton-item width="70%" height="calc(var(--semantic-measurement-spacing-m) - var(--semantic-measurement-spacing-xs))" />
           </ds-card>
         }
       </div>
@@ -247,7 +247,7 @@
     </ds-modal>
 
     <!-- Complete -->
-    <ds-modal title="Complete the request" size="large" [open]="completeOpen()" contentHeight="560px"
+    <ds-modal title="Complete the request" size="large" [open]="completeOpen()" contentHeight="calc(var(--semantic-measurement-sizing-3xl) * 8.75)"
       [suspended]="sendOpen()" (closed)="closeComplete()">
       <app-mu-complete-form #completeForm [rights]="canComplete()" [returnsToDraft]="status() === 'to-be-validated'" [value]="formValue()"
         (saved)="saveDraft($event)" (submitted)="submit($event)" />
