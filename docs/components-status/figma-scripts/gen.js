@@ -63,10 +63,10 @@ for(const[i,k]of Object.entries(KEYS)){try{PSETS[i]=await figma.importComponentS
 for(const c of [...figma.currentPage.children])if(!TID)c.remove();
 let table,wrap;
 if(!TID){
- wrap=af('Component Status / '+TITLE,'VERTICAL',{px:'xl',py:'x3',g:'l',fill:'bgMain'});wrap.layoutSizingHorizontal='FIXED';wrap.resize(1280,wrap.height);wrap.x=200;wrap.y=200;
+ wrap=af('Component Status / '+TITLE,'VERTICAL',{px:'xl',py:'x3',g:'l',fill:'bgMain'});wrap.layoutSizingHorizontal='FIXED';wrap.resize(TW+64,wrap.height);wrap.x=200;wrap.y=200;
  const hd=af('Heading','VERTICAL',{g:'xs'});wrap.appendChild(hd);hd.layoutSizingHorizontal='FILL';
- hd.appendChild(await tx(TITLE,'h2','tPri',{name:'Title'}));hd.appendChild(await tx(COUNT+' components, sorted by name. Scroll the table sideways for every column.','lR','tSec',{name:'Subtitle'}));
- const vp=af('Table viewport','VERTICAL',{fill:'bgMain',bd:'bdr',r:'rM'});wrap.appendChild(vp);vp.layoutSizingHorizontal='FILL';vp.clipsContent=true;vp.overflowDirection='HORIZONTAL';
+ hd.appendChild(await tx(TITLE,'h2','tPri',{name:'Title'}));hd.appendChild(await tx(COUNT+' components, sorted by name.','lR','tSec',{name:'Subtitle'}));
+ const vp=af('Table viewport','VERTICAL',{fill:'bgMain',bd:'bdr',r:'rM'});wrap.appendChild(vp);vp.layoutSizingHorizontal='FILL';
  table=af('Table','VERTICAL');vp.appendChild(table);table.layoutSizingHorizontal='FIXED';table.resize(TW,table.height);
  await mkHeader(table,COLS);
 }else{table=await figma.getNodeByIdAsync(TID);}
