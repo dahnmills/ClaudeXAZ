@@ -1,6 +1,7 @@
 // Tutorial film: Button. Content only (texts, scenes, timings, what to capture). The engine is in ../engine.
 // Timings in seconds of the film. The music bed phrases every 16 s; with offset 4 its changes land at 12 s and 28 s
 // of the film and its final chord rings out from 42 s: cut the chapters on those.
+// A component film stays generic: no feature screen, no feature name, no business label.
 module.exports = {
   id: 'button',
   name: 'Button',
@@ -11,35 +12,35 @@ module.exports = {
   files: { full: 'Qirin-Button-tutorial-1080p.mp4', light: 'Qirin-Button-tutorial-720p.mp4' },
 
   // ---- what to capture, from the real prototype (http://localhost:4450/#) ----
+  // Source page: the component catalogue (/design-system-components), a neutral page with every ds-* live on it.
   capture: {
     async run(h) {
-      const RM = '/reject-management';
-      // ids on every ds-button of the page first (moving one changes the order of the others)
-      const tag = () => h.eval(() => document.querySelectorAll('ds-button').forEach((e, i) => e.id = '__b' + i));
-      const btn = async i => '#__b' + i;
+      const DS = '/design-system-components';
+      // a ds-button of the page by its text, tagged with an id (moving one changes the order of the others)
+      const pick = (text, id) => h.eval(([t, id]) => { const e = [...document.querySelectorAll('ds-button')].find(b => b.textContent.trim() === t); e.id = id; return '#' + id; }, [text, id]);
 
       // 1. The four types, isolated on a white stage, labels in English, no icon
-      await h.go(RM); await tag();
-      const T = [['primary', 3, 'Primary'], ['secondary', 2, 'Secondary'], ['tertiary', 1, 'Tertiary'], ['plain', 4, 'Plain']];
-      for (const [type, i, label] of T) {
-        const s = await btn(i);
-        await h.eval(([s, label]) => __t.adopt(document.querySelector(s), { label, keepIcons: false, inputs: { disabled: false } }), [s, label]);
+      await h.go(DS);
+      const T = [['primary', 'Validate', 'Primary'], ['secondary', 'Confirm', 'Secondary'], ['tertiary', 'Cancel', 'Tertiary'], ['plain', 'Apply', 'Plain']];
+      for (const [type, src, label] of T) {
+        const s = await pick(src, '__t-' + type);
+        await h.eval(([s, label, type]) => __t.adopt(document.querySelector(s), { label, keepIcons: false, inputs: { type, disabled: false } }), [s, label, type]);
       }
-      for (const [type, i] of T) await h.shot(`type-${type}`, `#__b${i}`);
+      for (const [type] of T) await h.shot(`type-${type}`, `#__t-${type}`);
 
       // 2. One primary for the purpose line: Validate, default / hover / pressed
-      await h.go(RM); await tag();
-      const v = await btn(3);
-      await h.eval(s => __t.adopt(document.querySelector(s), { label: 'Validate', keepIcons: false, inputs: { disabled: false } }), v);
+      await h.go(DS);
+      const v = await pick('Validate', '__v');
+      await h.eval(s => __t.adopt(document.querySelector(s), { label: 'Validate', keepIcons: false, inputs: { type: 'primary', disabled: false } }), v);
       const vc = await h.clipOf(v, 14);
       await h.shot('validate-default', v, { clip: vc, pad: 0 });
       await h.hover(v); await h.shot('validate-hover', v, { clip: vc, pad: 0 });
       await h.press(v); await h.shot('validate-active', v, { clip: vc, pad: 0 }); await h.release();
 
-      // 3. The states, on the real Resubmit button (with its icon)
-      await h.go(RM); await tag();
-      const r = await btn(3);
-      await h.eval(s => __t.adopt(document.querySelector(s), { inputs: { disabled: false } }), r);
+      // 3. The states, on a primary Save button
+      await h.go(DS);
+      const r = await pick('Show toast', '__s');
+      await h.eval(s => __t.adopt(document.querySelector(s), { label: 'Save', keepIcons: false, inputs: { type: 'primary', disabled: false } }), r);
       const rc = await h.clipOf(r, 14);
       const S = (id) => h.shot(id, r, { clip: rc, pad: 0 });
       await h.away(); await S('state-default');
@@ -51,29 +52,63 @@ module.exports = {
       await h.eval(s => { const e = document.querySelector(s); __t.setIn(e, 'loading', false); __t.setIn(e, 'disabled', true); }, r);
       await h.away(); await S('state-disabled');
 
-      // 4. Do / Don't: the real action bar of Reject Management, one row selected
-      await h.go(RM, { dpr: 3 });
-      await h.click('ds-table-row ds-cell-selection >> nth=1');
+      // A generic screen made of live catalogue components: a "My profile" page (ds-page-title, ds-properties-panel)
+      // under an "Edit contact details" ds-modal (ds-input-text, ds-input-email, Cancel Secondary + Save Primary).
+      const compose = () => h.eval(() => {
+        const all = s => [...document.querySelectorAll(s)];
+        const st = __t.stage('display:block;padding:40px 56px;background:var(--semantic-color-static-background-main-primary);');
+        window.__rows = phone => [{ title: 'Contact details', rows: [
+          { label: 'Name', value: 'Jane Smith' }, { label: 'Email', value: 'jane.smith@example.com' },
+          { label: 'Phone number', value: phone }, { label: 'City', value: 'London' } ] }];
+        const title = document.querySelector('ds-page-title'); st.appendChild(title); __t.setIn(title, 'title', 'My profile');
+        const wrap = document.createElement('div'); wrap.style.cssText = 'margin-top:24px;max-width:880px;'; st.appendChild(wrap);
+        const panel = document.querySelector('ds-properties-panel'); panel.id = '__panel'; wrap.appendChild(panel);
+        __t.setIn(panel, 'variant', 'card'); __t.setIn(panel, 'columns', 2); __t.setIn(panel, 'sections', window.__rows('—'));
+        const modal = document.querySelector('ds-modal'); modal.id = '__modal'; st.appendChild(modal);
+        __t.setIn(modal, 'size', 'small'); __t.setIn(modal, 'title', 'Edit contact details'); __t.setIn(modal, 'contentHeight', 'auto');
+        const content = modal.querySelector('ds-modal-content'); content.querySelectorAll('p').forEach(p => p.remove());
+        const form = document.createElement('div'); form.style.cssText = 'display:grid;gap:var(--semantic-measurement-spacing-m);'; content.appendChild(form);
+        const inp = (el, id, label, value) => { el.id = id; form.appendChild(el); __t.setIn(el, 'label', label); __t.setIn(el, 'placeholder', ''); __t.setIn(el, 'value', value); };
+        inp(all('ds-input-text').find(e => e.textContent.trim().startsWith('Name')), '__name', 'Name', 'Jane Smith');
+        inp(document.querySelector('ds-input-email'), '__email', 'Email', 'jane.smith@example.com');
+        inp(all('ds-input-text').find(e => e.textContent.trim().startsWith('Phone')), '__phone', 'Phone number', '');
+        const save = modal.querySelector('ds-modal-footer ds-button'); save.id = '__save';
+        save.querySelector('[class$="__label"]').textContent = 'Save'; __t.setIn(save, 'disabled', true);
+        const cancel = all('ds-button').find(e => e.textContent.trim() === 'Cancel'); cancel.id = '__cancel';
+        save.parentElement.insertBefore(cancel, save); __t.setIn(cancel, 'type', 'secondary');
+        st.appendChild(document.querySelector('ds-toaster-container'));
+      });
+
+      // 4. Do / Don't: the footer of that modal, Cancel (Secondary) + Save (Primary); Don't: Cancel turns Primary
+      await h.go(DS, { dpr: 3 }); await compose();
+      await h.eval(() => __t.setIn(document.querySelector('#__save'), 'disabled', false));
       await h.away();
-      const ids = await h.eval(() => { const b = [...document.querySelectorAll('.rm-actions__buttons ds-button')]; b.forEach((e, i) => e.id = '__r' + i); return b.map(e => '#' + e.id); });
-      const barClip = await h.eval(ids => { const u = __t.union(ids.slice(1)); return { x: u.x - 20, y: u.y - 16, w: u.w + 30, h: u.h + 32 }; }, ids);
+      const barClip = await h.eval(() => { const u = __t.union(['#__cancel', '#__save']); return { x: u.x - 12, y: u.y - 12, w: u.w + 24, h: u.h + 24 }; });
       await h.shot('do', null, { clip: barClip, pad: 0 });
-      await h.eval(s => __t.setIn(document.querySelector(s), 'type', 'primary'), ids[2]);
+      await h.eval(() => __t.setIn(document.querySelector('#__cancel'), 'type', 'primary'));
       await h.wait(300); await h.shot('dont', null, { clip: barClip, pad: 0 });
 
-      // 5. In use: Reject Management, nothing selected -> two rows -> hover, press Resubmit -> rows gone, toast
-      await h.go(RM, { dpr: 2 });
-      const R = { cb1: 'ds-table-row:nth-of-type(2) ds-cell-selection', cb2: 'ds-table-row:nth-of-type(3) ds-cell-selection',
-        del: '.rm-actions__buttons > ds-button:nth-last-of-type(2)', res: '.rm-actions__buttons > ds-button:last-of-type',
-        bar: ['.rm-actions__buttons > ds-button:nth-last-of-type(2)', '.rm-actions__buttons > ds-button:last-of-type'],
-        table: '.rm-table' };
-      await h.away(); await h.screen('rm-0', R);
-      await h.click('ds-table-row ds-cell-selection >> nth=1'); await h.away(); await h.screen('rm-1', R);
-      await h.click('ds-table-row ds-cell-selection >> nth=2'); await h.away(); await h.screen('rm-2', R);
-      await h.hover(R.res); await h.screen('rm-3', R);
-      await h.press(R.res); await h.screen('rm-4', R);
-      await h.page.mouse.up(); await h.away(); await h.wait(500);
-      await h.screen('rm-5', { ...R, toast: 'ds-toaster-container' });
+      // 5. In use: nothing changed, Save disabled -> type a phone number, Save active -> hover, press -> saved, toast
+      await h.go(DS, { dpr: 2 }); await compose();
+      const R = { field: '#__phone input', cancel: '#__cancel', save: '#__save', bar: ['#__cancel', '#__save'],
+        box: '.ds-modal__box', panel: '#__panel' };
+      await h.away(); await h.screen('use-0', R);
+      await h.page.click(R.field); await h.away(); await h.screen('use-1', R);
+      await h.page.keyboard.type('+44 20'); await h.screen('use-2', R);
+      await h.page.keyboard.type(' 7946 0321');
+      await h.eval(() => __t.setIn(document.querySelector('#__save'), 'disabled', false)); await h.wait(300);
+      await h.screen('use-3', R);
+      await h.hover(R.save); await h.screen('use-4', R);
+      await h.press(R.save); await h.screen('use-5', R);
+      await h.page.mouse.up(); await h.away();
+      await h.eval(() => {
+        __t.setIn(document.querySelector('#__modal'), 'open', false);
+        __t.setIn(document.querySelector('#__panel'), 'sections', window.__rows('+44 20 7946 0321'));
+        ng.getComponent(document.querySelector('app-design-system-components')).toaster
+          .show('Your contact details are up to date.', { title: 'Changes saved', tone: 'success', duration: 0 });
+      });
+      await h.wait(800);
+      await h.screen('use-6', { ...R, toast: 'ds-toaster-container' });
     },
   },
 
@@ -98,7 +133,7 @@ module.exports = {
     { type: 'dodont', t: 12, d: 7, chapter: 'The key rule',
       heading: '<em>One Primary</em> per area.',
       sub: 'The main action stands out. The others step back.',
-      scale: 1.5,
+      scale: 2.2,
       do: { shot: 'do', text: 'One Primary, next to a Secondary' },
       dont: { shot: 'dont', text: 'Two Primary buttons side by side' } },
 
@@ -113,19 +148,19 @@ module.exports = {
 
     { type: 'screen', t: 28, d: 11.6, chapter: 'In use',
       // which capture is on screen from when (s, relative to the scene)
-      shots: [[0, 'rm-0'], [2.0, 'rm-1'], [3.0, 'rm-2'], [7.2, 'rm-3'], [8.2, 'rm-4'], [8.45, 'rm-5']],
+      shots: [[0, 'use-0'], [2.4, 'use-1'], [2.75, 'use-2'], [3.2, 'use-3'], [7.2, 'use-4'], [8.2, 'use-5'], [8.45, 'use-6']],
       // pointer: rect name (centre) or [x, y] in page px, time of arrival; click: true for a press at arrival
-      cursor: [[0, [980, 700]], [1.9, 'cb1', true], [2.9, 'cb2', true], [7.2, 'res'], [8.2, 'res', true], [10, [1339, 545]]],
-      // camera: from t, eased over 0.9 s: null (whole page), [rect name, zoom] or [x, y, zoom] (top-left of the view, page px)
-      camera: [[0, null], [4.0, [805, 216, 2.28]], [9.0, null]],
+      cursor: [[0, [1000, 700]], [2.4, 'field', true], [3.6, [1080, 520]], [7.2, [896, 576]], [8.2, [896, 576], true], [8.45, [896, 576]], [10, [1000, 560]]],
+      // camera: from t, eased over 0.9 s: null (whole page), rect name then zoom ([t, name, zoom]) or [t, [x, y, zoom]] (top-left of the view, page px)
+      camera: [[0, null], [4.0, [470, 196, 1.8]], [8.5, null]],
       captions: [
-        [0.4, 3.9, 'In Reject Management, nothing selected: actions <em>disabled</em>.'],
-        [4.0, 7.0, 'Select rows and they <em>come alive</em>.'],
-        [7.0, 9.0, 'One Primary: <em>Resubmit</em>, the main action.'],
+        [0.4, 3.3, 'Nothing has changed yet: Save is <em>disabled</em>.'],
+        [3.3, 7.0, 'Enter a value and it <em>comes alive</em>.'],
+        [7.0, 9.0, 'One Primary: <em>Save</em>, the main action.'],
         [9.0, 11.6, 'Click it: the action runs and is <em>confirmed</em>.'],
       ],
       // callouts: [from, to, rect name, text, 'above' (default: below the rect)]
-      callouts: [[4.8, 7.0, 'del', 'Secondary'], [5.2, 7.0, 'res', 'Primary'], [9.3, 11.6, 'toast', 'Confirmed by a toaster', 'above']] },
+      callouts: [[4.8, 7.0, 'cancel', 'Secondary'], [5.2, 7.0, 'save', 'Primary'], [9.5, 11.6, 'toast', 'Confirmed by a toaster', 'above']] },
 
     { type: 'end', t: 39.6, d: 4.4, title: 'Button',
       lines: ['Full guidelines on <em>ZeroHeight</em>', 'Live examples in <em>Storybook</em>'],

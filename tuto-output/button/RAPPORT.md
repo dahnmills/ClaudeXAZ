@@ -2,8 +2,8 @@
 
 ## Fichiers
 
-- `tuto-output/button/Qirin-Button-tutorial-1080p.mp4` : 1920 x 1080, 60 i/s, 44 s, 5,9 Mo
-- `tuto-output/button/Qirin-Button-tutorial-720p.mp4` : 1280 x 720, 30 i/s, 1,9 Mo (pour ZeroHeight)
+- `tuto-output/button/Qirin-Button-tutorial-1080p.mp4` : 1920 x 1080, 60 i/s, 44 s, 3,6 Mo
+- `tuto-output/button/Qirin-Button-tutorial-720p.mp4` : 1280 x 720, 30 i/s, 1,4 Mo (pour ZeroHeight)
 - `tuto-output/button/poster.jpg` : vignette (titre posé, aussi image 0 de la vidéo)
 - `tuto-output/button/work/` : captures (`shots/`), images, bande son, contrôles (`qc/`, `stills/`)
 - `tuto-output/_template/` : le gabarit (moteur, configs, musique, README)
@@ -15,15 +15,15 @@
 | 0-3,4 | Titre | Qirin design system, **Button**, pastille Action (fond navy) |
 | 3,4-7,6 | 1 What it is | « A button triggers an action on the current screen. » Un vrai Validate : survol puis appui |
 | 7,6-12 | 2 Four types | Primary, Secondary, Tertiary, Plain côte à côte, chacun avec son rôle |
-| 12-19 | 3 The key rule | « One Primary per area. » Do : la barre réelle de Reject Management (Delete Secondary, Resubmit Primary). Don't : la même barre où Delete bascule en Primary |
-| 19-28 | 4 States | Hover (curseur, puis appui), Focus (touche Tab, anneau), Loading (vrai spinner en rotation), Disabled |
-| 28-39,6 | 5 In use | Reject Management : actions grisées, deux lignes cochées, zoom sur la barre (bulles Secondary, Primary), survol et clic sur Resubmit, lignes retirées, toaster « 2 rejects resubmitted » |
+| 12-19 | 3 The key rule | « One Primary per area. » Do : le footer d'une modale générique (Cancel Secondary, Save Primary). Don't : le même footer où Cancel bascule en Primary |
+| 19-28 | 4 States | Sur un Save Primary (sans icône) : Hover (curseur, puis appui), Focus (touche Tab, anneau), Loading (vrai spinner en rotation), Disabled |
+| 28-39,6 | 5 In use | Page générique « My profile » (ds-page-title, ds-properties-panel) sous une modale « Edit contact details » : rien de modifié, Save grisé ; clic dans Phone number, saisie, Save s'active ; zoom sur la modale (bulles Secondary, Primary) ; survol et clic sur Save ; la modale se ferme, le numéro apparaît dans la page, toaster « Changes saved » |
 | 39,6-44 | Fin | Button, « Full guidelines on ZeroHeight », « Live examples in Storybook », chemin Design System / Action / Button |
 
-Tous les boutons sont de vrais `ds-button` du serveur de dev (port 4450, code courant, libellé SemiBold) : déplacés
+Aucune fonctionnalité du produit à l'écran : toutes les captures viennent du catalogue `/design-system-components`
+(page neutre où tous les `ds-*` sont vivants), recomposé sur une scène blanche. Tous les boutons sont de vrais `ds-button` du serveur de dev (port 4450, code courant, libellé SemiBold) : déplacés
 sur une scène blanche et réglés par leurs inputs signal (`type`, `disabled`, `loading`). Survol, appui et focus sont
-de vrais événements souris et clavier, les 12 images du spinner viennent de son animation CSS. Pas de topbox (Reject
-Management n'en a pas). Mots mis en avant en bleu. Aucun tiret cadratin.
+de vrais événements souris et clavier, les 12 images du spinner viennent de son animation CSS. Pas de topbox. Mots mis en avant en bleu. Aucun tiret cadratin.
 
 ## Son
 
@@ -41,9 +41,12 @@ pour décliner un composant.
 
 ## Autocritique (images extraites du MP4 final)
 
-- Lisibilité : titres 60 px, textes 30 à 40 px, composants agrandis 2,2 à 2,6 fois (captures x4, nettes). L'écran
-  entier de Reject Management en vue large a un texte d'environ 15 px : lisible en 1080p, juste en 720p ; d'où le zoom
-  sur la barre d'actions et la bulle sur le toaster.
+- Lisibilité : titres 60 px, textes 30 à 40 px, composants agrandis 2,2 à 2,6 fois (captures x4, nettes), Do/Don't
+  agrandi 2,2 fois. L'écran « My profile » en vue large a un texte d'environ 15 px : lisible en 1080p, juste en 720p ;
+  d'où le zoom x1,8 sur la modale entière et la bulle sur le toaster.
+- Curseur : jamais posé sur un texte (sur Save, il vise le coin bas droit du bouton, hors du libellé).
+- Révision du 2026-11-17 : la première version montrait l'écran Reject Management (barre d'actions, Resubmit,
+  toaster de rejets). Refaite sur une composition neutre, même durée, même calage musical, même musique.
 - Textes sur une ligne : vérifiés toutes les 0,25 s (`render.js check`), aucun débordement.
 - Éléments coupés : corrigés en cours de route (un zoom de fin coupait les colonnes du tableau, remplacé par la vue
   entière et une bulle ; un filet gris en bord de capture Do/Don't, recadré ; le cadrage du zoom sur la barre s'arrête
@@ -55,8 +58,8 @@ pour décliner un composant.
 
 Voir `tuto-output/_template/README.md`. En bref : copier `components/button.config.js`, changer la recette de capture
 et les textes, puis `capture.js`, `render.js check`, `render.js stills`, rendu des images, `encode.js`.
-Test fait avec **Badge** (`components/badge.config.js`, aperçu seul, pas d'export) : vrais `ds-badge` du Notification
-module, réglés en `label`, `status` et `variant`, cinq statuts Light, Light contre Strong, mise en situation dans le
-Notification module. Le moteur a suivi sans changement de fond (deux ajouts génériques : démo statique sans curseur,
+Test fait avec **Badge** (`components/badge.config.js`, aperçu seul, pas d'export) : vrais `ds-badge` du catalogue,
+réglés en `label`, `status` et `variant`, cinq statuts Light, Light contre Strong, mise en situation dans une liste de
+fichiers générique (les lignes `ds-table-row` de la page bac à sable `/modal`, seules sur la scène blanche). Le moteur a suivi sans changement de fond (deux ajouts génériques : démo statique sans curseur,
 scène d'écran sans curseur). La scène « In use » du Badge reste un brouillon (20 s pour un seul plan : à découper en
 temps forts avant tout export). Images d'aperçu : `tuto-output/badge/work/stills/`.

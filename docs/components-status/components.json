@@ -93,7 +93,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-09-08",
+      "lastChange": "2026-11-17",
       "commentary": "No Negative tone in Figma but present in code (ButtonTone includes negative); Figma defaults differ for Loading state not yet in the ZeroHeight library sync.",
       "variants": [
         "Type",
@@ -154,7 +154,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-09-08",
+      "lastChange": "2026-11-17",
       "commentary": "Figma-only name: in code it is ds-button type=\"secondary\" tone=\"accent\" fullWidth (story LoadMore).",
       "variants": [
         "State"
@@ -260,7 +260,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-05-27",
+      "lastChange": "2026-11-17",
       "commentary": "Uses --semantic-measurement-spacing-2xs which does not exist in _semantic.scss (padding falls back to nothing).",
       "variants": [
         "Status",
@@ -308,7 +308,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-05-27",
+      "lastChange": "2026-11-17",
       "commentary": "No separate Figma set: the group is composed from Button Range instances.",
       "variants": [
         "Status",
@@ -356,7 +356,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-09-08",
+      "lastChange": "2026-11-17",
       "commentary": "Missing aria-expanded on the chevron button (ZeroHeight audit 2026-11-04).",
       "variants": [
         "Type",
@@ -405,7 +405,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-07-23",
+      "lastChange": "2026-11-17",
       "commentary": "Selected state uses --semantic-color-static-background-subtle-informative, which does not exist in _semantic.scss.",
       "variants": [
         "State",
@@ -512,7 +512,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-06-02",
+      "lastChange": "2026-11-17",
       "commentary": "Figma name Breadcrumb, selector ds-breadcrumbs (plural).",
       "variants": [
         ".Specs of each Link"
@@ -569,7 +569,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-09-08",
+      "lastChange": "2026-11-17",
       "commentary": "Code, story, Figma and doc all in place.",
       "variants": [
         "Current Page"
@@ -626,7 +626,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-09-08",
+      "lastChange": "2026-11-17",
       "commentary": "Library Tab has no icon; code has one per tab. The counter badge exists only as the counter input of ds-tab.",
       "variants": [
         "Tone",
@@ -786,7 +786,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-10-21",
+      "lastChange": "2026-11-17",
       "commentary": "Remove glyph is a text character, not a ds-icon.",
       "variants": [
         "Selected",
@@ -1047,7 +1047,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-09-08",
+      "lastChange": "2026-11-17",
       "commentary": "Uses native <button> instead of ds-button; no focus-visible style.",
       "variants": [
         "Style",
@@ -1094,7 +1094,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-10-08",
+      "lastChange": "2026-11-17",
       "commentary": "Figma is only a WIP frame (no component set); steps are clickable divs without role.",
       "variants": [
         "To be defined"
@@ -3862,7 +3862,7 @@
       },
       "version": "1.0.0",
       "state": "ready",
-      "lastChange": "2026-09-08",
+      "lastChange": "2026-11-17",
       "commentary": "Figma-only component: in code it exists only as the counter input of ds-tab.",
       "variants": [],
       "variantsSource": "none",

@@ -26,6 +26,12 @@ pas de curseur sur un texte), puis `node analyse.js ../../<nom>/work/audio.wav` 
 
 ## Capture (`h`)
 
+**Mise en situation générique, jamais d'écran ni de libellé de feature.** Un film de composant ne doit pas être
+associé à une fonctionnalité du produit : ni écran de fonctionnalité, ni nom de feature, ni libellé métier (dans les
+captures, les légendes, les bulles et les toasts). On compose une scène neutre avec de vrais `ds-*` (par exemple le
+catalogue `/design-system-components` : une modale « Edit contact details », un footer Cancel + Save, un toaster
+« Changes saved ») et des textes génériques (Save, Cancel, Jane Smith, example.com).
+
 Rien n'est dessiné : on déplace de vrais composants `ds-*` de la page sur une scène blanche et on règle leurs inputs
 signal sur l'instance vivante.
 
@@ -50,7 +56,7 @@ signal sur l'instance vivante.
 | `screen` | `shots`, `cursor`, `camera`, `captions`, `callouts` | en situation dans un vrai écran |
 | `end` | `title`, `lines`, `foot` | où trouver la doc |
 
-Mots mis en avant : `<em>` (bleu, jamais rose). Pas de tiret cadratin. Pas de topbox dans les écrans de fonctionnalité.
+Mots mis en avant : `<em>` (bleu, jamais rose). Pas de tiret cadratin. Pas de topbox, pas d'écran ni de libellé de feature (voir « Capture »).
 
 ## Musique
 
