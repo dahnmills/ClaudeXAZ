@@ -23,8 +23,8 @@
     "layoutMockup": "bbgSPUChd18EVNGijjoZGn"
   },
   "summary": {
-    "total": 169,
-    "libraryComponents": 106,
+    "total": 170,
+    "libraryComponents": 107,
     "localComponents": 63,
     "byCategory": {
       "action": 19,
@@ -32,33 +32,33 @@
       "data-entry": 24,
       "data-display": 27,
       "feedback": 10,
-      "layout": 10,
+      "layout": 11,
       "overlay": 6,
       "other": 9,
       "local": 63
     },
     "byLevel": {
-      "atom": 41,
+      "atom": 42,
       "molecule": 87,
       "organism": 36,
       "template": 5
     },
     "byState": {
       "ready": 78,
-      "draft": 12,
+      "draft": 13,
       "in-review": 79
     },
     "availability": {
-      "design": 164,
+      "design": 165,
       "vibecoded": 165,
       "dev": 0,
       "storybook": 95,
       "zeroheightMarkdown": 80,
       "designAndVibecoded": 160,
-      "designOnly": 4,
+      "designOnly": 5,
       "vibecodedOnly": 5
     },
-    "mismatchesCount": 75
+    "mismatchesCount": 76
   },
   "components": [
     {
@@ -439,7 +439,7 @@
       "figma": {
         "fileKey": "xCeEJPn6fliEshuE9fnrqs",
         "nodeId": "688:4202",
-        "componentKey": "b9493d2f368c2be7b05432781ca275cc35a896f3",
+        "componentKey": "77367a8f128498576f030e35e042f9434514056a",
         "url": "https://www.figma.com/design/xCeEJPn6fliEshuE9fnrqs?node-id=688-4202"
       },
       "storybook": {
@@ -456,7 +456,7 @@
       "version": "1.0.0",
       "state": "ready",
       "lastChange": "2026-09-08",
-      "commentary": "Figma: only [DEPRECATED] Link is published, the two current sets (688:4202, 689:4239) are not; Crumb uses 688:4202.",
+      "commentary": "Figma: current set 688:4202 (key 77367a8f); the retired set 171:3074 (key b9493d2f) is still nested in Breadcrumb, Pagination, List Item and Snackbar (audit 2026-11-17).",
       "variants": [
         "Tone",
         "Size",
@@ -870,7 +870,7 @@
       "figma": {
         "fileKey": "xCeEJPn6fliEshuE9fnrqs",
         "nodeId": "507:833",
-        "componentKey": "5d1147ac0e38f8f0c1dc9e3f24e12925e60d5631",
+        "componentKey": "84a8ec3ed08331f3cf5d08222a02cad5dcb53d74",
         "url": "https://www.figma.com/design/xCeEJPn6fliEshuE9fnrqs?node-id=507-833"
       },
       "storybook": {
@@ -887,7 +887,7 @@
       "version": "1.0.0",
       "state": "ready",
       "lastChange": "2026-11-02",
-      "commentary": "Code, story, Figma and doc all in place.",
+      "commentary": "Figma: current component 507:833 (key 84a8ec3e, slot); the Legacy set 1:20 (key 5d1147ac, # Items) is still published and used.",
       "variants": [
         "Slot (v3.0.0)",
         "# Items (v2.0.0)"
@@ -4313,9 +4313,9 @@
       },
       "figma": {
         "fileKey": "bbgSPUChd18EVNGijjoZGn",
-        "nodeId": null,
+        "nodeId": "2390:1583",
         "componentKey": "39e53ceff3e27048d193a6a0e8d87a6337f410d5",
-        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=2390-1583"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-layout-header--docs",
@@ -4339,7 +4339,7 @@
       "usedBy": 0,
       "usedByPages": [],
       "visual": {
-        "figmaNodeId": null,
+        "figmaNodeId": "2390:1583",
         "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/header"
@@ -4359,9 +4359,9 @@
       },
       "figma": {
         "fileKey": "bbgSPUChd18EVNGijjoZGn",
-        "nodeId": null,
+        "nodeId": "2083:6932",
         "componentKey": "7472d0df1c69d84a49701b96603fe096a864c6a6",
-        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=2083-6932"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-layout-side-nav--docs",
@@ -4391,7 +4391,7 @@
       "usedBy": 0,
       "usedByPages": [],
       "visual": {
-        "figmaNodeId": null,
+        "figmaNodeId": "2083:6932",
         "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/side-nav"
@@ -4526,7 +4526,7 @@
       "figma": {
         "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": "4010:13",
-        "componentKey": null,
+        "componentKey": "15b5e617d6d17a3ff976d22db838bc0f9984d4aa",
         "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=4010-13"
       },
       "storybook": {
@@ -4585,9 +4585,9 @@
       },
       "figma": {
         "fileKey": "bbgSPUChd18EVNGijjoZGn",
-        "nodeId": null,
+        "nodeId": "2256:1556",
         "componentKey": "c81f6a2d522228de5c1ba82eb0240bc02fa658c4",
-        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=2256-1556"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-layout-modal--docs",
@@ -4628,7 +4628,7 @@
         "tag-configuration"
       ],
       "visual": {
-        "figmaNodeId": null,
+        "figmaNodeId": "2256:1556",
         "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/modal"
@@ -4804,9 +4804,9 @@
       },
       "figma": {
         "fileKey": "bbgSPUChd18EVNGijjoZGn",
-        "nodeId": null,
+        "nodeId": "2471:14923",
         "componentKey": "413684a36328011d3e9d4a452107c914f8440d5b",
-        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=2471-14923"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/story/design-system-layout-drawer--default",
@@ -4832,7 +4832,7 @@
         "buyer-summary"
       ],
       "visual": {
-        "figmaNodeId": null,
+        "figmaNodeId": "2471:14923",
         "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/drawer"
@@ -4853,7 +4853,7 @@
       "figma": {
         "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": "4015:1824",
-        "componentKey": null,
+        "componentKey": "64692d4700038c3fff885984f75dbe6cba21836b",
         "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=4015-1824"
       },
       "storybook": {
@@ -5049,7 +5049,7 @@
       "figma": {
         "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": "4019:755",
-        "componentKey": null,
+        "componentKey": "c6ac17c7e447eca149a7cc884d616abde5c1125b",
         "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=4019-755"
       },
       "storybook": {
@@ -5103,7 +5103,7 @@
       "figma": {
         "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": "4018:1029",
-        "componentKey": null,
+        "componentKey": "8594fa5129b5189d218c9e47e3642430702c53e4",
         "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=4018-1029"
       },
       "storybook": {
@@ -5667,6 +5667,50 @@
       "visual": {
         "figmaNodeId": null,
         "fileKey": "VpConH5AUGyCqtp8PMqj1i"
+      },
+      "codeFolder": null
+    },
+    {
+      "id": "scrollbar",
+      "name": "Scrollbar",
+      "selector": null,
+      "category": "layout",
+      "level": "atom",
+      "figmaLibrary": "layout",
+      "description": "A thin vertical scroll indicator used inside Modal Content and Drawer.",
+      "availability": {
+        "design": true,
+        "vibecoded": false,
+        "dev": false
+      },
+      "figma": {
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
+        "nodeId": "2076:9653",
+        "componentKey": "7ffc29a3dba4f4ecb2e048d1e1f0bb5b6e225dcd",
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=2076-9653"
+      },
+      "storybook": {
+        "vibecodedUrl": null,
+        "devUrl": null,
+        "devStatus": "planned"
+      },
+      "zeroheight": {
+        "pageId": null,
+        "url": null,
+        "status": null,
+        "markdown": null
+      },
+      "version": "0.1.0",
+      "state": "draft",
+      "lastChange": null,
+      "commentary": "Figma-only atom of the Layout library (published, nested in Modal Content and Drawer); no ds-scrollbar in code. Missing for ready: code, story, doc.",
+      "variants": [],
+      "variantsSource": "none",
+      "usedBy": 0,
+      "usedByPages": [],
+      "visual": {
+        "figmaNodeId": "2076:9653",
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": null
     },
@@ -8695,6 +8739,12 @@
       "ref": "tabs-topbox",
       "name": "Tabs - Topbox",
       "detail": "Figma-only sub-element of Page Header; in code it is the tabs input of ds-page-header. Missing for ready: code, story, doc."
+    },
+    {
+      "kind": "figma-only",
+      "ref": "scrollbar",
+      "name": "Scrollbar",
+      "detail": "Figma-only atom of the Layout library (published, nested in Modal Content and Drawer); no ds-scrollbar in code. Missing for ready: code, story, doc."
     },
     {
       "kind": "name-differs",

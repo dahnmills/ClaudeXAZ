@@ -6,7 +6,7 @@ File: [Components] Layout, fileKey `bbgSPUChd18EVNGijjoZGn`. Built 2026-11-06, a
 
 | Code | Figma equivalent | Verdict |
 |------|------------------|---------|
-| `ds-flyout` (rounded container with shadow, content composed by the consumer) | Flyout Menu (Action, set `5d1147ac0e38f8f0c1dc9e3f24e12925e60d5631`, variant `# Items`) | Same role. Not created. Renaming to decide: code `ds-flyout` vs Figma `Flyout Menu`. |
+| `ds-flyout` (rounded container with shadow, content composed by the consumer) | Flyout Menu (Action, component `84a8ec3ed08331f3cf5d08222a02cad5dcb53d74`, node 507:833, content in a slot; the Legacy set `5d1147ac…` 1:20 with `# Items` must not be used) | Same role. Not created. Renaming to decide: code `ds-flyout` vs Figma `Flyout Menu`. |
 | `ds-flyout-item` (title, reference, emphasized, badge slot) | Flyout Menu Item (`.Item`, node 507:996) | Already marked "covered by ds-flyout-menu-item" in components.json. Not created. `reference`, `emphasized` and the badge slot have no Figma property. |
 | `ds-flyout-section` (label, icon, highlighted) | Flyout Menu Title (node 507:833) | Same role (group title row). Not created. `icon` and `highlighted` have no Figma property. |
 | `ds-keyboard-map` | none | Internal of Shortcuts Panel, not drawn (see gaps). |

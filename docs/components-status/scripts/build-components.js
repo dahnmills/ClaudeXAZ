@@ -37,14 +37,15 @@ function expandKey(prefix) {
 }
 const KEYS = {};
 const keyPrefixes = {
-  button: 'ba6612f7', 'button-icon': '50cb3176', link: 'b9493d2f', chip: '1547bf75', tab: 'a1d28507',
-  breadcrumb: '955f4ed5', crumb: 'fe536134', 'flyout-menu': '5d1147ac', badge: '990a9ef2', 'skeleton-item': 'ed7d5d07',
+  button: 'ba6612f7', 'button-icon': '50cb3176', link: '77367a8f', chip: '1547bf75', tab: 'a1d28507',
+  breadcrumb: '955f4ed5', crumb: 'fe536134', 'flyout-menu': '84a8ec3e', badge: '990a9ef2', 'skeleton-item': 'ed7d5d07',
   card: '1d68f180', 'page-header': '659acf91', identifier: '53c3ac27', 'icon-tile': 'd0deb132', 'progress-bar': '4df39ca6',
   'standalone-dropdown': 'c8b538b2', header: '39e53cef', tag: '0543a49f', 'horizontal-card': 'f217735c',
   'search-bar': 'b084316c', 'widget-card': '987bbbe7', dropdown: '9274a067', drawer: '413684a3', modal: 'c81f6a2d',
   'radio-card': '50c847da', spinner: 'd19dd496', 'input-text': 'c88876bc', 'dropdown-flyout-menu': '2ce5aa69'.slice(0, 0) + '2ce5aa6c',
   toaster: '4cf21ce2', divider: '9498f5f5', 'side-navigation': '7472d0df', icon: 'cdf378d4', logo: 'd4206ee4',
   'breadcrumbs-topbox': '099403d1', 'tabs-topbox': '5126f0cd',
+  'page-title': '15b5e617', 'filter-drawer': '64692d47', spotlight: 'c6ac17c7', 'shortcuts-panel': '8594fa51', scrollbar: '7ffc29a3',
 };
 for (const [k, p] of Object.entries(keyPrefixes)) KEYS[k] = expandKey(p);
 
@@ -164,7 +165,7 @@ add('button-split', 'Button Split', 'ds-button-split', D + 'Action/Button Split'
 add('visual-button', 'Visual Button', 'ds-visual-button', D + 'Action/Visual Button', 'action', 'molecule', 'action/visual-button', null,
   { lib: 'action', comment: 'Selected state uses --semantic-color-static-background-subtle-informative, which does not exist in _semantic.scss.' });
 add('link', 'Link', 'ds-link', D + 'Action/Link', 'action', 'atom', 'action/link', null,
-  { lib: 'action', k: 'link', comment: 'Figma: only [DEPRECATED] Link is published, the two current sets (688:4202, 689:4239) are not; Crumb uses 688:4202.' });
+  { lib: 'action', k: 'link', comment: 'Figma: current set 688:4202 (key 77367a8f); the retired set 171:3074 (key b9493d2f) is still nested in Breadcrumb, Pagination, List Item and Snackbar (audit 2026-11-17).' });
 add('breadcrumbs', 'Breadcrumb', 'ds-breadcrumbs', D + 'Action/Breadcrumbs', 'action', 'molecule', 'action/breadcrumb', null,
   { lib: 'action', k: 'breadcrumb', comment: 'Figma name Breadcrumb, selector ds-breadcrumbs (plural).' });
 add('crumb', 'Crumb', 'ds-crumb', D + 'Action/Crumb', 'action', 'atom', 'action/crumb', null,
@@ -180,7 +181,7 @@ add('chip', 'Chip', 'ds-chip', D + 'Action/Chip', 'action', 'atom', 'action/chip
 add('tile', 'Tile', 'ds-tile', D + 'Action/Tile', 'action', 'atom', 'action/tile', null,
   { lib: 'action', comment: 'Figma set is named "Tiles"; no focus-visible style in code; not used by any page yet.' });
 add('flyout-menu', 'Flyout Menu', 'ds-flyout-menu', D + 'Action/Flyout Menu', 'action', 'molecule', 'action/flyout-menu', null,
-  { lib: 'action', k: 'flyout-menu' });
+  { lib: 'action', k: 'flyout-menu', comment: 'Figma: current component 507:833 (key 84a8ec3e, slot); the Legacy set 1:20 (key 5d1147ac, # Items) is still published and used.' });
 add('flyout-menu-item', 'Flyout Menu Item', 'ds-flyout-menu-item', D + 'Internals/Flyout Menu Item', 'action', 'atom', 'action/flyout-menu-item', null,
   { lib: 'action', comment: 'Figma name follows the code: Flyout Item becomes Flyout Menu Item (decision 2026-11-16, code not renamed); selectable/selected check sits in a fixed 20px slot.' });
 add('flyout-menu-title', 'Flyout Menu Title', 'ds-flyout-menu-title', null, 'action', 'atom', 'action/flyout-menu', 'A non-interactive group title row inside a Flyout Menu.',
@@ -277,22 +278,22 @@ add('confirm-dialog', 'Popin', 'ds-confirm-dialog', D + 'Feedback/Popin', 'feedb
   { lib: 'feedback', comment: 'Figma Popin = code ds-confirm-dialog. Figma Success tone has no code tone and danger reuses the warning glyph; role="alertdialog" is set on both the host and the inner box.' });
 
 // Layout
-add('header', 'Header', 'ds-header', D + 'Layout/Header', 'layout', 'organism', 'layout/header', null, { lib: 'layout', k: 'header' });
-add('side-nav', 'Side Navigation', 'ds-side-nav', D + 'Layout/Side Nav', 'layout', 'organism', 'layout/side-navigation', null, { lib: 'layout', k: 'side-navigation', comment: 'Figma Side Navigation = code ds-side-nav; Open default is inverted between Figma and code.' });
+add('header', 'Header', 'ds-header', D + 'Layout/Header', 'layout', 'organism', 'layout/header', null, { lib: 'layout', k: 'header', node: '2390:1583' });
+add('side-nav', 'Side Navigation', 'ds-side-nav', D + 'Layout/Side Nav', 'layout', 'organism', 'layout/side-navigation', null, { lib: 'layout', k: 'side-navigation', node: '2083:6932', comment: 'Figma Side Navigation = code ds-side-nav; Open default is inverted between Figma and code.' });
 add('side-nav-item', 'Side Navigation Item', 'ds-side-nav-item', D + 'Internals/Side Nav Item', 'layout', 'atom', 'layout/side-navigation', 'One entry of the side navigation rail.', { lib: 'layout', shareFigma: true });
 add('page-header', 'Page Header', 'ds-page-header', D + 'Layout/Page Header', 'layout', 'organism', 'layout/page-header', null, { lib: 'data-display', k: 'page-header', comment: 'Figma component lives in the Data Display library (page Topbox), not in Layout.' });
-add('page-title', 'Page Title', 'ds-page-title', D + 'Layout/Page Title', 'layout', 'molecule', null, 'The page heading with identifier, status badge and one optional action link.', { lib: 'layout', node: '4010:13', comment: 'Figma component created 2026-11-06 in the Layout file; the Figma Page Header still carries its own title.' });
-add('modal', 'Modal', 'ds-modal', D + 'Layout/Modal', 'layout', 'organism', 'layout/modal', null, { lib: 'layout', k: 'modal', comment: 'Carries dsFocusTrap; hard-coded px and rgba in its SCSS; default Size differs between Figma and code.' });
+add('page-title', 'Page Title', 'ds-page-title', D + 'Layout/Page Title', 'layout', 'molecule', null, 'The page heading with identifier, status badge and one optional action link.', { lib: 'layout', node: '4010:13', k: 'page-title', comment: 'Figma component created 2026-11-06 in the Layout file; the Figma Page Header still carries its own title.' });
+add('modal', 'Modal', 'ds-modal', D + 'Layout/Modal', 'layout', 'organism', 'layout/modal', null, { lib: 'layout', k: 'modal', node: '2256:1556', comment: 'Carries dsFocusTrap; hard-coded px and rgba in its SCSS; default Size differs between Figma and code.' });
 add('modal-header', 'Modal Header', 'ds-modal-header', D + 'Internals/Modal Header', 'layout', 'molecule', 'layout/modal', 'The title bar of a Modal.', { lib: 'layout', shareFigma: true });
 add('modal-content', 'Modal Content', 'ds-modal-content', D + 'Internals/Modal Content', 'layout', 'molecule', 'layout/modal', 'The scrollable body slot of a Modal.', { lib: 'layout', shareFigma: true });
 add('modal-footer', 'Modal Footer', 'ds-modal-footer', D + 'Internals/Modal Footer', 'layout', 'molecule', 'layout/modal', 'The action bar of a Modal, with an optional back button.', { lib: 'layout', shareFigma: true });
-add('drawer', 'Drawer', 'ds-drawer', D + 'Layout/Drawer', 'layout', 'organism', 'layout/drawer', null, { lib: 'layout', k: 'drawer', comment: 'Story has no autodocs tag, so the Storybook link opens the Default story.' });
-add('filter-drawer', 'Filter Drawer', 'ds-filter-drawer', D + 'Layout/Filter Drawer', 'overlay', 'organism', null, 'A Drawer preset to build and save filters.', { lib: 'layout', node: '4015:1824', comment: 'Figma component created 2026-11-06 in the Layout file.' });
+add('drawer', 'Drawer', 'ds-drawer', D + 'Layout/Drawer', 'layout', 'organism', 'layout/drawer', null, { lib: 'layout', k: 'drawer', node: '2471:14923', comment: 'Story has no autodocs tag, so the Storybook link opens the Default story.' });
+add('filter-drawer', 'Filter Drawer', 'ds-filter-drawer', D + 'Layout/Filter Drawer', 'overlay', 'organism', null, 'A Drawer preset to build and save filters.', { lib: 'layout', node: '4015:1824', k: 'filter-drawer', comment: 'Figma component created 2026-11-06 in the Layout file.' });
 add('flyout', 'Flyout Menu', 'ds-flyout', D + 'Layout/Flyout', 'overlay', 'molecule', null, 'The base floating panel used by menus and dropdowns.', { noFigma: true, comment: 'Code-only base panel (no page uses it directly).' });
 add('flyout-item', 'Flyout Menu Item', 'ds-flyout-item', D + 'Internals/Flyout Item', 'overlay', 'atom', null, 'A row of the base Flyout panel.', { noFigma: true, comment: 'Code-only internal; Figma Flyout Item is covered by ds-flyout-menu-item.' });
 add('flyout-section', 'Flyout Menu Section', 'ds-flyout-section', D + 'Internals/Flyout Section', 'overlay', 'atom', null, 'A titled section of the base Flyout panel.', { noFigma: true });
-add('spotlight', 'Spotlight', 'ds-spotlight', 'UI/Spotlight', 'overlay', 'organism', null, 'A command-palette search overlay with recents and keyboard navigation.', { lib: 'layout', node: '4019:755', comment: 'Figma component created 2026-11-06 in the Layout file; story title sits outside the Design System/* taxonomy (UI/Spotlight).' });
-add('shortcuts-panel', 'Shortcuts Panel', 'ds-shortcuts-panel', null, 'overlay', 'organism', null, 'A panel listing keyboard shortcuts by group, with a keyboard map view.', { lib: 'layout', node: '4018:1029', comment: 'Figma component created 2026-11-06 in the Layout file; no story.' });
+add('spotlight', 'Spotlight', 'ds-spotlight', 'UI/Spotlight', 'overlay', 'organism', null, 'A command-palette search overlay with recents and keyboard navigation.', { lib: 'layout', node: '4019:755', k: 'spotlight', comment: 'Figma component created 2026-11-06 in the Layout file; story title sits outside the Design System/* taxonomy (UI/Spotlight).' });
+add('shortcuts-panel', 'Shortcuts Panel', 'ds-shortcuts-panel', null, 'overlay', 'organism', null, 'A panel listing keyboard shortcuts by group, with a keyboard map view.', { lib: 'layout', node: '4018:1029', k: 'shortcuts-panel', comment: 'Figma component created 2026-11-06 in the Layout file; no story.' });
 add('shortcut-row', 'Shortcut Row', 'ds-shortcut-row', null, 'other', 'molecule', null, 'One shortcut line: label, keys and context.', { lib: 'action', node: '951:110', comment: 'Internal of Shortcuts Panel; Figma component in the Action library (page Utility, 2026-11-06); no story.' });
 add('keyboard-map', 'Keyboard Map', 'ds-keyboard-map', null, 'other', 'molecule', null, 'A keyboard-shaped map showing which keys have shortcuts.', { lib: 'action', node: '951:150', comment: 'Internal of Shortcuts Panel; Figma component in the Action library (page Utility, 2026-11-06); no story.' });
 add('keycap', 'Keycap', 'ds-keycap', null, 'other', 'atom', null, 'A single keyboard key cap.', { lib: 'action', node: '950:24', comment: 'Figma component in the Action library (page Utility, 2026-11-06); no story.' });
@@ -310,6 +311,8 @@ add('breadcrumbs-topbox', 'Breadcrumbs - Topbox', null, null, 'data-display', 'm
   { lib: 'data-display', k: 'breadcrumbs-topbox', noCode: true, comment: 'Figma-only sub-element of Page Header; in code it is the breadcrumb input of ds-page-header.' });
 add('tabs-topbox', 'Tabs - Topbox', null, null, 'data-display', 'molecule', null, 'The tab row variant used inside the Page Header.',
   { lib: 'data-display', k: 'tabs-topbox', noCode: true, comment: 'Figma-only sub-element of Page Header; in code it is the tabs input of ds-page-header.' });
+add('scrollbar', 'Scrollbar', null, null, 'layout', 'atom', null, 'A thin vertical scroll indicator used inside Modal Content and Drawer.',
+  { lib: 'layout', k: 'scrollbar', node: '2076:9653', noCode: true, comment: 'Figma-only atom of the Layout library (published, nested in Modal Content and Drawer); no ds-scrollbar in code.' });
 
 // Local components (per Figma feature files)
 const LOCALS = [];

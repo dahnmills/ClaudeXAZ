@@ -33,12 +33,12 @@ les scripts `use_figma` (`importComponentSetByKeyAsync`, `importComponentByKeyAs
 |-----------|-----------|-----------|-------------------|
 | Button | Action | `ba6612f79423df12e7c8056091b4f2be0117a96d` | |
 | Button Icon | Action | `50cb3176e31c571421705604e00f707cd7365bfd` | State, Type (Primary/Secondary/Tertiary/Plain), Size (S/M), Reversed, Tone (Default/Accent/Positive/Negative), Focus |
-| Link | Action | `b9493d2f368c2be7b05432781ca275cc35a896f3` | |
+| Link | Action | `77367a8f128498576f030e35e042f9434514056a` (set 688:4202) | State, Tone, Icon (Left/Right/None), Size, Font Weight, Text Decoration. Ne plus utiliser `b9493d2f…` : set 171:3074 retiré du canevas (relevé 2026-11-17) |
 | Chip | Action | `1547bf755eadb695613b4348141045dc99dff38e` | |
 | Tab | Action | `a1d28507f69545610a9b26df6159ff1bd5d4710b` | |
 | Breadcrumb | Action | composant `955f4ed585e92b7a35ef2efe4ecd083514754dd8` | |
 | Crumb | Action | `fe536134ad6af724c0d84b27bfdbff5b035da785` | |
-| Flyout Menu | Action | `5d1147ac0e38f8f0c1dc9e3f24e12925e60d5631` | (le Flyout Menu vit dans Action, pas dans Data Entry) |
+| Flyout Menu | Action | composant `84a8ec3ed08331f3cf5d08222a02cad5dcb53d74` (507:833, v3 à slot) | (le Flyout Menu vit dans Action, pas dans Data Entry). Ne plus utiliser `5d1147ac…` : set Legacy 1:20 (`# Items`) |
 | Badge | Feedback | `990a9ef2dd348f99e5b84b6d0605673ec4be7d23` | |
 | Skeleton Item | Feedback | `ed7d5d07b928ee3c836b31189bdd366d3e75bb8b` | |
 | Card | Data Display | `1d68f1804fb8a066557949eb3a00d267ecbbff95` | |
@@ -129,6 +129,20 @@ Retirés : Result Card, Policy Result Card, Properties Panel, .Property Row, Sea
 | Dropdown (Data Entry) | `9274a067572ab011d011923afe655c8ede781f25` |
 | Drawer (Layout) | `413684a36328011d3e9d4a452107c914f8440d5b` |
 | Modal (Layout) | `c81f6a2d522228de5c1ba82eb0240bc02fa658c4` |
+
+## Layout : clés et nodeIds (lus dans Figma le 2026-11-17, fichier `bbgSPUChd18EVNGijjoZGn`)
+
+| Composant | nodeId | Clé |
+|-----------|--------|-----|
+| Header (set) | 2390:1583 | `39e53ceff3e27048d193a6a0e8d87a6337f410d5` |
+| Side Navigation (set) | 2083:6932 | `7472d0df1c69d84a49701b96603fe096a864c6a6` |
+| Modal (set) | 2256:1556 | `c81f6a2d522228de5c1ba82eb0240bc02fa658c4` |
+| Drawer (set) | 2471:14923 | `413684a36328011d3e9d4a452107c914f8440d5b` |
+| Scrollbar (composant) | 2076:9653 | `7ffc29a3dba4f4ecb2e048d1e1f0bb5b6e225dcd` |
+| Page Title (composant) | 4010:13 | `15b5e617d6d17a3ff976d22db838bc0f9984d4aa` |
+| Filter Drawer (set) | 4015:1824 | `64692d4700038c3fff885984f75dbe6cba21836b` |
+| Spotlight (set) | 4019:755 | `c6ac17c7e447eca149a7cc884d616abde5c1125b` |
+| Shortcuts Panel (composant) | 4018:1029 | `8594fa5129b5189d218c9e47e3642430702c53e4` |
 | Radio Card (Data Entry) | `50c847daec5c6553ab40d2d83a94aa7baea693b4` |
 | Logo Qirin | `d4206ee4062b4521ca7005e17b172f4c2d925029` |
 | Spinner | `d19dd496d14564251acf7492ec0b97fde810da81` |
