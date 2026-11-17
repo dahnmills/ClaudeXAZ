@@ -1,0 +1,352 @@
+{
+  "generated": "2026-11-17",
+  "scope": "Releve lecture seule avant publication des librairies Action (xCeEJPn6fliEshuE9fnrqs) et Feedback (fH3vmSNZR8r0sU3kN455CD) : instances de Snackbar, Breadcrumb, Pagination, .Options, .Options Select (Legacy), y compris imbriquees, et texte des Link qu'elles contiennent.",
+  "targetKeys": {
+    "Snackbar": {
+      "key": "c398cab3efd7eae1c3f1d2d7ae62d81b6ed65ac4",
+      "node": "fH3vmSNZR8r0sU3kN455CD 124:34846"
+    },
+    "Breadcrumb": {
+      "key": "955f4ed585e92b7a35ef2efe4ecd083514754dd8",
+      "node": "xCeEJPn6fliEshuE9fnrqs 298:5526"
+    },
+    "Pagination": {
+      "key": "99702f1c1c48a38ed526ccb14a712205b95f7ee4",
+      "node": "xCeEJPn6fliEshuE9fnrqs 53:2994 (set)"
+    },
+    ".Options": {
+      "key": "9310e8a078ca348cc5547c7e3554394d0ddb994f",
+      "node": "xCeEJPn6fliEshuE9fnrqs 53:2954 (set)"
+    },
+    ".Options Select (Legacy)": {
+      "key": "7cdcd73ef5d7c505aa5b42498f95ca3c846b14ee",
+      "node": "xCeEJPn6fliEshuE9fnrqs 53:2983"
+    }
+  },
+  "linkKeys": {
+    "old": "b9493d2f368c2be7b05432781ca275cc35a896f3 (set 171:3074, texte dans .Specs > Label)",
+    "new": "77367a8f128498576f030e35e042f9434514056a (set 688:4202, texte dans Label)"
+  },
+  "method": "use_figma page par page, skipInvisibleInstanceChildren = false (calques masques inclus), cle du set ou du composant principal comparee aux cles ci-dessus, plus filet par nom (Snackbar, Breadcrumb, Pagination, .Options) retenu seulement s'il contient un Link. Surcharges lues sur InstanceNode.overrides de l'instance et de toutes ses instances parentes.",
+  "files": [
+    {
+      "fileKey": "NflKzgx17mOn2JPoFaqnjW",
+      "name": "Coverbook",
+      "pagesScanned": 7,
+      "instances": 0,
+      "labels": 0
+    },
+    {
+      "fileKey": "zUzOSE77EjbShM9u7yLthB",
+      "name": "Reject Management",
+      "pagesScanned": 7,
+      "instances": 0,
+      "labels": 0
+    },
+    {
+      "fileKey": "9EXkGvyk2yGF9qFpRpV0Ey",
+      "name": "Manual Underwriting",
+      "pagesScanned": 7,
+      "instances": 0,
+      "labels": 0
+    },
+    {
+      "fileKey": "LBLqJmlPqXmx9qksCyYGPb",
+      "name": "Search",
+      "pagesScanned": 7,
+      "instances": 0,
+      "labels": 0
+    },
+    {
+      "fileKey": "0ZjZu0OjHdzGowm3hliM2M",
+      "name": "Buyer Summary",
+      "pagesScanned": 8,
+      "instances": 0,
+      "labels": 0
+    },
+    {
+      "fileKey": "5OVzA6FZD7o8aGtfK5qo7g",
+      "name": "Exposure Card",
+      "pagesScanned": 1,
+      "instances": 0,
+      "labels": 0
+    },
+    {
+      "fileKey": "wqlQIlGhJmMCfgc2XD1Umm",
+      "name": "Component Status",
+      "pagesScanned": 9,
+      "instances": 1,
+      "labels": 7
+    },
+    {
+      "fileKey": "FS7qNdQx4Qyo9CkBgIWRMi",
+      "name": "showcase (Why Qirin)",
+      "pagesScanned": 1,
+      "instances": 0,
+      "labels": 0
+    },
+    {
+      "fileKey": "bbgSPUChd18EVNGijjoZGn",
+      "name": "Layout (librairie)",
+      "pagesScanned": 17,
+      "instances": 0,
+      "labels": 0
+    },
+    {
+      "fileKey": "VpConH5AUGyCqtp8PMqj1i",
+      "name": "Data Display (librairie)",
+      "pagesScanned": 25,
+      "instances": 1,
+      "labels": 7
+    },
+    {
+      "fileKey": "1wVY9FfjONIX6us9JmIm7U",
+      "name": "Data Entry (librairie)",
+      "pagesScanned": 36,
+      "instances": 0,
+      "labels": 0
+    }
+  ],
+  "instances": [
+    {
+      "fileKey": "wqlQIlGhJmMCfgc2XD1Umm",
+      "file": "Component Status",
+      "pageId": "6:3",
+      "page": "Action",
+      "instanceId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224",
+      "component": "Breadcrumb",
+      "componentKey": "955f4ed585e92b7a35ef2efe4ecd083514754dd8",
+      "instanceName": "Preview / Breadcrumb",
+      "path": "Component Status / Action / Table outline / Table / Row / Breadcrumb / Slot / Cell / Preview / .Cell Type / .Cell Properties / Content / .Content Type / Slot / Preview / Preview slot",
+      "insideInstances": "Row / Breadcrumb / Cell / Preview / .Cell Type / .Cell Properties / .Content Type",
+      "visible": true,
+      "componentProperties": {},
+      "instanceOverriddenFields": [
+        "height",
+        "name",
+        "width"
+      ],
+      "skipByDefault": false,
+      "links": [
+        {
+          "linkId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5479",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5479;179:4589;179:2988",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Home",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5480",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5480;179:4589;179:2988",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Crumb",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5481",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5481;179:4589;179:2988",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Crumb",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5482",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5482;179:4589;179:2988",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Crumb",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5483",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5483;179:4589;179:2988",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Crumb",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5484",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5484;179:4589;179:2988",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Crumb",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5485",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Default",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "I13:7094;1514:4333;13:7167;38:13892;28:21770;38:11041;1498:3458;13:7224;298:5485;171:3066;179:2298",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Current page",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        }
+      ]
+    },
+    {
+      "fileKey": "VpConH5AUGyCqtp8PMqj1i",
+      "file": "Data Display (librairie)",
+      "pageId": "1452:1720",
+      "page": "Archives",
+      "instanceId": "1704:17329",
+      "component": "Breadcrumb",
+      "componentKey": "955f4ed585e92b7a35ef2efe4ecd083514754dd8",
+      "instanceName": "Breadcrumb",
+      "path": "Frame 210",
+      "insideInstances": null,
+      "visible": true,
+      "componentProperties": {},
+      "instanceOverriddenFields": [
+        "height",
+        "width"
+      ],
+      "skipByDefault": true,
+      "skipReason": "Page Archives. Les 7 libelles valent 'Label' sans surcharge : instance restee sur une ancienne version publiee de Breadcrumb. Apres mise a jour, les valeurs du maitre (Home, Crumb, Current page) sont attendues ; ne reposer 'Label' que sur demande (INCLUDE_SKIPPED = true).",
+      "links": [
+        {
+          "linkId": "1704:17329;298:5479",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "1704:17329;298:5479;1704:17142",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Label",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "1704:17329;298:5480",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "1704:17329;298:5480;1704:17142",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Label",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "1704:17329;298:5481",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "1704:17329;298:5481;1704:17142",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Label",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "1704:17329;298:5482",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "1704:17329;298:5482;1704:17142",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Label",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "1704:17329;298:5483",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "1704:17329;298:5483;1704:17142",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Label",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "1704:17329;298:5484",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Neutral",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "1704:17329;298:5484;1704:17142",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Label",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        },
+        {
+          "linkId": "1704:17329;298:5485",
+          "linkRelPath": "Link",
+          "linkVariant": "State=Default, Tone=Default",
+          "linkVisible": true,
+          "linkOverriddenFields": [],
+          "oldTextId": "1704:17329;298:5485;1704:17095",
+          "oldTextRelPath": ".Specs/Label",
+          "newTextRelPath": "Label",
+          "text": "Label",
+          "textVisible": true,
+          "textOverriddenFields": [],
+          "textOverridden": false
+        }
+      ]
+    }
+  ]
+}
