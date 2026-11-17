@@ -95,6 +95,19 @@ Description mise à jour.
   `Body/L/Regular | Semi Bold | Bold` sur `.Title` + `.Missing Data` (3), Grade (20), Policy color (4), `.Topbox Content` (2),
   `.Data` (6). 0 écart.
 
+## Gris #5B5B5B -> #414141 (décision utilisateur 2026-11-17 15:15)
+- `qrn` `foundation/color/grey/450` (#5B5B5B) relié à `Color/Static/Text/Main/Secondary` (#414141) dans `.Columns` 415:2129,
+  `.Layout` 354:4468 et `.Label` 354:4711 : 222 nœuds, tous des remplissages de texte (aucun fond ni trait concerné, rien laissé).
+  Le chiffre de 444 de l'audit comptait chaque liaison deux fois. Changement visible voulu : texte un peu plus foncé.
+- Contrôle : boîtes absolues identiques sur les 3 maîtres et leurs 36 instances du fichier, 0 instance cassée.
+- Il reste des liaisons vers `qirin--variables` dans le fichier, le désabonnement n'est donc pas encore possible :
+  - Timeline Line 381:236 : #DC3149 (44), aucun Semantic de cette valeur ;
+  - ancienne table `.Content Type` 74:4618 (4, migration), `.☠️ Collapsible Table Row` (4), `.☠️ Row` (2) ;
+  - page Archives (explorations Topbox, environ 300) ;
+  - dans les maîtres de Card (Card, `.Action`, `.Key Info`, `.Columns`, `.Settings`…) : environ 500 liaisons portées par des
+    instances imbriquées d'autres librairies (Button, Skeleton, Tag, Grade publié : grey/050, grey/025, blue/600, grey/500,
+    light/tag/…). Elles appartiennent à ces atomes et ne se corrigent pas ici.
+
 ## Non fait / laissé (raison)
 - **Swap de l'ancien Link dans List Item 2059:394 : fait puis défait** (avant le STOP du coordinateur). Le libellé de l'ancien Link
   est sous `.Specs` (Link > .Specs > Label), celui du nouveau directement sous le Link : les 17 libellés surchargés des
@@ -103,9 +116,6 @@ Description mise à jour.
   consommateurs (pas de publication). Le swap demande une migration (Buyer Summary 42 libellés).
 - **Grade `5ac10c1b` de `.Company Profile` 565:23887 : non remplacé.** Le Grade étranger ne rend pas comme le Grade local
   (pastille 29,128,103 contre 26,117,33 ; score #414141 contre #121212) : le swap change le visuel. Décision utilisateur.
-- **`qrn` grey/450 (#5B5B5B) sur `.Columns` (432), `.Layout` (10), `.Label` (2)** : le seul Semantic de cette valeur est
-  `Interactive/*/Medium/Alt/Hover` (rôle d'état survolé, pas de texte statique) ; `Static/Text/Main/Secondary` vaut #414141. Non
-  lié, à trancher (accepter le rôle Hover, ou passer à #414141 avec changement visible).
 - **Timeline Line 381:236 `light/tag/label/error-reverse` #DC3149 (44)** : aucun Semantic de cette valeur.
 - `qrn` restant aussi sur l'ancienne table (`.Content Type` 74:4618, grey/500 et grey/300, migration), `.☠️ Collapsible Table
   Row` (blanc x4), `.☠️ Row` (blue/600 x2) et les explorations archivées. **Désabonnement de `qirin--variables` impossible** tant

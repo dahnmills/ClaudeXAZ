@@ -52,7 +52,7 @@ Aucun COMPONENT dans ces nœuds (vérifié avant chaque suppression). Les 26 ins
 - Toaster : 4 titres `foundation-h4` vers `Body/L/Semi Bold` (131:1878, 330:1035, 131:1896, 131:1914).
 - Functional Notice : 15 titres `foundation-h4` vers `Body/L/Semi Bold` (dont les 3 nouvelles variantes).
 - Popin : 2 textes `foundation-text-paragraph` du `.Content` vers `Body/L/Regular` (328:4209, 328:4219).
-- Badge : non touché (décision en attente).
+- Badge : traité ensuite, voir « Badge aligné sur le code ».
 
 ### Swap de l'ancien Link dans Snackbar
 124:34810 : `b9493d2f` vers Link `77367a8f`, variante `State=Default, Tone=Reversed, Icon=None, Size=M, Font Weight=Regular, Text Decoration=Underline` (même police 16/24 Regular, soulignement de l'ancien, 44 x 24 identique, libellé « Action »).
@@ -75,13 +75,23 @@ Descriptions ajoutées : `.Badge` 141:139, `.Content Properties S` 141:162, `.Co
 ## Non fait / laissé (raison)
 - Popin titre `Headline/Medium (🖥26 📱24)/Bold Mobile` (24/32 Bold, interlettrage 0,2, police non résolue) : aucun style Tokens de même valeur (`Title/H1` = 24/32 Regular, interlettrage 0). Non lié.
 - Functional Notice messages `Copy/Small (14)/Regular` (14/20, interlettrage 0,2, police non résolue) : `Body/M/Regular` a un interlettrage 0. Non lié (15 nœuds).
-- Badge : styles de texte (décision en attente) ; icône Neutral Light M en `qrn foundation/color/grey/500` (#414141) : le Semantic voisin `Icon/Main/Primary` vaut #121212, pas de même valeur, non touché ; interligne 12 du compteur (aucun Semantic à 12).
+- Badge : icône Neutral Light M en `qrn foundation/color/grey/500` (#414141) : le Semantic voisin `Icon/Main/Primary` vaut #121212, pas de même valeur, non touché ; interligne 12 du compteur (aucun Semantic à 12).
 - Spinner : `Property 1` non renommé (Button Loading en dépend), `Size` / `Tone` non ajoutés.
 - Ombres (Popin, Snackbar, Toaster, Tooltip) : décision en attente, non touchées.
 - Valeurs sans token exact, non liées : Snackbar gap 80, Tooltip gap 10, Toaster gap 10 du cadre Action, Popover gap -1 / 10 et rayon de flèche 2/0/0/0, Popin fond #000 35 %, paddings 179 / 78 et gaps 10.
 - Popin : le set `.Content` (1616 px) dépasse de 40 px le cadre Atoms (1576 utiles) et est rogné ; préexistant, non corrigé.
 - Functional Notice F3 / F5 (Title sans lien en Low, textes en largeur fixe) et Low/Default vert : hors liste du lot 2.
 - Calques génériques restants : illustration undraw du Popover (`Group`, `Vector`), cadres `Text` des légendes des Documentation (créés par le kit).
+
+## Badge aligné sur le code
+Décision utilisateur du 2026-11-17 (15 h 15) : le libellé de Badge suit le code (`badge.component.scss` : size-m, line-height-m, font-weight-regular, letter-spacing-s, pour S et M). Changement visible voulu.
+- `Body/M/Regular` vaut 14/20 Regular mais avec un interlettrage 0, alors que le code a `letter-spacing-s` (0,2). Le style ne correspond donc pas exactement : j'ai retiré les styles hérités et lié les variables directement, `Font/Family`, `Font/Text Style/Size/M`, `Line Height/M`, `Font Weight/Regular`, `Letter Spacing/S`.
+- Nœuds : 141:166 et 141:172 (`.Content Properties S`, ex `Copy/Small (14)/Semibold`), 141:154 et 141:159 (`.Content Properties M`, ex `Copy/Medium (16)/Semibold`). Les 20 variantes de Badge en héritent.
+- Valeurs : S 14/20 SemiBold 0,2 devient 14/20 Regular 0,2 ; M 16/24 SemiBold 0 devient 14/20 Regular 0,2.
+- Les variantes restent en Hug sur les deux axes. Dimensions avec le libellé « Draft » et l'icône : S 65 x 20 avant, 64 x 20 après ; M 71 x 24 avant, 66 x 24 après. Les mêmes sur les 5 statuts et les 2 styles. Les valeurs « avant » sont calculées à partir de la largeur mesurée du texte dans l'ancienne et la nouvelle typo ; l'étiquette du Versionning confirme l'écart de 5 px en M (61 puis 56 px).
+- Hauteur M restée à 24 : l'axe vertical de `.Content Properties M` est en taille fixe à 24, le texte de 20 px y est centré. Je ne l'ai pas modifié.
+- 0 instance cassée sur la page. Les badges des pages de doc et les instances consommatrices vont rétrécir à la publication.
+- Non touchés, comme demandé : icône Neutral Light M (`grey/500`), interligne du compteur.
 
 ## À publier (par l'utilisateur)
 Librairie Feedback. Points à relire juste après : libellés de lien des Snackbar chez les consommateurs ; largeur des instances High/Info de Functional Notice (Search, Reject Management, Coverbook) ; instance `Notice` 31:4053 de Reject Management (déjà connue) ; validation des rendus High/Default et Medium/Default.

@@ -65,7 +65,7 @@ Deux colonnes :
 
 Phrase : **Missing something? Ask before you build it.**
 Sous-texte : New needs feed the system: tell us and we will add or extend a component, so the next team gets it for free.
-Lien : Contact the design system team (lien à fournir par l'utilisateur).
+Contact : mail qirin_design@allianz-trade.com (décision utilisateur 2026-11-17 : un mail, pas de lien de page).
 
 ---
 
@@ -74,4 +74,4 @@ Lien : Contact the design system team (lien à fournir par l'utilisateur).
 - Storybook : https://dahnmills.github.io/ClaudeXAZ/storybook/
 - Figma : librairies Action `xCeEJPn6fliEshuE9fnrqs`, Data Entry `1wVY9FfjONIX6us9JmIm7U`, Data Display
   `VpConH5AUGyCqtp8PMqj1i`, Feedback `fH3vmSNZR8r0sU3kN455CD`, Layout `bbgSPUChd18EVNGijjoZGn`
-- Contact de l'équipe design system : à fournir
+- Contact de l'équipe design system : qirin_design@allianz-trade.com

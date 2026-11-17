@@ -11,7 +11,8 @@ async (page) => {
     const a = (text, href) => t(text, [{ type: 'link', attrs: { blockId: '', href, target: '_blank', rel: 'noopener noreferrer nofollow', class: 'zheditor-a' } }]);
     const p = (...c) => ({ type: 'paragraph', attrs: { blockId: id() }, content: c });
     const h = (level, text) => ({ type: 'heading', attrs: { blockId: id(), level }, content: [t(text)] });
-    const img = (src, alt) => ({ type: 'image', attrs: { blockId: id(), image: src, caption: '', altText: alt, alignment: 'center', lightboxEnabled: true, previewPercent: 100, link: '', openInNewTab: false } });
+    const img = (src, alt, link) => ({ type: 'image', attrs: { blockId: id(), image: src, caption: '', altText: alt, alignment: 'center', lightboxEnabled: !link, previewPercent: 100, link: link || '', openInNewTab: false } });
+    const MAIL = 'mailto:qirin_design@allianz-trade.com';
     const cols = (...cs) => ({ type: 'columns', attrs: { blockId: id() }, content: cs.map((c) => ({ type: 'column', attrs: { blockId: '', width: Math.round(100 / cs.length) }, content: c })) });
     const ol = (...items) => ({ type: 'orderedList', attrs: { blockId: id(), start: 1 }, content: items.map((i) => ({ type: 'listItem', attrs: { blockId: '' }, content: [p(...i)] })) });
     const ZH = 'https://qirin-design-system.zeroheight.com/styleguide/s/138794/p/';
@@ -64,7 +65,8 @@ async (page) => {
         )],
       ),
 
-      img(IMG.v4, 'Missing something? Ask before you build it.'),
+      img(IMG.v4, 'Missing something? Ask before you build it. Contact the design system team.', MAIL),
+      p(t('Write to the design system team: '), a('qirin_design@allianz-trade.com', MAIL), t('.')),
     ];
 
     const eds = document.querySelectorAll('.ProseMirror');
