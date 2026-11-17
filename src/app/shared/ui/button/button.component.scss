@@ -9,7 +9,7 @@
 //   • height 32px (Plain : 24px), padding 0 16px (Plain : 0)
 //   • border-radius 4px (Radius/S)
 //   • gap 8px entre icon et label
-//   • font 16px / 400 / lh 24px / ls 0
+//   • font 16px / 600 (SemiBold, décision Figma) / lh 24px / ls 0
 //   • disabled : opacity 0.40 sur le composant entier
 //   • focus-visible : outline 3px BlueA/400, offset 2px
 // =============================================================
@@ -31,7 +31,7 @@
   user-select:     none;
 
   font-size:      var(--semantic-font-text-style-size-l);              // 16px
-  font-weight:    var(--semantic-font-text-style-font-weight-regular);  // 400
+  font-weight:    var(--semantic-font-text-style-font-weight-semi-bold); // 600 (Figma SemiBold)
   line-height:    var(--semantic-font-text-style-line-height-l);        // 24px
   letter-spacing: 0;
 

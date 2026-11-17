@@ -66,6 +66,7 @@
         type="button"
         [class.ds-pagination__link--current]="p === page()"
         [attr.aria-current]="p === page() ? 'page' : null"
+        [attr.aria-label]="'Page ' + p"
         (click)="goTo(p)"
       >{{ p }}</button>
     }

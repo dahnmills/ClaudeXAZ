@@ -1,4 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
+import { IconComponent } from '../icon/icon.component';
 
 export type ChipType = 'static' | 'filter' | 'select';
 export type ChipSize = 's' | 'm';
@@ -6,6 +7,7 @@ export type ChipSize = 's' | 'm';
 @Component({
   selector: 'ds-chip',
   standalone: true,
+  imports: [IconComponent],
   templateUrl: './chip.component.html',
   styleUrl: './chip.component.scss',
   host: {
@@ -13,7 +15,7 @@ export type ChipSize = 's' | 'm';
     '[attr.aria-pressed]': 'type() === "select" ? selected() : null',
     '[attr.aria-disabled]': 'disabled() || null',
     '[attr.tabindex]':    'isInteractive() && !disabled() ? 0 : null',
-    'role':               'button',
+    '[attr.role]':        'isInteractive() ? "button" : null',
     '(click)':            'onActivate()',
     '(keydown.enter)':    'onActivate()',
     '(keydown.space)':    '$event.preventDefault(); onActivate()',

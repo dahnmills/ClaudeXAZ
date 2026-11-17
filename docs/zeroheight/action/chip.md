@@ -19,13 +19,13 @@ Chip is a pill-shaped control with a single label. In Figma it models a selectab
 ## Anatomy
 1. `Chip` (container): pill with a 1px border and round radius. 32px high in size M, 24px in size S.
 2. `Value` (text): the label, semi-bold, 14px in M and 12px in S.
-3. Close mark (code only, filter type): a "×" after the label, the click target to remove the chip.
+3. Close mark (code only, filter type): a `close` icon after the label, the click target to remove the chip.
 4. Icon slots (code only): `[slot=icon-left]` and `[slot=icon-right]` for an optional `ds-icon`.
 
 ## Variants and properties
 | Figma property | Type | Values (default in bold) | Code input | Notes |
 |---|---|---|---|---|
-| Selected | Variant | **False**, True | `selected: boolean` (default `false`) | Used by `type="select"`; written to `aria-pressed`. |
+| Selected | Variant | **False**, True | `selected: boolean` (default `false`) | The blue selected style applies whatever the `type`; `aria-pressed` is written for `type="select"` only. |
 | Size | Variant | **M**, S | `size: 's' \| 'm'` (default `'m'`) | |
 | State | Variant | **Default**, Hover, Active, Disabled | Hover, Active: CSS. Disabled: `disabled: boolean` | |
 | (none) | | | `type: 'static' \| 'filter' \| 'select'` (default `'static'`) | Code only. Figma models only the selectable chip. Static has no hover and no tab stop. |
@@ -68,13 +68,13 @@ Exposed nested instances: none.
 | Focus ring | outline color | `--semantic-color-interactive-border-focus` | `--foundation-color-blue-a-400` |
 | Disabled | opacity | `--semantic-measurement-opacity-disabled` | `--foundation-opacity-40` |
 
-Values written outside tokens in the SCSS: border 1px, focus outline 2px and offset 2px, close mark font-size 16px. The hover and active label colors are swapped on purpose to match Figma (alt active on hover, alt hover on press).
+Values written outside tokens in the SCSS: border 1px, focus outline 2px and offset 2px. The hover and active label colors are swapped on purpose to match Figma (alt active on hover, alt hover on press).
 
 ## Accessibility
-- Role: `role="button"` on the host. Select chips expose `aria-pressed` (true or false).
+- Role: `role="button"` on filter and select chips only; static chips have no role. Select chips expose `aria-pressed` (true or false).
 - Keyboard: select and filter chips are in the tab order (`tabindex="0"`); Enter and Space activate. Static chips are not focusable.
 - Disabled: `aria-disabled="true"` and removed from the tab order.
-- Filter chips: the "×" is `aria-hidden`; the whole chip is the remove control. Add the action to the label context (for example "Country: France, remove") when the screen does not make it clear.
+- Filter chips: the close mark is a `ds-icon` (`close`, 16px) with `aria-hidden`; the whole chip is the remove control. Add the action to the label context (for example "Country: France, remove") when the screen does not make it clear.
 - Focus: 2px ring on `:focus-visible`.
 
 ## Content guidelines

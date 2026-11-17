@@ -27,8 +27,8 @@ Pagination sits under a table or a result list. Figma offers two styles: Classic
 ## Variants and properties
 | Figma property | Type | Values (default in bold) | Code input | Notes |
 |---|---|---|---|---|
-| Style | Variant | Infinite Scroll, **Classic** | `style: 'classic' \| 'infinite'` (default `'classic'`) | Names do not match: Figma Infinite Scroll is a Load more button; code `infinite` is Back, "N of M", Next (Figma Classic with `.Options` Minimal). Load more is built in code with `ds-button` `fullWidth` (see Button Load More). |
-| `.Options` › Type | Variant (exposed) | Full, Select, **Minimal** | `classic` = Full, `infinite` = Minimal | Select (page dropdown) has no code equivalent. |
+| Style | Variant | Infinite Scroll, **Classic** | `style: 'classic' \| 'infinite'` (default `'classic'`) | The code is the reference (decision of 16 Nov 2026): `classic` = First, Back, pages, Next, Last; `infinite` = Back, "N of M", Next. Figma will be renamed to match. Load more stays a separate component (`ds-button` `fullWidth`, see Button Load More). |
+| `.Options` › Type | Variant (exposed) | Full, Select, **Minimal** | `classic` = Full, `infinite` = Minimal | Select (page dropdown) has no code equivalent; Figma follows the code. |
 | (none) | | | `page: number` (default `1`), `total: number` (required) | 1-based current page and page count. |
 | (none) | | | `siblings: number` (default `1`) | Pages shown on each side of the current page in `classic`. |
 | (none) | | | `showFirstLast: boolean` (default `true`) | First and Last links in `classic`. |
@@ -42,10 +42,10 @@ Exposed nested instances: `.Options` (property `Type`) and the `.Specs` of the B
 | State | How it is triggered in code (pseudo-class or input) | Figma |
 |---|---|---|
 | Default | Rest state | default |
-| Hover, Active | `:hover`, `:active` on each link | on the Link set |
-| Current page | `page` input: `aria-current="page"`, Grey/900 semi-bold | page link styled as current |
-| Disabled | First and Back on page 1, Next and Last on the last page: `disabled`, opacity 0.40 | Link `State=Disabled` |
-| Focus | no `:focus-visible` style in the SCSS (browser default) | no variant |
+| Hover, Active | `:hover` (darker blue plus underline), `:active` on each link | on the Link set |
+| Current page | `page` input: `aria-current="page"`, Grey/900 semi-bold, not clickable (`pointer-events: none`) | page link styled as current |
+| Disabled | First and Back on page 1, Next and Last on the last page: `disabled`, `aria-disabled`, opacity 0.40 | Link `State=Disabled` |
+| Focus | `:focus-visible` on each link: 2px outline, 2px offset | no variant |
 
 ## Tokens
 | Element | Property | Semantic token (CSS var) | Foundation alias |
@@ -63,9 +63,9 @@ Exposed nested instances: `.Options` (property `Type`) and the `.Specs` of the B
 - The host has `role="navigation"` and `aria-label="Pagination"`.
 - The current page has `aria-current="page"`.
 - Unavailable links are `disabled` with `aria-disabled` and out of the tab order.
+- Page buttons carry `aria-label="Page N"`.
 - The ellipsis is `aria-hidden`.
-- Page buttons are labeled by their number only; add context in the surrounding text (for example "Page 3 of 21").
-- No visible focus style is defined; the browser default ring applies.
+- Focus: 2px ring on `:focus-visible` (`--semantic-color-interactive-border-focus`).
 
 ## Content guidelines
 - Labels are fixed in code: "First", "Back", "Next", "Last", "N of M".
@@ -75,6 +75,9 @@ Exposed nested instances: `.Options` (property `Type`) and the `.Specs` of the B
 ## Do / Don't
 - Do keep the page size stable while the user pages; don't change the number of items per page between pages.
 - Do keep pagination under the list it controls; don't place it far from the content.
+
+## Design decisions
+- 16 Nov 2026: Figma follows the code. The two code styles (`classic`, `infinite`), the distinct current page (Grey/900 semi-bold, `aria-current`) and the absence of a page dropdown are the reference. Load more leaves the Pagination set and lives in Button Load More. No code change.
 
 ## Related components
 Composes: Icon (`ds-icon` chevrons) in code; Link, Dropdown (Select layout) and Button Load More in Figma · Used by: no other DS component.

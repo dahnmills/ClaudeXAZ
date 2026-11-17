@@ -15,7 +15,7 @@ const LIB = {
   'data-display': 'VpConH5AUGyCqtp8PMqj1i',
   'data-entry': '1wVY9FfjONIX6us9JmIm7U',
   feedback: 'fH3vmSNZR8r0sU3kN455CD',
-  layout: null, // Layout library file key not available (docs: "file not accessible")
+  layout: 'bbgSPUChd18EVNGijjoZGn', // Layout file (also the target mockup file)
 };
 const LOCAL_FILES = {
   search: 'LBLqJmlPqXmx9qksCyYGPb',
@@ -104,6 +104,47 @@ function storyUrl(title) {
 // extra: {lib, figma:{node,key,name}, noFigma, comment, codeOnlyVia, vibecoded, noCode, variants}
 const D = 'Design System/';
 const R = [];
+// ZeroHeight pages: id -> [pageId, uid, status]. See docs/components-status/README.md (ZH_PAGES).
+// uid null = unknown (url stays null). pageId null = page created but id not recorded yet.
+// The 18 Action pages and the 16 new-component pages are all created hidden.
+const ZH_PAGES = {
+  button: [9166118, '20fe33', 'hidden'],
+  link: [9166113, null, 'hidden'],
+  'button-icon': [9166114, null, 'hidden'],
+  'button-split': [9166115, null, 'hidden'],
+  'segmented-control': [9166116, null, 'hidden'],
+  tag: [9166117, null, 'hidden'],
+  'flyout-menu': [9185766, null, 'hidden'],
+  'flyout-menu-item': [9185767, null, 'hidden'],
+  crumb: [9185878, null, 'hidden'],
+  'button-load-more': [9185879, null, 'hidden'],
+  breadcrumbs: [9185880, null, 'hidden'],
+  'button-range': [9185881, null, 'hidden'],
+  chip: [9185882, null, 'hidden'],
+  pagination: [9185883, null, 'hidden'],
+  tab: [9185884, null, 'hidden'],
+  tile: [9185885, null, 'hidden'],
+  stepper: [9185886, null, 'hidden'],
+  'visual-button': [9185887, null, 'hidden'],
+  // new components (Figma components created 2026-11-06, pages hidden)
+  'search-bar': [9186071, null, 'hidden'],
+  'search-bar-multi': [9186072, null, 'hidden'],
+  'tag-filter-chip': [9186073, null, 'hidden'],
+  'grid-selection': [9186074, null, 'hidden'],
+  'file-upload': [9186075, null, 'hidden'],
+  'pie-chart': [9186062, null, 'hidden'],
+  'action-card': [9186061, null, 'hidden'],
+  'page-title': [9186063, null, 'hidden'],
+  'filter-drawer': [9186064, null, 'hidden'],
+  spotlight: [9186066, null, 'hidden'],
+  'shortcuts-panel': [9186069, null, 'hidden'],
+  'shortcut-row': [9186067, null, 'hidden'],
+  'keyboard-map': [9186068, null, 'hidden'],
+  keycap: [9186058, null, 'hidden'],
+  'shortcut-keys': [9186065, null, 'hidden'],
+  flag: [9186070, null, 'hidden'],
+};
+
 const add = (id, name, selector, story, category, level, zh, description, extra = {}) =>
   R.push({ id, name, selector, story, category, level, zh, description, extra });
 
@@ -141,7 +182,7 @@ add('tile', 'Tile', 'ds-tile', D + 'Action/Tile', 'action', 'atom', 'action/tile
 add('flyout-menu', 'Flyout Menu', 'ds-flyout-menu', D + 'Action/Flyout Menu', 'action', 'molecule', 'action/flyout-menu', null,
   { lib: 'action', k: 'flyout-menu' });
 add('flyout-menu-item', 'Flyout Menu Item', 'ds-flyout-menu-item', D + 'Internals/Flyout Menu Item', 'action', 'atom', 'action/flyout-menu-item', null,
-  { lib: 'action', comment: 'Figma component is called Flyout Item; selectable/selected check sits in a fixed 20px slot.' });
+  { lib: 'action', comment: 'Figma name follows the code: Flyout Item becomes Flyout Menu Item (decision 2026-11-16, code not renamed); selectable/selected check sits in a fixed 20px slot.' });
 add('flyout-menu-title', 'Flyout Menu Title', 'ds-flyout-menu-title', null, 'action', 'atom', 'action/flyout-menu', 'A non-interactive group title row inside a Flyout Menu.',
   { lib: 'action', shareFigma: true, comment: 'No story of its own; covered by the Flyout Menu stories.' });
 add('pagination', 'Pagination', 'ds-pagination', D + 'Action/Pagination', 'action', 'molecule', 'action/pagination', null,
@@ -177,15 +218,15 @@ add('search-bar-scoped', 'Search Bar', 'ds-search-bar-scoped', D + 'Data Entry/S
   { lib: 'data-entry', k: 'search-bar', comment: 'Figma master "Search Bar" (slots Filters/Options) maps to code ds-search-bar-scoped; Figma retired the Search Bar Scoped set.' });
 add('more-criteria', 'More Criteria', 'ds-more-criteria', D + 'Data Entry/More Criteria', 'data-entry', 'organism', 'data-entry/more-criteria', null, { lib: 'data-entry' });
 add('search-bar', 'Search Bar (home)', 'ds-search-bar', D + 'Data Entry/Search Bar', 'data-entry', 'organism', null, 'The single free-text search bar of the home page, with recent searches and an advanced-search link.',
-  { noFigma: true, comment: 'Code-only; distinct from ds-search-bar-multi and ds-search-bar-scoped (checked in the audit).' });
+  { lib: 'data-entry', node: '3098:3', figmaName: 'Search Bar Home', comment: 'Figma component Search Bar Home (2026-11-06); distinct from ds-search-bar-multi and ds-search-bar-scoped.' });
 add('search-bar-multi', 'Search Bar Multi', 'ds-search-bar-multi', D + 'Data Entry/Search Bar Multi', 'data-entry', 'organism', null, 'The earlier multi-type search bar (buyer ID type, country, query) used by Search v1.',
-  { noFigma: true, comment: 'Code-only, superseded in Figma by the Search Bar master (slots).' });
+  { lib: 'data-entry', node: '3102:849', comment: 'Figma component created 2026-11-06; the Search Bar master (slots) remains the reference for new screens.' });
 add('tag-filter-chip', 'Tag Filter Chip', 'ds-tag-filter-chip', D + 'Data Entry/Tag Filter Chip', 'data-entry', 'molecule', null, 'A filter chip that opens an option list and shows the picked values as tags.',
-  { noFigma: true, comment: 'Code-only; composes ds-chip internally.' });
+  { lib: 'data-entry', node: '3104:1454', comment: 'Figma component created 2026-11-06; composes ds-chip internally.' });
 add('grid-selection', 'Grid Selection', 'ds-grid-selection', D + 'Data Entry/Grid Selection', 'data-entry', 'molecule', null, 'A picker of board grid layouts (Buyer Summary card builder).',
-  { noFigma: true, comment: 'Code-only; the Figma equivalent is the local Radio Card + Layout preview in the Buyer Summary file.' });
+  { lib: 'data-entry', node: '3105:59', comment: 'Figma component created 2026-11-06 in the Data Entry library.' });
 add('file-upload', 'File Upload', 'ds-file-upload', null, 'data-entry', 'molecule', null, 'A drop zone and file list to attach files with type and size limits.',
-  { noFigma: true, comment: 'No story and no Figma component yet.' });
+  { lib: 'data-entry', node: '3107:851', comment: 'Figma component created 2026-11-06; no story yet.' });
 
 // Data Display
 add('card', 'Card', 'ds-card', D + 'Data Display/Card', 'data-display', 'organism', 'data-display/card', null, { lib: 'data-display', k: 'card', comment: 'Figma has six Card types; code exposes tone/loading/elevated/noPadding (no subtle tone).' });
@@ -214,11 +255,11 @@ add('progress-bar', 'Progress Bar', 'ds-progress-bar', D + 'Feedback/Progress Ba
 add('list-widget', 'List Widget', 'ds-list-widget', D + 'Data Display/List Widget', 'data-display', 'organism', 'data-display/list-item', null, { lib: 'data-display', comment: 'Figma List Item covers the entries of both ds-list-widget and ds-newsfeed.' });
 add('newsfeed', 'Newsfeed', 'ds-newsfeed', D + 'Data Display/Newsfeed', 'data-display', 'organism', 'data-display/list-item', null, { lib: 'data-display', comment: 'Maps to the Figma List Item (news variant).' });
 add('chart', 'Chart', 'ds-chart', D + 'Data Display/Chart', 'data-display', 'organism', 'data-display/chart', null, { lib: 'data-display', comment: 'No accessible name; hard-coded values flagged by the audit.' });
-add('pie-chart', 'Pie Chart', 'ds-pie-chart', D + 'Data Display/Pie Chart', 'data-display', 'organism', null, 'A donut/pie chart from labelled segments.', { noFigma: true, comment: 'Code-only; no Figma component.' });
+add('pie-chart', 'Pie Chart', 'ds-pie-chart', D + 'Data Display/Pie Chart', 'data-display', 'organism', null, 'A donut/pie chart from labelled segments.', { lib: 'data-display', node: '2118:177', comment: 'Figma component created 2026-11-06.' });
 add('properties-panel', 'Properties Panel', 'ds-properties-panel', D + 'Data Display/Properties Panel', 'data-display', 'organism', null, 'A label/value list in 1 to 4 columns, as a card or flat.',
   { noFigma: true, comment: 'Retired from the Figma library (replaced by Card .Columns, which is private); heavily used in code.' });
 add('action-card', 'Action Card', 'ds-action-card', D + 'Data Display/Action Card', 'data-display', 'organism', null, 'A card with icon, title and description that links to an action or area.',
-  { noFigma: true, comment: 'Code-only; uses --semantic-color-static-background-subtle-informative, which does not exist.' });
+  { lib: 'data-display', node: '2117:1081', comment: 'Figma component created 2026-11-06; code uses --semantic-color-static-background-subtle-informative, which does not exist.' });
 
 // Feedback
 add('badge', 'Badge', 'ds-badge', D + 'Feedback/Badge', 'feedback', 'atom', 'feedback/badge', null, { lib: 'feedback', k: 'badge', comment: 'Figma property Style corresponds to the code input variant.' });
@@ -240,28 +281,28 @@ add('header', 'Header', 'ds-header', D + 'Layout/Header', 'layout', 'organism', 
 add('side-nav', 'Side Navigation', 'ds-side-nav', D + 'Layout/Side Nav', 'layout', 'organism', 'layout/side-navigation', null, { lib: 'layout', k: 'side-navigation', comment: 'Figma Side Navigation = code ds-side-nav; Open default is inverted between Figma and code.' });
 add('side-nav-item', 'Side Navigation Item', 'ds-side-nav-item', D + 'Internals/Side Nav Item', 'layout', 'atom', 'layout/side-navigation', 'One entry of the side navigation rail.', { lib: 'layout', shareFigma: true });
 add('page-header', 'Page Header', 'ds-page-header', D + 'Layout/Page Header', 'layout', 'organism', 'layout/page-header', null, { lib: 'data-display', k: 'page-header', comment: 'Figma component lives in the Data Display library (page Topbox), not in Layout.' });
-add('page-title', 'Page Title', 'ds-page-title', D + 'Layout/Page Title', 'layout', 'molecule', null, 'The page heading with identifier, status badge and one optional action link.', { noFigma: true, comment: 'Code-only; the Figma Page Header carries the title inside its own layout.' });
+add('page-title', 'Page Title', 'ds-page-title', D + 'Layout/Page Title', 'layout', 'molecule', null, 'The page heading with identifier, status badge and one optional action link.', { lib: 'layout', node: '4010:13', comment: 'Figma component created 2026-11-06 in the Layout file; the Figma Page Header still carries its own title.' });
 add('modal', 'Modal', 'ds-modal', D + 'Layout/Modal', 'layout', 'organism', 'layout/modal', null, { lib: 'layout', k: 'modal', comment: 'Carries dsFocusTrap; hard-coded px and rgba in its SCSS; default Size differs between Figma and code.' });
 add('modal-header', 'Modal Header', 'ds-modal-header', D + 'Internals/Modal Header', 'layout', 'molecule', 'layout/modal', 'The title bar of a Modal.', { lib: 'layout', shareFigma: true });
 add('modal-content', 'Modal Content', 'ds-modal-content', D + 'Internals/Modal Content', 'layout', 'molecule', 'layout/modal', 'The scrollable body slot of a Modal.', { lib: 'layout', shareFigma: true });
 add('modal-footer', 'Modal Footer', 'ds-modal-footer', D + 'Internals/Modal Footer', 'layout', 'molecule', 'layout/modal', 'The action bar of a Modal, with an optional back button.', { lib: 'layout', shareFigma: true });
 add('drawer', 'Drawer', 'ds-drawer', D + 'Layout/Drawer', 'layout', 'organism', 'layout/drawer', null, { lib: 'layout', k: 'drawer', comment: 'Story has no autodocs tag, so the Storybook link opens the Default story.' });
-add('filter-drawer', 'Filter Drawer', 'ds-filter-drawer', D + 'Layout/Filter Drawer', 'overlay', 'organism', null, 'A Drawer preset to build and save filters.', { noFigma: true, comment: 'Code-only; the Figma Drawer master is used with local contents.' });
-add('flyout', 'Flyout', 'ds-flyout', D + 'Layout/Flyout', 'overlay', 'molecule', null, 'The base floating panel used by menus and dropdowns.', { noFigma: true, comment: 'Code-only base panel (no page uses it directly).' });
-add('flyout-item', 'Flyout Item', 'ds-flyout-item', D + 'Internals/Flyout Item', 'overlay', 'atom', null, 'A row of the base Flyout panel.', { noFigma: true, comment: 'Code-only internal; Figma Flyout Item is covered by ds-flyout-menu-item.' });
-add('flyout-section', 'Flyout Section', 'ds-flyout-section', D + 'Internals/Flyout Section', 'overlay', 'atom', null, 'A titled section of the base Flyout panel.', { noFigma: true });
-add('spotlight', 'Spotlight', 'ds-spotlight', 'UI/Spotlight', 'overlay', 'organism', null, 'A command-palette search overlay with recents and keyboard navigation.', { noFigma: true, comment: 'Story title sits outside the Design System/* taxonomy (UI/Spotlight).' });
-add('shortcuts-panel', 'Shortcuts Panel', 'ds-shortcuts-panel', null, 'overlay', 'organism', null, 'A panel listing keyboard shortcuts by group, with a keyboard map view.', { noFigma: true, comment: 'No story and no Figma component.' });
-add('shortcut-row', 'Shortcut Row', 'ds-shortcut-row', null, 'other', 'molecule', null, 'One shortcut line: label, keys and context.', { noFigma: true, comment: 'Internal of Shortcuts Panel; no story.' });
-add('keyboard-map', 'Keyboard Map', 'ds-keyboard-map', null, 'other', 'molecule', null, 'A keyboard-shaped map showing which keys have shortcuts.', { noFigma: true, comment: 'Internal of Shortcuts Panel; no story.' });
-add('keycap', 'Keycap', 'ds-keycap', null, 'other', 'atom', null, 'A single keyboard key cap.', { noFigma: true, comment: 'No story and no Figma component.' });
-add('shortcut-keys', 'Shortcut Keys', 'ds-shortcut-keys', null, 'other', 'atom', null, 'A sequence of Keycaps for one shortcut.', { noFigma: true, comment: 'No story and no Figma component.' });
+add('filter-drawer', 'Filter Drawer', 'ds-filter-drawer', D + 'Layout/Filter Drawer', 'overlay', 'organism', null, 'A Drawer preset to build and save filters.', { lib: 'layout', node: '4015:1824', comment: 'Figma component created 2026-11-06 in the Layout file.' });
+add('flyout', 'Flyout Menu', 'ds-flyout', D + 'Layout/Flyout', 'overlay', 'molecule', null, 'The base floating panel used by menus and dropdowns.', { noFigma: true, comment: 'Code-only base panel (no page uses it directly).' });
+add('flyout-item', 'Flyout Menu Item', 'ds-flyout-item', D + 'Internals/Flyout Item', 'overlay', 'atom', null, 'A row of the base Flyout panel.', { noFigma: true, comment: 'Code-only internal; Figma Flyout Item is covered by ds-flyout-menu-item.' });
+add('flyout-section', 'Flyout Menu Section', 'ds-flyout-section', D + 'Internals/Flyout Section', 'overlay', 'atom', null, 'A titled section of the base Flyout panel.', { noFigma: true });
+add('spotlight', 'Spotlight', 'ds-spotlight', 'UI/Spotlight', 'overlay', 'organism', null, 'A command-palette search overlay with recents and keyboard navigation.', { lib: 'layout', node: '4019:755', comment: 'Figma component created 2026-11-06 in the Layout file; story title sits outside the Design System/* taxonomy (UI/Spotlight).' });
+add('shortcuts-panel', 'Shortcuts Panel', 'ds-shortcuts-panel', null, 'overlay', 'organism', null, 'A panel listing keyboard shortcuts by group, with a keyboard map view.', { lib: 'layout', node: '4018:1029', comment: 'Figma component created 2026-11-06 in the Layout file; no story.' });
+add('shortcut-row', 'Shortcut Row', 'ds-shortcut-row', null, 'other', 'molecule', null, 'One shortcut line: label, keys and context.', { lib: 'action', node: '951:110', comment: 'Internal of Shortcuts Panel; Figma component in the Action library (page Utility, 2026-11-06); no story.' });
+add('keyboard-map', 'Keyboard Map', 'ds-keyboard-map', null, 'other', 'molecule', null, 'A keyboard-shaped map showing which keys have shortcuts.', { lib: 'action', node: '951:150', comment: 'Internal of Shortcuts Panel; Figma component in the Action library (page Utility, 2026-11-06); no story.' });
+add('keycap', 'Keycap', 'ds-keycap', null, 'other', 'atom', null, 'A single keyboard key cap.', { lib: 'action', node: '950:24', comment: 'Figma component in the Action library (page Utility, 2026-11-06); no story.' });
+add('shortcut-keys', 'Shortcut Keys', 'ds-shortcut-keys', null, 'other', 'atom', null, 'A sequence of Keycaps for one shortcut.', { lib: 'action', node: '950:64', comment: 'Figma component in the Action library (page Utility, 2026-11-06); no story.' });
 
 // Foundations / other
 add('icon', 'Icon', 'ds-icon', D + 'Foundation/Icon', 'other', 'atom', null, 'The SVG icon wrapper that renders a glyph from the code icon registry.', { k: 'icon', figmaName: 'Icon Functional (NDBX Web library)', comment: 'Figma wrapper is Icon Functional from the NDBX Web library; the code has its own registry, not NDBX. Figma library file is outside the Qirin files.' });
 add('logo', 'Logo', 'ds-logo', D + 'Foundation/Logo', 'other', 'atom', null, 'The Qirin brand mark and app name, in default or reversed colors.', { k: 'logo', figmaName: 'Logo Qirin', comment: 'Figma component key known, library file not identified.' });
 add('divider', 'Divider', 'ds-divider', D + 'Foundation/Divider', 'other', 'atom', null, 'A horizontal or vertical separator line.', { k: 'divider', figmaName: 'Divider', comment: 'Figma Divider has no vertical variant (vertical lines use a rotated instance).' });
-add('flag', 'Flag', 'ds-flag', D + 'Foundation/Flag', 'other', 'atom', null, 'A country flag SVG from an ISO country code.', { noFigma: true, comment: 'Code-only; no Figma component.' });
+add('flag', 'Flag', 'ds-flag', D + 'Foundation/Flag', 'other', 'atom', null, 'A country flag SVG from an ISO country code.', { lib: 'action', node: '952:165', comment: 'Figma component in the Action library (page Utility, 2026-11-06).' });
 add('focus-trap', 'Focus Trap', '[dsFocusTrap]', null, 'other', 'atom', null, 'A directive that traps focus inside a dialog and restores it to the trigger on close.', { noFigma: true, usage: 'dsFocusTrap', comment: 'Directive, not a visual component; no story. Applied on ds-modal and ds-confirm-dialog.' });
 
 // Figma-only (no code selector)
@@ -377,7 +418,7 @@ for (const r of R) {
   if (!ex.noFigma) {
     const lib = ex.lib;
     const fileKey = lib ? LIB[lib] : null;
-    const nodeId = zh ? zh.node : null;
+    const nodeId = ex.node || (zh ? zh.node : null); // ex.node: components without a ZeroHeight Markdown
     const key = ex.k ? KEYS[ex.k] : (zh && zh.key) || null;
     if (nodeId || key || zh) {
       design = true;
@@ -398,7 +439,6 @@ for (const r of R) {
   // ZeroHeight
   let zeroheight = { pageId: null, url: null, status: null, markdown: null };
   if (zh) zeroheight = { pageId: null, url: null, status: 'drafted', markdown: zh.file };
-  const ZH_PAGES = { button: [9166118, '20fe33', 'hidden'], link: [9166113, null, 'stub-hidden'], 'button-icon': [9166114, null, 'stub-hidden'], 'button-split': [9166115, null, 'stub-hidden'], 'segmented-control': [9166116, null, 'stub-hidden'], tag: [9166117, null, 'stub-hidden'] };
   if (ZH_PAGES[r.id]) {
     const [pid, uid, st] = ZH_PAGES[r.id];
     zeroheight = { pageId: pid, url: uid ? ZH_BASE + uid : null, status: st, markdown: zh ? zh.file : null };
@@ -538,7 +578,7 @@ const nameDiff = [
   ['list-widget', 'List Item (Figma) vs ds-list-widget + ds-newsfeed'],
   ['newsfeed', 'List Item (Figma) vs ds-list-widget + ds-newsfeed'],
   ['widget-card', 'Card with Slot (Figma) vs ds-widget-card'],
-  ['flyout-menu-item', 'Flyout Item (Figma) vs ds-flyout-menu-item'],
+  ['flyout-menu-item', 'Flyout Item (Figma, to be renamed Flyout Menu Item) vs ds-flyout-menu-item'],
   ['table-row', 'Data Grid / Table (Figma) vs ds-table-row and ds-cell-*'],
   ['segmented-control', 'Component 1 (Figma set name) vs Segmented Control'],
   ['tile', 'Tiles (Figma set name) vs ds-tile'],

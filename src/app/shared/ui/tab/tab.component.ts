@@ -16,7 +16,7 @@ export type TabCounterStyle = 'badge' | 'inline';
     '[attr.aria-selected]': 'selected()',
     '[attr.aria-disabled]': 'disabled() || null',
     '[attr.tabindex]':      'selected() ? 0 : -1',
-    '(click)':              '!disabled() && selected.set ? null : clicked.emit()',
+    '(click)':              '!disabled() && clicked.emit()',
     '(keydown.enter)':      '!disabled() && clicked.emit()',
     '(keydown.space)':      '$event.preventDefault(); !disabled() && clicked.emit()',
   },

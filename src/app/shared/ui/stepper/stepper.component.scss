@@ -140,11 +140,16 @@
   min-height: 16px;
   line-height: 16px;
   font-size: var(--semantic-font-text-style-size-s);
-  color: var(--semantic-color-static-background-functional-positive);
+  color: var(--semantic-color-static-text-main-functional-positive);
 }
 .ds-stepper__step--error .ds-stepper__status {
   color: var(--semantic-color-static-text-main-functional-negative);
 }
 .ds-stepper__step--warning .ds-stepper__status {
   color: var(--semantic-color-static-text-main-functional-warning);
+}
+
+.ds-stepper__step:focus-visible {
+  outline:        2px solid var(--semantic-color-interactive-border-focus);
+  outline-offset: 2px;
 }

@@ -28,7 +28,7 @@ Stepper guides the user through a wizard (company creation, company edit). Each 
 | | | | `current: number` (default `0`) | 0-based index of the current step. |
 | | | | `completedSteps: number[]` (default `[]`) | Stay completed after going back. |
 | | | | `errorSteps: number[]`, `warningSteps: number[]` | Error wins over warning, which wins over the rest. |
-| | | | `navigableUpTo: number` (default `-1`) | Highest step index the user reached; steps up to it are clickable. |
+| | | | `navigableUpTo: number` (default `-1`) | Highest step index the user reached; steps up to it are clickable. Completed, current, error and warning steps are clickable whatever their index. |
 | | | | `stepChange` (output, `number`) | Emitted when the user clicks a navigable step. |
 
 Status values computed per step: `completed`, `current`, `current-completed`, `unlocked`, `upcoming`, `error`, `warning`.
@@ -46,7 +46,7 @@ Exposed nested instances: To be defined.
 | Completed / Current completed | `completedSteps` | To be defined |
 | Error | `errorSteps` | To be defined |
 | Warning | `warningSteps` | To be defined |
-| Clickable | any navigable step (class `--clickable`) | To be defined |
+| Clickable | any navigable step (class `--clickable`): the label turns blue on hover | To be defined |
 
 ## Tokens
 | Element | Property | Semantic token (CSS var) | Foundation alias |
@@ -62,14 +62,17 @@ Exposed nested instances: To be defined.
 | Status text error / warning | color | `--semantic-color-static-text-main-functional-negative` / `-warning` | `--foundation-color-red-500` / `--foundation-color-orange-400` |
 | Text | font-family | `--semantic-font-family` | `--foundation-font-family` |
 | Index | size, color | `--semantic-font-text-style-size-s`, `--semantic-color-static-text-main-tertiary` | `--foundation-font-size-12`, `--foundation-color-grey-500` |
+| Label (upcoming) | color | `--semantic-color-static-text-main-tertiary` | `--foundation-color-grey-500` |
+| Label (clickable, hover) | color | `--semantic-color-interactive-text-strong-default` | `--foundation-color-blue-a-500` |
+| Status text completed | color | `--semantic-color-static-text-main-functional-positive` | `--foundation-color-green-500` |
 | Label | size, weight, color | `--semantic-font-text-style-size-m`, `--semantic-font-text-style-font-weight-semi-bold`, `--semantic-color-static-text-main-primary` | `--foundation-font-size-14`, `--foundation-font-weight-semi-bold`, `--foundation-color-grey-900` |
 
 Values written outside tokens in the SCSS: row min-height 56px (70px with connector), connector width 1px and offsets (11px, 28px), marker 24 x 24px, ring 2px, dot 8 x 8px, halo 2px and 4px, line-heights 16px and 24px.
 
 ## Accessibility
-- Steps are `div` elements with a click handler: they have no role, no tab stop and no keyboard activation. Keyboard users cannot move between steps from the stepper; the wizard's Back and Next buttons must cover it.
+- Navigable steps expose `role="button"`, `tabindex="0"` and activate on click, Enter and Space; steps that are not navigable have no role and no tab stop. A 2px ring shows on `:focus-visible`.
 - The status is given in text ("Completed", "Error", "Warning") next to the icon, so it does not rely on color.
-- The current step is not marked with `aria-current`; add it if the stepper becomes navigable by keyboard.
+- The current step carries `aria-current="step"`.
 
 ## Content guidelines
 - Labels name the step's content with a noun or a short phrase ("Company identity", "Addresses").
@@ -79,6 +82,9 @@ Values written outside tokens in the SCSS: row min-height 56px (70px with connec
 ## Do / Don't
 - Do keep completed steps clickable so users can review them; don't lock the user out of a step they finished.
 - Do show error on the step that holds the problem; don't flag only the last step.
+
+## Design decisions
+- 16 Nov 2026: the code stays vertical. The horizontal layouts drawn in Figma are not coded for now; a horizontal orientation will come later as its own change. The Figma component, when built, starts from the vertical model.
 
 ## Related components
 Composes: Icon (`ds-icon`) · Used by: Company Creation Wizard and Company Edit Wizard (app pages), no other DS component.

@@ -1,10 +1,10 @@
 # Flyout Menu Item
 **Status**: Design Ready · Tech In code
 One row of a Flyout Menu: an action or an option with an optional icon.
-Figma: [Components] Action › page Flyout Menu (node 507:996, `Flyout Item`) · Storybook: `Design System/Internals/Flyout Menu Item` (id `design-system-internals-flyout-menu-item--default`) · Code: `shared/ui/flyout-menu` (`ds-flyout-menu-item`)
+Figma: [Components] Action › page Flyout Menu (node 507:996, set still named `Flyout Item`, to be renamed Flyout Menu Item) · Storybook: `Design System/Internals/Flyout Menu Item` (id `design-system-internals-flyout-menu-item--default`) · Code: `shared/ui/flyout-menu` (`ds-flyout-menu-item`)
 
 ## Overview
-Flyout Menu Item is a full-width row with a hover plate, an optional icon and a label. In code it also supports a keyboard shortcut and a selectable mode that shows a check mark in a fixed 20px slot. It is a sibling atom of Button and Link, not a wrapper: its full-width row and background states do not map to them. Embed the Storybook story `Default` as the live example, and the Figma component set `Flyout Item` (node 507:996) as the visual reference.
+Flyout Menu Item is a full-width row with a hover plate, an optional icon and a label. In code it also supports a keyboard shortcut and a selectable mode that shows a check mark in a fixed 20px slot. It is a sibling atom of Button and Link, not a wrapper: its full-width row and background states do not map to them. Embed the Storybook story `Default` as the live example, and the Figma component set `Flyout Menu Item` (node 507:996) as the visual reference.
 
 ## When to use / When not to use
 - Use inside a Flyout Menu, one per action or option.
@@ -17,7 +17,7 @@ Flyout Menu Item is a full-width row with a hover plate, an optional icon and a 
 - Don't use for side navigation entries → use Side Nav Item instead.
 
 ## Anatomy
-1. `Flyout Item` (container): full-width row, padding 8px 32px, gap 4px, white plate.
+1. `Flyout Menu Item` (container): full-width row, padding 8px 32px, gap 4px, white plate.
 2. Check slot (code, selectable only): a 20px `check` icon always rendered, hidden when not selected, so the label never moves.
 3. `Edit Compose` / `↳ Icon` (icon): optional 16px icon, swapped with the `↳ Icon` instance swap, shown with the `Icon` boolean.
 4. `Label` (text): Body L regular, 16px / 24px, Grey/900.
@@ -81,6 +81,9 @@ Values written outside tokens in the SCSS: focus outline 2px with offset -2px.
 - Do keep the check mark slot for single choice; don't toggle a conditional icon to show selection.
 - Do use icons on all items of a menu or on none; don't mix rows with and without icons.
 - Do disable an item that is temporarily unavailable; don't hide it if the user expects to find it there.
+
+## Design decisions
+- 16 Nov 2026: the name is Flyout Menu Item, in Figma as in code. The code is not renamed (`ds-flyout-menu-item`); Figma renames its `Flyout Item` set. The sibling names are Flyout Menu and Flyout Menu Section.
 
 ## Related components
 Composes: Icon (`ds-icon`), Shortcut Keys (`ds-shortcut-keys`) · Used by: Flyout Menu, Search Bar Multi, Search Bar Scoped, Select, Standalone Dropdown, Table.

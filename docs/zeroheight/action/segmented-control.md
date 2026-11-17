@@ -17,7 +17,7 @@ Segmented Control shows two to five mutually exclusive options side by side, wit
 - Don't use to run actions → use Button instead.
 
 ## Anatomy
-1. Segment (`Component 1`): one option, 32px high, padding 0 16px, 1px Grey/900 border. `Position` sets the rounded corners (First: left, Last: right, Middle: none).
+1. Segment (`Component 1`): one option, 32px high, padding 0 16px, 1px Grey/900 border on a white plate (grey rest state, the reference). `Position` sets the rounded corners (First: left, Last: right, Middle: none).
 2. `.Content` (private atom, exposed): optional icon and label, `Icon` Left, Right or None; glyph swapped through `🔗 Icon`.
 3. Label: Body L semi-bold, 16px / 24px.
 4. Group (code): `ds-segmented-control`, segments joined in a row, `role="tablist"` or `role="radiogroup"`.
@@ -82,6 +82,9 @@ Values written outside tokens in the SCSS: border 1px. The selected hover and ac
 - Do use `mode="radio"` for a setting and `mode="tabs"` for a view switch; don't mix the two roles.
 - Do keep two to five segments; don't squeeze long labels into it.
 - Do explain a disabled option with `describedBy`; don't leave the user guessing why it is off.
+
+## Design decisions
+- 16 Nov 2026: the rest state stays grey, as in code (Grey/900 border, white plate, Grey/900 label). Figma, which shows a blue rest state, follows the code. No code change.
 
 ## Related components
 Composes: Icon (`ds-icon`) · Used by: Portfolio Management (select portfolio modal, app page), no other DS component.

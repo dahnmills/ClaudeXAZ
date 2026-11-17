@@ -3,7 +3,7 @@
 // Source : Figma > -Components--Action > Chip (456:438)
 //
 // Pill rond compact pour filtres actifs, valeurs sélectionnées,
-// shortcuts. Distinct du Tag (Tag = status badge).
+// shortcuts. Distinct du Tag (étiquette) et du Badge (pastille de statut).
 // Un seul style, celui de Figma : non sélectionnée, contour foncé sur fond
 // blanc ; sélectionnée, aplat bleu à texte blanc. Figma « main » = token
 // « strong », « main/alt » = « strong-alt ».
@@ -86,7 +86,6 @@
 .ds-chip__close {
   display:     inline-flex;
   align-items: center;
-  font-size:   16px;
   line-height: 1;
   color:       inherit;
   padding-left: var(--semantic-measurement-spacing-xxs);

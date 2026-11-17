@@ -23,6 +23,19 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'action-buttons-figma-2026-11-16',
+    date: '2026-11-16',
+    category: 'design',
+    screens: ['reject-management', 'search', 'tag-configuration', 'manual-underwriting/4421706', 'coverbook/buyer/4421706'],
+    title: 'Buttons: semi-bold labels, readable range steps',
+    description:
+      'Two details aligned on the design files: button labels are a touch bolder, and the steps inside a selected range are easier to read.',
+    changes: [
+      'Buttons: every label is semi-bold, as in the design files; buttons grow by one or two pixels and no label wraps',
+      'Range picker (grade filters): the steps between the two ends of a range show a dark label on the light blue plate instead of white, which was hard to read',
+    ],
+  },
+  {
     id: 'visual-details-2026-11-06',
     date: '2026-11-06',
     category: 'design',

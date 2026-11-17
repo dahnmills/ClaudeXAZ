@@ -19,7 +19,7 @@ Tab is one item of a tab bar: a label with an underline indicator that shows the
 ## Anatomy
 1. `Tab` (container): 32px high, no own padding (spacing comes from the parent).
 2. `Content` (frame): optional icon, `Label`, optional counter and optional `.Options` chevron, gap 4px.
-3. `Label` (text): Body L regular, 16px / 24px.
+3. `Label` (text): Body L regular, 16px / 24px, selected or not (the indicator and the color mark the selection).
 4. `Badge Wrapper` with a `Badge` instance: the counter, shown with the `Badge` boolean.
 5. `.Options` (private atom, `Open` False or True): the dropdown chevron, shown with the `Dropdown` boolean.
 6. `Border Selected` (frame): the 4px indicator under the tab, colored when selected.
@@ -39,7 +39,7 @@ Tab is one item of a tab bar: a label with an underline indicator that shows the
 | (none) | | | `icon: boolean` (default `false`) | Code only: renders `[slot=icon]` or `[slot=icon-left]` before the label. |
 | (none) | | | `changed: boolean` (default `false`) | Code only: red dot that flags a changed view. |
 | (none) | | | `fill: boolean` (default `false`) | Code only: the tab takes an equal share of the parent width. |
-| (none) | | | `clicked` (output) | Emitted on click, Enter and Space, never while disabled. |
+| (none) | | | `clicked` (output) | Emitted on click, Enter and Space. Nothing fires while disabled; a click is also ignored while disabled (in code, not only by CSS). |
 
 Slots: no Figma slot. In code: default projection for the label, `[slot=icon]` or `[slot=icon-left]` for an icon (with `icon=true`), `[slot=badge]` for a custom badge.
 
@@ -75,12 +75,13 @@ Exposed nested instances: `.Options` is exposed (property `Open`). The `Badge` i
 | Focus ring | outline color | `--semantic-color-interactive-border-focus` | `--foundation-color-blue-a-400` |
 | Disabled | opacity | `--semantic-measurement-opacity-disabled` | `--foundation-opacity-40` |
 
-Values written outside tokens in the SCSS: indicator height 4px and radius 2px 2px 0 0, counter badge min-width and height 16px, padding 0 4px, radius 9999px, font-size 12px and line-height 16px, focus outline 3px, offset 2px, radius 2px. The Reversed active comment says Grey/100 while the token resolves to Grey/200.
+Values written outside tokens in the SCSS: indicator height 4px and radius 2px 2px 0 0, counter badge min-width and height 16px, padding 0 4px, radius 9999px, font-size 12px and line-height 16px, focus outline 3px, offset 2px, radius 2px, hover indicator on an unselected tab at opacity 0.35. The Reversed active comment says Grey/100 while the token resolves to Grey/200.
 
 ## Accessibility
 - Role: `role="tab"` on the host, `aria-selected` reflects `selected`. The parent must carry `role="tablist"` and link each tab to its panel (`aria-controls`, `role="tabpanel"`).
 - Keyboard: roving tab stop, only the selected tab has `tabindex="0"`, the others -1. Enter and Space emit `clicked`. Arrow key navigation between tabs is the parent's job (not in the atom).
 - Disabled: `aria-disabled="true"`.
+- Change dot: rendered with `aria-label="changed"` (English literal, not translated).
 - Counter: rendered with `aria-label="counter"`; give the parent tab label enough context so the number is meaningful ("Tasks, 3").
 - Selection is shown by the indicator bar and the label color, not by color alone.
 
@@ -94,6 +95,9 @@ Values written outside tokens in the SCSS: indicator height 4px and radius 2px 2
 - Do keep tabs for peer views of one object; don't use them as a step-by-step flow.
 - Do keep the number of tabs small enough to fit on one line; don't let the tab bar wrap.
 - Do use the counter for actionable counts; don't add a counter to every tab.
+
+## Design decisions
+- 16 Nov 2026: the label stays Regular in every state, selected included, as in code. Figma, which sets the selected label in Bold, follows the code. No code change.
 
 ## Related components
 Composes: Icon (`ds-icon` chevron and icon slot), Badge (Figma `Badge Wrapper`) · Used by: Filter Drawer, Shortcuts Panel.

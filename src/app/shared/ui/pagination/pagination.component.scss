@@ -27,6 +27,11 @@
     text-decoration: underline;
   }
 
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-focus);
+    outline-offset: 2px;
+  }
+
   &:active:not(:disabled) {
     color: var(--semantic-color-interactive-text-strong-active);
   }

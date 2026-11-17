@@ -1,0 +1,94 @@
+{
+ "chunks": [
+  {
+   "text": "[Opening]",
+   "duration_ms": 16000,
+   "positive_styles": [
+    "120 BPM",
+    "soft felt piano motif",
+    "warm round bass",
+    "light brushed percussion",
+    "gentle kick",
+    "airy pad bed",
+    "steady understated groove",
+    "clean modern corporate underscore",
+    "wide stereo mix",
+    "intro"
+   ],
+   "negative_styles": [
+    "risers",
+    "white noise sweeps",
+    "whooshes",
+    "filter sweeps",
+    "reverse cymbals",
+    "drum rolls",
+    "vocals",
+    "singing",
+    "aggressive drums"
+   ],
+   "context_adherence": "high",
+   "conditioning_ref": null,
+   "condition_strength": null
+  },
+  {
+   "text": "[Development]",
+   "duration_ms": 16000,
+   "positive_styles": [
+    "120 BPM",
+    "felt piano motif with subtle variation",
+    "warm round bass",
+    "soft muted plucks",
+    "light brushed percussion",
+    "gentle kick",
+    "slightly richer harmony",
+    "calm confident lift",
+    "precise polished production",
+    "midsection"
+   ],
+   "negative_styles": [
+    "risers",
+    "white noise sweeps",
+    "whooshes",
+    "filter sweeps",
+    "reverse cymbals",
+    "drum rolls",
+    "vocals",
+    "singing",
+    "aggressive drums"
+   ],
+   "context_adherence": "high",
+   "conditioning_ref": null,
+   "condition_strength": null
+  },
+  {
+   "text": "[Resolution]",
+   "duration_ms": 16000,
+   "positive_styles": [
+    "120 BPM",
+    "felt piano motif",
+    "warm round bass",
+    "soft muted plucks",
+    "light brushed percussion",
+    "gentle kick",
+    "airier pads",
+    "clean resolved downbeat ending",
+    "natural ring out",
+    "outro"
+   ],
+   "negative_styles": [
+    "risers",
+    "white noise sweeps",
+    "whooshes",
+    "filter sweeps",
+    "reverse cymbals",
+    "drum rolls",
+    "vocals",
+    "singing",
+    "aggressive drums"
+   ],
+   "context_adherence": "high",
+   "conditioning_ref": null,
+   "condition_strength": null
+  }
+ ]
+}

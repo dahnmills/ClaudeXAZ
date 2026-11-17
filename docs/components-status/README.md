@@ -21,6 +21,24 @@ Figma node ids and variant axes are read from `docs/zeroheight/**` (the `Figma:`
 `PLAYBOOK.md` and `STATUS.md`. When a component is added or renamed, add one `add(...)` line.
 Update the `ZH_PAGES` table when a ZeroHeight page is created or published.
 
+## Automation
+
+- Git hook `.githooks/pre-commit` (versioned, `core.hooksPath=.githooks`, same mechanism as `pre-push`): when the commit
+  touches `src/app/shared/ui/`, `src/styles/` or `docs/zeroheight/`, it runs both scripts and stages `components.json`.
+  It never blocks a commit (failure = warning). Skip with `--no-verify`.
+- Slash command `/sync-status` (`.claude/commands/sync-status.md`): reruns the scripts, diffs against the old JSON,
+  refreshes `ZH_PAGES` and pushes only the changed rows to the Figma Component Status file.
+
+## ZH_PAGES (ZeroHeight pages)
+
+`ZH_PAGES` is a top-level table in `build-components.js`: `id: [pageId, uid, status]`. Source of truth is ZeroHeight:
+call the MCP `allianz-trade` `list-pages` (styleguide 138794); `pageId` is the page id, `uid` is the last segment of the
+page URL (`.../p/<uid>`), `status` is `hidden` or `published`. Known ids are also logged in `docs/SESSION-RESUME.md`.
+Today: the 18 Action pages (hidden) have a `pageId` (uid known for Button only), the 16 pages of new components
+(Search Bar, Search Bar Multi, Tag Filter Chip, Grid Selection, File Upload, Pie Chart, Action Card, Page Title,
+Filter Drawer, Spotlight, Shortcuts Panel, Shortcut Row, Keyboard Map, Keycap, Shortcut Keys, Flag) are `hidden`
+with `pageId: null` until read from `list-pages`. A null `uid` gives `zeroheight.url = null`.
+
 ## Top-level keys
 
 `schemaVersion`, `generatedAt`, `storybookBaseUrl`, `zeroheight`, `figmaFiles`, `summary`,
@@ -36,9 +54,9 @@ Update the `ZH_PAGES` table when a ZeroHeight page is created or published.
 | `level` | `atom`, `molecule`, `organism`, `template` (locals: page shells are `template`) |
 | `description` | One English sentence (taken from the ZeroHeight page when it exists) |
 | `availability` | `design` (a Figma component or key exists), `vibecoded` (code in `main`), `dev` (always false for now) |
-| `figma` | `fileKey`, `nodeId` (`a:b`), `componentKey`, `url` (`https://www.figma.com/design/<fileKey>?node-id=a-b`). Null when unknown. The Layout library file key is not available, so Layout components have a `componentKey` but no `url` |
+| `figma` | `fileKey`, `nodeId` (`a:b`), `componentKey`, `url` (`https://www.figma.com/design/<fileKey>?node-id=a-b`). Null when unknown. Layout library file key: `bbgSPUChd18EVNGijjoZGn` (since 2026-11-16) |
 | `storybook` | `vibecodedUrl` = `https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/<id>--docs`, where `<id>` is the story `title` lowercased with every run of non `[a-z0-9]` replaced by `-` (same rule as `storybookSlug` in `design-system-audit.data.ts`). Stories without the `autodocs` tag (Drawer, Inline Edit) link to `/story/<id>--<first-story>`. `devUrl` is null and `devStatus` is `planned` |
-| `zeroheight` | `pageId`, `url`, `status`, `markdown`. Only Button (page 9166118, uid 20fe33, `hidden`) and five hidden stubs (Link, Button Icon, Button Split, Segmented Control, Tag: ids known, uid unknown so `url` is null) exist in ZeroHeight. Every other page is `status: "drafted"` with the Markdown path in `markdown` |
+| `zeroheight` | `pageId`, `url`, `status`, `markdown`. Hidden pages exist for the 18 Action components and the 16 components created on 2026-11-06 (ids in `ZH_PAGES`; only Button has a known uid, so other `url`s are null). Every other page is `status: "drafted"` with the Markdown path in `markdown` |
 | `version` | `1.0.0` when the component folder was created at least 30 days before `generatedAt` and `state` is not `draft`; otherwise `0.N.0` where N is the number of commits touching the folder (min 1, max 9); `0.1.0` when there is no code. Locals are `1.0.0` (Figma v1.0 Ready for dev) |
 | `state` | `ready` = code + story + Figma + doc; `in-review` = code + story with Figma or doc missing; `draft` = anything less. `deprecated` is reserved (nothing is deprecated yet). Locals are capped at `in-review` (no story or doc by design); a local with no code (Exposure Card) is `draft` |
 | `lastChange` | `git log -1 --format=%cs` of the code folder (the page folder for locals, the Markdown for doc-only records) |

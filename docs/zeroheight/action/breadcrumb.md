@@ -47,7 +47,7 @@ Exposed nested instances: 7 `.Specs` (one per `Link`), so each label is edited f
 Values written outside tokens in the SCSS: container min-height 32px, trail height 20px, actions height 32px. Item tokens are documented on Crumb and Link.
 
 ## Accessibility
-- The host has `role="navigation"` and `aria-label="Breadcrumb"`.
+- The host has `role="navigation"`. Its `aria-label` is "Breadcrumb" by default and can be overridden with the optional `ariaLabel` input. In the DOM the trail comes before the actions; the visual order (trail left, actions right) is unchanged. The crumbs are not wrapped in an `ol`/`li` list yet (crumbs are projected by the consumer).
 - The current crumb carries `aria-current="page"` and is not a link.
 - Each parent crumb is a real `<a>` (through `ds-link`), reachable with Tab.
 - Chevrons are decorative icons.

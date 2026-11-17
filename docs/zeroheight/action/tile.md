@@ -52,7 +52,7 @@ Exposed nested instances: none (the icon glyph is changed through the `Icon` ins
 | Container | radius | `--semantic-border-radius-s` | `--foundation-radius-4` |
 | Container | background rest / hover / active | `--semantic-color-static-background-main-secondary`, `--semantic-color-interactive-background-light-{hover,active}` | `--foundation-color-grey-050`, `--foundation-color-blue-a-050` / `-100` |
 | Selected | background | `--semantic-color-interactive-background-light-default` | `--foundation-color-blue-a-025` |
-| Selected | icon color | `--semantic-color-interactive-text-strong-default` | `--foundation-color-blue-a-500` |
+| Selected | icon and label color | `--semantic-color-interactive-text-strong-default` | `--foundation-color-blue-a-500` |
 | Icon | color | `--semantic-color-static-text-main-secondary` | `--foundation-color-grey-700` |
 | Label | font, color | `--semantic-font-family`, `--semantic-font-text-style-size-m`, `--semantic-font-text-style-font-weight-semi-bold`, `--semantic-font-text-style-line-height-m`, `--semantic-color-static-text-main-primary` | `--foundation-font-size-14`, `--foundation-font-weight-semi-bold`, `--foundation-font-line-height-20`, `--foundation-color-grey-900` |
 | Disabled | opacity | `--semantic-measurement-opacity-disabled` | `--foundation-opacity-40` |
@@ -61,7 +61,7 @@ Exposed nested instances: none (the icon glyph is changed through the `Icon` ins
 - `role="button"` with `aria-pressed` that reflects `selected`; Enter and Space toggle through `clicked`.
 - Disabled tiles are out of the tab order and carry `aria-disabled`.
 - Wrap a set of tiles in a labeled group (for example a `fieldset` with a legend) so the choice has a name.
-- Selected differs from hover only by a lighter blue plate and a blue icon; check that the selected state is distinguishable without color.
+- Selected differs from hover only by a lighter blue plate and a blue icon and label; check that the selected state is distinguishable without color.
 - No visible focus style is defined; the browser default ring applies.
 
 ## Content guidelines

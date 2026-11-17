@@ -13,7 +13,7 @@
     "data-display": "VpConH5AUGyCqtp8PMqj1i",
     "data-entry": "1wVY9FfjONIX6us9JmIm7U",
     "feedback": "fH3vmSNZR8r0sU3kN455CD",
-    "layout": null,
+    "layout": "bbgSPUChd18EVNGijjoZGn",
     "search": "LBLqJmlPqXmx9qksCyYGPb",
     "buyer-summary": "0ZjZu0OjHdzGowm3hliM2M",
     "coverbook": "NflKzgx17mOn2JPoFaqnjW",
@@ -49,16 +49,16 @@
       "in-review": 79
     },
     "availability": {
-      "design": 148,
+      "design": 164,
       "vibecoded": 165,
       "dev": 0,
       "storybook": 95,
       "zeroheightMarkdown": 80,
-      "designAndVibecoded": 144,
+      "designAndVibecoded": 160,
       "designOnly": 4,
-      "vibecodedOnly": 21
+      "vibecodedOnly": 5
     },
-    "mismatchesCount": 91
+    "mismatchesCount": 75
   },
   "components": [
     {
@@ -147,9 +147,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185879,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/button-load-more.md"
       },
       "version": "1.0.0",
@@ -195,7 +195,7 @@
       "zeroheight": {
         "pageId": 9166114,
         "url": null,
-        "status": "stub-hidden",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/button-icon.md"
       },
       "version": "1.0.0",
@@ -253,9 +253,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185881,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/button-range.md"
       },
       "version": "1.0.0",
@@ -351,7 +351,7 @@
       "zeroheight": {
         "pageId": 9166115,
         "url": null,
-        "status": "stub-hidden",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/button-split.md"
       },
       "version": "1.0.0",
@@ -398,9 +398,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185887,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/visual-button.md"
       },
       "version": "1.0.0",
@@ -450,7 +450,7 @@
       "zeroheight": {
         "pageId": 9166113,
         "url": null,
-        "status": "stub-hidden",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/link.md"
       },
       "version": "1.0.0",
@@ -505,9 +505,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185880,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/breadcrumb.md"
       },
       "version": "1.0.0",
@@ -562,9 +562,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185878,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/crumb.md"
       },
       "version": "1.0.0",
@@ -619,9 +619,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185884,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/tab.md"
       },
       "version": "1.0.0",
@@ -681,7 +681,7 @@
       "zeroheight": {
         "pageId": 9166116,
         "url": null,
-        "status": "stub-hidden",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/segmented-control.md"
       },
       "version": "1.0.0",
@@ -732,7 +732,7 @@
       "zeroheight": {
         "pageId": 9166117,
         "url": null,
-        "status": "stub-hidden",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/tag.md"
       },
       "version": "1.0.0",
@@ -779,9 +779,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185882,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/chip.md"
       },
       "version": "1.0.0",
@@ -831,9 +831,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185885,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/tile.md"
       },
       "version": "1.0.0",
@@ -879,9 +879,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185766,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/flyout-menu.md"
       },
       "version": "1.0.0",
@@ -934,15 +934,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185767,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/flyout-menu-item.md"
       },
       "version": "1.0.0",
       "state": "ready",
       "lastChange": "2026-11-02",
-      "commentary": "Figma component is called Flyout Item; selectable/selected check sits in a fixed 20px slot.",
+      "commentary": "Figma name follows the code: Flyout Item becomes Flyout Menu Item (decision 2026-11-16, code not renamed); selectable/selected check sits in a fixed 20px slot.",
       "variants": [
         "State",
         "Icon",
@@ -1040,9 +1040,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185883,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/pagination.md"
       },
       "version": "1.0.0",
@@ -1087,9 +1087,9 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9185886,
         "url": null,
-        "status": "drafted",
+        "status": "hidden",
         "markdown": "docs/zeroheight/action/stepper.md"
       },
       "version": "1.0.0",
@@ -1641,9 +1641,9 @@
         "status": "drafted",
         "markdown": "docs/zeroheight/data-entry/dropdown.md"
       },
-      "version": "0.2.0",
+      "version": "0.3.0",
       "state": "ready",
-      "lastChange": "2026-10-21",
+      "lastChange": "2026-11-06",
       "commentary": "Maps to the same Figma Dropdown as ds-select (multi variant).",
       "variants": [
         "State",
@@ -2144,18 +2144,18 @@
       "selector": "ds-search-bar",
       "category": "data-entry",
       "level": "organism",
-      "figmaLibrary": null,
+      "figmaLibrary": "data-entry",
       "description": "The single free-text search bar of the home page, with recent searches and an advanced-search link.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U",
+        "nodeId": "3098:3",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/1wVY9FfjONIX6us9JmIm7U?node-id=3098-3"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-data-entry-search-bar--docs",
@@ -2163,15 +2163,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186071,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-09-08",
-      "commentary": "Code-only; distinct from ds-search-bar-multi and ds-search-bar-scoped (checked in the audit). Missing for ready: Figma, doc.",
+      "commentary": "Figma component Search Bar Home (2026-11-06); distinct from ds-search-bar-multi and ds-search-bar-scoped. Missing for ready: doc.",
       "variants": [
         "placeholder",
         "buttonLabel",
@@ -2185,8 +2185,8 @@
         "home"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "3098:3",
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U"
       },
       "codeFolder": "src/app/shared/ui/search-bar"
     },
@@ -2196,18 +2196,18 @@
       "selector": "ds-search-bar-multi",
       "category": "data-entry",
       "level": "organism",
-      "figmaLibrary": null,
+      "figmaLibrary": "data-entry",
       "description": "The earlier multi-type search bar (buyer ID type, country, query) used by Search v1.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U",
+        "nodeId": "3102:849",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/1wVY9FfjONIX6us9JmIm7U?node-id=3102-849"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-data-entry-search-bar-multi--docs",
@@ -2215,15 +2215,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186072,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-11-06",
-      "commentary": "Code-only, superseded in Figma by the Search Bar master (slots). Missing for ready: Figma, doc.",
+      "commentary": "Figma component created 2026-11-06; the Search Bar master (slots) remains the reference for new screens. Missing for ready: doc.",
       "variants": [
         "type",
         "country",
@@ -2237,8 +2237,8 @@
         "search"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "3102:849",
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U"
       },
       "codeFolder": "src/app/shared/ui/search-bar-multi"
     },
@@ -2248,18 +2248,18 @@
       "selector": "ds-tag-filter-chip",
       "category": "data-entry",
       "level": "molecule",
-      "figmaLibrary": null,
+      "figmaLibrary": "data-entry",
       "description": "A filter chip that opens an option list and shows the picked values as tags.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U",
+        "nodeId": "3104:1454",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/1wVY9FfjONIX6us9JmIm7U?node-id=3104-1454"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-data-entry-tag-filter-chip--docs",
@@ -2267,15 +2267,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186073,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-09-11",
-      "commentary": "Code-only; composes ds-chip internally. Missing for ready: Figma, doc.",
+      "commentary": "Figma component created 2026-11-06; composes ds-chip internally. Missing for ready: doc.",
       "variants": [
         "label",
         "options",
@@ -2291,8 +2291,8 @@
         "tag-configuration"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "3104:1454",
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U"
       },
       "codeFolder": "src/app/shared/ui/tag-filter-chip"
     },
@@ -2302,18 +2302,18 @@
       "selector": "ds-grid-selection",
       "category": "data-entry",
       "level": "molecule",
-      "figmaLibrary": null,
+      "figmaLibrary": "data-entry",
       "description": "A picker of board grid layouts (Buyer Summary card builder).",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U",
+        "nodeId": "3105:59",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/1wVY9FfjONIX6us9JmIm7U?node-id=3105-59"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-data-entry-grid-selection--docs",
@@ -2321,15 +2321,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186074,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-08-26",
-      "commentary": "Code-only; the Figma equivalent is the local Radio Card + Layout preview in the Buyer Summary file. Missing for ready: Figma, doc.",
+      "commentary": "Figma component created 2026-11-06 in the Data Entry library. Missing for ready: doc.",
       "variants": [
         "layout",
         "selected"
@@ -2340,8 +2340,8 @@
         "buyer-summary"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "3105:59",
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U"
       },
       "codeFolder": "src/app/shared/ui/grid-selection"
     },
@@ -2351,18 +2351,18 @@
       "selector": "ds-file-upload",
       "category": "data-entry",
       "level": "molecule",
-      "figmaLibrary": null,
+      "figmaLibrary": "data-entry",
       "description": "A drop zone and file list to attach files with type and size limits.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U",
+        "nodeId": "3107:851",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/1wVY9FfjONIX6us9JmIm7U?node-id=3107-851"
       },
       "storybook": {
         "vibecodedUrl": null,
@@ -2370,15 +2370,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186075,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "0.1.0",
       "state": "draft",
       "lastChange": "2026-09-10",
-      "commentary": "No story and no Figma component yet. Missing for ready: story, Figma, doc.",
+      "commentary": "Figma component created 2026-11-06; no story yet. Missing for ready: story, doc.",
       "variants": [
         "accept",
         "acceptLabel",
@@ -2393,8 +2393,8 @@
         "portfolio-management"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "3107:851",
+        "fileKey": "1wVY9FfjONIX6us9JmIm7U"
       },
       "codeFolder": "src/app/shared/ui/file-upload"
     },
@@ -3121,9 +3121,9 @@
         "status": "drafted",
         "markdown": "docs/zeroheight/data-display/policy-color.md"
       },
-      "version": "0.1.0",
+      "version": "0.2.0",
       "state": "draft",
-      "lastChange": "2026-11-04",
+      "lastChange": "2026-11-06",
       "commentary": "ZeroHeight page still says \"Tech Planned\" but the component exists in code (added 2026-11-04); it has no story yet. Missing for ready: story.",
       "variants": [
         "Color",
@@ -3619,18 +3619,18 @@
       "selector": "ds-pie-chart",
       "category": "data-display",
       "level": "organism",
-      "figmaLibrary": null,
+      "figmaLibrary": "data-display",
       "description": "A donut/pie chart from labelled segments.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "VpConH5AUGyCqtp8PMqj1i",
+        "nodeId": "2118:177",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/VpConH5AUGyCqtp8PMqj1i?node-id=2118-177"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-data-display-pie-chart--docs",
@@ -3638,15 +3638,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186062,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-09-08",
-      "commentary": "Code-only; no Figma component. Missing for ready: Figma, doc.",
+      "commentary": "Figma component created 2026-11-06. Missing for ready: doc.",
       "variants": [
         "segments",
         "size",
@@ -3656,8 +3656,8 @@
       "usedBy": 0,
       "usedByPages": [],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "2118:177",
+        "fileKey": "VpConH5AUGyCqtp8PMqj1i"
       },
       "codeFolder": "src/app/shared/ui/pie-chart"
     },
@@ -3693,7 +3693,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-04",
+      "lastChange": "2026-11-06",
       "commentary": "Retired from the Figma library (replaced by Card .Columns, which is private); heavily used in code. Missing for ready: Figma, doc.",
       "variants": [
         "sections",
@@ -3724,18 +3724,18 @@
       "selector": "ds-action-card",
       "category": "data-display",
       "level": "organism",
-      "figmaLibrary": null,
+      "figmaLibrary": "data-display",
       "description": "A card with icon, title and description that links to an action or area.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "VpConH5AUGyCqtp8PMqj1i",
+        "nodeId": "2117:1081",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/VpConH5AUGyCqtp8PMqj1i?node-id=2117-1081"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-data-display-action-card--docs",
@@ -3743,15 +3743,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186061,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-06-08",
-      "commentary": "Code-only; uses --semantic-color-static-background-subtle-informative, which does not exist. Missing for ready: Figma, doc.",
+      "commentary": "Figma component created 2026-11-06; code uses --semantic-color-static-background-subtle-informative, which does not exist. Missing for ready: doc.",
       "variants": [
         "variant",
         "title",
@@ -3768,8 +3768,8 @@
         "home"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "2117:1081",
+        "fileKey": "VpConH5AUGyCqtp8PMqj1i"
       },
       "codeFolder": "src/app/shared/ui/action-card"
     },
@@ -4312,10 +4312,10 @@
         "dev": false
       },
       "figma": {
-        "fileKey": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": null,
         "componentKey": "39e53ceff3e27048d193a6a0e8d87a6337f410d5",
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-layout-header--docs",
@@ -4340,7 +4340,7 @@
       "usedByPages": [],
       "visual": {
         "figmaNodeId": null,
-        "fileKey": null
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/header"
     },
@@ -4358,10 +4358,10 @@
         "dev": false
       },
       "figma": {
-        "fileKey": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": null,
         "componentKey": "7472d0df1c69d84a49701b96603fe096a864c6a6",
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-layout-side-nav--docs",
@@ -4392,7 +4392,7 @@
       "usedByPages": [],
       "visual": {
         "figmaNodeId": null,
-        "fileKey": null
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/side-nav"
     },
@@ -4410,10 +4410,10 @@
         "dev": false
       },
       "figma": {
-        "fileKey": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": null,
         "componentKey": "7472d0df1c69d84a49701b96603fe096a864c6a6",
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-internals-side-nav-item--docs",
@@ -4444,7 +4444,7 @@
       "usedByPages": [],
       "visual": {
         "figmaNodeId": null,
-        "fileKey": null
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/side-nav"
     },
@@ -4516,18 +4516,18 @@
       "selector": "ds-page-title",
       "category": "layout",
       "level": "molecule",
-      "figmaLibrary": null,
+      "figmaLibrary": "layout",
       "description": "The page heading with identifier, status badge and one optional action link.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
+        "nodeId": "4010:13",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=4010-13"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-layout-page-title--docs",
@@ -4535,15 +4535,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186063,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-09-10",
-      "commentary": "Code-only; the Figma Page Header carries the title inside its own layout. Missing for ready: Figma, doc.",
+      "commentary": "Figma component created 2026-11-06 in the Layout file; the Figma Page Header still carries its own title. Missing for ready: doc.",
       "variants": [
         "title",
         "id",
@@ -4565,8 +4565,8 @@
         "tag-configuration"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "4010:13",
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/page-title"
     },
@@ -4584,10 +4584,10 @@
         "dev": false
       },
       "figma": {
-        "fileKey": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": null,
         "componentKey": "c81f6a2d522228de5c1ba82eb0240bc02fa658c4",
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-layout-modal--docs",
@@ -4629,7 +4629,7 @@
       ],
       "visual": {
         "figmaNodeId": null,
-        "fileKey": null
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/modal"
     },
@@ -4647,10 +4647,10 @@
         "dev": false
       },
       "figma": {
-        "fileKey": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": null,
         "componentKey": "c81f6a2d522228de5c1ba82eb0240bc02fa658c4",
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-internals-modal-header--docs",
@@ -4681,7 +4681,7 @@
       "usedByPages": [],
       "visual": {
         "figmaNodeId": null,
-        "fileKey": null
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/modal"
     },
@@ -4699,10 +4699,10 @@
         "dev": false
       },
       "figma": {
-        "fileKey": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": null,
         "componentKey": "c81f6a2d522228de5c1ba82eb0240bc02fa658c4",
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-internals-modal-content--docs",
@@ -4733,7 +4733,7 @@
       "usedByPages": [],
       "visual": {
         "figmaNodeId": null,
-        "fileKey": null
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/modal"
     },
@@ -4751,10 +4751,10 @@
         "dev": false
       },
       "figma": {
-        "fileKey": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": null,
         "componentKey": "c81f6a2d522228de5c1ba82eb0240bc02fa658c4",
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-internals-modal-footer--docs",
@@ -4785,7 +4785,7 @@
       "usedByPages": [],
       "visual": {
         "figmaNodeId": null,
-        "fileKey": null
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/modal"
     },
@@ -4803,10 +4803,10 @@
         "dev": false
       },
       "figma": {
-        "fileKey": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
         "nodeId": null,
         "componentKey": "413684a36328011d3e9d4a452107c914f8440d5b",
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/story/design-system-layout-drawer--default",
@@ -4833,7 +4833,7 @@
       ],
       "visual": {
         "figmaNodeId": null,
-        "fileKey": null
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/drawer"
     },
@@ -4843,18 +4843,18 @@
       "selector": "ds-filter-drawer",
       "category": "overlay",
       "level": "organism",
-      "figmaLibrary": null,
+      "figmaLibrary": "layout",
       "description": "A Drawer preset to build and save filters.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
+        "nodeId": "4015:1824",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=4015-1824"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-layout-filter-drawer--docs",
@@ -4862,15 +4862,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186064,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-09-08",
-      "commentary": "Code-only; the Figma Drawer master is used with local contents. Missing for ready: Figma, doc.",
+      "commentary": "Figma component created 2026-11-06 in the Layout file. Missing for ready: doc.",
       "variants": [
         "open",
         "title",
@@ -4888,14 +4888,14 @@
         "tag-configuration"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "4015:1824",
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/filter-drawer"
     },
     {
       "id": "flyout",
-      "name": "Flyout",
+      "name": "Flyout Menu",
       "selector": "ds-flyout",
       "category": "overlay",
       "level": "molecule",
@@ -4939,7 +4939,7 @@
     },
     {
       "id": "flyout-item",
-      "name": "Flyout Item",
+      "name": "Flyout Menu Item",
       "selector": "ds-flyout-item",
       "category": "overlay",
       "level": "atom",
@@ -4987,7 +4987,7 @@
     },
     {
       "id": "flyout-section",
-      "name": "Flyout Section",
+      "name": "Flyout Menu Section",
       "selector": "ds-flyout-section",
       "category": "overlay",
       "level": "atom",
@@ -5039,18 +5039,18 @@
       "selector": "ds-spotlight",
       "category": "overlay",
       "level": "organism",
-      "figmaLibrary": null,
+      "figmaLibrary": "layout",
       "description": "A command-palette search overlay with recents and keyboard navigation.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
+        "nodeId": "4019:755",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=4019-755"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/ui-spotlight--docs",
@@ -5058,15 +5058,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186066,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-09-08",
-      "commentary": "Story title sits outside the Design System/* taxonomy (UI/Spotlight). Missing for ready: Figma, doc.",
+      "commentary": "Figma component created 2026-11-06 in the Layout file; story title sits outside the Design System/* taxonomy (UI/Spotlight). Missing for ready: doc.",
       "variants": [
         "open",
         "query",
@@ -5082,8 +5082,8 @@
         "spotlight"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "4019:755",
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/spotlight"
     },
@@ -5093,18 +5093,18 @@
       "selector": "ds-shortcuts-panel",
       "category": "overlay",
       "level": "organism",
-      "figmaLibrary": null,
+      "figmaLibrary": "layout",
       "description": "A panel listing keyboard shortcuts by group, with a keyboard map view.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "bbgSPUChd18EVNGijjoZGn",
+        "nodeId": "4018:1029",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/bbgSPUChd18EVNGijjoZGn?node-id=4018-1029"
       },
       "storybook": {
         "vibecodedUrl": null,
@@ -5112,15 +5112,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186069,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "0.2.0",
       "state": "draft",
       "lastChange": "2026-09-08",
-      "commentary": "No story and no Figma component. Missing for ready: story, Figma, doc.",
+      "commentary": "Figma component created 2026-11-06 in the Layout file; no story. Missing for ready: story, doc.",
       "variants": [
         "open",
         "groups",
@@ -5132,8 +5132,8 @@
       "usedBy": 0,
       "usedByPages": [],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "4018:1029",
+        "fileKey": "bbgSPUChd18EVNGijjoZGn"
       },
       "codeFolder": "src/app/shared/ui/shortcuts-panel"
     },
@@ -5143,18 +5143,18 @@
       "selector": "ds-shortcut-row",
       "category": "other",
       "level": "molecule",
-      "figmaLibrary": null,
+      "figmaLibrary": "action",
       "description": "One shortcut line: label, keys and context.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs",
+        "nodeId": "951:110",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/xCeEJPn6fliEshuE9fnrqs?node-id=951-110"
       },
       "storybook": {
         "vibecodedUrl": null,
@@ -5162,15 +5162,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186067,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "0.2.0",
       "state": "draft",
       "lastChange": "2026-09-08",
-      "commentary": "Internal of Shortcuts Panel; no story. Missing for ready: story, Figma, doc.",
+      "commentary": "Internal of Shortcuts Panel; Figma component in the Action library (page Utility, 2026-11-06); no story. Missing for ready: story, doc.",
       "variants": [
         "label",
         "keys",
@@ -5181,8 +5181,8 @@
       "usedBy": 0,
       "usedByPages": [],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "951:110",
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs"
       },
       "codeFolder": "src/app/shared/ui/shortcuts-panel"
     },
@@ -5192,18 +5192,18 @@
       "selector": "ds-keyboard-map",
       "category": "other",
       "level": "molecule",
-      "figmaLibrary": null,
+      "figmaLibrary": "action",
       "description": "A keyboard-shaped map showing which keys have shortcuts.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs",
+        "nodeId": "951:150",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/xCeEJPn6fliEshuE9fnrqs?node-id=951-150"
       },
       "storybook": {
         "vibecodedUrl": null,
@@ -5211,15 +5211,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186068,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "0.2.0",
       "state": "draft",
       "lastChange": "2026-09-08",
-      "commentary": "Internal of Shortcuts Panel; no story. Missing for ready: story, Figma, doc.",
+      "commentary": "Internal of Shortcuts Panel; Figma component in the Action library (page Utility, 2026-11-06); no story. Missing for ready: story, doc.",
       "variants": [
         "view"
       ],
@@ -5227,8 +5227,8 @@
       "usedBy": 0,
       "usedByPages": [],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "951:150",
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs"
       },
       "codeFolder": "src/app/shared/ui/shortcuts-panel"
     },
@@ -5238,18 +5238,18 @@
       "selector": "ds-keycap",
       "category": "other",
       "level": "atom",
-      "figmaLibrary": null,
+      "figmaLibrary": "action",
       "description": "A single keyboard key cap.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs",
+        "nodeId": "950:24",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/xCeEJPn6fliEshuE9fnrqs?node-id=950-24"
       },
       "storybook": {
         "vibecodedUrl": null,
@@ -5257,15 +5257,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186058,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "0.2.0",
       "state": "draft",
       "lastChange": "2026-09-08",
-      "commentary": "No story and no Figma component. Missing for ready: story, Figma, doc.",
+      "commentary": "Figma component in the Action library (page Utility, 2026-11-06); no story. Missing for ready: story, doc.",
       "variants": [
         "label",
         "tone"
@@ -5274,8 +5274,8 @@
       "usedBy": 0,
       "usedByPages": [],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "950:24",
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs"
       },
       "codeFolder": "src/app/shared/ui/keycap"
     },
@@ -5285,18 +5285,18 @@
       "selector": "ds-shortcut-keys",
       "category": "other",
       "level": "atom",
-      "figmaLibrary": null,
+      "figmaLibrary": "action",
       "description": "A sequence of Keycaps for one shortcut.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs",
+        "nodeId": "950:64",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/xCeEJPn6fliEshuE9fnrqs?node-id=950-64"
       },
       "storybook": {
         "vibecodedUrl": null,
@@ -5304,15 +5304,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186065,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "0.2.0",
       "state": "draft",
       "lastChange": "2026-09-08",
-      "commentary": "No story and no Figma component. Missing for ready: story, Figma, doc.",
+      "commentary": "Figma component in the Action library (page Utility, 2026-11-06); no story. Missing for ready: story, doc.",
       "variants": [
         "keys",
         "tone"
@@ -5321,8 +5321,8 @@
       "usedBy": 0,
       "usedByPages": [],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "950:64",
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs"
       },
       "codeFolder": "src/app/shared/ui/keycap"
     },
@@ -5495,18 +5495,18 @@
       "selector": "ds-flag",
       "category": "other",
       "level": "atom",
-      "figmaLibrary": null,
+      "figmaLibrary": "action",
       "description": "A country flag SVG from an ISO country code.",
       "availability": {
-        "design": false,
+        "design": true,
         "vibecoded": true,
         "dev": false
       },
       "figma": {
-        "fileKey": null,
-        "nodeId": null,
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs",
+        "nodeId": "952:165",
         "componentKey": null,
-        "url": null
+        "url": "https://www.figma.com/design/xCeEJPn6fliEshuE9fnrqs?node-id=952-165"
       },
       "storybook": {
         "vibecodedUrl": "https://dahnmills.github.io/ClaudeXAZ/storybook/?path=/docs/design-system-foundation-flag--docs",
@@ -5514,15 +5514,15 @@
         "devStatus": "planned"
       },
       "zeroheight": {
-        "pageId": null,
+        "pageId": 9186070,
         "url": null,
-        "status": null,
+        "status": "hidden",
         "markdown": null
       },
       "version": "1.0.0",
       "state": "in-review",
       "lastChange": "2026-09-08",
-      "commentary": "Code-only; no Figma component. Missing for ready: Figma, doc.",
+      "commentary": "Figma component in the Action library (page Utility, 2026-11-06). Missing for ready: doc.",
       "variants": [
         "code"
       ],
@@ -5533,8 +5533,8 @@
         "tag-configuration"
       ],
       "visual": {
-        "figmaNodeId": null,
-        "fileKey": null
+        "figmaNodeId": "952:165",
+        "fileKey": "xCeEJPn6fliEshuE9fnrqs"
       },
       "codeFolder": "src/app/shared/ui/flag"
     },
@@ -8463,22 +8463,10 @@
       "detail": "Figma-only name: implemented by ds-flyout-menu + ds-flyout-menu-item (single/multi, flat/grouped)."
     },
     {
-      "kind": "code-only",
-      "ref": "search-bar",
-      "selector": "ds-search-bar",
-      "detail": "Component in shared/ui with no matching Figma library component."
-    },
-    {
       "kind": "no-doc",
       "ref": "search-bar",
       "selector": "ds-search-bar",
       "detail": "No ZeroHeight Markdown page for this code component."
-    },
-    {
-      "kind": "code-only",
-      "ref": "search-bar-multi",
-      "selector": "ds-search-bar-multi",
-      "detail": "Component in shared/ui with no matching Figma library component."
     },
     {
       "kind": "no-doc",
@@ -8487,34 +8475,16 @@
       "detail": "No ZeroHeight Markdown page for this code component."
     },
     {
-      "kind": "code-only",
-      "ref": "tag-filter-chip",
-      "selector": "ds-tag-filter-chip",
-      "detail": "Component in shared/ui with no matching Figma library component."
-    },
-    {
       "kind": "no-doc",
       "ref": "tag-filter-chip",
       "selector": "ds-tag-filter-chip",
       "detail": "No ZeroHeight Markdown page for this code component."
     },
     {
-      "kind": "code-only",
-      "ref": "grid-selection",
-      "selector": "ds-grid-selection",
-      "detail": "Component in shared/ui with no matching Figma library component."
-    },
-    {
       "kind": "no-doc",
       "ref": "grid-selection",
       "selector": "ds-grid-selection",
       "detail": "No ZeroHeight Markdown page for this code component."
-    },
-    {
-      "kind": "code-only",
-      "ref": "file-upload",
-      "selector": "ds-file-upload",
-      "detail": "Component in shared/ui with no matching Figma library component."
     },
     {
       "kind": "no-doc",
@@ -8535,12 +8505,6 @@
       "detail": "Code component without a Storybook story."
     },
     {
-      "kind": "code-only",
-      "ref": "pie-chart",
-      "selector": "ds-pie-chart",
-      "detail": "Component in shared/ui with no matching Figma library component."
-    },
-    {
       "kind": "no-doc",
       "ref": "pie-chart",
       "selector": "ds-pie-chart",
@@ -8557,12 +8521,6 @@
       "ref": "properties-panel",
       "selector": "ds-properties-panel",
       "detail": "No ZeroHeight Markdown page for this code component."
-    },
-    {
-      "kind": "code-only",
-      "ref": "action-card",
-      "selector": "ds-action-card",
-      "detail": "Component in shared/ui with no matching Figma library component."
     },
     {
       "kind": "no-doc",
@@ -8577,22 +8535,10 @@
       "detail": "Figma-only component: in code it exists only as the counter input of ds-tab."
     },
     {
-      "kind": "code-only",
-      "ref": "page-title",
-      "selector": "ds-page-title",
-      "detail": "Component in shared/ui with no matching Figma library component."
-    },
-    {
       "kind": "no-doc",
       "ref": "page-title",
       "selector": "ds-page-title",
       "detail": "No ZeroHeight Markdown page for this code component."
-    },
-    {
-      "kind": "code-only",
-      "ref": "filter-drawer",
-      "selector": "ds-filter-drawer",
-      "detail": "Component in shared/ui with no matching Figma library component."
     },
     {
       "kind": "no-doc",
@@ -8637,24 +8583,12 @@
       "detail": "No ZeroHeight Markdown page for this code component."
     },
     {
-      "kind": "code-only",
-      "ref": "spotlight",
-      "selector": "ds-spotlight",
-      "detail": "Component in shared/ui with no matching Figma library component."
-    },
-    {
       "kind": "no-doc",
       "ref": "spotlight",
       "selector": "ds-spotlight",
       "detail": "No ZeroHeight Markdown page for this code component."
     },
     {
-      "kind": "code-only",
-      "ref": "shortcuts-panel",
-      "selector": "ds-shortcuts-panel",
-      "detail": "Component in shared/ui with no matching Figma library component."
-    },
-    {
       "kind": "no-doc",
       "ref": "shortcuts-panel",
       "selector": "ds-shortcuts-panel",
@@ -8665,12 +8599,6 @@
       "ref": "shortcuts-panel",
       "selector": "ds-shortcuts-panel",
       "detail": "Code component without a Storybook story."
-    },
-    {
-      "kind": "code-only",
-      "ref": "shortcut-row",
-      "selector": "ds-shortcut-row",
-      "detail": "Component in shared/ui with no matching Figma library component."
     },
     {
       "kind": "no-doc",
@@ -8685,12 +8613,6 @@
       "detail": "Code component without a Storybook story."
     },
     {
-      "kind": "code-only",
-      "ref": "keyboard-map",
-      "selector": "ds-keyboard-map",
-      "detail": "Component in shared/ui with no matching Figma library component."
-    },
-    {
       "kind": "no-doc",
       "ref": "keyboard-map",
       "selector": "ds-keyboard-map",
@@ -8703,12 +8625,6 @@
       "detail": "Code component without a Storybook story."
     },
     {
-      "kind": "code-only",
-      "ref": "keycap",
-      "selector": "ds-keycap",
-      "detail": "Component in shared/ui with no matching Figma library component."
-    },
-    {
       "kind": "no-doc",
       "ref": "keycap",
       "selector": "ds-keycap",
@@ -8719,12 +8635,6 @@
       "ref": "keycap",
       "selector": "ds-keycap",
       "detail": "Code component without a Storybook story."
-    },
-    {
-      "kind": "code-only",
-      "ref": "shortcut-keys",
-      "selector": "ds-shortcut-keys",
-      "detail": "Component in shared/ui with no matching Figma library component."
     },
     {
       "kind": "no-doc",
@@ -8755,12 +8665,6 @@
       "ref": "divider",
       "selector": "ds-divider",
       "detail": "No ZeroHeight Markdown page for this code component."
-    },
-    {
-      "kind": "code-only",
-      "ref": "flag",
-      "selector": "ds-flag",
-      "detail": "Component in shared/ui with no matching Figma library component."
     },
     {
       "kind": "no-doc",
@@ -8865,7 +8769,7 @@
     {
       "kind": "name-differs",
       "ref": "flyout-menu-item",
-      "detail": "Flyout Item (Figma) vs ds-flyout-menu-item"
+      "detail": "Flyout Item (Figma, to be renamed Flyout Menu Item) vs ds-flyout-menu-item"
     },
     {
       "kind": "name-differs",

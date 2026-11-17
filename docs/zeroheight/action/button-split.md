@@ -41,7 +41,7 @@ Exposed nested instances: `Button` (and its `.Content`: `Icon` Left, Right, None
 | Open | chevron click: `menuOpen` true, chevron turns up, menu shown | `Open=True` |
 | Hover, Active, Focus | from Button and Button Icon | on the exposed instances |
 | Disabled | `disabled` input on both parts, opacity 0.40 | through the exposed instances |
-| Loading | `loading` input on the main button | through the exposed `Button` (`State=Loading`) |
+| Loading | `loading` input on the main button; while loading, the toggle click is also ignored (menu cannot open) although the toggle is not drawn disabled | through the exposed `Button` (`State=Loading`) |
 
 ## Tokens
 | Element | Property | Semantic token (CSS var) | Foundation alias |
@@ -53,7 +53,7 @@ Values written outside tokens in the SCSS: toggle left border 1px, menu offset 4
 
 ## Accessibility
 - The two parts sit in a `role="group"`; each part is a full button with its own focus.
-- The toggle has `ariaLabel="Toggle menu"` written in the component; it does not expose `aria-expanded` or `aria-haspopup`. Add them, or a more specific label, if the menu content needs it.
+- The toggle has `ariaLabel="Toggle menu"`, `aria-haspopup="menu"` and `aria-expanded` (true while the menu is open).
 - Escape closes the menu. Focus is not moved into the menu by the component.
 - Click outside closes the menu.
 

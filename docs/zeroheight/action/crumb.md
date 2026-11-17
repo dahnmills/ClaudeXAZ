@@ -26,7 +26,7 @@ Crumb is the item that Breadcrumb repeats. A parent crumb is a neutral Link foll
 | (none) | | | `label: string` (required) | Label text. |
 | (none) | | | `href: string` (default `'#'`) | Destination of a parent crumb. |
 | (none) | | | `disabled: boolean` (default `false`) | Code only, no Figma variant (the Link set has `State=Disabled`). |
-| (none) | | | `clicked` (output) | Emitted on click; the default navigation is prevented, so the parent handles routing. |
+| (none) | | | `clicked` (output) | Emitted on click (not when `disabled`); the default navigation is prevented, so the parent handles routing. |
 
 Slots: none.
 
@@ -38,7 +38,7 @@ Exposed nested instances: none (the `Link` instance is not exposed on Crumb).
 | Default | Rest state | `Current Page=False` |
 | Hover, Active, Focus | from `ds-link` (`:hover`, `:active`, `:focus-visible`) | on the Link set |
 | Current page | `currentPage` input | `Current Page=True` |
-| Disabled | `disabled` input: opacity 0.40, link disabled | not modeled on Crumb |
+| Disabled | `disabled` input: opacity 0.40 on the host and on the link (the two stack, about 0.16 rendered; kept as is, to decide) | not modeled on Crumb |
 
 ## Tokens
 | Element | Property | Semantic token (CSS var) | Foundation alias |

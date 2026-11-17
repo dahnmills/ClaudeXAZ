@@ -19,6 +19,8 @@
     [reversed]="reversed()"
     [disabled]="disabled()"
     ariaLabel="Toggle menu"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="menuOpen()"
     (clicked)="onToggle()"
   >
     <ds-icon [name]="menuOpen() ? 'chevron-up' : 'chevron-down'" [size]="16" />

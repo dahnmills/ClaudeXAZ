@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Tutorial film composition (1920 x 1080). Deterministic: window.seek(t) draws the frame at t seconds.
+     Content comes from window.CFG (the component config, without its capture recipe) and window.SHOTS (shots.json);
+     images are served under /shots/. Scene types: title, statement, gallery, dodont, states, screen, end. -->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #f5f5f5; }
+  body { font-family: 'Allianz Neo', sans-serif; color: #121212; -webkit-font-smoothing: antialiased; }
+  em { font-style: normal; color: #007ab3; }
+  .dark em { color: #8fd0f5; }
+  #bg { position: absolute; inset: 0; background: #003781; }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .line { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; }
+  .h { font-size: 60px; font-weight: 600; letter-spacing: -0.6px; line-height: 72px; }
+  .s { font-size: 32px; font-weight: 400; color: #414141; line-height: 40px; }
+  .dark .h, .dark .s { color: #fff; }
+  .panel { position: absolute; background: #fff; border: 1px solid #e3e3e3; border-radius: 16px; box-shadow: 0 24px 60px rgba(0, 30, 80, .07); }
+  .shot { position: absolute; display: block; }
+  .cap { position: absolute; text-align: center; white-space: nowrap; transform: translateX(-50%); }
+  .cap b { display: block; font-size: 34px; font-weight: 600; color: #121212; }
+  .cap i { display: block; font-style: normal; font-size: 26px; color: #6b6b6b; margin-top: 6px; }
+  .cap.on b { color: #007ab3; }
+  .cap b.solo { font-size: 30px; font-weight: 400; color: #414141; }
+
+  /* frame chrome on the light scenes */
+  #chrome { position: absolute; left: 96px; right: 96px; top: 56px; height: 40px; display: flex; justify-content: space-between; align-items: center; opacity: 0; }
+  #chrome .who { font-size: 24px; color: #6b6b6b; white-space: nowrap; }
+  #chrome .who b { color: #003781; font-weight: 600; }
+  #chrome .chap { display: flex; gap: 10px; align-items: center; font-size: 24px; color: #6b6b6b; white-space: nowrap; }
+  #chrome .chap b { color: #003781; font-weight: 600; }
+  #chrome .dots { display: flex; gap: 8px; margin-right: 14px; }
+  #chrome .dots i { width: 28px; height: 4px; border-radius: 2px; background: #d9d9d9; }
+  #chrome .dots i.on { background: #007ab3; }
+
+  /* title and end */
+  .kicker { font-size: 34px; color: #b9dcf5; letter-spacing: .2px; }
+  .big { font-size: 168px; font-weight: 700; letter-spacing: -4px; line-height: 1; color: #fff; }
+  .tag { display: inline-block; height: 52px; line-height: 52px; padding: 0 26px; border-radius: 26px; border: 1.5px solid rgba(185, 220, 245, .6); color: #fff; font-size: 26px; }
+  .foot { font-size: 26px; color: #b9dcf5; }
+
+  /* do / don't */
+  .dd { position: absolute; width: 780px; height: 400px; }
+  .dd .band { position: absolute; left: 0; right: 0; top: 0; height: 72px; border-radius: 16px 16px 0 0; display: flex; align-items: center; gap: 14px; padding: 0 32px; font-size: 30px; font-weight: 600; color: #fff; }
+  .dd.do .band { background: #1e8927; } .dd.dont .band { background: #b0050c; }
+  .dd .band svg { width: 34px; height: 34px; }
+  .dd .txt { position: absolute; left: 0; right: 0; bottom: 44px; text-align: center; font-size: 28px; color: #414141; white-space: nowrap; }
+  .dd .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 6px; border-radius: 0 0 16px 16px; }
+
+  /* states */
+  .key { position: absolute; height: 54px; min-width: 96px; padding: 0 18px; line-height: 50px; text-align: center; border: 2px solid #9a9a9a; border-bottom-width: 5px; border-radius: 10px; background: #fff; font-size: 26px; font-weight: 600; color: #414141; transform: translateX(-50%); }
+
+  /* screen */
+  #win { position: absolute; overflow: hidden; border-radius: 14px; background: #fff; box-shadow: 0 30px 90px rgba(0, 30, 80, .18), 0 0 0 1px rgba(0, 0, 0, .06); }
+  #win .pg { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #win .pg img { position: absolute; left: 0; top: 0; }
+  .call { position: absolute; transform: translate(-50%, 0); white-space: nowrap; font-size: 26px; font-weight: 600; padding: 8px 18px; border-radius: 8px; background: #fff; color: #007ab3; border: 2px solid #007ab3; box-shadow: 0 10px 30px rgba(0, 30, 80, .15); }
+  .call.p { background: #003781; border-color: #003781; color: #fff; }
+  .call::after { content: ''; position: absolute; left: 50%; top: -12px; width: 2px; height: 10px; background: #007ab3; }
+  .call.p::after { background: #003781; }
+  .call.up::after { top: auto; bottom: -12px; }
+  #capt { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; font-size: 40px; font-weight: 600; line-height: 52px; }
+
+  #cursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; opacity: 0; transform-origin: 6px 4px; z-index: 50; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .25)); }
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="root"></div>
+<div id="chrome"><div class="who"></div><div class="chap"><span class="dots"></span><span class="ct"></span></div></div>
+<svg id="cursor" viewBox="0 0 44 44"><path d="M6 4 L6 34 L13.5 27 L18.5 39 L24 36.6 L19 25 L29 25 Z" fill="#121212" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/></svg>
+<script>
+const CFG = window.CFG, SH = window.SHOTS, W = 1920, H = 1080;
+const $ = (tag, cls, html, parent) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; (parent || root).appendChild(e); return e; };
+const root = document.getElementById('root'), bg = document.getElementById('bg'), chrome = document.getElementById('chrome'), cursor = document.getElementById('cursor');
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = x => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const out3 = x => 1 - Math.pow(1 - clamp(x), 3);
+const rise = (lt, at, dur = .6) => out3((lt - at) / dur);                     // 0 -> 1 from at
+const img = (id, scale, parent) => {                                         // a capture, sized from its CSS-px rect
+  const s = SH[id]; if (!s) throw new Error('missing shot ' + id);
+  const e = $('img', 'shot', null, parent); e.src = `/shots/${id}.png`; e.style.width = s.w * scale + 'px'; e.style.height = s.h * scale + 'px';
+  e._w = s.w * scale; e._h = s.h * scale; return e;
+};
+const place = (e, cx, cy) => { e.style.left = (cx - e._w / 2) + 'px'; e.style.top = (cy - e._h / 2) + 'px'; };
+const appear = (e, k, dy = 24) => { e.style.opacity = k; e.style.transform = (e._base || '') + ` translateY(${(1 - k) * dy}px)`; };
+const ICON = {
+  ok: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="#fff" stroke-width="2"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  no: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="none" stroke="#fff" stroke-width="2"/><path d="M8 8l8 8M16 8l-8 8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>',
+};
+// pointer shared by the scenes: a scene sets CUR = {x, y, down, o}
+let CUR = null;
+const path = (keys, lt, pos) => {                                             // keys: [[t, target, click?]], eased moves
+  let i = 0; while (i < keys.length - 1 && lt >= keys[i + 1][0]) i++;
+  const a = keys[i], b = keys[i + 1];
+  let p = pos(a[1]);
+  if (b && lt > a[0]) { const pb = pos(b[1]), k = ease((lt - a[0]) / (b[0] - a[0])); p = [p[0] + (pb[0] - p[0]) * k, p[1] + (pb[1] - p[1]) * k]; }
+  const clickAt = keys.filter(k => k[2]).map(k => k[0]);
+  const down = clickAt.some(c => lt >= c && lt < c + .18);
+  return { x: p[0], y: p[1], down };
+};
+
+const BUILD = {
+  title(sc, el) {
+    el.classList.add('dark');
+    sc.k = $('div', 'line kicker', sc.kicker, el); sc.k.style.top = '330px';
+    sc.b = $('div', 'line big', sc.title, el); sc.b.style.top = '400px';
+    sc.g = $('div', 'line', `<span class="tag">${sc.tag}</span>`, el); sc.g.style.top = '620px';
+  },
+  draw_title(sc, lt) { appear(sc.k, rise(lt, .3)); appear(sc.b, rise(lt, .5, .8), 40); appear(sc.g, rise(lt, 1.1)); },
+
+  statement(sc, el) {
+    sc.h = $('div', 'line h', sc.text, el); sc.h.style.top = '250px';
+    sc.s = $('div', 'line s', sc.sub, el); sc.s.style.top = '350px';
+    sc.p = $('div', 'panel', null, el); Object.assign(sc.p.style, { left: '560px', top: '470px', width: '800px', height: '380px' });
+    const d = sc.demo, S = d.shots;
+    sc.im = Object.fromEntries(Object.entries(S).map(([k, id]) => { const e = img(id, d.scale, el); place(e, 960, 660); return [k, e]; }));
+  },
+  draw_statement(sc, lt) {
+    appear(sc.h, rise(lt, .2)); appear(sc.s, rise(lt, .5)); const kp = rise(lt, .7);
+    appear(sc.p, kp, 30); const d = sc.demo;
+    const hov = clamp((lt - d.hoverAt) / .15), down = lt >= d.clickAt && lt < d.clickAt + .22;
+    sc.im.rest.style.opacity = kp;
+    if (!sc.im.hover) { sc.im.rest.style.transform = `translateY(${(1 - kp) * 30}px)`; CUR = null; return; }   // static demo: no pointer
+    sc.im.hover.style.opacity = kp * hov * (down ? 0 : 1); sc.im.down.style.opacity = down ? kp : 0;
+    for (const e of Object.values(sc.im)) e.style.transform = `translateY(${(1 - kp) * 30}px)`;
+    const tgt = [960 + 40, 660 + 18];
+    CUR = lt > .9 ? { ...path([[.9, [1250, 900]], [d.hoverAt, tgt, false], [d.clickAt, tgt, true], [sc.d, [1180, 860]]], lt, p => p), o: rise(lt, .9, .3) } : null;
+  },
+
+  gallery(sc, el) {
+    sc.h = $('div', 'line h', sc.heading, el); sc.h.style.top = '200px';
+    sc.p = $('div', 'panel', null, el); Object.assign(sc.p.style, { left: '180px', top: '360px', width: '1560px', height: '520px' });
+    const n = sc.items.length, slot = 1560 / n;
+    sc.els = sc.items.map((it, i) => {
+      const cx = 180 + slot * (i + .5), e = img(it.shot, sc.scale, el); place(e, cx, 585);
+      const c = $('div', 'cap', it.caption ? `<b>${it.caption}</b><i>${it.sub}</i>` : `<b class="solo">${it.sub}</b>`, el); c.style.left = cx + 'px'; c.style.top = '680px'; c._base = 'translateX(-50%)';
+      return { e, c };
+    });
+  },
+  draw_gallery(sc, lt) {
+    appear(sc.h, rise(lt, .2)); appear(sc.p, rise(lt, .4), 30);
+    sc.els.forEach(({ e, c }, i) => { const k = rise(lt, .8 + i * .28); appear(e, k, 30); appear(c, rise(lt, 1.0 + i * .28), 16); });
+  },
+
+  dodont(sc, el) {
+    sc.h = $('div', 'line h', sc.heading, el); sc.h.style.top = '190px';
+    sc.s = $('div', 'line s', sc.sub, el); sc.s.style.top = '290px';
+    const mk = (cls, label, icon, x, side) => {
+      const box = $('div', `panel dd ${cls}`, `<div class="band">${icon}${label}</div><div class="txt">${side.text}</div>`, el);
+      Object.assign(box.style, { left: x + 'px', top: '420px' });
+      return box;
+    };
+    sc.bd = mk('do', 'Do', ICON.ok, 160, sc.do); sc.bn = mk('dont', 'Don’t', ICON.no, 980, sc.dont);
+    sc.id = img(sc.do.shot, sc.scale, el); place(sc.id, 550, 640);
+    sc.in0 = img(sc.do.shot, sc.scale, el); place(sc.in0, 1370, 640);
+    sc.in1 = img(sc.dont.shot, sc.scale, el); place(sc.in1, 1370, 640);
+  },
+  draw_dodont(sc, lt) {
+    appear(sc.h, rise(lt, .2)); appear(sc.s, rise(lt, .6));
+    const a = rise(lt, 1.2), b = rise(lt, 2.6);
+    appear(sc.bd, a, 30); appear(sc.id, a, 30); appear(sc.bn, b, 30);
+    const flip = clamp((lt - 3.6) / .2);                                        // Delete turns Primary: the mistake
+    sc.in0.style.opacity = b * (1 - flip); sc.in1.style.opacity = b * flip;
+    sc.in0.style.transform = sc.in1.style.transform = `translateY(${(1 - b) * 30}px)`;
+  },
+
+  states(sc, el) {
+    sc.h = $('div', 'line h', sc.heading, el); sc.h.style.top = '200px';
+    sc.p = $('div', 'panel', null, el); Object.assign(sc.p.style, { left: '180px', top: '360px', width: '1560px', height: '520px' });
+    const n = sc.items.length, slot = 1560 / n;
+    sc.cols = sc.items.map((it, i) => {
+      const cx = 180 + slot * (i + .5), col = { it, cx };
+      col.rest = img(sc.rest, sc.scale, el); place(col.rest, cx, 590);
+      if (it.kind === 'loading') col.fr = [...Array(SH[it.shot].frames).keys()].map(f => { const e = img(`${it.shot}-${f}`, sc.scale, el); place(e, cx, 590); return e; });
+      else { col.st = img(it.shot, sc.scale, el); place(col.st, cx, 590); }
+      if (it.down) { col.dn = img(it.down, sc.scale, el); place(col.dn, cx, 590); }
+      if (it.kind === 'focus') { col.key = $('div', 'key', 'Tab', el); col.key.style.left = cx + 'px'; col.key.style.top = '440px'; col.key._base = 'translateX(-50%)'; }
+      col.c = $('div', 'cap', `<b>${it.caption}</b><i>${it.sub}</i>`, el); col.c.style.left = cx + 'px'; col.c.style.top = '700px'; col.c._base = 'translateX(-50%)';
+      return col;
+    });
+  },
+  draw_states(sc, lt) {
+    appear(sc.h, rise(lt, .2)); appear(sc.p, rise(lt, .4), 30);
+    const T0 = 1.2, STEP = 1.75; let cur = null;
+    sc.cols.forEach((col, i) => {
+      const k = rise(lt, .6 + i * .12), at = T0 + i * STEP, on = clamp((lt - at) / .15), it = col.it;
+      appear(col.c, k, 16); col.c.classList.toggle('on', lt >= at && lt < at + STEP);
+      col.rest.style.opacity = k * (1 - on);
+      col.rest.style.transform = `translateY(${(1 - k) * 30}px)`;
+      if (it.kind === 'hover') {
+        const dn = lt >= at + .8 && lt < at + 1.05;
+        col.st.style.opacity = on * (dn ? 0 : 1); col.dn.style.opacity = dn ? 1 : 0;
+        const tgt = [col.cx + 30, 608];
+        if (lt > at - .7 && lt < at + STEP) cur = { ...path([[at - .7, [col.cx + 150, 830]], [at, tgt], [at + .8, tgt, true], [at + STEP, [col.cx + 170, 820]]], lt, p => p), o: rise(lt, at - .7, .25) * (1 - rise(lt, at + STEP - .35, .3)) };
+      } else if (it.kind === 'focus') {
+        const kk = rise(lt, at - .5, .3) * (1 - rise(lt, at + .5, .3)), press = lt >= at - .1 && lt < at + .1;
+        appear(col.key, kk, 10); col.key.style.borderBottomWidth = press ? '2px' : '5px';
+        col.st.style.opacity = on;
+      } else if (it.kind === 'loading') {
+        const f = Math.floor((lt * 1000) / (SH[it.shot].period / col.fr.length)) % col.fr.length;
+        col.fr.forEach((e, j) => e.style.opacity = j === f ? on : 0);
+      } else col.st.style.opacity = on;
+    });
+    CUR = cur;
+  },
+
+  screen(sc, el) {
+    const s0 = SH[sc.shots[0][1]]; sc.pw = s0.w; sc.ph = s0.h;
+    sc.fw = 1512; sc.fh = sc.fw * sc.ph / sc.pw; sc.fx = (W - sc.fw) / 2; sc.fy = 64;
+    sc.win = $('div', null, null, el); sc.win.id = 'win';
+    Object.assign(sc.win.style, { left: sc.fx + 'px', top: sc.fy + 'px', width: sc.fw + 'px', height: sc.fh + 'px' });
+    sc.pg = $('div', 'pg', null, sc.win); sc.pg.style.width = sc.pw + 'px'; sc.pg.style.height = sc.ph + 'px';
+    sc.imgs = sc.shots.map(([t, id]) => { const e = img(id, 1, sc.pg); e.style.left = e.style.top = '0'; return e; });
+    sc.capEls = sc.captions.map(c => { const e = $('div', 'line', c[2], el); e.id = ''; e.className = 'line'; e.style.cssText = `top:${sc.fy + sc.fh + 30}px;font-size:40px;font-weight:600;line-height:52px`; return e; });
+    sc.calls = sc.callouts.map(c => $('div', 'call' + (/primary/i.test(c[3]) ? ' p' : ''), c[3], el));
+  },
+  draw_screen(sc, lt) {
+    const k = rise(lt, 0, .7); sc.win.style.opacity = k; sc.win.style.transform = `translateY(${(1 - k) * 40}px) scale(${.97 + .03 * k})`;
+    let cur = 0; sc.shots.forEach(([t], i) => { if (lt >= t) cur = i; });
+    sc.imgs.forEach((e, i) => { const prev = i === cur - 1, x = clamp((lt - sc.shots[cur][0]) / .15); e.style.opacity = i === cur ? (cur ? x : 1) : prev ? 1 : 0; e.style.zIndex = i === cur ? 2 : 1; });
+    const R = n => typeof n === 'string' ? SH[sc.shots[cur][1]].rects[n] : n;
+    const C = n => { if (Array.isArray(n)) return n; const r = R(n); return [r.x + r.w / 2, r.y + r.h / 2]; };
+    // camera: view rect in page px, eased between keys
+    const view = key => { if (!key || !key[1]) return [0, 0, sc.pw, sc.ph]; const t = key[1];
+      if (Array.isArray(t)) { const vw = sc.pw / t[2]; return [t[0], t[1], vw, sc.ph / t[2]]; }
+      const r = R(t), z = key[2], vw = sc.pw / z, vh = sc.ph / z;
+      const cx = clamp(r.x + r.w / 2, vw / 2, sc.pw - vw / 2), cy = clamp(r.y + r.h / 2, vh / 2, sc.ph - vh / 2); return [cx - vw / 2, cy - vh / 2, vw, vh]; };
+    let ci = 0; sc.camera.forEach((c, i) => { if (lt >= c[0]) ci = i; });
+    const a = view(sc.camera[Math.max(0, ci - 1)]), b = view(sc.camera[ci]), m = ci ? ease((lt - sc.camera[ci][0]) / .9) : 1;
+    const v = a.map((x, i) => x + (b[i] - x) * m), K = sc.fw / v[2];
+    sc.pg.style.transform = `scale(${K}) translate(${-v[0]}px, ${-v[1]}px)`;
+    const toFrame = p => [sc.fx + (p[0] - v[0]) * K, sc.fy + (p[1] - v[1]) * K];
+    sc.capEls.forEach((e, i) => { const [t0, t1] = sc.captions[i]; const kk = rise(lt, t0, .45) * (1 - rise(lt, t1 - .3, .3)); appear(e, kk * k, 14); });
+    sc.calls.forEach((e, i) => { const [t0, t1, n, , up] = sc.callouts[i]; const r = R(n); if (!r) { e.style.opacity = 0; return; } const p = toFrame([r.x + r.w / 2, up ? r.y : r.y + r.h]); const kk = rise(lt, t0, .4) * (1 - rise(lt, t1 - .3, .3));
+      e.style.left = p[0] + 'px'; e.style.top = (up ? p[1] - 18 : p[1] + 18) + 'px'; e.style.opacity = kk; e.style.transform = `translate(-50%, ${up ? -100 : 0}%) translateY(${(1 - kk) * (up ? 12 : -12)}px)`; e.classList.toggle('up', !!up); });
+    const pc = path(sc.cursor, lt, C), f = toFrame([pc.x, pc.y]);
+    CUR = sc.cursor.length > 1 ? { x: f[0], y: f[1], down: pc.down, o: rise(lt, .6, .3) * (1 - rise(lt, sc.d - .6, .4)) } : null;   // a single key: no pointer
+  },
+
+  end(sc, el) {
+    el.classList.add('dark');
+    sc.b = $('div', 'line big', sc.title, el); sc.b.style.top = '250px'; sc.b.style.fontSize = '132px';
+    sc.ls = sc.lines.map((l, i) => { const e = $('div', 'line s', l, el); e.style.top = (480 + i * 72) + 'px'; e.style.fontSize = '44px'; e.style.lineHeight = '56px'; return e; });
+    sc.f = $('div', 'line foot', sc.foot, el); sc.f.style.top = '760px';
+  },
+  draw_end(sc, lt) { appear(sc.b, rise(lt, .3, .8), 30); sc.ls.forEach((e, i) => appear(e, rise(lt, .9 + i * .35))); appear(sc.f, rise(lt, 1.8)); },
+};
+
+// chapters (scenes that have one), for the chrome
+const SC = CFG.scenes, CH = SC.filter(s => s.chapter);
+chrome.querySelector('.who').innerHTML = `Qirin design system <b>/ ${CFG.name}</b>`;
+const dots = chrome.querySelector('.dots'); CH.forEach(() => $('i', null, null, dots));
+SC.forEach(sc => { sc.el = $('div', 'scene'); BUILD[sc.type](sc, sc.el); });
+const FADE = .45;
+
+window.seek = t => {
+  CUR = null; let dark = 0, chap = null, chromeK = 0;
+  SC.forEach(sc => {
+    const lt = t - sc.t, live = lt >= -FADE && lt <= sc.d + FADE;
+    if (!live) { sc.el.style.display = 'none'; return; }
+    sc.el.style.display = '';
+    const first = sc === SC[0], last = sc === SC[SC.length - 1];
+    const o = (first ? 1 : clamp((lt + FADE / 2) / FADE)) * (last ? 1 : clamp((sc.d - lt + FADE / 2) / FADE));
+    sc.el.style.opacity = o;
+    if (sc.el.classList.contains('dark')) dark = Math.max(dark, o);
+    if (sc.chapter && o > .5) chap = sc;
+    if (sc.chapter && sc.type !== 'screen') chromeK = Math.max(chromeK, o);
+    BUILD['draw_' + sc.type](sc, clamp(lt, 0, sc.d));
+  });
+  bg.style.opacity = dark;
+  chrome.style.opacity = chromeK;
+  if (chap) { const i = CH.indexOf(chap); chrome.querySelector('.ct').innerHTML = `<b>${i + 1}</b> / ${CH.length}&nbsp;&nbsp;${chap.chapter}`; [...dots.children].forEach((d, j) => d.classList.toggle('on', j <= i)); }
+  if (CUR && CUR.o > 0) { cursor.style.opacity = CUR.o; cursor.style.transform = `translate(${CUR.x - 6}px, ${CUR.y - 4}px) scale(${CUR.down ? .86 : 1})`; }
+  else cursor.style.opacity = 0;
+};
+// quality gate: any text line wider than the safe area (one line, nothing cut) at the current time
+window.check = () => [...document.querySelectorAll('.line, .cap, .call, .dd .txt, #chrome')].filter(e => e.offsetParent && getComputedStyle(e.closest('.scene') || e).opacity > 0 && getComputedStyle(e).opacity > 0.01)
+  .map(e => { const r = e.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(e); const tr = range.getBoundingClientRect();
+    return (tr.width > 0 && (tr.left < 60 || tr.right > W - 60 || tr.height > parseFloat(getComputedStyle(e).lineHeight || 0) * 1.6 + 8)) ? `${e.textContent.trim().slice(0, 50)} [${Math.round(tr.left)}..${Math.round(tr.right)} h${Math.round(tr.height)}]` : null; })
+  .filter(Boolean);
+window.ready = () => Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+</script>
+</body>
+</html>

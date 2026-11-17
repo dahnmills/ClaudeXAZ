@@ -3,7 +3,12 @@
     class="ds-stepper__step ds-stepper__step--{{ statusOf($index) }}"
     [class.ds-stepper__step--is-current]="$index === current()"
     [class.ds-stepper__step--clickable]="isNavigable($index)"
+    [attr.role]="isNavigable($index) ? 'button' : null"
+    [attr.tabindex]="isNavigable($index) ? 0 : null"
+    [attr.aria-current]="$index === current() ? 'step' : null"
     (click)="isNavigable($index) && stepChange.emit($index)"
+    (keydown.enter)="isNavigable($index) && stepChange.emit($index)"
+    (keydown.space)="$event.preventDefault(); isNavigable($index) && stepChange.emit($index)"
   >
     <div class="ds-stepper__marker">
       @if (signalIcon($index); as icon) {

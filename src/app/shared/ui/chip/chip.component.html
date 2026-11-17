@@ -1,6 +1,6 @@
 <ng-content select="[slot=icon-left]" />
 <span class="ds-chip__label">{{ label() }}</span>
 @if (type() === 'filter') {
-  <span class="ds-chip__close" aria-hidden="true">×</span>
+  <ds-icon class="ds-chip__close" name="close" [size]="16" aria-hidden="true" />
 }
 <ng-content select="[slot=icon-right]" />

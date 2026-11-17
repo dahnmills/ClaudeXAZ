@@ -16,7 +16,7 @@ Button Range is a 40 x 40px button with a short label (a number, a grade, a buck
 
 ## Anatomy
 1. `Button Range` (container): 40 x 40px square, 4px radius, light grey plate.
-2. Label (text layer `1`): Body L, 16px / 24px; bold and white when selected or between.
+2. Label (text layer `1`): Body L, 16px / 24px; bold and white when selected, bold Grey/900 (`Text/Strong/Alt`, same color as Default) when between.
 3. Group (code, `ds-button-range-group`): a wrapping row with gap 4px and `role="group"`.
 
 ## Variants and properties
@@ -46,13 +46,14 @@ Exposed nested instances: none.
 | Element | Property | Semantic token (CSS var) | Foundation alias |
 |---|---|---|---|
 | Container | width, height | `--semantic-measurement-sizing-xl` + `--semantic-measurement-sizing-s` | `--foundation-sizing-32` + `--foundation-sizing-8` (40px) |
-| Container | horizontal padding | `--semantic-measurement-spacing-2xs` | not defined in `_semantic.scss` |
+| Container | horizontal padding | `--semantic-measurement-spacing-xxs` | `--foundation-spacing-2` |
 | Container | border-radius | `--semantic-border-radius-s` | `--foundation-radius-4` |
 | Label | font-size, line-height, letter-spacing | `--semantic-font-text-style-size-l`, `--semantic-font-text-style-line-height-l`, `--semantic-font-text-style-letter-spacing-none` | `--foundation-font-size-16`, `--foundation-font-line-height-24`, `--foundation-font-letter-spacing-0` |
 | Default | label, background rest / hover / active | `--semantic-color-interactive-text-strong-alt-default`, `--semantic-color-interactive-background-light-alt-{default,hover,active}` | `--foundation-color-grey-900`, `--foundation-color-grey-050` / `-100` / `-200` |
 | Selected | background rest / hover / active | `--semantic-color-interactive-background-strong-{default,hover,active}` | `--foundation-color-blue-a-500` / `-600` / `-700` |
 | Between | background rest / hover / active | `--semantic-color-interactive-background-medium-{default,hover,active}` | `--foundation-color-blue-a-200` / `-300` / `-400` |
-| Selected, Between | label color, weight | `--semantic-color-interactive-text-neutral-default`, `--semantic-font-text-style-font-weight-bold` | `--foundation-color-white-1000`, `--foundation-font-weight-bold` |
+| Selected | label color, weight | `--semantic-color-interactive-text-neutral-default`, `--semantic-font-text-style-font-weight-bold` | `--foundation-color-white-1000`, `--foundation-font-weight-bold` |
+| Between | label color, weight | `--semantic-color-interactive-text-strong-alt-default`, `--semantic-font-text-style-font-weight-bold` | `--foundation-color-grey-900`, `--foundation-font-weight-bold` |
 | Group | gap | `--semantic-measurement-spacing-xs` | `--foundation-spacing-4` |
 | Disabled | opacity | `--semantic-measurement-opacity-disabled` | `--foundation-opacity-40` |
 
@@ -61,7 +62,7 @@ Exposed nested instances: none.
 - The group has `role="group"`; give it an `ariaLabel` that names the scale ("Grade range").
 - The selected and between statuses are not exposed to assistive technology (no `aria-pressed`); the group should state the current value in text next to it.
 - No visible focus style is defined in the SCSS.
-- White bold text on Between (`blue-a-200`) is low contrast; check it against WCAG AA before using it for essential information.
+- Between label contrast (Grey/900 on the Medium plate): 10.9:1 at rest (`blue-a-200`), 9.2:1 on hover (`blue-a-300`), 5.2:1 when active (`blue-a-400`). All pass WCAG AA. The former white label measured 1.7:1.
 
 ## Content guidelines
 - Labels are one to three characters (a number, a grade, a short bucket code).
@@ -71,6 +72,9 @@ Exposed nested instances: none.
 ## Do / Don't
 - Do use range mode for "from X to Y" choices on a short scale; don't use it for more than about a dozen steps.
 - Do show the chosen range in text near the group; don't rely on the blue shades alone.
+
+## Design decisions
+- 16 Nov 2026: the Between label takes the Figma color `Text/Strong/Alt` (code `--semantic-color-interactive-text-strong-alt-default`, Grey/900), the same as Default, instead of white. Weight stays bold. The label color does not change on hover or active, like Default.
 
 ## Related components
 Composes: none · Used by: Button Range Group, Filter Drawer.

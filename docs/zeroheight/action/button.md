@@ -22,7 +22,7 @@ Button is the main call to action of the system. It comes in four types that set
 1. `Button` (container): the clickable surface. Holds the background, the 1px border and the 4px radius. Height 32px (24px for Plain).
 2. `.Content` (private atom): horizontal row with an optional icon and the label, gap 8px. Its `Icon` property places the icon on the left, on the right or removes it.
 3. `Icon Functional` (inside `.Content`): the icon, swapped through the nested `🔗 Icon` instance (default glyph `Edit Pen`).
-4. `Label` (text inside `.Content`): the action text, Body L regular (16px / 24px).
+4. `Label` (text inside `.Content`): the action text, Body L semi-bold (16px / 24px, weight 600), as in Figma.
 5. `Border Focus` (frame): the keyboard focus ring drawn around the container.
 6. Spinner (Loading state only): replaces the content while the action runs. In code it is a `ds-spinner` (size `s`, tone `current`) centered over the hidden content, so the button keeps its width.
 
@@ -48,7 +48,7 @@ Exposed nested instances: `.Content` is exposed, so its `Icon` property (**Left*
 | Active | `:active` (skipped when disabled) | `State=Active` |
 | Focus | `:focus-visible`: 3px outline in the focus color, 2px offset | `Border Focus` layer (no dedicated variant) |
 | Disabled | `disabled` input: sets `disabled` and `aria-disabled`, `tabindex=-1`, opacity 0.40, no pointer events | `State=Disabled` |
-| Loading | `loading` input: content hidden, spinner shown, `aria-busy`, opacity 0.40, not clickable | `State=Loading` |
+| Loading | `loading` input: content hidden, spinner shown, `aria-busy`, plus `disabled`, `aria-disabled` and `tabindex=-1` (same inactive path as Disabled), opacity 0.40, not clickable | `State=Loading` |
 
 ## Tokens
 | Element | Property | Semantic token (CSS var) | Foundation alias |
@@ -59,7 +59,7 @@ Exposed nested instances: `.Content` is exposed, so its `Icon` property (**Left*
 | Content | gap icon / label | `--semantic-measurement-spacing-s` | `--foundation-spacing-8` (8px) |
 | Container | border-radius | `--semantic-border-radius-s` | `--foundation-radius-4` (4px) |
 | Label | font-size | `--semantic-font-text-style-size-l` | `--foundation-font-size-16` (16px) |
-| Label | font-weight | `--semantic-font-text-style-font-weight-regular` | `--foundation-font-weight-regular` (400) |
+| Label | font-weight | `--semantic-font-text-style-font-weight-semi-bold` | `--foundation-font-weight-semi-bold` (600) |
 | Label | line-height | `--semantic-font-text-style-line-height-l` | `--foundation-font-line-height-24` (24px) |
 | Focus ring | outline color | `--semantic-color-interactive-border-focus` | `--foundation-color-blue-a-400` |
 | Disabled, Loading | opacity | `--semantic-measurement-opacity-disabled` | `--foundation-opacity-40` (0.40) |
@@ -88,7 +88,7 @@ Values written outside tokens in the SCSS: border width 1px, focus outline width
 - Role: the host element carries `role="button"` and `tabindex="0"`, so it is reachable with Tab.
 - Keyboard: Enter and Space trigger `clicked`; Space does not scroll the page.
 - Disabled: `disabled` and `aria-disabled="true"` are set, `tabindex` becomes -1, and no event is emitted.
-- Loading: `aria-busy="true"` is set and the button is not clickable; the label stays in the DOM (hidden visually) so the width does not jump.
+- Loading: `aria-busy="true"` is set and the button is not clickable (`disabled`, `aria-disabled="true"` and `tabindex=-1` are also set, so it leaves the tab order); the label stays in the DOM (hidden visually) so the width does not jump.
 - Focus: visible ring of 3px in `--semantic-color-interactive-border-focus`, offset 2px, shown on keyboard focus only (`:focus-visible`).
 - Label: always give a text label. If an icon alone carries the meaning, use Button Icon with its `ariaLabel`.
 - Contrast: Positive and Negative tones must keep a text label; the color never carries the decision alone.
@@ -105,6 +105,9 @@ Values written outside tokens in the SCSS: border width 1px, focus outline width
 - Do use Negative tone for destructive actions such as delete; don't use red for an action that is not destructive or a refusal.
 - Do use Reversed on dark or brand backgrounds; don't put a Default button on the navy header.
 - Do use the Loading state while a request runs; don't disable the button without telling the user why.
+
+## Design decisions
+- 16 Nov 2026: the label is SemiBold, as in Figma. The code moved from Regular (400) to `--semantic-font-text-style-font-weight-semi-bold` (600). The change cascades to every consumer (Button Split, Confirm Dialog, Modal, Filter Drawer...); labels grow by 1 to 2px and none wraps (checked on Reject Management, Search, Tag Configuration, Manual Underwriting, Coverbook).
 
 ## Related components
 Composes: Icon (`ds-icon` in the icon slots), Spinner (`ds-spinner`, Loading state) · Used by: Button Split, Confirm Dialog, Date Range, File Upload, Filter Drawer, Modal, More Criteria, Search Bar, Search Bar Multi, Search Bar Scoped, Widget Card.

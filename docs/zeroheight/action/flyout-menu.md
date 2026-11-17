@@ -4,7 +4,7 @@ A floating list of actions or options that opens from a trigger (button, dropdow
 Figma: [Components] Action › page Flyout Menu (node 507:833, slot version 3.0.0; node 1:20, item-count version 2.0.0) · Storybook: `Design System/Action/Flyout Menu` (id `design-system-action-flyout-menu--four-actions`) · Code: `shared/ui/flyout-menu` (`ds-flyout-menu`)
 
 ## Overview
-Flyout Menu is the white floating panel that lists Flyout Menu Items. It is the common surface behind "more" menus, the Button Split menu and the option lists of Select, Multi Select and Standalone Dropdown. Figma holds two versions: version 3.0.0 is a container with a `Slot` that receives Flyout Items; version 2.0.0 fixes the number of items (1 to 7). Embed the Storybook story `FourActions` as the live example, and the Figma component `Flyout Menu` (node 507:833) as the visual reference.
+Flyout Menu is the white floating panel that lists Flyout Menu Items. It is the common surface behind "more" menus, the Button Split menu and the option lists of Select, Multi Select and Standalone Dropdown. Figma holds two versions: version 3.0.0 is a container with a `Slot` that receives Flyout Menu Items; version 2.0.0 fixes the number of items (1 to 7). Embed the Storybook story `FourActions` as the live example, and the Figma component `Flyout Menu` (node 507:833) as the visual reference.
 
 ## When to use / When not to use
 - Use to group secondary actions behind a "more" Button Icon or a Button Split.
@@ -18,18 +18,18 @@ Flyout Menu is the white floating panel that lists Flyout Menu Items. It is the 
 
 ## Anatomy
 1. `Flyout Menu` (container): white panel, 4px radius, flyout shadow, vertical padding 8px, min width 196px in code.
-2. `Slot` (version 3.0.0): receives `Flyout Item` instances. In version 2.0.0, a fixed stack of `.Item` instances (private atom) set by `# Items`.
-3. Items: `Flyout Item` (see its own page) or `.Item` (private, same properties as Flyout Item).
-4. Section title (code only): `ds-flyout-menu-title`, bold 16px label on white, padding 6px top and bottom, 16px left.
+2. `Slot` (version 3.0.0): receives `Flyout Menu Item` instances. In version 2.0.0, a fixed stack of `.Item` instances (private atom) set by `# Items`.
+3. Items: `Flyout Menu Item` (see its own page) or `.Item` (private, same properties as Flyout Menu Item).
+4. Flyout Menu Section (code only): the section title `ds-flyout-menu-title`, bold 16px label on white, padding 6px top and bottom, 16px left.
 
 ## Variants and properties
 | Figma property | Type | Values (default in bold) | Code input | Notes |
 |---|---|---|---|---|
-| Slot (v3.0.0) | Slot | Flyout Item instances | default content projection | Put `ds-flyout-menu-item` and `ds-flyout-menu-title` elements inside `ds-flyout-menu`. |
+| Slot (v3.0.0) | Slot | Flyout Menu Item instances | default content projection | Put `ds-flyout-menu-item` and `ds-flyout-menu-title` elements inside `ds-flyout-menu`. |
 | # Items (v2.0.0) | Variant | **7**, 6, 5, 4, 3, 2, 1 | none | In code the number of items is the number of children. |
 | (none) | | | none | `ds-flyout-menu` has no input. Opening, positioning and "one open flyout at a time" are handled by the trigger (`single-open-flyout.ts` contract: `closeFlyout`, `claimFlyout`, `releaseFlyout`). |
 
-Slots: `Slot` (v3.0.0) takes Flyout Items. In code the default projection takes items and titles.
+Slots: `Slot` (v3.0.0) takes Flyout Menu Items. In code the default projection takes items and titles.
 
 Exposed nested instances: none.
 
@@ -37,7 +37,7 @@ Exposed nested instances: none.
 | State | How it is triggered in code (pseudo-class or input) | Figma |
 |---|---|---|
 | Open | rendered by the trigger component when open | the component itself |
-| Item states | on each `ds-flyout-menu-item` (hover, active, focus, disabled, selected) | on `Flyout Item` / `.Item` |
+| Item states | on each `ds-flyout-menu-item` (hover, active, focus, disabled, selected) | on `Flyout Menu Item` / `.Item` |
 
 ## Tokens
 | Element | Property | Semantic token (CSS var) | Foundation alias |
@@ -71,8 +71,11 @@ Values written outside tokens in the SCSS: min-width 196px.
 - Do show the check mark in its fixed slot for single choice; don't add or remove an icon to show the selection (the label must not move).
 - Do close the menu after an action runs; don't keep two flyouts open at once.
 
+## Design decisions
+- 16 Nov 2026: the names are Flyout Menu, Flyout Menu Item and Flyout Menu Section. The code is not renamed (`ds-flyout-menu`, `ds-flyout-menu-item`, `ds-flyout-menu-title`; base panel `ds-flyout`, `ds-flyout-item`, `ds-flyout-section`); Figma renames its `Flyout Item` set to Flyout Menu Item.
+
 ## Related components
-Composes: Flyout Menu Item (`ds-flyout-menu-item`), Flyout Menu Title (`ds-flyout-menu-title`) · Used by: Multi Select, Search Bar Multi, Search Bar Scoped, Select, Standalone Dropdown, Table, Tag Filter Chip.
+Composes: Flyout Menu Item (`ds-flyout-menu-item`), Flyout Menu Section (`ds-flyout-menu-title`) · Used by: Multi Select, Search Bar Multi, Search Bar Scoped, Select, Standalone Dropdown, Table, Tag Filter Chip.
 
 ## Changelog
 | Version | Date | Change |
