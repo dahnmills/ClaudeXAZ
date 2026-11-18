@@ -91,16 +91,20 @@
 
         <!-- ── Barre d'actions (Figma action-bar--coverbook) ───────────── -->
         <div class="cb-toolbar">
+          <!-- Mécanique de Reject Management : le select applique un filtre
+               enregistré, Filter ouvre le panneau à droite -->
           <div class="cb-toolbar__filters">
-            <ds-multi-select
+            <ds-select
               class="cb-toolbar__filter-field"
               placeholder="Select your filters"
-              [options]="filterOptions()"
-              [(value)]="draftFilters"
-              [maxVisible]="2"
+              [options]="savedFilterOptions()"
+              [value]="activeSavedFilterId() ?? ''"
+              (selectionChange)="onSavedSelectChange($event)"
             />
-            <ds-button type="secondary" (clicked)="applyFilters()">Filter</ds-button>
-            @if (appliedFilters().length) {
+            <ds-button type="secondary" (clicked)="openDrawer()">
+              Filter@if (activeFiltersCount() > 0) { ({{ activeFiltersCount() }}) }
+            </ds-button>
+            @if (activeFiltersCount() > 0) {
               <ds-button type="plain" (clicked)="resetFilters()">Clear</ds-button>
             }
           </div>
@@ -278,3 +282,20 @@
     <ds-badge [label]="policy().customerSegment" status="info" size="m" />
   </ng-template>
 </app-topbox-test-shell>
+
+<ds-filter-drawer
+  [open]="drawerOpen()"
+  title="Filters"
+  [filters]="filters()"
+  [savedFilters]="savedFilters()"
+  [currentFilters]="currentFilters()"
+  [activeSavedFilterId]="activeSavedFilterId()"
+  (currentFiltersChange)="currentFilters.set($event)"
+  [currentTab]="currentTab()"
+  (currentTabChange)="currentTab.set($event)"
+  (savedFiltersChange)="savedFilters.set($event)"
+  (savedFilterApplied)="onSavedFilterApplied($event)"
+  (savedFilterCreated)="onSavedFilterCreated($event)"
+  (closed)="drawerOpen.set(false)"
+  (applied)="onApplied($event)"
+/>

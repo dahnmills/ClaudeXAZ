@@ -15,7 +15,13 @@ import { LinkComponent } from '../../shared/ui/link/link.component';
 import { IconComponent } from '../../shared/ui/icon/icon.component';
 import { ButtonComponent } from '../../shared/ui/button/button.component';
 import { SelectComponent, type SelectOption } from '../../shared/ui/select/select.component';
-import { MultiSelectComponent, type MultiSelectOption } from '../../shared/ui/multi-select/multi-select.component';
+import {
+  FilterDrawerComponent,
+  type FilterDefinition,
+  type FilterDrawerTab,
+  type FilterValue,
+  type SavedFilter,
+} from '../../shared/ui/filter-drawer/filter-drawer.component';
 import { FlyoutMenuComponent } from '../../shared/ui/flyout-menu/flyout-menu.component';
 import { FlyoutMenuItemComponent } from '../../shared/ui/flyout-menu/flyout-menu-item.component';
 import { FlyoutMenuTitleComponent } from '../../shared/ui/flyout-menu/flyout-menu-title.component';
@@ -112,7 +118,7 @@ const COLOR_NAMES: Record<PolicyColorValue, string> = {
     IconComponent,
     ButtonComponent,
     SelectComponent,
-    MultiSelectComponent,
+    FilterDrawerComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
     FlyoutMenuTitleComponent,
@@ -226,10 +232,11 @@ export class CoverbookPage {
 
   // ── Filtres ──────────────────────────────────────────────────────────────
   private readonly filterCategories = computed<FilterCategory[]>(() => {
-    const base: FilterCategory[] = [
-      { key: 'color', label: 'Policy color', value: (r) => r.policyColor,
-        show: (v) => COLOR_NAMES[v as PolicyColorValue] },
-    ];
+    // Côté policy, toutes les lignes ont la couleur de la police : pas de filtre couleur.
+    const base: FilterCategory[] = this.side() === 'buyer'
+      ? [{ key: 'color', label: 'Policy color', value: (r) => r.policyColor,
+          show: (v) => COLOR_NAMES[v as PolicyColorValue] }]
+      : [];
     if (this.coversTab() === 'grade-covers') {
       return [
         ...base,
@@ -247,47 +254,87 @@ export class CoverbookPage {
     ];
   });
 
-  readonly filterOptions = computed<MultiSelectOption[]>(() => {
-    const options: MultiSelectOption[] = [];
-    for (const cat of this.filterCategories()) {
-      const values = [...new Set(this.rows().map(cat.value))].sort();
-      for (const v of values) {
-        options.push({ value: `${cat.key}:${v}`, label: `${cat.label}: ${cat.show ? cat.show(v) : v}` });
-      }
-    }
-    return options;
+  // Mécanique de Reject Management et de la page Filters : le select applique un
+  // filtre enregistré, Filter ouvre le panneau à droite (ds-filter-drawer), qui
+  // gère aussi l'enregistrement, le renommage et la suppression des filtres.
+
+  /** Une liste de cases par catégorie, valeurs tirées des lignes de l'onglet. */
+  readonly filters = computed<FilterDefinition[]>(() =>
+    this.filterCategories().map((cat) => ({
+      id: cat.key,
+      label: cat.label,
+      type: 'checkbox-list',
+      defaultOpen: true,
+      columns: 2,
+      options: [...new Set(this.rows().map(cat.value))].sort()
+        .map((v) => ({ value: v, label: cat.show ? cat.show(v) : v })),
+    })));
+
+  readonly drawerOpen          = signal(false);
+  readonly currentTab          = signal<FilterDrawerTab>('current');
+  readonly activeSavedFilterId = signal<string | null>(null);
+  readonly appliedFilters      = signal<Record<string, FilterValue>>({});
+  readonly currentFilters      = signal<Record<string, FilterValue>>({});
+
+  /** Exemples, valables des deux côtés (les clés absentes d'un onglet sont ignorées). */
+  readonly savedFilters = signal<SavedFilter[]>([
+    { id: 'saved-refusals', name: 'Refusals and restrictive answers', filters: { decision: ['Refusal', 'RestrictiveAnswer'] }, createdAt: new Date('2026-10-02T09:00:00') },
+    { id: 'saved-partial', name: 'Partial or no cover', filters: { status: ['Partial', 'NoCover'] }, createdAt: new Date('2026-10-14T15:30:00') },
+    { id: 'saved-check', name: 'Grade covers to check', filters: { coverCode: ['Check policy'] }, createdAt: new Date('2026-11-03T11:10:00') },
+  ]);
+  readonly savedFilterOptions = computed<SelectOption[]>(() =>
+    this.savedFilters().map((f) => ({ value: f.id, label: f.name })));
+
+  /** Filtres renseignés et connus de l'onglet, affichés sur le bouton : « Filter (2) ». */
+  readonly activeFiltersCount = computed(() => {
+    const keys = new Set(this.filterCategories().map((c) => c.key));
+    return Object.entries(this.appliedFilters())
+      .filter(([k, v]) => keys.has(k) && (Array.isArray(v) ? v.length > 0 : !!v)).length;
   });
 
-  /** Sélection en cours dans le champ ; appliquée au clic sur Filter. */
-  readonly draftFilters   = signal<string[]>([]);
-  readonly appliedFilters = signal<string[]>([]);
+  openDrawer(): void {
+    this.closeFlyouts();
+    this.currentFilters.set({ ...this.appliedFilters() });
+    this.drawerOpen.set(true);
+  }
 
-  applyFilters(): void {
-    this.appliedFilters.set([...this.draftFilters()]);
+  onApplied(filters: Record<string, FilterValue>): void {
+    this.applyFilters(filters, null);
+    this.drawerOpen.set(false);
+  }
+
+  onSavedFilterApplied(filter: SavedFilter): void {
+    this.applyFilters(filter.filters, filter.id);
+    this.drawerOpen.set(false);
+  }
+
+  onSavedFilterCreated(filter: SavedFilter): void {
+    this.applyFilters(filter.filters, filter.id);
+  }
+
+  onSavedSelectChange(filterId: string): void {
+    const filter = this.savedFilters().find((f) => f.id === filterId);
+    if (filter) this.applyFilters(filter.filters, filter.id);
+  }
+
+  private applyFilters(filters: Record<string, FilterValue>, savedId: string | null): void {
+    this.currentFilters.set({ ...filters });
+    this.appliedFilters.set({ ...filters });
+    this.activeSavedFilterId.set(savedId);
   }
 
   resetFilters(): void {
-    this.draftFilters.set([]);
-    this.appliedFilters.set([]);
+    this.applyFilters({}, null);
   }
 
   private readonly filteredRows = computed(() => {
     const applied = this.appliedFilters();
-    if (!applied.length) return this.rows();
-    // OU dans une catégorie, ET entre catégories.
-    const byCat = new Map<string, Set<string>>();
-    for (const f of applied) {
-      const i = f.indexOf(':');
-      const k = f.slice(0, i);
-      if (!byCat.has(k)) byCat.set(k, new Set());
-      byCat.get(k)!.add(f.slice(i + 1));
-    }
-    const cats = this.filterCategories();
-    return this.rows().filter((row) =>
-      [...byCat].every(([k, values]) => {
-        const cat = cats.find((c) => c.key === k);
-        return !cat || values.has(cat.value(row));
-      }));
+    // OU dans une catégorie, ET entre catégories ; une clé absente de l'onglet est ignorée.
+    const active = this.filterCategories()
+      .map((cat) => ({ cat, values: applied[cat.key] }))
+      .filter((x): x is { cat: FilterCategory; values: string[] } => Array.isArray(x.values) && x.values.length > 0);
+    if (!active.length) return this.rows();
+    return this.rows().filter((row) => active.every(({ cat, values }) => values.includes(cat.value(row))));
   });
 
   // ── Tri ──────────────────────────────────────────────────────────────────

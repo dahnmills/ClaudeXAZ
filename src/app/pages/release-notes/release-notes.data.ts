@@ -23,6 +23,22 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'coverbook-filter-drawer-2026-11-18',
+    date: '2026-11-18',
+    category: 'feature',
+    screens: ['coverbook/policy/2590417133', 'coverbook/buyer/4421706'],
+    title: 'Coverbook: filters in a side panel, with saved filters',
+    description:
+      'Coverbook filters now work like Reject Management: pick a saved filter in the list, or open the side panel to choose your filters and save them for later.',
+    changes: [
+      'The "Select your filters" list now holds saved filters; picking one applies it at once',
+      'Filter opens a panel on the right with one group of checkboxes per column (decision code, cover status, cover code, type, and policy color and inforce BU on the buyer side)',
+      'The button shows how many filters are on, for example "Filter (2)", and Clear removes them',
+      'In the panel, "Save my filters" keeps the current choice; the Saved filters tab lets you apply, rename or delete them',
+      'Policy side: no policy color filter, since every cover of a policy shares its color',
+    ],
+  },
+  {
     id: 'action-buttons-figma-2026-11-16',
     date: '2026-11-16',
     category: 'design',
