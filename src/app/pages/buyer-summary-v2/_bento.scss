@@ -1,0 +1,23 @@
+// Buyer Summary V2: values shared by the page and its sub-components.
+// Layout constants that can't be tokens today (container queries can't read
+// a var()): the content level thresholds below.
+
+$gap: var(--semantic-measurement-spacing-m);
+
+// Validated 2026-11-20 (benchmark question 5): bento cards at radius M (8 px, existing
+// Semantic token) instead of the DS card radius S (4 px). Local to this page.
+$bento-radius: var(--semantic-border-radius-m);
+// Proposal: bar thickness for bullets and stacked bars = sizing XS (4 px) + XXS
+$bar-h: calc(var(--semantic-measurement-sizing-xs) + var(--semantic-measurement-sizing-xxs));
+
+// Content levels, measured on each card (container "card")
+// n columns (or rows) at the 172 px minimum unit: n × 172 + (n - 1) × 16
+$w2: 360px;   // 2 columns and more
+$w3: 548px;   // 3 columns
+$w4: 736px;   // 4 columns
+$w5: 924px;   // 5 columns
+$w6: 1112px;  // 6 columns
+$h2: 360px;   // 2 rows
+$h3: 548px;   // 3 rows
+$h4: 736px;   // 4 rows
+

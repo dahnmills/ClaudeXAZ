@@ -1,0 +1,689 @@
+@use "sass:math";
+@use "bento" as *;
+
+// =============================================================
+// Bento card body: what a card shows, by kind and by size.
+// Base styles = smallest level; container queries ("card", set on the cell
+// by the page) add layers. Tone colours come from the --bc-* variables set
+// by the page on the cell; data-tone on the host says a tone is on.
+// =============================================================
+
+:host { display: contents; }
+
+.bc-value {
+  font-size:   var(--semantic-font-title-size-m);
+  line-height: var(--semantic-font-title-line-height-m);
+  font-weight: var(--semantic-font-title-font-weight-m);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.bc-unit {
+  font-size:   var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+.bc-num { font-variant-numeric: tabular-nums; }
+
+.bc-ctx {
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+.bc-label {
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  color:       var(--semantic-color-static-text-main-tertiary);
+  white-space: nowrap;
+}
+
+.bc-strong { font-weight: var(--semantic-font-text-style-font-weight-semi-bold); }
+
+// Column that takes the room left (chart + caption)
+.bc-main {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  flex:           1 1 0;
+  min-width:      0;
+  min-height:     0;
+}
+
+// Fit area: shows as many items as the card holds (JS), then "+ n more"
+.bc-fit {
+  flex:       1 1 0;
+  min-height: 0;
+  overflow:   hidden;
+
+  [hidden] { display: none !important; }
+}
+
+.bc-fit__more {
+  padding-top: var(--semantic-measurement-spacing-xs);
+  list-style:  none;
+}
+
+.bc-foot-link { flex-shrink: 0; }
+
+// Facts on one line, label then value
+.bc-facts-inline {
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-l);
+  margin:     0;
+  padding:    var(--semantic-measurement-spacing-s) 0 0;
+  border-top: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  list-style: none;
+  font-size:  var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  flex-shrink: 0;
+
+  li { display: inline-flex; gap: var(--semantic-measurement-spacing-xs); }
+
+  &--end {
+    margin-left: auto;
+    padding:     0;
+    border-top:  0;
+  }
+}
+
+// Legend dot of a band (colour + its label next to it)
+.bc-dot {
+  display:       inline-block;
+  width:         var(--semantic-measurement-sizing-s);
+  height:        var(--semantic-measurement-sizing-s);
+  margin-right:  var(--semantic-measurement-spacing-xs);
+  border-radius: var(--semantic-border-radius-round);
+
+  &--positive { background: var(--semantic-color-static-background-functional-positive); }
+  &--warning  { background: var(--semantic-color-static-background-functional-warning); }
+  &--negative { background: var(--semantic-color-static-background-functional-negative); }
+}
+
+// Column chart (overdues per period)
+.bc-bars {
+  display:     flex;
+  align-items: flex-end;
+  gap:         var(--semantic-measurement-spacing-xs);
+  height:      var(--semantic-measurement-sizing-2xl);
+  border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+}
+
+.bc-bars__col {
+  display:     flex;
+  align-items: flex-end;
+  flex:        1 1 0;
+  height:      100%;
+}
+
+.bc-bars__bar {
+  display:       block;
+  width:         100%;
+  min-height:    var(--semantic-border-size-m);
+  border-radius: var(--semantic-border-radius-xs) var(--semantic-border-radius-xs) 0 0;
+  background:    var(--semantic-color-static-background-functional-warning);
+
+  &.bc-hp-0 { background: var(--semantic-color-static-background-main-tertiary); }
+}
+
+// Overdue bars: empty or full (one late payment in the period)
+.bc-hp-0   { height: 0; }
+.bc-hp-100 { height: 100%; }
+
+.bc-axis {
+  display:         flex;
+  justify-content: space-between;
+  font-size:       var(--semantic-font-text-style-size-s);
+  line-height:     var(--semantic-font-text-style-line-height-s);
+  color:           var(--semantic-color-static-text-main-tertiary);
+}
+
+// KPI row (label over value), separated from the table above
+.bc-kpis--row {
+  padding-top: var(--semantic-measurement-spacing-s);
+  border-top:  var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  gap:         var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-2xl);
+  flex-shrink: 0;
+}
+
+.bc-li__date { flex: 0 0 auto; min-width: var(--semantic-measurement-sizing-3xl); }
+.bc-li__bar  { flex: 1 1 auto; }
+
+.bc-band--sep {
+  padding-top: var(--semantic-measurement-spacing-xs);
+  border-top:  var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+}
+
+.bc-note {
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+.bc-delta {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xxs);
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  font-variant-numeric: tabular-nums;
+  color:       var(--semantic-color-static-text-main-secondary);
+  white-space: nowrap;
+
+  &--good { color: var(--semantic-color-static-text-main-functional-positive); }
+  &--bad  { color: var(--semantic-color-static-text-main-functional-negative); }
+}
+
+.bc-stack {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+  min-width:      0;
+}
+
+.bc-grow { flex: 1 1 0; min-height: 0; }
+
+.bc-stack > ds-badge, .bc-keyrow > ds-badge { align-self: flex-start; }
+
+.bc-keyrow {
+  display:     flex;
+  align-items: center;
+  flex-wrap:   wrap;
+  gap:         var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+}
+
+// Two zones side by side from 3 columns (chart | side panel)
+.bc-split {
+  display:   flex;
+  gap:       var(--semantic-measurement-spacing-l);
+  flex:      1 1 0;
+  min-height: 0;
+}
+
+.bc-side {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  flex:           0 0 40%;
+  min-width:      0;
+}
+
+// Columns that appear with width: 1, 2 then 3
+.bc-cols {
+  display:               grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap:                   var(--semantic-measurement-spacing-l);
+  flex-shrink:           0;
+}
+
+// Charts fill the room they get (ds-chart takes a fixed height: overridden
+// here so the chart follows its card; candidate "fill" option for ds-chart)
+.bc-chart {
+  display:    flex;
+  flex:       1 1 0;
+  min-height: var(--semantic-measurement-sizing-xl);
+
+  ds-chart { height: 100% !important; }
+
+  &--spark { flex: 0 0 var(--semantic-measurement-sizing-xl); }
+}
+
+// KPI pairs (label over value)
+.bc-kpis {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-l);
+  margin:    0;
+  padding:   0;
+  list-style: none;
+
+  li {
+    display:        flex;
+    flex-direction: column;
+  }
+
+  &--stack {
+    flex-direction: column;
+    gap:            var(--semantic-measurement-spacing-xs);
+
+    li { flex-direction: row; justify-content: space-between; gap: var(--semantic-measurement-spacing-s); }
+  }
+}
+
+// Lists (tasks, news, changes)
+.bc-list {
+  display:        flex;
+  flex-direction: column;
+  margin:         0;
+  padding:        0;
+  list-style:     none;
+  min-height:     0;
+}
+
+.bc-li {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xxs);
+  padding:        var(--semantic-measurement-spacing-s) 0;
+  border-top:     var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+
+  &:first-child { border-top: 0; padding-top: 0; }
+
+  &--row {
+    flex-direction: row;
+    align-items:    center;
+    gap:            var(--semantic-measurement-spacing-s);
+
+    .bc-li__text { flex: 1 1 auto; }
+  }
+}
+
+.bc-li__text {
+  min-width:   0;
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+}
+
+.bc-li__top {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-s);
+}
+
+.bc-li__amount { white-space: nowrap; }
+
+@container card (min-width: #{$w3}) {
+  .bc-list--cols {
+    display:               grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows:        min-content;
+    align-content:         start;
+    column-gap:            var(--semantic-measurement-spacing-l);
+
+    .bc-li:nth-child(2) { border-top: 0; padding-top: 0; }
+    .bc-fit__more { grid-column: 1 / -1; }
+  }
+}
+
+.bc-li__link { display: block; }
+
+// Payment bands: label, value, bar
+.bc-bands {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  margin:         0;
+  padding:        0;
+  list-style:     none;
+}
+
+.bc-band {
+  display:               grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap:                   var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-s);
+  font-size:             var(--semantic-font-text-style-size-s);
+  line-height:           var(--semantic-font-text-style-line-height-s);
+}
+
+.bc-band__label { color: var(--semantic-color-static-text-main-secondary); }
+
+
+// Tables (financials, policies)
+.bc-table {
+  width:           100%;
+  border-collapse: collapse;
+  font-size:       var(--semantic-font-text-style-size-m);
+  line-height:     var(--semantic-font-text-style-line-height-m);
+
+  th, td {
+    padding:        var(--semantic-measurement-spacing-xs) 0;
+    padding-left:   var(--semantic-measurement-spacing-s);
+    text-align:     left;
+    vertical-align: middle;
+    border-top:     var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+    white-space:    nowrap;
+  }
+
+  th:first-child, td:first-child { padding-left: 0; }
+
+  thead th {
+    border-top:  0;
+    font-size:   var(--semantic-font-text-style-size-s);
+    line-height: var(--semantic-font-text-style-line-height-s);
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
+
+  tbody th, tfoot th {
+    font-weight: var(--semantic-font-text-style-font-weight-regular);
+    color:       var(--semantic-color-static-text-main-secondary);
+  }
+
+  tfoot th, tfoot td {
+    font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+}
+
+.bc-table__num {
+  text-align:           right !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.bc-table--policies tbody th {
+  white-space: normal;
+  width:       100%;
+}
+
+.bc-table__holder { display: block; color: var(--semantic-color-static-text-main-primary); }
+
+.bc-share {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+}
+
+.bc-share__bar { width: var(--semantic-measurement-sizing-3xl); }
+
+// Fact grid (identity): columns follow the card width
+.bc-facts {
+  display:               grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap:                   var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-l);
+  margin:                0;
+}
+
+.bc-fact {
+  display:        flex;
+  flex-direction: column;
+  min-width:      0;
+}
+
+.bc-fact__value {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+// KPI tiles (at a glance): one per column of the card
+.bc-tiles {
+  display:               grid;
+  grid-auto-flow:        column;
+  grid-auto-columns:     minmax(0, 1fr);
+  flex:                  1 1 0;
+  margin:                0;
+  padding:               0;
+  list-style:            none;
+}
+
+.bc-tile {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+  padding:        0 var(--semantic-measurement-spacing-m);
+  border-left:    var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  min-width:      0;
+
+  &:first-child { padding-left: 0; border-left: 0; }
+}
+
+// Bullet graph (Few): measure, comparative mark (previous period), on a track
+.bc-bullet {
+  position:      relative;
+  display:       block;
+  height:        $bar-h;
+  border-radius: var(--semantic-border-radius-round);
+  background:    var(--semantic-color-static-background-main-tertiary);
+}
+
+.bc-bullet__fill {
+  position:      absolute;
+  inset:         0 auto 0 0;
+  border-radius: inherit;
+  background:    var(--semantic-color-interactive-background-strong-default);
+}
+
+.bc-bullet__mark {
+  position:   absolute;
+  top:        calc(var(--semantic-measurement-spacing-xs) * -1);
+  bottom:     calc(var(--semantic-measurement-spacing-xs) * -1);
+  width:      var(--semantic-border-size-m);
+  background: var(--semantic-color-static-text-main-primary);
+}
+
+.bc-mark-key {
+  display:        inline-block;
+  width:          var(--semantic-border-size-m);
+  height:         var(--semantic-measurement-sizing-s);
+  vertical-align: middle;
+  background:     var(--semantic-color-static-text-main-primary);
+}
+
+// Stacked bar: share of a total, functional colours with labels next to it
+.bc-stackbar {
+  display:       flex;
+  gap:           var(--semantic-border-size-m);
+  height:        $bar-h;
+  overflow:      hidden;
+  border-radius: var(--semantic-border-radius-round);
+  background:    var(--semantic-color-static-background-main-tertiary);
+}
+
+.bc-stackbar__seg {
+  display: block;
+  &--positive { background: var(--semantic-color-static-background-functional-positive); }
+  &--warning  { background: var(--semantic-color-static-background-functional-warning); }
+  &--negative { background: var(--semantic-color-static-background-functional-negative); }
+}
+
+// Data-driven widths and positions, as classes (no inline style)
+@for $i from 0 through 100 {
+  .bc-w-#{$i} { width: #{$i * 1%}; }
+  .bc-l-#{$i} { left:  #{$i * 1%}; }
+}
+.bc-stackbar__seg[class*='bc-w-'] { flex: 0 1 auto; min-width: 0; }
+
+// Properties panel inside cards: tabular values
+:host ::ng-deep .ds-properties-panel__value { font-variant-numeric: tabular-nums; }
+
+
+// =============================================================
+// Container queries: base = 1 × 1; each level adds a layer
+// =============================================================
+
+@container card (max-width: #{$w2 - 0.02px}) { .w2 { display: none !important; } }
+@container card (max-width: #{$w3 - 0.02px}) { .w3 { display: none !important; } }
+@container card (max-width: #{$w4 - 0.02px}) { .w4 { display: none !important; } }
+@container card (max-width: #{$w5 - 0.02px}) { .w5 { display: none !important; } }
+@container card (max-width: #{$w6 - 0.02px}) { .w6 { display: none !important; } }
+@container card (max-height: #{$h2 - 0.02px}) { .h2 { display: none !important; } }
+@container card (max-height: #{$h3 - 0.02px}) { .h3 { display: none !important; } }
+@container card (max-height: #{$h4 - 0.02px}) { .h4 { display: none !important; } }
+@container card (max-width: #{$w2 - 0.02px}) and (max-height: #{$h2 - 0.02px}) { .wh2 { display: none !important; } }
+@container card (min-width: #{$w2}) { .lt-w2 { display: none !important; } }
+@container card (min-width: #{$w3}) { .lt-w3 { display: none !important; } }
+@container card (min-height: #{$h2}) { .lt-h2 { display: none !important; } }
+@container card (min-height: #{$h3}) { .lt-h3 { display: none !important; } }
+
+@container card (min-width: #{$w2}) {
+  .bc-cols  { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bc-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@container card (min-width: #{$w3}) {
+  .bc-cols  { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bc-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@container card (min-width: #{$w4}) {
+  .bc-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+// The key value steps up from 2 columns wide (title size L, 28 px)
+@container card (min-width: #{$w2}) {
+  .bc-value { font-size: var(--semantic-font-title-size-l); line-height: var(--semantic-font-title-line-height-l); }
+}
+
+
+// Status inside a card (icon + label): replaces light badges, which fail AA
+// on a pale tint of their own colour
+.bc-status {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xxs);
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+
+  ds-icon { color: var(--semantic-color-static-icon-main-functional-positive); }
+}
+
+
+// =============================================================
+// Pass 3: cards that fill their size with real data
+// =============================================================
+
+[hidden] { display: none !important; }
+
+// A full fit list spreads its rows: the last row sits on the bottom edge
+.bc-fit--full:not(.bc-facts) {
+  display:         flex;
+  flex-direction:  column;
+  justify-content: space-between;
+}
+
+@container card (min-width: #{$w3}) {
+  .bc-fit--full.bc-list--cols { display: grid; align-content: space-between; }
+}
+
+.bc-facts.bc-fit--full { align-content: space-between; }
+
+// Nothing fits: the area gives its room back to its neighbours
+.bc-fit--none { flex: 0 0 0; }
+
+// Label / value rows
+.bc-kv { gap: 0; }
+
+.bc-kv__row {
+  display:         flex;
+  align-items:     baseline;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-s);
+  padding:         var(--semantic-measurement-spacing-xxs) 0;
+  border-top:      var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  font-size:       var(--semantic-font-text-style-size-m);
+  line-height:     var(--semantic-font-text-style-line-height-m);
+
+  .bc-num { white-space: nowrap; }
+}
+
+// Columns that fill a 1-row card; from 2 rows the card has its own chart below
+.bc-cols--fill {
+  flex:               1 1 0;
+  min-height:         0;
+  grid-template-rows: minmax(0, 1fr);
+
+  > .bc-stack { min-height: 0; }
+}
+
+@container card (min-height: #{$h2}) {
+  .bc-cols--fill { flex: 0 0 auto; grid-template-rows: auto; }
+  .bc-chart--trend { flex: 0 0 var(--semantic-measurement-sizing-xl); }
+}
+
+@container card (min-width: #{$w3}) {
+  .bc-cols--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.bc-chart--trend { flex: 1 1 0; min-height: var(--semantic-measurement-sizing-xl); }
+
+.bc-fitwrap {
+  display:        flex;
+  flex-direction: column;
+  flex:           1 1 0;
+  min-height:     0;
+}
+
+// Overdue bars grow with the card
+.bc-stack--grow {
+  flex:       1 1 0;
+  min-height: 0;
+
+  .bc-bars { flex: 1 1 auto; height: auto; min-height: var(--semantic-measurement-sizing-2xl); }
+}
+
+.bc-table--policies tbody th { white-space: nowrap; }
+.bc-table--policies .bc-table__holder { display: inline; }
+
+
+.bc-fit--kpis { flex: 0 1 auto; }
+
+
+.bc-empty {
+  display:     flex;
+  align-items: flex-start;
+  gap:         var(--semantic-measurement-spacing-xs);
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+
+  ds-icon { flex-shrink: 0; color: var(--semantic-color-static-icon-main-functional-positive); }
+}
+
+
+.bc-ctx, .bc-delta, .bc-band, .bc-facts-inline, .bc-note, .bc-empty {
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+}
+
+// Meta stays at 12 px: dates and sources of list rows, "n more", axes
+.bc-li .bc-ctx, .bc-li__date, .bc-fit__more, .bc-axis, .bc-tile .bc-ctx + .bc-ctx {
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+}
+
+
+// ── Tones (variables set by the page on the cell) ───────────────────────────
+:host(:not([data-tone='none'])) {
+  .bc-status { color: var(--bc-ink); }
+  .bc-status ds-icon { color: var(--bc-icon); }
+
+  .bc-value, .bc-table__holder, .bc-table tfoot th, .bc-table tfoot td, .bc-li__text { color: var(--bc-ink); }
+
+  .bc-ctx, .bc-label, .bc-note, .bc-unit, .bc-band__label, .bc-axis,
+  .bc-delta, .bc-delta--good, .bc-delta--bad, .bc-table thead th, .bc-table tbody th {
+    color: var(--bc-ink2);
+  }
+
+  .bc-li, .bc-table th, .bc-table td, .bc-tile, .bc-kv__row, .bc-facts-inline,
+  .bc-kpis--row, .bc-band--sep, .bc-bars {
+    border-color: var(--bc-line);
+  }
+
+  ::ng-deep {
+    .ds-properties-panel__label { color: var(--bc-ink2); }
+    .ds-properties-panel__value { color: var(--bc-ink); }
+  }
+}
+
+// Strong tones: charts and bars go light
+:host([data-tone$='strong']) {
+  ds-chart { --ds-chart-line: var(--bc-chart); }
+  .bc-bullet, .bc-stackbar { background: var(--bc-line); }
+  .bc-bullet__fill { background: var(--bc-chart); }
+  .bc-bullet__mark, .bc-mark-key { background: var(--bc-ink2); }
+
+  ::ng-deep {
+    .ds-chart__axis-label { color: var(--bc-ink2); }
+    .ds-chart__grid       { stroke: var(--bc-line); }
+    .ds-chart__dot        { border-color: var(--bc-bg); }
+  }
+}

@@ -9,7 +9,7 @@ import { SearchV2Component } from './pages/search-v2/search-v2.component';
 import { FiltersTestPageComponent } from './user-testing/filters/filters-test-page.component';
 import { AdminDataComponent } from './pages/admin-data/admin-data.component';
 import { BuyerSummaryComponent } from './pages/buyer-summary/buyer-summary.component';
-import { BuyerSummaryV2Component } from './pages/buyer-summary-v2/buyer-summary-v2.component';
+import type { BuyerSummaryV2Component } from './pages/buyer-summary-v2/buyer-summary-v2.component';
 import { TagConfigurationComponent } from './pages/tag-configuration/tag-configuration.component';
 import { PortfolioManagementComponent } from './pages/portfolio-management/portfolio-management.component';
 import { GradeStoryComponent } from './pages/grade-story/grade-story.component';
@@ -45,7 +45,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'search-v2', component: SearchV2Component },
   { path: 'admin-data', component: AdminDataComponent },
   { path: 'buyer-summary/:id', component: BuyerSummaryComponent },
-  { path: 'buyer-summary-v2/:id', component: BuyerSummaryV2Component,
+  { path: 'buyer-summary-v2/:id', loadComponent: () => import('./pages/buyer-summary-v2/buyer-summary-v2.component').then(m => m.BuyerSummaryV2Component),
     // Edit mode with changes: leaving the page asks first (Discard / Keep editing)
     canDeactivate: [(c: BuyerSummaryV2Component) => c.canLeave()] },
   { path: 'tag-configuration', component: TagConfigurationComponent },

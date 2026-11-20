@@ -11,14 +11,12 @@ import {
   PageHeaderComponent,
   PageTitleComponent,
   CardComponent,
-  ChartComponent,
   PropertiesPanelComponent,
   ModalComponent,
   ButtonComponent,
   ButtonIconComponent,
   IconComponent,
   BadgeComponent,
-  GradeComponent,
   LinkComponent,
   FlyoutMenuComponent,
   FlyoutMenuItemComponent,
@@ -37,9 +35,6 @@ import {
   SkeletonItemComponent,
   FunctionalNoticeComponent,
   TooltipDirective,
-  TableRowComponent,
-  CellComponent,
-  CellHeaderComponent,
   type SelectOption,
 } from '../../shared/ui';
 import { type BuyerCompany } from '../buyer-summary/buyer-summary.store';
@@ -60,6 +55,9 @@ import {
   AS_OF, AS_OF_TIME, CARD_SOURCES, HAS_FIGURES, EXTERNAL_RATINGS, shortDate, type DetailTable,
 } from './buyer-summary-v2.data';
 import { type Placed, packCards, nearestFormat, stepFormat } from './bento-layout';
+import * as F from './buyer-summary-v2.facts';
+import { BentoCardBodyComponent } from './bento-card-body.component';
+import { BentoDetailTableComponent } from './bento-detail-table.component';
 import {
   type Look, type Tone, type EmphasisOption, TONE_LABEL, MAX_AUTO_BACKGROUNDS,
   autoBackgrounds, lookOf, normalize, emphasisOptions,
@@ -132,14 +130,12 @@ interface DragState {
     PageHeaderComponent,
     PageTitleComponent,
     CardComponent,
-    ChartComponent,
     PropertiesPanelComponent,
     ModalComponent,
     ButtonComponent,
     ButtonIconComponent,
     IconComponent,
     BadgeComponent,
-    GradeComponent,
     LinkComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
@@ -158,13 +154,12 @@ interface DragState {
     SkeletonItemComponent,
     FunctionalNoticeComponent,
     TooltipDirective,
-    TableRowComponent,
-    CellComponent,
-    CellHeaderComponent,
     NgTemplateOutlet,
+    BentoCardBodyComponent,
+    BentoDetailTableComponent,
   ],
   templateUrl: './buyer-summary-v2.component.html',
-  styleUrl: './buyer-summary-v2.component.scss',
+  styleUrls: ['./buyer-summary-v2.component.scss', './buyer-summary-v2.panels.scss'],
 })
 export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   private route    = inject(ActivatedRoute);
@@ -193,103 +188,17 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   // ── Data exposed to the template ───────────────────────────────────────────
   readonly KINDS = KINDS;
   readonly FORMAT_GROUPS = FORMAT_GROUPS;
-  readonly months = MONTHS;
-  // One label out of two: eight labels collide below 3 columns
-  readonly sparseMonths = MONTHS.map((m, i) => (i % 2 === 0 ? m : ''));
-  readonly gradeHistory = GRADE_HISTORY;
-  readonly gradeY = GRADE_Y;
-  readonly gradeChanges = GRADE_CHANGES;
-  readonly exposureTrend = EXPOSURE_TREND;
-  readonly scoreTrend = SCORE_TREND;
-  readonly paymentBands = PAYMENT_BANDS;
-  readonly finYears = FIN_YEARS;
-  readonly financials = FINANCIALS;
-  readonly turnoverTrend = TURNOVER_TREND;
-  readonly turnoverYears = TURNOVER_YEARS;
-  readonly jobs = JOBS;
-  readonly news = NEWS;
-  readonly notes = NOTES;
-  readonly identity = IDENTITY;
-  readonly decisions = DECISIONS;
-  readonly policies = POLICIES;
-  readonly coverHistory = COVER_HISTORY;
-  readonly overduePeriods = OVERDUE_PERIODS;
-  readonly overdueEvents = OVERDUE_EVENTS;
-  readonly paymentMonths = PAYMENT_MONTHS;
-  readonly policyMoves = POLICY_MOVES;
-  readonly ratings = EXTERNAL_RATINGS;
 
-  // Label / value lists that show as many rows as their card holds
-  readonly limitKv = [
-    { label: 'Granted', value: '5 000 000' }, { label: 'Used', value: '1 548 000' },
-    { label: 'Granted on', value: '11 Nov 2024' }, { label: 'Expiry', value: 'None' }, { label: 'Policies', value: '6' },
-  ];
-  readonly riskKv = [
-    { label: 'Highest limit', value: '10.0 bn' }, { label: 'Exposure', value: '1.55 M' },
-    { label: 'Policies', value: '6' }, { label: 'Updated', value: '11 Nov 2024' },
-  ];
-  readonly scoreKv = [
-    { label: 'Updated', value: '11 Nov 2024' }, { label: 'Sector', value: '74 / 100' },
-    { label: '12 months ago', value: '80' }, { label: 'Lowest, 18 m', value: '78' },
-  ];
-  readonly exposureKv = [
-    { label: 'Granted limit', value: '5 000 000' }, { label: 'Available', value: '3 452 000' },
-    { label: 'Policies', value: '6' }, { label: 'Limits on market', value: '72' },
-    { label: 'Highest limit', value: '10 000 246 000' },
-  ];
-  readonly reviewKv = [
-    { label: 'Last review', value: '12 Jun 2024' }, { label: 'Owner', value: 'C. Morel' },
-    { label: 'Policies', value: '6' }, { label: 'Priority', value: 'Medium' },
-  ];
-  readonly sanctionKv = [
-    { label: 'List', value: 'EU' }, { label: 'Screened', value: '28 Oct 2024' },
-    { label: 'Status', value: 'Proof asked' }, { label: 'Owner', value: 'J. Petit' },
-  ];
-  readonly paymentKv = [
-    { label: 'Average delay', value: '3 days' }, { label: 'DSO', value: '47 days' },
-    { label: 'Invoices', value: '1 284' }, { label: 'Disputes', value: 'None' },
-  ];
-  readonly limitFacts: PropertySection[] = [{ rows: [
-    { label: 'Granted', value: '5 000 000' },
-    { label: 'Used',    value: '1 548 000' },
-    { label: 'Available', value: '3 452 000' },
-  ] }];
-  readonly limitMore: PropertySection[] = [{ rows: [
-    { label: 'Granted on', value: '11 Nov 2024' },
-    { label: 'Expiry',     value: 'None' },
-    { label: 'Policies',   value: '6' },
-  ] }];
-  readonly exposureFacts: PropertySection[] = [{ rows: [
-    { label: 'Granted limit', value: '5 000 000' },
-    { label: 'Available',     value: '3 452 000' },
-    { label: 'Policies',      value: '6' },
-  ] }];
-  readonly overdueFacts: PropertySection[] = [{ rows: [
-    { label: 'Oldest',      value: 'N/A' },
-    { label: 'Disputes',    value: 'None' },
-    { label: 'Collections', value: '0 open' },
-    { label: 'Claims, 24 m', value: '0' },
-  ] }];
-  readonly paymentFacts: PropertySection[] = [{ rows: [
-    { label: 'Average delay', value: '3 days' },
-    { label: 'DSO',           value: '47 days' },
-    { label: 'Invoices',      value: '1 284' },
-  ] }];
-  readonly scoreFacts: PropertySection[] = [{ rows: [
-    { label: 'Updated', value: '11 Nov 2024' },
-    { label: 'Sector',  value: '74 / 100' },
-  ] }];
-  readonly riskFacts: PropertySection[] = [{ rows: [
-    { label: 'Highest limit', value: '10 000 246 000' },
-    { label: 'Exposure',      value: '1 548 000' },
-  ] }];
-  readonly coverFacts: PropertySection[] = [{ rows: [
-    { label: 'Requested', value: '2 000 000' },
-    { label: 'Granted',   value: '2 000 000' },
-    { label: 'Decided',   value: '11 Nov 2024' },
-    { label: 'By',        value: 'C. Morel' },
-  ] }];
-
+  // Label / value lists of the cards (also shown in the detail panel)
+  readonly exposureKv = F.exposureKv;
+  readonly limitKv = F.limitKv;
+  readonly paymentKv = F.paymentKv;
+  readonly overdueFacts = F.overdueFacts;
+  readonly scoreKv = F.scoreKv;
+  readonly riskKv = F.riskKv;
+  readonly coverFacts = F.coverFacts;
+  readonly sanctionKv = F.sanctionKv;
+  readonly reviewKv = F.reviewKv;
   // ── Boards (templates + personal boards), saved in localStorage ───────────
   readonly TEMPLATES = TEMPLATES;
   private stored = loadBoards();
@@ -953,11 +862,6 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     const back = this.detailReturnFocus;
     this.detailReturnFocus = null;
     if (back?.isConnected) afterNextRender(() => back.focus(), { injector: this.injector });
-  }
-
-  /** Column grid of a detail table: "w" text column, "n" short column. */
-  pattern(t: DetailTable): string {
-    return t.columns.map(c => (c.wide ? 'w' : 'n')).join('');
   }
 
   setDetailTab(v: string): void {
