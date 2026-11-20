@@ -42,8 +42,8 @@ $h4: 736px;   // 4 rows
 
 .bento-sr {
   position:    absolute;
-  width:       1px;
-  height:      1px;
+  width:       var(--semantic-border-size-s);
+  height:      var(--semantic-border-size-s);
   overflow:    hidden;
   clip-path:   inset(50%);
   white-space: nowrap;
@@ -155,20 +155,22 @@ $h4: 736px;   // 4 rows
   background:    var(--semantic-color-static-background-main-alt-primary);
 }
 
-// ── Floating toolbar: copied as is from V1 (buyer-summary.component.scss,
-//    .bs-toolbar*), values included, so the two stay identical ─────────────
+// ── Floating toolbar: same markup and look as V1 (buyer-summary.component.scss,
+//    .bs-toolbar*); V2 only: the V1 hard values (24 / 20 / 2 / 1 px) are tokens
+//    here and the font weight uses the real token (semi-bold, the V1 name
+//    "semibold" does not exist) ─────────────────────────────────────────────
 .bs-toolbar {
   position:      absolute;
   top:           calc(-1 * var(--semantic-measurement-spacing-xl));
   left:          50%;
-  transform:     translateX(-50%) translateY(4px);
+  transform:     translateX(-50%) translateY(var(--semantic-measurement-spacing-xs));
   z-index:       5;
   display:       flex;
   align-items:   center;
   gap:           var(--semantic-measurement-spacing-s); // breathing room between items
   padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
   background:    var(--semantic-color-static-background-main-primary);
-  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border:        var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
   border-radius: var(--semantic-border-radius-m);
   box-shadow:    var(--semantic-shadow-flyout);
   opacity:       0;
@@ -203,8 +205,8 @@ $h4: 736px;   // 4 rows
   display:         inline-flex;
   align-items:     center;
   justify-content: center;
-  width:           24px;
-  height:          24px;
+  width:           var(--semantic-measurement-sizing-l);
+  height:          var(--semantic-measurement-sizing-l);
   padding:         0;
   background:      none;
   border:          none;
@@ -218,7 +220,7 @@ $h4: 736px;   // 4 rows
 
 .bs-toolbar__sizes {
   display: flex;
-  gap:     2px;
+  gap:     var(--semantic-measurement-spacing-xxs);
 }
 
 .bs-toolbar__size {
@@ -229,7 +231,7 @@ $h4: 736px;   // 4 rows
   cursor:        pointer;
   font-family:   var(--semantic-font-family);
   font-size:     var(--semantic-font-text-style-size-s);
-  font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+  font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
   color:         var(--semantic-color-static-text-main-secondary);
   transition:    background 120ms ease, color 120ms ease;
 
@@ -247,10 +249,10 @@ $h4: 736px;   // 4 rows
 }
 
 .bs-toolbar__sep {
-  width:      1px;
-  height:     20px;
+  width:      var(--semantic-border-size-s);
+  height:     calc(var(--semantic-measurement-sizing-m) + var(--semantic-measurement-sizing-xs));
   background: var(--semantic-color-static-border-subtle-tertiary);
-  margin:     0 2px;
+  margin:     0 var(--semantic-measurement-spacing-xxs);
 }
 
 // Keyboard pick-up: the card shows it is held
@@ -1757,3 +1759,22 @@ $dt-w: calc(var(--semantic-measurement-sizing-3xl) * 2 + var(--semantic-measurem
 }
 
 .bento-swatch--none { background: var(--semantic-color-static-background-main-primary); }
+
+// =============================================================
+// Readability of dense boards (edit-flow benchmark 7.2): 12 px only for
+// meta (dates, sources, axes, labels, legends), 14 px for text and deltas,
+// key values from 20 px; tabular figures on the whole board.
+// =============================================================
+
+.bc { font-variant-numeric: tabular-nums; }
+
+.bc-ctx, .bc-delta, .bc-band, .bc-facts-inline, .bc-note, .bc-empty {
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+}
+
+// Meta stays at 12 px: dates and sources of list rows, "n more", axes
+.bc-li .bc-ctx, .bc-li__date, .bc-fit__more, .bc-axis, .bc-tile .bc-ctx + .bc-ctx {
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+}
