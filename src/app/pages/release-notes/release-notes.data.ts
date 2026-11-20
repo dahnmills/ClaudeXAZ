@@ -23,6 +23,24 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'buyer-summary-v2-bento-2026-11-20',
+    date: '2026-11-20',
+    category: 'feature',
+    screens: ['buyer-summary-v2/137381425'],
+    title: 'Buyer Summary V2: a Bento board of dense cards you can rearrange',
+    description:
+      'Buyer Summary V2 now shows one Bento board of 16 cards, each answering a business question. Cards come in 14 formats, adapt their content to their size, and can be moved, resized and highlighted in edit mode.',
+    changes: [
+      'The board follows its own width: 4 columns at 1024 px, 6 at 1280 and 1440, 8 at 1920, 12 at 2560, with square rows and no row limit',
+      'Each card shows more as it grows: a 1 by 1 card gives the key figure and its context, larger formats add charts, tables and history',
+      'Default board: grade and history, exposure, limit left, payment behaviour, overdues, financials over 3 years, jobs to do, news, score, risk figures, notes, company identity, recent decisions, exposure by policy, latest cover request and an at a glance strip',
+      'Edit board: drag a card and the others move aside, then it settles in its new place',
+      'Each card has a menu in edit mode: move before, after, to the start or the end, pick one of 14 formats, highlight it on a navy background',
+      'Moves and format changes are announced to screen readers, and motion is reduced when the system asks for it',
+      'The previous Common, Credit Assessment and Credit Underwriting boards are replaced by this board for now',
+    ],
+  },
+  {
     id: 'coverbook-filter-drawer-2026-11-18',
     date: '2026-11-18',
     category: 'feature',
