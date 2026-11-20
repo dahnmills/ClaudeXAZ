@@ -58,7 +58,7 @@ $h4: 736px;   // 4 rows
   padding:         0 var(--semantic-measurement-spacing-xl);
   min-height:      var(--semantic-measurement-sizing-xl);
 
-  &--editing { justify-content: space-between; }
+  justify-content: space-between;
 }
 
 .bento-bar__hint {
@@ -1689,3 +1689,43 @@ $dt-w: calc(var(--semantic-measurement-sizing-3xl) * 2 + var(--semantic-measurem
     min-width:             calc(#{$nw} * #{$dt-w} + #{$nn} * #{$dt-n});
   }
 }
+
+// =============================================================
+// States: board date, skeleton, error, empty
+// =============================================================
+
+.bento-bar__asof {
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.bc-skel {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  flex:           1 1 0;
+  min-height:     0;
+}
+
+// The last block takes the room left: the skeleton has the card's final size
+.bc-skel__fill { flex: 1 1 0; min-height: 0; }
+
+.bc-error { flex-shrink: 0; }
+
+.bc-empty {
+  display:     flex;
+  align-items: flex-start;
+  gap:         var(--semantic-measurement-spacing-xs);
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+
+  ds-icon { flex-shrink: 0; color: var(--semantic-color-static-icon-main-functional-positive); }
+}
+
+// On a navy card the light skeleton is toned down
+.bento-cell--rev .bc-skel { opacity: 0.25; }

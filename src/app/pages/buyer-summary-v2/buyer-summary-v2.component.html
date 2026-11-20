@@ -56,6 +56,8 @@
           <ds-button type="primary" (clicked)="stopEditing()">Done</ds-button>
         </div>
       } @else {
+        <!-- One date for the whole board; a card shows its own only when it differs -->
+        <p class="bento-bar__asof">Data as of {{ AS_OF }}, {{ AS_OF_TIME }}</p>
         <div class="bento-bar__actions">
           <ds-button type="secondary" (clicked)="startEditing()">
             <ds-icon slot="icon-left" name="sliders" [size]="16" />
@@ -480,7 +482,7 @@
      board and the gallery preview. ═══ -->
 <ng-template #cardTpl let-card let-pfx="pfx">
   @let em = emphasisOf(card.emphasis);
-  <ds-card class="bento-card" [noPadding]="true">
+  <ds-card class="bento-card" [noPadding]="true" [loading]="pfx === 'bc-' && isLoading(card.id)">
     <div class="bc">
       <header class="bc-head">
         <h3 class="bc-title" [id]="pfx + card.id + '-title'">
@@ -511,9 +513,25 @@
         </span>
       </header>
 
-      <ng-container
-        [ngTemplateOutlet]="body"
-        [ngTemplateOutletContext]="{ $implicit: card.kind, hl: em.reversed }" />
+      @if (pfx === 'bc-' && isLoading(card.id)) {
+        <!-- Skeleton at the card's final size: value, context, bar, then more rows -->
+        <div class="bc-skel" aria-hidden="true">
+          <ds-skeleton-item width="45%" height="var(--semantic-measurement-sizing-l)" radius="var(--semantic-border-radius-xs)" />
+          <ds-skeleton-item width="80%" height="var(--semantic-measurement-sizing-s)" radius="var(--semantic-border-radius-xs)" />
+          <ds-skeleton-item width="100%" height="var(--semantic-measurement-sizing-xs)" radius="var(--semantic-border-radius-round)" />
+          <ds-skeleton-item class="bc-skel__fill" width="100%" height="100%" radius="var(--semantic-border-radius-s)" />
+        </div>
+        <span class="bento-sr">Loading</span>
+      } @else if (pfx === 'bc-' && isError(card.id)) {
+        <ds-functional-notice class="bc-error" status="error" emphasis="low"
+          message="No answer from the rating provider.">
+          <ds-button type="tertiary" (clicked)="retryCard(card.id)">Retry</ds-button>
+        </ds-functional-notice>
+      } @else {
+        <ng-container
+          [ngTemplateOutlet]="body"
+          [ngTemplateOutletContext]="{ $implicit: card.kind, hl: em.reversed }" />
+      }
     </div>
   </ds-card>
 </ng-template>
@@ -1019,6 +1037,34 @@
       <ul class="bc-list bc-fit bc-kv">
         @for (f of reviewKv; track f.label) {
           <li class="bc-kv__row bc-fit__item"><span class="bc-label">{{ f.label }}</span><span class="bc-num">{{ f.value }}</span></li>
+        }
+      </ul>
+    }
+
+    <!-- ── Claims: nothing to report is an information (empty state) ── -->
+    @case ('claims') {
+      <p class="bc-empty">
+        <ds-icon name="check-circle" [size]="16" />
+        <span>No claim filed on this buyer as of {{ AS_OF }}</span>
+      </p>
+      <p class="bc-ctx h2">Claims of the last 5 years show here with their amount and status.</p>
+    }
+
+    <!-- ── External ratings ──────────────────────────────── -->
+    @case ('external-rating') {
+      <div class="bc-stack">
+        <span class="bc-keyrow">
+          <span class="bc-value">BBB-</span>
+          <span class="bc-ctx w2">S&amp;P Global, stable</span>
+        </span>
+        <span class="bc-ctx">Investment grade, in line with our A3</span>
+      </div>
+      <ul class="bc-list bc-fit bc-kv">
+        @for (r of ratings; track r.agency) {
+          <li class="bc-kv__row bc-fit__item">
+            <span class="bc-label">{{ r.agency }}<span class="w2">, {{ r.date }}</span></span>
+            <span class="bc-num">{{ r.rating }}<span class="w2">, {{ r.outlook }}</span></span>
+          </li>
         }
       </ul>
     }

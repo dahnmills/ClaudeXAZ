@@ -34,6 +34,8 @@ import {
   TagComponent,
   SnackbarComponent,
   SegmentedControlComponent,
+  SkeletonItemComponent,
+  FunctionalNoticeComponent,
   TableRowComponent,
   CellComponent,
   CellHeaderComponent,
@@ -88,6 +90,9 @@ const DRAG_THRESHOLD   = 6;    // px before a press becomes a drag
 const DRAG_GRIP_PX     = 48;   // where a card from the gallery is held
 const FLASH_MS         = 700;  // fade of a card just added (benchmark 5.1)
 const SNACK_MS         = 8000; // time to undo a removal
+const BOOT_MS          = 500;  // first card of a board, then one card every 50 ms
+const BOOT_STEP_MS     = 50;
+const ADD_LOAD_MS      = 600;  // a card just added or retried
 const MOVE_COOLDOWN_MS = 140;  // hysteresis between two reorders
 
 /** 1548000 → "1 548 000" (space as thousands separator, as everywhere in Qirin). */
@@ -144,6 +149,8 @@ interface DragState {
     TagComponent,
     SnackbarComponent,
     SegmentedControlComponent,
+    SkeletonItemComponent,
+    FunctionalNoticeComponent,
     TableRowComponent,
     CellComponent,
     CellHeaderComponent,
@@ -203,6 +210,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   readonly overdueEvents = OVERDUE_EVENTS;
   readonly paymentMonths = PAYMENT_MONTHS;
   readonly policyMoves = POLICY_MOVES;
+  readonly ratings = EXTERNAL_RATINGS;
 
   // Label / value lists that show as many rows as their card holds
   readonly limitKv = [
@@ -588,6 +596,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.closeMenu();
     this.currentBoardId.set(id);
     this.cards.set(cloneCards(board.cards));
+    this.loadBoard();
     this.persist();
     this.announce(`${board.name} board, ${board.cards.length} cards.`);
   }
@@ -648,6 +657,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.drawerOpen.set(false);
     this.currentBoardId.set(board.id);
     this.cards.set(cloneCards(board.cards));
+    this.loadBoard();
     this.persist();
     this.toaster.show(`“${board.name}” is ready`, { tone: 'success', title: 'Board created' });
     this.announce(`${board.name} created.`);
@@ -667,6 +677,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.boards.update(arr => [...arr.slice(0, i + 1), copy, ...arr.slice(i + 1)]);
     this.currentBoardId.set(copy.id);
     this.cards.set(cloneCards(copy.cards));
+    this.loadBoard();
     this.persist();
     this.announce(`${copy.name} created and opened.`);
   }
@@ -707,6 +718,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
       const next = this.boards()[Math.max(0, i - 1)] ?? this.boards()[0];
       this.currentBoardId.set(next.id);
       this.cards.set(cloneCards(next.cards));
+      this.loadBoard();
     }
     this.persist();
     this.toaster.show(`“${board.name}” was deleted`, { tone: 'success', title: 'Board deleted' });
@@ -1003,7 +1015,46 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   }
 
   // ── Loading states (point 6) ───────────────────────────────────────────────
-  private markLoading(_id: string): void {}
+  // Skeleton at the card's final size, in reading order (no jump when the data
+  // comes); an error stays inside its card with Retry.
+  loadingIds = signal<ReadonlySet<string>>(new Set());
+  errorIds   = signal<ReadonlySet<string>>(new Set());
+  /** The rating provider fails on the first load of each visit (demo of the error state). */
+  private providerFailed = false;
+  private loadTimers: ReturnType<typeof setTimeout>[] = [];
+
+  isLoading(id: string): boolean { return this.loadingIds().has(id); }
+  isError(id: string): boolean { return this.errorIds().has(id); }
+
+  private markLoading(id: string, delay = ADD_LOAD_MS): void {
+    this.loadingIds.update(s => new Set([...s, id]));
+    this.errorIds.update(s => { const n = new Set(s); n.delete(id); return n; });
+    this.loadTimers.push(setTimeout(() => this.finishLoad(id), delay));
+  }
+
+  private finishLoad(id: string): void {
+    this.loadingIds.update(s => { const n = new Set(s); n.delete(id); return n; });
+    const card = this.cards().find(c => c.id === id);
+    if (card?.kind === 'external-rating' && !this.providerFailed) {
+      this.providerFailed = true;
+      this.errorIds.update(s => new Set([...s, id]));
+      this.announce(`${KINDS[card.kind].short}: the rating provider did not answer.`);
+    }
+    this.scheduleFit();
+  }
+
+  /** Whole board: cards arrive one after the other, in reading order. */
+  private loadBoard(): void {
+    this.loadTimers.forEach(t => clearTimeout(t));
+    this.loadTimers = [];
+    this.loadingIds.set(new Set());
+    packCards(this.cards(), this.cols()).forEach((p, i) => this.markLoading(p.card.id, BOOT_MS + i * BOOT_STEP_MS));
+  }
+
+  retryCard(id: string): void {
+    this.markLoading(id);
+    this.announce(`${this.titleOf(id)}: loading again.`);
+  }
 
   // ── Undo steps (one per action or gesture, edit mode only) ─────────────────
 
@@ -1570,6 +1621,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   // ── Lifecycle ──────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
+    this.loadBoard();
     const id = this.route.snapshot.paramMap.get('id') ?? '';
     this.routeId.set(id);
     // Une visite ne compte que sur la route du buyer (voir V1).
@@ -1582,6 +1634,8 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.loadTimers.forEach(t => clearTimeout(t));
+    clearTimeout(this.snackTimer);
     this.resizeObs?.disconnect();
   }
 }
