@@ -24,6 +24,13 @@ import {
   FlyoutMenuItemComponent,
   FlyoutMenuTitleComponent,
   DividerComponent,
+  DrawerComponent,
+  SelectComponent,
+  InputTextComponent,
+  RadioCardComponent,
+  ConfirmDialogComponent,
+  InlineEditComponent,
+  type SelectOption,
 } from '../../shared/ui';
 import { type BuyerCompany } from '../buyer-summary/buyer-summary.store';
 import { SECTIONS } from '../../user-testing/mocks';
@@ -33,13 +40,20 @@ import { ToasterService } from '../../shared/ui/toaster/toaster.service';
 import { BuyerSummaryStore } from '../buyer-summary/buyer-summary.store';
 import { ViewedBuyersStore } from '../buyer-summary/viewed-buyers.store';
 import {
-  type BentoCard, type BentoFormat, type BentoKind, type Emphasis, EMPHASES, EMPHASIS_MAP,
-  DEFAULT_CARDS, FORMATS, FORMAT_GROUPS, FORMAT_MAP, KINDS,
+  type BentoCard, type BentoFormat, type BentoKind, type Emphasis, type EmphasisChoice, EMPHASES, EMPHASIS_MAP,
+  FORMATS, FORMAT_GROUPS, FORMAT_MAP, KINDS,
   MONTHS, GRADE_HISTORY, GRADE_Y, GRADE_CHANGES, EXPOSURE_TREND, SCORE_TREND,
   PAYMENT_BANDS, FIN_YEARS, FINANCIALS, TURNOVER_TREND, TURNOVER_YEARS, JOBS, NEWS,
   NOTES, IDENTITY, DECISIONS, POLICIES, COVER_HISTORY,
-  OVERDUE_PERIODS, OVERDUE_EVENTS, PAYMENT_MONTHS, POLICY_MOVES, STRETCH,
+  OVERDUE_PERIODS, OVERDUE_EVENTS, PAYMENT_MONTHS, POLICY_MOVES,
 } from './buyer-summary-v2.data';
+import { type Placed, packCards } from './bento-layout';
+import {
+  type Board, type TemplateId, TEMPLATES, TEMPLATE_MAP,
+  cloneCards, templateBoards, loadBoards, saveBoards, newId,
+} from './buyer-summary-v2.boards';
+
+export { type Placed } from './bento-layout';
 
 const DEFAULT_COMPANY: BuyerCompany = {
   name: 'Immobilière du Marais',
@@ -60,124 +74,9 @@ const MOTION_MS        = 240;
 const MOTION_EASE      = 'cubic-bezier(0.2, 0, 0, 1)';
 const LAND_MS          = 280;
 const LAND_EASE        = 'cubic-bezier(0.05, 0.7, 0.1, 1)';
+const BOARD_NAME_MAX   = 40;   // characters (edit-flow benchmark 2.2)
 const DRAG_THRESHOLD   = 6;    // px before a press becomes a drag
 const MOVE_COOLDOWN_MS = 140;  // hysteresis between two reorders
-
-export interface Placed {
-  card: BentoCard;
-  x: number;  // column, 0-based
-  y: number;  // row, 0-based
-  w: number;
-  h: number;
-}
-
-/** First free slot, in list order, restarting from the top for each card
- *  (fills holes left higher up). Width is capped to the column count. */
-function packBase(cards: BentoCard[], cols: number): Placed[] {
-  const taken: boolean[][] = [];
-  const free = (x: number, y: number, w: number, h: number) => {
-    for (let yy = y; yy < y + h; yy++) {
-      for (let xx = x; xx < x + w; xx++) if (taken[yy]?.[xx]) return false;
-    }
-    return true;
-  };
-  const out: Placed[] = [];
-  for (const card of cards) {
-    const f = FORMAT_MAP[card.format] ?? FORMATS[0];
-    const w = f.w === 'full' ? cols : Math.min(f.w, cols);
-    const h = f.h;
-    let placed = false;
-    for (let y = 0; !placed; y++) {
-      for (let x = 0; x + w <= cols && !placed; x++) {
-        if (!free(x, y, w, h)) continue;
-        for (let yy = y; yy < y + h; yy++) {
-          taken[yy] ??= [];
-          for (let xx = x; xx < x + w; xx++) taken[yy][xx] = true;
-        }
-        out.push({ card, x, y, w, h });
-        placed = true;
-      }
-    }
-  }
-  return out;
-}
-
-/** Clean bottom edge: free cells inside the board's rectangle are taken by
- *  stretching a neighbouring card, but only a card that can show more when it
- *  grows (lists, tables, charts: STRETCH). Returns the cells left free. */
-export function fillHoles(cards: Placed[], cols: number): number {
-  const rows = cards.reduce((m, p) => Math.max(m, p.y + p.h), 0);
-  const grid: (Placed | undefined)[][] = Array.from({ length: rows }, () => Array(cols).fill(undefined));
-  const mark = (p: Placed) => {
-    for (let y = p.y; y < p.y + p.h; y++) for (let x = p.x; x < p.x + p.w; x++) grid[y][x] = p;
-  };
-  cards.forEach(mark);
-  const at = (x: number, y: number) => (x < 0 || x >= cols || y < 0 || y >= rows ? undefined : grid[y][x]);
-  const rowFree = (x0: number, w: number, y: number) => {
-    if (y < 0 || y >= rows) return false;
-    for (let x = x0; x < x0 + w; x++) if (grid[y][x]) return false;
-    return true;
-  };
-  const colFree = (x: number, y0: number, h: number) => {
-    if (x < 0 || x >= cols) return false;
-    for (let y = y0; y < y0 + h; y++) if (grid[y][x]) return false;
-    return true;
-  };
-  const v = (p: Placed) => STRETCH[p.card.kind].v;
-  const hz = (p: Placed) => STRETCH[p.card.kind].h;
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (let y = 0; y < rows && !changed; y++) {
-      for (let x = 0; x < cols && !changed; x++) {
-        if (grid[y][x]) continue;
-        const above = at(x, y - 1);
-        const below = at(x, y + 1);
-        const left  = at(x - 1, y);
-        const right = at(x + 1, y);
-        if (above && v(above) && above.y + above.h === y && rowFree(above.x, above.w, y)) { above.h++; changed = true; }
-        else if (below && v(below) && below.y === y + 1 && rowFree(below.x, below.w, y)) { below.y--; below.h++; changed = true; }
-        else if (left && hz(left) && left.x + left.w === x && colFree(x, left.y, left.h)) { left.w++; changed = true; }
-        else if (right && hz(right) && right.x === x + 1 && colFree(x, right.y, right.h)) { right.x--; right.w++; changed = true; }
-        if (changed) cards.forEach(mark);
-      }
-    }
-  }
-  let holes = 0;
-  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) if (!grid[y][x]) holes++;
-  return holes;
-}
-
-function layout(cards: BentoCard[], cols: number): { placed: Placed[]; holes: number; stretch: number } {
-  const placed = packBase(cards, cols);
-  const base = placed.reduce((s, p) => s + p.w * p.h, 0);
-  const holes = fillHoles(placed, cols);
-  const stretch = placed.reduce((s, p) => s + p.w * p.h, 0) - base;
-  return { placed, holes, stretch };
-}
-
-/** Layout shown on the board. `settle`: when gaps remain, try swapping two
- *  cards, first near the end of the list, then anywhere (the analyst's order
- *  stays in the model), and keep the layout with the fewest gaps, then the
- *  least stretching. */
-export function packCards(cards: BentoCard[], cols: number, settle = true): Placed[] {
-  let best = layout(cards, cols);
-  const n = cards.length;
-  const trySwaps = (from: number) => {
-    for (let j = Math.max(1, n - 6); j < n && best.holes > 0; j++) {
-      for (let i = from; i < j; i++) {
-        const order = [...cards];
-        [order[i], order[j]] = [order[j], order[i]];
-        const r = layout(order, cols);
-        if (r.holes < best.holes || (r.holes === best.holes && r.stretch < best.stretch)) best = r;
-      }
-    }
-  };
-  if (settle && best.holes > 0) trySwaps(Math.max(0, n - 9));
-  if (settle && best.holes > 0) trySwaps(0);
-  // DOM in visual order: Tab and screen readers follow the eye
-  return best.placed.sort((a, b) => a.y - b.y || a.x - b.x);
-}
 
 interface PressState { id: string; el: HTMLElement; x: number; y: number; }
 interface DragState {
@@ -213,6 +112,12 @@ interface DragState {
     FlyoutMenuItemComponent,
     FlyoutMenuTitleComponent,
     DividerComponent,
+    DrawerComponent,
+    SelectComponent,
+    InputTextComponent,
+    RadioCardComponent,
+    ConfirmDialogComponent,
+    InlineEditComponent,
     NgTemplateOutlet,
   ],
   templateUrl: './buyer-summary-v2.component.html',
@@ -340,8 +245,23 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     { label: 'By',        value: 'C. Morel' },
   ] }];
 
-  // ── Board model ────────────────────────────────────────────────────────────
-  cards   = signal<BentoCard[]>(DEFAULT_CARDS.map(c => ({ ...c })));
+  // ── Boards (templates + personal boards), saved in localStorage ───────────
+  readonly TEMPLATES = TEMPLATES;
+  private stored = loadBoards();
+  boards         = signal<Board[]>(this.stored?.boards ?? templateBoards());
+  currentBoardId = signal<string>(this.stored?.current ?? 'common');
+  currentBoard   = computed(() => this.boards().find(b => b.id === this.currentBoardId()) ?? this.boards()[0]);
+  boardOptions   = computed<SelectOption[]>(() => this.boards().map(b => ({ value: b.id, label: b.name })));
+
+  // Manage boards drawer (V1 "Manage boards" panel)
+  drawerOpen   = signal<boolean>(false);
+  drawerView   = signal<'boards' | 'create'>('boards');
+  newBoardName = signal<string>('');
+  newBoardFrom = signal<'current' | 'empty' | TemplateId>('current');
+  deleteTarget = signal<Board | null>(null);
+
+  // ── Board model: working copy of the current board's cards ────────────────
+  cards   = signal<BentoCard[]>(cloneCards(this.currentBoard()?.cards ?? []));
   cols    = signal<number>(6);
   editing = signal<boolean>(false);
   dragId  = signal<string | null>(null);
@@ -482,14 +402,169 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.closeMenu();
     this.keyGrab.set(null);
     this.editing.set(false);
+    this.saveCurrentCards();
     this.announce('Board saved.');
     this.toaster.show('Your board layout is saved', { tone: 'success', title: 'Board updated' });
   }
 
+  /** Cards of the board's template (a copy), or null for a board started empty. */
+  private templateCards(board: Board | undefined): BentoCard[] | null {
+    const t = board?.template ? TEMPLATE_MAP[board.template] : null;
+    return t ? cloneCards(t.cards) : null;
+  }
+
+  canReset = computed(() => !!this.currentBoard()?.template);
+
   resetBoard(): void {
     this.closeMenu();
-    this.mutate(() => this.cards.set(DEFAULT_CARDS.map(c => ({ ...c }))));
-    this.announce('Board reset to the default layout.');
+    const cards = this.templateCards(this.currentBoard());
+    if (!cards) return;
+    this.mutate(() => this.cards.set(cards));
+    this.announce(`Board reset to the ${TEMPLATE_MAP[this.currentBoard().template!].name} template.`);
+  }
+
+  // ── Boards: switch, create, duplicate, rename, delete ──────────────────────
+
+  private persist(): void {
+    saveBoards(this.currentBoardId(), this.boards());
+  }
+
+  private saveCurrentCards(): void {
+    const id = this.currentBoardId();
+    const cards = cloneCards(this.cards());
+    this.boards.update(arr => arr.map(b => (b.id === id ? { ...b, cards } : b)));
+    this.persist();
+  }
+
+  selectBoard(id: string): void {
+    if (!id || id === this.currentBoardId() || this.editing()) return;
+    const board = this.boards().find(b => b.id === id);
+    if (!board) return;
+    this.closeMenu();
+    this.currentBoardId.set(id);
+    this.cards.set(cloneCards(board.cards));
+    this.persist();
+    this.announce(`${board.name} board, ${board.cards.length} cards.`);
+  }
+
+  openBoardsDrawer(): void {
+    this.drawerView.set('boards');
+    this.drawerOpen.set(true);
+  }
+
+  closeDrawer(): void {
+    this.drawerOpen.set(false);
+  }
+
+  /** Unique name: "My board", "My board 2"... */
+  private uniqueName(base: string, except?: string): string {
+    const taken = new Set(this.boards().filter(b => b.id !== except).map(b => b.name.toLowerCase()));
+    if (!taken.has(base.toLowerCase())) return base;
+    let n = 2;
+    while (taken.has(`${base} ${n}`.toLowerCase())) n++;
+    return `${base} ${n}`;
+  }
+
+  openCreateBoard(): void {
+    this.newBoardFrom.set('current');
+    this.newBoardName.set(this.uniqueName(`Copy of ${this.currentBoard().name}`));
+    this.drawerView.set('create');
+    this.drawerOpen.set(true);
+  }
+
+  pickNewBoardSource(from: 'current' | 'empty' | TemplateId): void {
+    this.newBoardFrom.set(from);
+    const name = from === 'current' ? `Copy of ${this.currentBoard().name}`
+      : from === 'empty' ? 'My board' : `My ${TEMPLATE_MAP[from].name}`;
+    this.newBoardName.set(this.uniqueName(name));
+  }
+
+  newBoardNameError = computed(() => {
+    const name = this.newBoardName().trim();
+    if (!name) return 'Give the board a name';
+    if (name.length > BOARD_NAME_MAX) return `${BOARD_NAME_MAX} characters at most`;
+    if (this.boards().some(b => b.name.toLowerCase() === name.toLowerCase())) return 'A board already has this name';
+    return '';
+  });
+
+  createBoard(): void {
+    if (this.newBoardNameError()) return;
+    const from = this.newBoardFrom();
+    const source = from === 'current' ? this.cards()
+      : from === 'empty' ? [] : TEMPLATE_MAP[from].cards;
+    const board: Board = {
+      id: newId('board'),
+      name: this.newBoardName().trim(),
+      builtin: false,
+      template: from === 'current' ? this.currentBoard().template : from === 'empty' ? null : from,
+      cards: source.map(c => ({ ...c, id: newId(c.kind) })),
+    };
+    this.boards.update(arr => [...arr, board]);
+    this.drawerOpen.set(false);
+    this.currentBoardId.set(board.id);
+    this.cards.set(cloneCards(board.cards));
+    this.persist();
+    this.toaster.show(`“${board.name}” is ready`, { tone: 'success', title: 'Board created' });
+    this.announce(`${board.name} created.`);
+    // An empty board goes straight to edit mode: there is nothing to read yet
+    if (!board.cards.length) this.startEditing();
+  }
+
+  duplicateBoard(board: Board): void {
+    const copy: Board = {
+      ...board,
+      id: newId('board'),
+      name: this.uniqueName(`Copy of ${board.name}`),
+      builtin: false,
+      cards: (board.id === this.currentBoardId() ? this.cards() : board.cards).map(c => ({ ...c, id: newId(c.kind) })),
+    };
+    const i = this.boards().findIndex(b => b.id === board.id);
+    this.boards.update(arr => [...arr.slice(0, i + 1), copy, ...arr.slice(i + 1)]);
+    this.currentBoardId.set(copy.id);
+    this.cards.set(cloneCards(copy.cards));
+    this.persist();
+    this.announce(`${copy.name} created and opened.`);
+  }
+
+  renameError(board: Board, name: string): string {
+    const n = name.trim();
+    if (!n) return 'Give the board a name';
+    if (n.length > BOARD_NAME_MAX) return `${BOARD_NAME_MAX} characters at most`;
+    if (this.boards().some(b => b.id !== board.id && b.name.toLowerCase() === n.toLowerCase())) return 'A board already has this name';
+    return '';
+  }
+
+  renameBoard(board: Board, name: string): void {
+    const error = this.renameError(board, name);
+    if (error) {
+      this.toaster.show(error, { tone: 'warning', title: 'Name not saved' });
+      // Re-render the field with the previous name
+      this.boards.update(arr => [...arr]);
+      return;
+    }
+    this.boards.update(arr => arr.map(b => (b.id === board.id ? { ...b, name: name.trim() } : b)));
+    this.persist();
+    this.announce(`Board renamed ${name.trim()}.`);
+  }
+
+  askDeleteBoard(board: Board): void {
+    this.deleteTarget.set(board);
+  }
+
+  confirmDeleteBoard(): void {
+    const board = this.deleteTarget();
+    this.deleteTarget.set(null);
+    if (!board || board.builtin) return;
+    const i = this.boards().findIndex(b => b.id === board.id);
+    this.boards.update(arr => arr.filter(b => b.id !== board.id));
+    if (this.currentBoardId() === board.id) {
+      // Back to the previous board, or Common
+      const next = this.boards()[Math.max(0, i - 1)] ?? this.boards()[0];
+      this.currentBoardId.set(next.id);
+      this.cards.set(cloneCards(next.cards));
+    }
+    this.persist();
+    this.toaster.show(`“${board.name}” was deleted`, { tone: 'success', title: 'Board deleted' });
   }
 
   // ── Card toolbar (V1 floating toolbar): formats, emphasis, handle ──────────
@@ -537,13 +612,13 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.announce(`${this.titleOf(id)}: emphasis ${EMPHASIS_MAP[emphasis].label}.`);
   }
 
-  emphasisOf(e: Emphasis) { return EMPHASIS_MAP[e]; }
+  emphasisOf(e: EmphasisChoice) { return EMPHASIS_MAP[e === 'auto' ? 'none' : e]; }
 
   duplicateCard(id: string): void {
     const arr = this.cards();
     const i = arr.findIndex(c => c.id === id);
     if (i < 0) return;
-    const copy: BentoCard = { ...arr[i], id: `${arr[i].kind}-${++this.copyCounter}`, emphasis: 'none' };
+    const copy: BentoCard = { ...arr[i], id: newId(arr[i].kind), emphasis: 'auto' };
     this.mutate(() => this.cards.set([...arr.slice(0, i + 1), copy, ...arr.slice(i + 1)]));
     this.announce(`${this.titleOf(id)} duplicated.`);
   }
@@ -554,7 +629,6 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.announce(`${name} removed. Reset layout brings it back.`);
   }
 
-  private copyCounter = 0;
 
   // ── Keyboard move on the handle (no extra UI) ──────────────────────────────
   // Space or Enter picks the card up, arrows move it one place in the reading

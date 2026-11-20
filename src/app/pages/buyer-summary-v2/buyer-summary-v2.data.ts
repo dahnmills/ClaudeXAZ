@@ -47,7 +47,8 @@ export const FORMAT_MAP: Record<string, BentoFormat> =
 export type BentoKind =
   | 'grade' | 'exposure' | 'limit' | 'payment' | 'overdues' | 'financials'
   | 'jobs' | 'newsfeed' | 'score' | 'risk-figures' | 'notepad' | 'identity'
-  | 'decisions' | 'policies' | 'coverage' | 'glance' | 'sanction' | 'limit-review';
+  | 'decisions' | 'policies' | 'coverage' | 'glance' | 'sanction' | 'limit-review'
+  | 'claims' | 'external-rating';
 
 export interface BentoKindDef {
   /** Business question, shown from 2 columns wide. */
@@ -77,6 +78,8 @@ export const KINDS: Record<BentoKind, BentoKindDef> = {
   'glance':       { title: 'Where does the buyer stand?',       short: 'At a glance' },
   'sanction':     { title: 'Is there a sanction hit to clear?', short: 'Sanctions' },
   'limit-review': { title: 'Is a limit review due?',            short: 'Limit review' },
+  'claims':       { title: 'Any claim filed on this buyer?',    short: 'Claims',       meta: 'USD' },
+  'external-rating': { title: 'What do the agencies say?',      short: 'Ext. rating' },
 };
 
 // Emphasis levels: none, brand (subtle pale blue, strong navy) and status tones
@@ -112,34 +115,15 @@ export const EMPHASES: EmphasisDef[] = [
 export const EMPHASIS_MAP: Record<Emphasis, EmphasisDef> =
   Object.fromEntries(EMPHASES.map(e => [e.id, e])) as Record<Emphasis, EmphasisDef>;
 
+/** What the analyst picked: a fixed emphasis, or 'auto' (business thresholds). */
+export type EmphasisChoice = Emphasis | 'auto';
+
 export interface BentoCard {
   id: string;
   kind: BentoKind;
   format: string;
-  emphasis: Emphasis;
+  emphasis: EmphasisChoice;
 }
-
-// Default board, direction A: packs with no free cell on 6 columns (1280 px)
-export const DEFAULT_CARDS: BentoCard[] = [
-  { id: 'grade',        kind: 'grade',        format: '3x2',  emphasis: 'strong' },
-  { id: 'exposure',     kind: 'exposure',     format: '3x1',  emphasis: 'subtle' },
-  { id: 'limit',        kind: 'limit',        format: '1x1',  emphasis: 'subtle' },
-  { id: 'payment',      kind: 'payment',      format: '2x1',  emphasis: 'none' },
-  { id: 'overdues',     kind: 'overdues',     format: '1x2',  emphasis: 'positive' },
-  { id: 'financials',   kind: 'financials',   format: '2x3',  emphasis: 'none' },
-  { id: 'jobs',         kind: 'jobs',         format: '1x4',  emphasis: 'none' },
-  { id: 'newsfeed',     kind: 'newsfeed',     format: '2x2',  emphasis: 'none' },
-  { id: 'score',        kind: 'score',        format: '1x1',  emphasis: 'none' },
-  { id: 'risk-figures', kind: 'risk-figures', format: '1x1',  emphasis: 'none' },
-  { id: 'notepad',      kind: 'notepad',      format: '1x1',  emphasis: 'none' },
-  { id: 'identity',     kind: 'identity',     format: '2x1',  emphasis: 'none' },
-  { id: 'sanction',     kind: 'sanction',     format: '1x1',  emphasis: 'negative-strong' },
-  { id: 'limit-review', kind: 'limit-review', format: '1x1',  emphasis: 'warning' },
-  { id: 'decisions',    kind: 'decisions',    format: '2x1',  emphasis: 'none' },
-  { id: 'policies',     kind: 'policies',     format: '4x2',  emphasis: 'none' },
-  { id: 'coverage',     kind: 'coverage',     format: '2x2',  emphasis: 'none' },
-  { id: 'glance',       kind: 'glance',       format: 'full', emphasis: 'none' },
-];
 
 // ── Mock data ────────────────────────────────────────────────────────────────
 
@@ -194,8 +178,6 @@ export const JOBS: JobItem[] = [
   { label: 'Annual review of the limit',          due: '02 Dec 2024', priority: 'Medium', status: 'warning' },
   { label: 'CLR',                                 due: '09 Dec 2024', priority: 'Low',    status: 'success' },
   { label: 'Ask for FY 2024 interim accounts',    due: '16 Dec 2024', priority: 'Low',    status: 'success' },
-  { label: 'Review policy 2590423690 at expiry',  due: '31 Dec 2024', priority: 'Medium', status: 'warning' },
-  { label: 'Check the BHV lease guarantee',       due: '06 Jan 2025', priority: 'Low',    status: 'success' },
 ];
 
 export interface NewsItem { date: string; headline: string; source: string; tone: string; status: BadgeStatus; }
@@ -345,4 +327,6 @@ export const STRETCH: Record<BentoKind, { v: boolean; h: boolean }> = {
   'glance':       { v: false, h: false },
   'sanction':     { v: false, h: false },
   'limit-review': { v: false, h: false },
+  'claims':       { v: false, h: false },
+  'external-rating': { v: false, h: false },
 };

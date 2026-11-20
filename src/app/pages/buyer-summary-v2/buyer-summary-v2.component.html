@@ -35,7 +35,9 @@
           Drag a card to move it. Its toolbar changes the format and the emphasis.
         </p>
         <div class="bento-bar__actions">
-          <ds-button type="tertiary" (clicked)="resetBoard()">Reset layout</ds-button>
+          @if (canReset()) {
+            <ds-button type="tertiary" (clicked)="resetBoard()">Reset layout</ds-button>
+          }
           <ds-button type="primary" (clicked)="stopEditing()">Done</ds-button>
         </div>
       } @else {
@@ -44,6 +46,13 @@
             <ds-icon slot="icon-left" name="sliders" [size]="16" />
             Edit board
           </ds-button>
+          <!-- V1 order: Manage boards, then the board list furthest right -->
+          <ds-button type="secondary" (clicked)="openBoardsDrawer()">
+            <ds-icon slot="icon-left" name="settings" [size]="16" />
+            Manage boards
+          </ds-button>
+          <ds-select class="bento-bar__select" [options]="boardOptions()"
+            [value]="currentBoardId()" (selectionChange)="selectBoard($event)" />
         </div>
       }
     </div>
@@ -169,12 +178,91 @@
     </div>
   </div>
 
+  <!-- ═══ Manage boards (V1 panel): list, open, duplicate, rename, delete, create ═══ -->
+  <ds-drawer [title]="drawerView() === 'create' ? 'New board' : 'Boards'" [open]="drawerOpen()"
+    [showBack]="drawerView() === 'create'" backLabel="Boards"
+    (back)="drawerView.set('boards')" (closed)="closeDrawer()">
+    @if (drawerView() === 'boards') {
+      <div class="bm-pane">
+      <ul class="bm-list" aria-label="Your boards">
+        @for (b of boards(); track b.id) {
+          <li class="bm-row" [class.bm-row--current]="b.id === currentBoardId()">
+            <span class="bm-row__check" aria-hidden="true">
+              @if (b.id === currentBoardId()) { <ds-icon name="check" [size]="16" /> }
+            </span>
+            <div class="bm-row__main">
+              @if (b.builtin) {
+                <span class="bm-row__name">{{ b.name }}</span>
+              } @else {
+                <ds-inline-edit class="bm-row__edit" [value]="b.name" [deletable]="false"
+                  [ariaLabel]="'Rename ' + b.name" (saved)="renameBoard(b, $event)" />
+              }
+              <span class="bm-row__meta">
+                @if (b.builtin) { <ds-badge label="Template" status="neutral" /> }
+                <span>{{ b.cards.length }} {{ b.cards.length === 1 ? 'card' : 'cards' }}@if (b.id === currentBoardId()) {, open}</span>
+              </span>
+            </div>
+            <div class="bm-row__actions">
+              @if (b.id !== currentBoardId()) {
+                <ds-button type="tertiary" (clicked)="selectBoard(b.id)">Open</ds-button>
+              }
+              <ds-button-icon type="plain" tone="default" [ariaLabel]="'Duplicate ' + b.name" (clicked)="duplicateBoard(b)">
+                <ds-icon name="copy" [size]="16" />
+              </ds-button-icon>
+              @if (!b.builtin) {
+                <ds-button-icon type="plain" tone="default" [ariaLabel]="'Delete ' + b.name" (clicked)="askDeleteBoard(b)">
+                  <ds-icon name="trash" [size]="16" />
+                </ds-button-icon>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+      <p class="bm-note">Templates can be edited and reset, not renamed or deleted.</p>
+      <ds-button type="secondary" (clicked)="openCreateBoard()">
+        <ds-icon slot="icon-left" name="plus" [size]="16" />
+        New board
+      </ds-button>
+      </div>
+    } @else {
+      <div class="bm-create">
+        <ds-input-text label="Board name" [value]="newBoardName()" (valueChange)="newBoardName.set($event)"
+          [error]="!!newBoardNameError()" [errorMessage]="newBoardNameError()" />
+        <p class="bm-label" id="bm-from">Start from</p>
+        <div class="bm-choices" role="radiogroup" aria-labelledby="bm-from">
+          <ds-radio-card label="Copy of the current board"
+            [sublabel]="currentBoard().name + ', ' + cards().length + ' cards, as you set it'"
+            [selected]="newBoardFrom() === 'current'" (selectedChange)="pickNewBoardSource('current')" />
+          @for (t of TEMPLATES; track t.id) {
+            <ds-radio-card [label]="t.name + ' template'" [sublabel]="t.purpose + ', ' + t.cards.length + ' cards'"
+              [selected]="newBoardFrom() === t.id" (selectedChange)="pickNewBoardSource(t.id)" />
+          }
+          <ds-radio-card label="Empty board" sublabel="Start from nothing and add cards one by one"
+            [selected]="newBoardFrom() === 'empty'" (selectedChange)="pickNewBoardSource('empty')" />
+        </div>
+      </div>
+    }
+    @if (drawerView() === 'create') {
+      <div slot="footer" class="bm-footer">
+        <ds-button type="tertiary" (clicked)="drawerView.set('boards')">Cancel</ds-button>
+        <ds-button type="primary" [disabled]="!!newBoardNameError()" (clicked)="createBoard()">Create board</ds-button>
+      </div>
+    }
+  </ds-drawer>
+
   <ng-container slot="modals">
     <ds-modal title="Full properties" size="medium" [open]="detailsModalOpen()"
       [footer]="false" [closeOnBackdrop]="true" [closeOnEscape]="true"
       contentHeight="500px" (closed)="closeDetails()">
       <ds-properties-panel [sections]="detailsSections" [columns]="2" variant="card" />
     </ds-modal>
+
+    <ds-confirm-dialog [open]="!!deleteTarget()" tone="danger"
+      [title]="'Delete “' + (deleteTarget()?.name ?? '') + '”?'"
+      confirmLabel="Delete board" cancelLabel="Keep it"
+      (confirmed)="confirmDeleteBoard()" (closed)="deleteTarget.set(null)">
+      Its {{ deleteTarget()?.cards?.length ?? 0 }} cards and their layout will be removed. Templates stay available.
+    </ds-confirm-dialog>
   </ng-container>
 </app-topbox-test-shell>
 
