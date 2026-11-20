@@ -33,6 +33,10 @@ import {
   InputSearchComponent,
   TagComponent,
   SnackbarComponent,
+  SegmentedControlComponent,
+  TableRowComponent,
+  CellComponent,
+  CellHeaderComponent,
   type SelectOption,
 } from '../../shared/ui';
 import { type BuyerCompany } from '../buyer-summary/buyer-summary.store';
@@ -50,6 +54,7 @@ import {
   NOTES, IDENTITY, DECISIONS, POLICIES, COVER_HISTORY,
   OVERDUE_PERIODS, OVERDUE_EVENTS, PAYMENT_MONTHS, POLICY_MOVES,
   CATALOG, CATALOG_GROUPS, CATALOG_MAP,
+  AS_OF, AS_OF_TIME, CARD_SOURCES, HAS_FIGURES, EXTERNAL_RATINGS, shortDate, type DetailTable,
 } from './buyer-summary-v2.data';
 import { type Placed, packCards, nearestFormat, stepFormat } from './bento-layout';
 import {
@@ -84,6 +89,9 @@ const DRAG_GRIP_PX     = 48;   // where a card from the gallery is held
 const FLASH_MS         = 700;  // fade of a card just added (benchmark 5.1)
 const SNACK_MS         = 8000; // time to undo a removal
 const MOVE_COOLDOWN_MS = 140;  // hysteresis between two reorders
+
+/** 1548000 → "1 548 000" (space as thousands separator, as everywhere in Qirin). */
+const groupDigits = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
 const sameOrder = (a: BentoCard[], b: BentoCard[]) =>
   a.length === b.length && a.every((c, i) => c === b[i]);
@@ -135,6 +143,10 @@ interface DragState {
     InputSearchComponent,
     TagComponent,
     SnackbarComponent,
+    SegmentedControlComponent,
+    TableRowComponent,
+    CellComponent,
+    CellHeaderComponent,
     NgTemplateOutlet,
   ],
   templateUrl: './buyer-summary-v2.component.html',
@@ -284,7 +296,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   editing = signal<boolean>(false);
   dragId  = signal<string | null>(null);
   openMenuId = signal<string | null>(null);
-  menuView   = signal<'format' | 'emphasis'>('format');
+  menuView   = signal<'format' | 'emphasis' | 'read'>('format');
   announcement = signal<string>('');
 
   // While dragging, no settling swaps: the lifted card's spot stays predictable
@@ -706,7 +718,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   readonly QUICK_FORMATS = ['1x1', '2x1', '2x2'];
   readonly EMPHASES = EMPHASES;
 
-  toggleMenu(id: string, view: 'format' | 'emphasis'): void {
+  toggleMenu(id: string, view: 'format' | 'emphasis' | 'read'): void {
     const open = this.openMenuId() === id && this.menuView() === view;
     this.openMenuId.set(open ? null : id);
     this.menuView.set(view);
@@ -720,13 +732,15 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   onDocumentClick(ev: MouseEvent): void {
     if (this.openMenuId() === null) return;
     // composedPath: the clicked item may already be gone (menu re-render)
-    const inside = ev.composedPath().some(n => n instanceof HTMLElement && n.classList.contains('bs-toolbar'));
+    const inside = ev.composedPath().some(n => n instanceof HTMLElement
+      && (n.classList.contains('bs-toolbar') || n.classList.contains('bc-readmenu')));
     if (inside) return;
     this.closeMenu();
   }
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
+    if (this.detailOpen() && this.openMenuId() === null) return; // the drawer closes itself
     if (this.resize) { this.resizeEnd(true); return; }
     if (this.drag) { this.cancelDrag(); return; }
     if (this.openMenuId() !== null) {
@@ -844,8 +858,151 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     afterNextRender(() => this.cellEl(id)?.querySelector<HTMLElement>('.bento-resize')?.focus(), { injector: this.injector });
   }
 
-  // ── Card detail panel (point 5) and loading states (point 6) ──────────────
+  // ── Card detail panel: the card's data in tables (V1 See figures / View data)
+
   detailOpen = signal<boolean>(false);
+  detailId   = signal<string | null>(null);
+  detailTab  = signal<'figures' | 'data'>('data');
+  readonly HAS_FIGURES = HAS_FIGURES;
+  readonly AS_OF = AS_OF;
+  readonly AS_OF_TIME = AS_OF_TIME;
+
+  detailCard = computed(() => this.cards().find(c => c.id === this.detailId()) ?? null);
+  detailSource = computed(() => {
+    const c = this.detailCard();
+    return c ? CARD_SOURCES[c.kind] : null;
+  });
+  detailTabs = computed(() => [{ value: 'figures', label: 'Figures' }, { value: 'data', label: 'Data' }]);
+  detailTables = computed<DetailTable[]>(() => {
+    const c = this.detailCard();
+    if (!c) return [];
+    const t = this.tablesFor(c.kind);
+    if (!HAS_FIGURES.includes(c.kind)) return t.data;
+    return this.detailTab() === 'figures' ? t.figures : t.data;
+  });
+
+  /** Read menu: "See figures" (charts) or "View data"; the title opens the data. */
+  openDetail(id: string, tab: 'figures' | 'data' = 'data'): void {
+    if (this.editing()) return;
+    this.closeMenu();
+    this.drawerOpen.set(false);
+    this.detailReturnFocus = document.activeElement as HTMLElement | null;
+    this.detailId.set(id);
+    const kind = this.cards().find(c => c.id === id)?.kind;
+    this.detailTab.set(kind && HAS_FIGURES.includes(kind) ? tab : 'data');
+    this.detailOpen.set(true);
+  }
+
+  private detailReturnFocus: HTMLElement | null = null;
+
+  closeDetail(): void {
+    this.detailOpen.set(false);
+    const back = this.detailReturnFocus;
+    this.detailReturnFocus = null;
+    if (back?.isConnected) afterNextRender(() => back.focus(), { injector: this.injector });
+  }
+
+  /** Column grid of a detail table: "w" text column, "n" short column. */
+  pattern(t: DetailTable): string {
+    return t.columns.map(c => (c.wide ? 'w' : 'n')).join('');
+  }
+
+  setDetailTab(v: string): void {
+    this.detailTab.set(v === 'figures' ? 'figures' : 'data');
+  }
+
+  openFullPage(ev: Event): void {
+    ev.preventDefault();
+    const s = this.detailSource();
+    this.toaster.show(`The ${s?.page ?? 'full'} page is not part of this prototype.`, { tone: 'info', title: 'Open full page' });
+  }
+
+  /** Card date in its header, only when it differs from the board's date. */
+  cardDate(kind: BentoKind): string {
+    const d = CARD_SOURCES[kind].updated;
+    return d === AS_OF ? '' : shortDate(d);
+  }
+
+  private tablesFor(kind: BentoKind): { figures: DetailTable[]; data: DetailTable[] } {
+    const kv = (title: string, rows: { label: string; value: string }[]): DetailTable =>
+      ({ title, columns: [{ label: 'Item', wide: true }, { label: 'Value', num: true }], rows: rows.map(r => [r.label, r.value]) });
+    const series = (title: string, label: string, unit: string, xs: string[], vs: (string | number)[]): DetailTable =>
+      ({ title, columns: [{ label }, { label: unit, num: true }], rows: xs.map((x, i) => [x, String(vs[i])]) });
+    const usd = (k: number) => groupDigits(Math.round(k * 1000));
+    switch (kind) {
+      case 'grade': return {
+        figures: [series('Grade over 8 periods', 'Period', 'Grade, 1 = best', MONTHS, GRADE_HISTORY.map(g => `A${g}`))],
+        data: [{ title: 'Grade changes', columns: [{ label: 'Date' }, { label: 'Change' }, { label: 'Reason', wide: true }],
+          rows: GRADE_CHANGES.map(g => [g.date, g.from ? `${g.from} to ${g.to}` : g.to, g.reason]) }],
+      };
+      case 'exposure': return {
+        figures: [series('Exposure over 8 periods', 'Period', 'Exposure, USD', MONTHS, EXPOSURE_TREND.map(usd))],
+        data: [kv('Exposure and limit, USD', [{ label: 'Exposure', value: '1 548 000' }, ...this.exposureKv])],
+      };
+      case 'limit': return { figures: [], data: [kv('Limit, USD', [{ label: 'Available', value: '3 452 000' }, ...this.limitKv])] };
+      case 'payment': return {
+        figures: [{ title: 'Paid on time, month by month', columns: [{ label: 'Month' }, { label: 'On time', num: true }, { label: '1 to 30 days late', num: true }],
+          rows: PAYMENT_MONTHS.map(m => [m.month, `${m.onTime} %`, `${m.late} %`]) }],
+        data: [
+          { title: 'Payment delays, last 12 months', columns: [{ label: 'Delay', wide: true }, { label: 'Share', num: true }], rows: PAYMENT_BANDS.map(b => [b.label, `${b.value} %`]) },
+          kv('Payment behaviour', this.paymentKv),
+        ],
+      };
+      case 'overdues': return {
+        figures: [series('Overdue per period', 'Period', 'Overdue, USD', OVERDUE_PERIODS.map(o => o.label), OVERDUE_PERIODS.map(o => usd(o.value)))],
+        data: [
+          kv('Open overdues', [{ label: 'Open overdue, USD', value: '0' }, ...this.overdueFacts[0].rows.map(r => ({ label: r.label, value: String(r.value) }))]),
+          { title: 'History', columns: [{ label: 'Date' }, { label: 'Event', wide: true }, { label: 'Outcome' }], rows: OVERDUE_EVENTS.map(e => [e.date, e.text, e.outcome]) },
+        ],
+      };
+      case 'financials': return {
+        figures: [series('Turnover over 5 years', 'Year', 'Turnover, USD M', TURNOVER_YEARS, TURNOVER_TREND)],
+        data: [{ title: 'Key figures, USD k', columns: [{ label: 'Indicator', wide: true }, ...FIN_YEARS.map(y => ({ label: y, num: true })), { label: 'Change', num: true }],
+          rows: FINANCIALS.map(r => [r.label, ...r.values, r.delta]) }],
+      };
+      case 'jobs': return { figures: [], data: [{ title: 'Open tasks, by due date', columns: [{ label: 'Task', wide: true }, { label: 'Due' }, { label: 'Priority' }],
+        rows: JOBS.map(j => [j.label, j.due, j.priority]) }] };
+      case 'newsfeed': return { figures: [], data: [{ title: 'Articles', columns: [{ label: 'Date' }, { label: 'Headline', wide: true }, { label: 'Source' }, { label: 'Tone' }],
+        rows: NEWS.map(n => [n.date, n.headline, n.source, n.tone]) }] };
+      case 'score': return {
+        figures: [series('Score over 8 periods', 'Period', 'Score, out of 100', MONTHS, SCORE_TREND)],
+        data: [kv('Score', [{ label: 'Score', value: '82 / 100' }, ...this.scoreKv])],
+      };
+      case 'risk-figures': return { figures: [], data: [kv('Risk figures', [{ label: 'Limits held', value: '72' }, ...this.riskKv])] };
+      case 'notepad': return { figures: [], data: [{ title: 'Notes', columns: [{ label: 'Date' }, { label: 'Note', wide: true }, { label: 'Author' }],
+        rows: NOTES.map(n => [n.date, n.text, n.author]) }] };
+      case 'identity': return { figures: [], data: [kv('Company', IDENTITY)] };
+      case 'decisions': return { figures: [], data: [{ title: 'Decisions', columns: [{ label: 'Date' }, { label: 'Decision', wide: true }, { label: 'Amount, USD', num: true }, { label: 'Outcome' }],
+        rows: DECISIONS.map(d => [d.date, d.label, d.amount || '—', d.outcome]) }] };
+      case 'policies': return { figures: [], data: [
+        { title: 'Exposure by policy, USD', columns: [{ label: 'Policy holder', wide: true }, { label: 'Policy' }, { label: 'Exposure', num: true }, { label: 'Share', num: true }, { label: 'Limit', num: true }, { label: 'Status' }],
+          rows: POLICIES.map(p => [p.holder, p.policy, p.exposure, `${p.share} %`, p.limit, p.status]) },
+        { title: 'Limit movements', columns: [{ label: 'Date' }, { label: 'Policy holder', wide: true }, { label: 'Movement', wide: true }],
+          rows: POLICY_MOVES.map(m => [m.date, m.policy, m.text]) },
+      ] };
+      case 'coverage': return {
+        figures: [series('Exposure against the 2 000 000 cover', 'Period', 'Exposure, USD', MONTHS, EXPOSURE_TREND.map(usd))],
+        data: [
+          kv('Latest request, USD', this.coverFacts[0].rows.map(r => ({ label: r.label, value: String(r.value) }))),
+          { title: 'Request history, USD', columns: [{ label: 'Date' }, { label: 'Requested', num: true }, { label: 'Granted', num: true }, { label: 'Outcome' }],
+            rows: COVER_HISTORY.map(c => [c.date, c.requested, c.granted, c.outcome]) },
+        ],
+      };
+      case 'glance': return { figures: [], data: [kv('Key figures', [
+        { label: 'Grade', value: 'A3, up from A4' }, { label: 'Exposure, USD', value: '1 548 000' },
+        { label: 'Paid on time', value: '94 %' }, { label: 'Overdue', value: '0' },
+        { label: 'Score', value: '82 / 100' }, { label: 'Latest cover', value: 'Approved, 2 000 000' },
+      ])] };
+      case 'sanction': return { figures: [], data: [kv('Screening', [{ label: 'Hits to clear', value: '1' }, ...this.sanctionKv])] };
+      case 'limit-review': return { figures: [], data: [kv('Limit review', [{ label: 'Due', value: '02 Dec 2024' }, ...this.reviewKv])] };
+      case 'claims': return { figures: [], data: [{ title: 'Claims', columns: [{ label: 'Date' }, { label: 'Claim', wide: true }, { label: 'Amount, USD', num: true }],
+        rows: [], empty: `No claim filed on this buyer as of ${AS_OF}.` }] };
+      case 'external-rating': return { figures: [], data: [{ title: 'Agency ratings', columns: [{ label: 'Agency', wide: true }, { label: 'Rating' }, { label: 'Outlook' }, { label: 'Date' }],
+        rows: EXTERNAL_RATINGS.map(r => [r.agency, r.rating, r.outlook, r.date]) }] };
+    }
+  }
+
+  // ── Loading states (point 6) ───────────────────────────────────────────────
   private markLoading(_id: string): void {}
 
   // ── Undo steps (one per action or gesture, edit mode only) ─────────────────

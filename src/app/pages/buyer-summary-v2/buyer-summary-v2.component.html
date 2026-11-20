@@ -117,6 +117,26 @@
             <ng-container [ngTemplateOutlet]="cardTpl"
               [ngTemplateOutletContext]="{ $implicit: p.card, pfx: 'bc-' }" />
 
+            @if (!editing()) {
+              <!-- Read menu (V1): See figures, View data, Edit board -->
+              <div class="bc-readmenu" (click)="$event.stopPropagation()">
+                <ds-button-icon type="plain" tone="default" [reversed]="em.reversed"
+                  [ariaLabel]="kindOf(p.card.kind).short + ' options'" (clicked)="toggleMenu(p.card.id, 'read')">
+                  <ds-icon name="context-vertical" [size]="16" />
+                </ds-button-icon>
+                @if (openMenuId() === p.card.id && menuView() === 'read') {
+                  <div class="bento-menu">
+                    <ds-flyout-menu>
+                      @if (HAS_FIGURES.includes(p.card.kind)) {
+                        <ds-flyout-menu-item label="See figures" icon="chart" (clicked)="openDetail(p.card.id, 'figures')" />
+                      }
+                      <ds-flyout-menu-item label="View data" icon="info-circle" (clicked)="openDetail(p.card.id, 'data')" />
+                      <ds-flyout-menu-item label="Edit board" icon="sliders" (clicked)="closeMenu(); startEditing()" />
+                    </ds-flyout-menu>
+                  </div>
+                }
+              </div>
+            }
             @if (editing()) {
               <!-- Corner handle: snaps to the 14 formats; arrows with the keyboard -->
               <span class="bento-resize" role="button" tabindex="0"
@@ -266,6 +286,50 @@
       <div slot="footer" class="bm-footer">
         <ds-button type="tertiary" (clicked)="drawerView.set('boards')">Cancel</ds-button>
         <ds-button type="primary" [disabled]="!!newBoardNameError()" (clicked)="createBoard()">Create board</ds-button>
+      </div>
+    }
+  </ds-drawer>
+
+  <!-- ═══ Card detail: the same data, larger and in tables (V1 See figures / View data) ═══ -->
+  <ds-drawer class="bento-detail" [title]="detailCard() ? kindOf(detailCard()!.kind).title : 'Card'"
+    [open]="detailOpen()" (closed)="closeDetail()">
+    @if (detailCard(); as c) {
+      <div class="dt-pane">
+        <p class="dt-meta">
+          {{ detailSource()?.source }}, data of {{ detailSource()?.updated }}@if (kindOf(c.kind).meta) {, in {{ kindOf(c.kind).meta }}}.
+        </p>
+        @if (HAS_FIGURES.includes(c.kind)) {
+          <ds-segmented-control [options]="detailTabs()" [selected]="detailTab()" ariaLabel="Show"
+            (selectedChange)="setDetailTab($event)" />
+        }
+        @for (t of detailTables(); track t.title) {
+          <section class="dt-section">
+            <h3 class="dt-title">{{ t.title }}</h3>
+            @if (t.rows.length) {
+              <div [class]="'dt-table dt-l--' + pattern(t)" role="table" [attr.aria-label]="t.title">
+                <ds-table-row>
+                  @for (col of t.columns; track col.label) {
+                    <ds-cell-header [title]="col.label" [align]="col.num ? 'right' : 'left'" />
+                  }
+                </ds-table-row>
+                @for (row of t.rows; track $index) {
+                  <ds-table-row>
+                    @for (v of row; track $index; let i = $index) {
+                      <ds-cell size="s" [class.dt-num]="t.columns[i].num"
+                        [align]="t.columns[i].num ? 'right' : 'left'">{{ v }}</ds-cell>
+                    }
+                  </ds-table-row>
+                }
+              </div>
+            } @else {
+              <p class="dt-meta">{{ t.empty }}</p>
+            }
+          </section>
+        }
+        <ds-link href="#" (click)="openFullPage($event)">
+          Open the {{ detailSource()?.page }}
+          <ds-icon slot="icon-right" name="arrow-right" [size]="16" />
+        </ds-link>
       </div>
     }
   </ds-drawer>
@@ -420,17 +484,31 @@
     <div class="bc">
       <header class="bc-head">
         <h3 class="bc-title" [id]="pfx + card.id + '-title'">
-          <span class="lt-w2">{{ kindOf(card.kind).short }}</span>
-          <span class="w2">{{ kindOf(card.kind).title }}</span>
+          @if (pfx === 'bc-' && !editing()) {
+            <!-- The title opens the card's data in the side panel -->
+            <ds-link class="bc-title__link" [tone]="em.reversed ? 'reversed' : 'neutral'" weight="semi-bold"
+              (click)="openDetail(card.id, 'data'); $event.preventDefault()">
+              <span class="lt-w2">{{ kindOf(card.kind).short }}</span>
+              <span class="w2">{{ kindOf(card.kind).title }}</span>
+            </ds-link>
+          } @else {
+            <span class="lt-w2">{{ kindOf(card.kind).short }}</span>
+            <span class="w2">{{ kindOf(card.kind).title }}</span>
+          }
         </h3>
-        @if (em.status) {
-          <span class="bc-emph">
-            <ds-icon [name]="em.icon!" [size]="12" />
-            <span [class.w2]="card.emphasis === 'subtle' || card.emphasis === 'strong'">{{ em.status }}</span>
-          </span>
-        } @else if (kindOf(card.kind).meta) {
-          <span class="bc-meta">{{ kindOf(card.kind).meta }}</span>
-        }
+        <span class="bc-head__end">
+          @if (em.status) {
+            <span class="bc-emph">
+              <ds-icon [name]="em.icon!" [size]="12" />
+              <span [class.w2]="card.emphasis === 'subtle' || card.emphasis === 'strong'">{{ em.status }}</span>
+            </span>
+          } @else if (kindOf(card.kind).meta) {
+            <span class="bc-meta">{{ kindOf(card.kind).meta }}</span>
+          }
+          @if (cardDate(card.kind); as d) {
+            <span class="bc-date" [attr.aria-label]="'Data of ' + d">{{ d }}</span>
+          }
+        </span>
       </header>
 
       <ng-container

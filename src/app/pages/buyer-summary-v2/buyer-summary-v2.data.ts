@@ -384,3 +384,56 @@ export const CATALOG: CatalogEntry[] = [
 
 export const CATALOG_MAP: Record<BentoKind, CatalogEntry> =
   Object.fromEntries(CATALOG.map(e => [e.kind, e])) as Record<BentoKind, CatalogEntry>;
+
+// ── Card detail panel: source, date of the data, full page ─────────────────
+// The board carries one date (AS_OF); a card shows its own date only when it
+// differs (edit-flow benchmark 5.2).
+
+export const AS_OF = '20 Nov 2024';
+export const AS_OF_TIME = '09:42';
+
+export interface CardSource { source: string; updated: string; page: string; }
+export const CARD_SOURCES: Record<BentoKind, CardSource> = {
+  'grade':           { source: 'Qirin grading',              updated: '12 Jul 2024', page: 'grade history' },
+  'exposure':        { source: 'Policy administration',      updated: AS_OF,         page: 'exposure details' },
+  'limit':           { source: 'Policy administration',      updated: AS_OF,         page: 'limit details' },
+  'payment':         { source: 'Payment experience',         updated: '31 Oct 2024', page: 'payment experience' },
+  'overdues':        { source: 'Overdue notifications',      updated: AS_OF,         page: 'overdue history' },
+  'financials':      { source: 'Filed accounts, FY 2023',    updated: '30 Jun 2024', page: 'financial statements' },
+  'jobs':            { source: 'Qirin workflow',             updated: AS_OF,         page: 'task list' },
+  'newsfeed':        { source: 'Press monitoring',           updated: '11 Nov 2024', page: 'newsfeed' },
+  'score':           { source: 'Qirin scoring',              updated: '11 Nov 2024', page: 'score details' },
+  'risk-figures':    { source: 'Policy administration',      updated: AS_OF,         page: 'risk figures' },
+  'notepad':         { source: 'Analyst notes',              updated: AS_OF,         page: 'notepad' },
+  'identity':        { source: 'Company register',           updated: '11 Nov 2024', page: 'full properties' },
+  'decisions':       { source: 'Qirin decisions',            updated: AS_OF,         page: 'decision history' },
+  'policies':        { source: 'Policy administration',      updated: AS_OF,         page: 'policy list' },
+  'coverage':        { source: 'Cover requests',             updated: '11 Nov 2024', page: 'cover request' },
+  'glance':          { source: 'Several sources',            updated: AS_OF,         page: 'buyer profile' },
+  'sanction':        { source: 'Sanction screening',         updated: '28 Oct 2024', page: 'screening case' },
+  'limit-review':    { source: 'Qirin workflow',             updated: AS_OF,         page: 'limit review' },
+  'claims':          { source: 'Claims management',          updated: AS_OF,         page: 'claims' },
+  'external-rating': { source: 'Rating agencies',            updated: '04 Nov 2024', page: 'external ratings' },
+};
+
+/** Short date for a card header ("12 Jul"), only when it differs from the board's. */
+export const shortDate = (d: string) => d.slice(0, 6);
+
+// Kinds whose card holds a chart: the menu offers "See figures"
+export const HAS_FIGURES: BentoKind[] = ['grade', 'exposure', 'payment', 'overdues', 'financials', 'score', 'coverage'];
+
+export interface DetailTable {
+  title: string;
+  columns: { label: string; num?: boolean; wide?: boolean }[];
+  rows: string[][];
+  /** Shown instead of the rows when there are none. */
+  empty?: string;
+}
+
+// External ratings (new for the gallery card "What do the agencies say?")
+export interface AgencyRating { agency: string; rating: string; outlook: string; date: string; }
+export const EXTERNAL_RATINGS: AgencyRating[] = [
+  { agency: 'S&P Global', rating: 'BBB-', outlook: 'Stable',   date: '04 Nov 2024' },
+  { agency: 'Moody’s', rating: 'Baa3', outlook: 'Stable',   date: '18 Sep 2024' },
+  { agency: 'Fitch',      rating: 'BBB-', outlook: 'Negative', date: '02 Aug 2024' },
+];
