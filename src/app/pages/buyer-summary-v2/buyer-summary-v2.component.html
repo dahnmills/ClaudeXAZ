@@ -32,7 +32,7 @@
       @if (editing()) {
         <p class="bento-bar__hint">
           <ds-icon name="move" [size]="16" />
-          Drag a card to move it. Use its menu to change its format or highlight it.
+          Drag a card to move it. Its toolbar changes the format and the emphasis.
         </p>
         <div class="bento-bar__actions">
           <ds-button type="tertiary" (clicked)="resetBoard()">Reset layout</ds-button>
@@ -64,12 +64,14 @@
         }
 
         @for (p of placed(); track p.card.id) {
+          @let em = emphasisOf(p.card.emphasis);
           <section
             #cell
             class="bento-cell"
-            [class]="'bento-cell ' + cellClass(p)"
-            [class.bento-cell--hl]="p.card.highlight"
+            [class]="'bento-cell ' + cellClass(p) + ' bento-cell--e-' + p.card.emphasis"
+            [class.bento-cell--rev]="em.reversed"
             [class.bento-cell--lifted]="dragId() === p.card.id"
+            [class.bento-cell--grabbed]="keyGrab()?.id === p.card.id"
             [class.bento-cell--menu-open]="openMenuId() === p.card.id"
             [attr.data-id]="p.card.id"
             [attr.aria-labelledby]="'bc-' + p.card.id + '-title'"
@@ -79,65 +81,81 @@
               <div class="bc">
                 <header class="bc-head">
                   <h3 class="bc-title" [id]="'bc-' + p.card.id + '-title'">
-                    @if (p.card.highlight) {
-                      <ds-icon class="bc-title__star" name="star-filled" [size]="16" />
-                      <span class="bento-sr">Highlighted: </span>
-                    }
                     <span class="lt-w2">{{ kindOf(p.card.kind).short }}</span>
                     <span class="w2">{{ kindOf(p.card.kind).title }}</span>
                   </h3>
-                  @if (kindOf(p.card.kind).meta; as meta) {
-                    <span class="bc-meta">{{ meta }}</span>
+                  @if (em.status) {
+                    <span class="bc-emph">
+                      <ds-icon [name]="em.icon!" [size]="12" />
+                      <span [class.w2]="p.card.emphasis === 'subtle' || p.card.emphasis === 'strong'">{{ em.status }}</span>
+                    </span>
+                  } @else if (kindOf(p.card.kind).meta) {
+                    <span class="bc-meta">{{ kindOf(p.card.kind).meta }}</span>
                   }
                 </header>
 
                 <ng-container
                   [ngTemplateOutlet]="body"
-                  [ngTemplateOutletContext]="{ $implicit: p.card.kind, hl: p.card.highlight }" />
+                  [ngTemplateOutletContext]="{ $implicit: p.card.kind, hl: em.reversed }" />
               </div>
             </ds-card>
 
             @if (editing()) {
-              <div class="bento-cell__tools" (pointerdown)="$event.stopPropagation()">
-                <span class="bento-cell__handle" aria-hidden="true">
-                  <ds-icon name="drag-handle" [size]="16" />
+              <!-- Floating toolbar: same markup and look as V1 (.bs-toolbar) -->
+              <div class="bs-toolbar" (click)="$event.stopPropagation()" (pointerdown)="$event.stopPropagation()">
+                <div class="bs-toolbar__sizes" role="group" aria-label="Card size">
+                  @for (f of QUICK_FORMATS; track f) {
+                    <button class="bs-toolbar__size" type="button"
+                      [class.bs-toolbar__size--on]="p.card.format === f"
+                      (click)="setFormat(p.card.id, f)" [attr.aria-label]="formatLabel(f)">{{ formatLabel(f) }}</button>
+                  }
+                  <button class="bs-toolbar__size" type="button"
+                    [class.bs-toolbar__size--on]="!QUICK_FORMATS.includes(p.card.format)"
+                    [attr.aria-expanded]="openMenuId() === p.card.id && menuView() === 'format'"
+                    (click)="toggleMenu(p.card.id, 'format')"
+                    aria-label="All formats">{{ QUICK_FORMATS.includes(p.card.format) ? 'More' : formatLabel(p.card.format) }}</button>
+                </div>
+                <span class="bs-toolbar__sep" aria-hidden="true"></span>
+                <ds-button-icon type="plain" tone="default" ariaLabel="Emphasis"
+                  (clicked)="toggleMenu(p.card.id, 'emphasis')">
+                  <ds-icon name="star" [size]="16" />
+                </ds-button-icon>
+                <span class="bs-toolbar__sep" aria-hidden="true"></span>
+                <!-- Drag handle: keyboard move (Space, arrows, Space) -->
+                <span class="bs-toolbar__handle" role="button" tabindex="0"
+                  [attr.aria-label]="'Move ' + kindOf(p.card.kind).short + ', position ' + ($index + 1) + ' of ' + placed().length + '. Press Space to pick up.'"
+                  [attr.aria-pressed]="keyGrab()?.id === p.card.id"
+                  (keydown)="onHandleKey($event, p.card.id)">
+                  <ds-icon name="move" [size]="16" />
                 </span>
-                <ds-button-icon class="bento-cell__menu-btn" type="secondary" size="s"
-                  [ariaLabel]="'Options for ' + kindOf(p.card.kind).short + ', position ' + ($index + 1) + ', ' + formatLabel(p.card.format)"
-                  (clicked)="toggleMenu(p.card.id)">
-                  <ds-icon name="context-vertical" [size]="16" />
+                <ds-button-icon type="plain" tone="default" ariaLabel="Duplicate card" (clicked)="duplicateCard(p.card.id)">
+                  <ds-icon name="copy" [size]="16" />
+                </ds-button-icon>
+                <ds-button-icon type="plain" tone="default" ariaLabel="Remove card" (clicked)="removeCard(p.card.id)">
+                  <ds-icon name="trash" [size]="16" />
                 </ds-button-icon>
 
                 @if (openMenuId() === p.card.id) {
                   <div class="bento-menu">
                     <ds-flyout-menu>
-                      @if (menuView() === 'main') {
-                        <ds-flyout-menu-title label="Move" />
-                        <ds-flyout-menu-item label="Move before" icon="arrow-left"
-                          [disabled]="$index === 0" (clicked)="moveCard(p.card.id, 'before')" />
-                        <ds-flyout-menu-item label="Move after" icon="arrow-right"
-                          [disabled]="$last" (clicked)="moveCard(p.card.id, 'after')" />
-                        <ds-flyout-menu-item label="Move to start" icon="arrow-first"
-                          [disabled]="$index === 0" (clicked)="moveCard(p.card.id, 'start')" />
-                        <ds-flyout-menu-item label="Move to end" icon="arrow-last"
-                          [disabled]="$last" (clicked)="moveCard(p.card.id, 'end')" />
-                        <ds-divider />
-                        <ds-flyout-menu-item [label]="'Format: ' + formatLabel(p.card.format)" icon="grid"
-                          (clicked)="menuView.set('format')" />
-                        <ds-flyout-menu-item
-                          [label]="p.card.highlight ? 'Remove highlight' : 'Highlight this card'"
-                          [icon]="p.card.highlight ? 'star' : 'star-filled'"
-                          (clicked)="toggleHighlight(p.card.id)" />
-                      } @else {
-                        <ds-flyout-menu-item label="Back" icon="chevron-left" (clicked)="menuView.set('main')" />
-                        @for (group of FORMAT_GROUPS; track group) {
-                          <ds-divider />
+                      @if (menuView() === 'format') {
+                        @for (group of FORMAT_GROUPS; track group; let first = $first) {
+                          @if (!first) { <ds-divider /> }
                           <ds-flyout-menu-title [label]="group" />
                           @for (f of formatsOf(group); track f.id) {
                             <ds-flyout-menu-item [label]="f.label" [selectable]="true"
                               [selected]="p.card.format === f.id"
                               (clicked)="setFormat(p.card.id, f.id)" />
                           }
+                        }
+                      } @else {
+                        <ds-flyout-menu-title label="Emphasis" />
+                        @for (e of EMPHASES; track e.id) {
+                          <ds-flyout-menu-item [label]="e.label" [selectable]="true"
+                            [selected]="p.card.emphasis === e.id"
+                            (clicked)="setEmphasis(p.card.id, e.id)">
+                            <span slot="icon" [class]="'bento-swatch bento-swatch--' + e.id" aria-hidden="true"></span>
+                          </ds-flyout-menu-item>
                         }
                       }
                     </ds-flyout-menu>
@@ -162,14 +180,16 @@
 
 <!-- ═══ Card bodies. Base styles = smallest level; container queries add layers:
      w2 / w3 / w4 / w5 / w6 show from 2 / 3 / 4 / 5 / 6 columns wide,
-     h2 / h3 / h4 from 2 / 3 / 4 rows high, lt-* hide from that level. ═══ -->
+     h2 / h3 / h4 from 2 / 3 / 4 rows high, lt-* hide from that level.
+     .bc-fit areas take the room left and show as many items as fit (JS),
+     with a "+ n more" line: a card that grows shows more real data. ═══ -->
 <ng-template #body let-kind let-hl="hl">
   @switch (kind) {
 
     <!-- ── Grade ─────────────────────────────────────────── -->
     @case ('grade') {
       <div class="bc-split">
-        <div class="bc-stack bc-grow">
+        <div class="bc-main">
           <div class="bc-keyrow">
             <ds-grade type="automatic" [grade]="3" size="m" />
             <span class="bc-delta bc-delta--good">
@@ -186,20 +206,17 @@
             <ds-chart [data]="gradeHistory" [xLabels]="sparseMonths" [yLabels]="gradeY" [min]="1" [max]="10"
               [invertY]="true" [tone]="hl ? 'brand' : 'positive'" />
           </div>
-          <ul class="bc-kpis w2 lt-w3">
-            <li><span class="bc-label">Score</span><span class="bc-num">82 / 100</span></li>
-            <li><span class="bc-label">Next review</span><span class="bc-num">12 May 2025</span></li>
-          </ul>
+          <p class="bc-ctx w2 h2">Range over 8 periods: A3 to A5, 3 changes</p>
         </div>
         <div class="bc-side w3">
           <ul class="bc-kpis">
-            <li><span class="bc-label">Score</span><span class="bc-num">82 / 100</span></li>
-            <li><span class="bc-label">Next review</span><span class="bc-num">12 May 2025</span></li>
+            <li><span class="bc-label">Score</span><span class="bc-num bc-strong">82 / 100</span></li>
+            <li><span class="bc-label">Next review</span><span class="bc-num bc-strong">12 May 2025</span></li>
           </ul>
-          <p class="bc-label h2">Grade changes</p>
-          <ul class="bc-list h2">
-            @for (c of gradeChanges; track c.date; let i = $index) {
-              <li class="bc-li" [class]="'bc-li ' + rowLevel(i, 3, 1)">
+          <p class="bc-label bc-fit-label h2">Grade changes</p>
+          <ul class="bc-list bc-fit h2">
+            @for (c of gradeChanges; track $index) {
+              <li class="bc-li bc-fit__item">
                 <span class="bc-li__top">
                   <span class="bc-num">{{ c.date }}</span>
                   <span class="bc-delta" [class.bc-delta--good]="c.up" [class.bc-delta--bad]="!c.up">
@@ -210,6 +227,7 @@
                 <span class="bc-ctx">{{ c.reason }}</span>
               </li>
             }
+            <li class="bc-fit__more bc-ctx" data-tpl="{n} older changes" hidden></li>
           </ul>
         </div>
       </div>
@@ -217,7 +235,7 @@
 
     <!-- ── Exposure ──────────────────────────────────────── -->
     @case ('exposure') {
-      <div class="bc-cols">
+      <div class="bc-cols bc-cols--fill">
         <div class="bc-stack">
           <span class="bc-value">
             <span class="w2">1 548 000</span><span class="lt-w2">1.55 M</span>
@@ -229,14 +247,18 @@
           <span class="bc-ctx">31 % of limit, <span class="bc-mark-key"></span> 26 % in May 24</span>
         </div>
         <div class="bc-stack w2">
-          <ds-properties-panel [sections]="exposureFacts" [columns]="1" variant="flat" layout="inline" density="compact" />
+          <ul class="bc-list bc-fit bc-kv">
+        @for (f of exposureKv; track f.label) {
+          <li class="bc-kv__row bc-fit__item"><span class="bc-label">{{ f.label }}</span><span class="bc-num">{{ f.value }}</span></li>
+        }
+      </ul>
         </div>
         <div class="bc-stack w3">
           <span class="bc-delta">
             <ds-icon name="arrow-up" [size]="12" />
             +232 000 since May 24
           </span>
-          <div class="bc-chart bc-chart--spark">
+          <div class="bc-chart bc-chart--trend">
             <ds-chart [data]="exposureTrend" [showGrid]="false" [showDots]="false" tone="brand" />
           </div>
           <span class="bc-ctx">Exposure, last 8 periods</span>
@@ -245,6 +267,7 @@
       <div class="bc-chart h2">
         <ds-chart [data]="exposureTrend" [xLabels]="sparseMonths" [yLabels]="['1.5 M', '1.0 M', '0.5 M']" tone="brand" />
       </div>
+
     }
 
     <!-- ── Limit ─────────────────────────────────────────── -->
@@ -255,28 +278,26 @@
       </div>
       <div class="bc-stack">
         <span class="bc-bullet" role="img" aria-label="31 % used, 26 % in May 24">
-            <span class="bc-bullet__fill bc-w-31"></span>
-            <span class="bc-bullet__mark bc-l-26"></span>
-          </span>
+          <span class="bc-bullet__fill bc-w-31"></span>
+          <span class="bc-bullet__mark bc-l-26"></span>
+        </span>
         <span class="bc-ctx bc-num">31 % used, 1.55 M</span>
       </div>
-      <div class="w2 h2">
-        <ds-properties-panel [sections]="limitFacts" [columns]="1" variant="flat" layout="inline" density="compact" />
-      </div>
-      <div class="h2 w2">
-        <ds-properties-panel [sections]="limitMore" [columns]="1" variant="flat" layout="inline" density="compact" />
-      </div>
+      <ul class="bc-list bc-fit bc-kv">
+        @for (f of limitKv; track f.label) {
+          <li class="bc-kv__row bc-fit__item"><span class="bc-label">{{ f.label }}</span><span class="bc-num">{{ f.value }}</span></li>
+        }
+      </ul>
     }
 
     <!-- ── Payment behaviour ─────────────────────────────── -->
     @case ('payment') {
-      <div class="bc-cols">
+      <div class="bc-cols bc-cols--two bc-cols--fill">
         <div class="bc-stack">
           <span class="bc-value">94 %</span>
           <span class="bc-stackbar" role="img" aria-label="94 % on time, 6 % 1 to 30 days late, 0 % more than 30 days late">
-            @for (b of paymentBands; track b.label) {
-              @if (b.value) { <span [class]="'bc-stackbar__seg bc-stackbar__seg--' + b.tone + ' bc-w-' + b.value"></span> }
-            }
+            <span class="bc-stackbar__seg bc-stackbar__seg--positive bc-w-94"></span>
+            <span class="bc-stackbar__seg bc-stackbar__seg--warning bc-w-6"></span>
           </span>
           <span class="bc-ctx">paid on time, last 12 months</span>
           <span class="bc-delta bc-delta--good">
@@ -284,31 +305,37 @@
             +2 pts vs prior year
           </span>
         </div>
-        <ul class="bc-bands w2">
+        <div class="bc-stack w2"><ul class="bc-bands">
           @for (b of paymentBands; track b.label) {
             <li class="bc-band">
-              <span class="bc-band__label">{{ b.label }}</span>
+              <span class="bc-band__label"><span [class]="'bc-dot bc-dot--' + b.tone"></span>{{ b.label }}</span>
               <span class="bc-num">{{ b.value }} %</span>
-              <ds-progress-bar class="bc-band__bar" [value]="b.value" [tone]="b.tone" size="s" />
             </li>
           }
         </ul>
-        <div class="w3">
-          <ds-properties-panel [sections]="paymentFacts" [columns]="1" variant="flat" layout="inline" density="compact" />
+          <div class="bc-fitwrap lt-h2">
+          <ul class="bc-list bc-fit bc-kv">
+        @for (f of paymentKv; track f.label) {
+          <li class="bc-kv__row bc-fit__item"><span class="bc-label">{{ f.label }}</span><span class="bc-num">{{ f.value }}</span></li>
+        }
+      </ul>
+          </div>
         </div>
       </div>
-      <div class="h2 bc-stack">
-        <ul class="bc-bands lt-w2">
-          @for (b of paymentBands; track b.label) {
-            <li class="bc-band">
-              <span class="bc-band__label">{{ b.label }}</span>
-              <span class="bc-num">{{ b.value }} %</span>
-              <ds-progress-bar class="bc-band__bar" [value]="b.value" [tone]="b.tone" size="s" />
-            </li>
-          }
-        </ul>
-        <p class="bc-note">Last late payment: Sep 23, 1 to 30 days, settled in 18 days.</p>
-      </div>
+      <p class="bc-label bc-fit-label h2">Month by month, on time</p>
+      <ul class="bc-list bc-fit bc-list--cols h2">
+        @for (m of paymentMonths; track m.month) {
+          <li class="bc-li bc-li--row bc-fit__item">
+            <span class="bc-num bc-ctx bc-li__date">{{ m.month }}</span>
+            <span class="bc-stackbar bc-li__bar" aria-hidden="true">
+              <span [class]="'bc-stackbar__seg bc-stackbar__seg--positive bc-w-' + m.onTime"></span>
+              <span [class]="'bc-stackbar__seg bc-stackbar__seg--warning bc-w-' + m.late"></span>
+            </span>
+            <span class="bc-num">{{ m.onTime }} %</span>
+          </li>
+        }
+        <li class="bc-fit__more bc-ctx" data-tpl="{n} earlier months" hidden></li>
+      </ul>
     }
 
     <!-- ── Overdues ──────────────────────────────────────── -->
@@ -316,25 +343,50 @@
       <div class="bc-stack">
         <span class="bc-keyrow">
           <span class="bc-value">0</span>
-          <ds-badge label="None open" status="success" />
+          <span class="bc-status"><ds-icon name="check-circle" [size]="12" />None open</span>
         </span>
         <span class="bc-ctx">No overdue recorded as of 11 Nov 2024</span>
       </div>
       <div class="h2">
         <ds-properties-panel [sections]="overdueFacts" [columns]="1" variant="flat" layout="inline" density="compact" />
       </div>
-      <div class="h2 bc-stack">
-        <p class="bc-label">Last overdue</p>
-        <p class="bc-note bc-num">Sep 23, 42 000, settled in 18 days</p>
+      <div class="bc-stack bc-stack--grow h2">
+        <p class="bc-label">Overdue, USD k</p>
+        <div class="bc-bars" role="img" aria-label="One overdue of 42 000 in Sep 23, none in the other periods">
+          @for (o of overduePeriods; track o.label) {
+            <span class="bc-bars__col">
+              <span [class]="'bc-bars__bar bc-hp-' + (o.value ? 100 : 0)"></span>
+            </span>
+          }
+        </div>
+        <span class="bc-axis"><span>May 23</span><span>Jul 24</span></span>
       </div>
+      <p class="bc-label bc-fit-label h2">History</p>
+      <ul class="bc-list bc-fit h2">
+        @for (e of overdueEvents; track e.date) {
+          <li class="bc-li bc-fit__item">
+            <span class="bc-li__top">
+              <span class="bc-num bc-ctx">{{ e.date }}</span>
+              <ds-badge [label]="e.outcome" [status]="e.status" />
+            </span>
+            <span class="bc-li__text">{{ e.text }}</span>
+          </li>
+        }
+        <li class="bc-fit__more bc-ctx" data-tpl="{n} older events" hidden></li>
+      </ul>
     }
 
     <!-- ── Financials ────────────────────────────────────── -->
     @case ('financials') {
+      <div class="bc-keyrow">
+        <span class="bc-value">123 900</span>
+        <span class="bc-delta bc-delta--good"><ds-icon name="arrow-up" [size]="12" />+4.6 %</span>
+        <span class="bc-ctx w2">turnover vs FY 2022</span>
+      </div>
       <table class="bc-table">
         <thead>
           <tr>
-            <th scope="col"><span class="bento-sr">Indicator</span></th>
+            <th scope="col">Indicator</th>
             <th scope="col" class="bc-table__num">{{ finYears[0] }}</th>
             <th scope="col" class="bc-table__num w2">{{ finYears[1] }}</th>
             <th scope="col" class="bc-table__num w3">{{ finYears[2] }}</th>
@@ -358,24 +410,32 @@
           }
         </tbody>
       </table>
-      <div class="bc-stack bc-grow h3">
+      <div class="bc-main h3">
         <p class="bc-label">Turnover, USD M, 5 years</p>
         <div class="bc-chart">
           <ds-chart [data]="turnoverTrend" [xLabels]="turnoverYears" [yLabels]="['124', '111', '98']" tone="brand" />
         </div>
       </div>
-      <p class="bc-ctx lt-h3">FY 2023 closed 31 Dec, filed 30 Jun 2024</p>
+      <p class="bc-ctx">FY 2023 closed 31 Dec, filed 30 Jun 2024</p>
     }
 
     <!-- ── Jobs to do ────────────────────────────────────── -->
     @case ('jobs') {
       <div class="bc-keyrow">
-        <span class="bc-value">6</span>
-        <span class="bc-ctx">open, 2 high priority</span>
+        <span class="bc-value">{{ jobs.length }}</span>
+        <span class="bc-ctx">open, by due date</span>
       </div>
-      <ul class="bc-list">
-        @for (j of jobs; track j.label; let i = $index) {
-          <li [class]="'bc-li ' + rowLevel(i, 1, 2)">
+      <div class="bc-stack">
+        <span class="bc-stackbar" role="img" aria-label="2 high, 3 medium, 3 low priority">
+          <span class="bc-stackbar__seg bc-stackbar__seg--negative bc-w-25"></span>
+          <span class="bc-stackbar__seg bc-stackbar__seg--warning bc-w-37"></span>
+          <span class="bc-stackbar__seg bc-stackbar__seg--positive bc-w-38"></span>
+        </span>
+        <span class="bc-ctx bc-num">2 high, 3 medium, 3 low</span>
+      </div>
+      <ul class="bc-list bc-fit">
+        @for (j of jobs; track j.label) {
+          <li class="bc-li bc-fit__item">
             <span class="bc-li__text">{{ j.label }}</span>
             <span class="bc-li__top">
               <span class="bc-ctx bc-num">Due {{ j.due.slice(0, 6) }}<span class="w2">{{ j.due.slice(6) }}</span></span>
@@ -383,14 +443,16 @@
             </span>
           </li>
         }
+        <li class="bc-fit__more bc-ctx" data-tpl="+ {n} more jobs" hidden></li>
       </ul>
+      <ds-link class="bc-foot-link h2" href="#" [tone]="hl ? 'reversed' : 'default'" size="s">Open all jobs</ds-link>
     }
 
     <!-- ── Newsfeed ──────────────────────────────────────── -->
     @case ('newsfeed') {
-      <ul class="bc-list">
-        @for (n of news; track n.headline; let i = $index) {
-          <li [class]="'bc-li ' + rowLevel(i, 1, 3)">
+      <ul class="bc-list bc-fit bc-list--cols">
+        @for (n of news; track n.headline) {
+          <li class="bc-li bc-fit__item">
             <span class="bc-li__top">
               <span class="bc-ctx bc-num">{{ n.date }}<span class="w2">, {{ n.source }}</span></span>
               <ds-badge [label]="n.tone" [status]="n.status" />
@@ -398,6 +460,7 @@
             <ds-link class="bc-li__link" href="#" [tone]="hl ? 'reversed' : 'neutral'" size="s">{{ n.headline }}</ds-link>
           </li>
         }
+        <li class="bc-fit__more bc-ctx" data-tpl="{n} more in the newsfeed" hidden></li>
       </ul>
     }
 
@@ -413,10 +476,11 @@
       <div class="bc-chart bc-chart--spark">
         <ds-chart [data]="scoreTrend" [min]="70" [max]="90" [showGrid]="false" [showDots]="false" tone="brand" />
       </div>
-      <span class="bc-ctx bc-num">Updated 11 Nov 2024</span>
-      <div class="h2 w2">
-        <ds-properties-panel [sections]="scoreFacts" [columns]="1" variant="flat" layout="inline" density="compact" />
-      </div>
+      <ul class="bc-list bc-fit bc-kv">
+        @for (f of scoreKv; track f.label) {
+          <li class="bc-kv__row bc-fit__item"><span class="bc-label">{{ f.label }}</span><span class="bc-num">{{ f.value }}</span></li>
+        }
+      </ul>
     }
 
     <!-- ── Risk figures ──────────────────────────────────── -->
@@ -425,36 +489,35 @@
         <span class="bc-value">72</span>
         <span class="bc-ctx">limits held on this buyer</span>
       </div>
-      <ul class="bc-kpis bc-kpis--stack lt-w2">
-        <li><span class="bc-label">Highest limit</span><span class="bc-num">10.0 bn</span></li>
-        <li><span class="bc-label">Exposure</span><span class="bc-num">1.55 M</span></li>
+      <ul class="bc-list bc-fit bc-kv">
+        @for (f of riskKv; track f.label) {
+          <li class="bc-kv__row bc-fit__item"><span class="bc-label">{{ f.label }}</span><span class="bc-num">{{ f.value }}</span></li>
+        }
       </ul>
-      <div class="w2">
-        <ds-properties-panel [sections]="riskFacts" [columns]="1" variant="flat" layout="inline" density="compact" />
-      </div>
     }
 
     <!-- ── Notepad ───────────────────────────────────────── -->
     @case ('notepad') {
       <div class="bc-keyrow">
-        <span class="bc-value">3</span>
+        <span class="bc-value">{{ notes.length }}</span>
         <span class="bc-ctx">notes, latest 11 Nov</span>
       </div>
-      <ul class="bc-list">
-        @for (n of notes; track n.text; let i = $index) {
-          <li [class]="'bc-li ' + rowLevel(i, 1, 2)">
+      <ul class="bc-list bc-fit" data-min="1">
+        @for (n of notes; track n.text) {
+          <li class="bc-li bc-fit__item">
             <span class="bc-li__text">{{ n.text }}</span>
-            <span class="bc-ctx bc-num w2">{{ n.date }}, {{ n.author }}</span>
+            <span class="bc-ctx bc-num h2">{{ n.date }}, {{ n.author }}</span>
           </li>
         }
+        <li class="bc-fit__more bc-ctx" data-tpl="{n} more notes" hidden></li>
       </ul>
     }
 
     <!-- ── Company identity ──────────────────────────────── -->
     @case ('identity') {
-      <dl class="bc-facts">
-        @for (f of identity; track f.label; let i = $index) {
-          <div [class]="'bc-fact ' + factLevel(i)">
+      <dl class="bc-facts bc-fit">
+        @for (f of identity; track f.label) {
+          <div class="bc-fact bc-fit__item">
             <dt class="bc-label">{{ f.label }}</dt>
             <dd class="bc-fact__value">{{ f.value }}</dd>
           </div>
@@ -464,25 +527,34 @@
 
     <!-- ── Decisions ─────────────────────────────────────── -->
     @case ('decisions') {
-      <ul class="bc-list">
-        @for (d of decisions; track d.date + d.label; let i = $index) {
-          <li [class]="'bc-li bc-li--row ' + (i === 2 ? 'wh2' : rowLevel(i, 2, 3))">
-            <span class="bc-num bc-ctx w2">{{ d.date }}</span>
+      <ul class="bc-list bc-fit bc-list--cols">
+        @for (d of decisions; track d.date + d.label) {
+          <li class="bc-li bc-li--row bc-fit__item">
+            <span class="bc-num bc-ctx bc-li__date w2">{{ d.date }}</span>
             <span class="bc-li__text">{{ d.label }}</span>
             <span class="bc-num bc-li__amount w3">{{ d.amount }}</span>
             <ds-badge [label]="d.outcome" [status]="d.status" />
           </li>
         }
+        <li class="bc-fit__more bc-ctx" data-tpl="{n} older decisions" hidden></li>
       </ul>
     }
 
     <!-- ── Exposure by policy ────────────────────────────── -->
     @case ('policies') {
+      <div class="bc-keyrow">
+        <span class="bc-value"><span class="w2">1 548 000</span><span class="lt-w2">1.55 M</span></span>
+        <span class="bc-ctx">across 6 policies</span>
+        <ul class="bc-facts-inline bc-facts-inline--end w3">
+          <li><span class="bc-label">Granted limits</span> <span class="bc-num">5 000 000</span></li>
+          <li><span class="bc-label">Used</span> <span class="bc-num">31 %</span></li>
+          <li><span class="bc-label">Largest share</span> <span class="bc-num">34 %</span></li>
+        </ul>
+      </div>
       <table class="bc-table bc-table--policies">
         <thead>
           <tr>
             <th scope="col">Policy holder</th>
-            <th scope="col" class="w4">Policy</th>
             <th scope="col" class="bc-table__num">Exposure</th>
             <th scope="col" class="w3">Share</th>
             <th scope="col" class="bc-table__num w4">Limit</th>
@@ -495,14 +567,16 @@
             <tr [class]="rowLevel(i, 2, 4)">
               <th scope="row">
                 <span class="bc-table__holder">{{ r.holder }}</span>
+                <span class="bc-ctx bc-num w4"> {{ r.policy }}</span>
               </th>
-              <td class="bc-num bc-ctx w4">{{ r.policy }}</td>
               <td class="bc-table__num">
                 <span class="w2">{{ r.exposure }}</span><span class="lt-w2">{{ r.exposureShort }}</span>
               </td>
               <td class="w3">
                 <span class="bc-share">
-                  <ds-progress-bar class="bc-share__bar" [value]="r.share" size="s" />
+                  <span class="bc-bullet bc-share__bar" aria-hidden="true">
+                    <span [class]="'bc-bullet__fill bc-w-' + r.share"></span>
+                  </span>
                   <span class="bc-num">{{ r.share }} %</span>
                 </span>
               </td>
@@ -515,7 +589,6 @@
         <tfoot class="h2">
           <tr>
             <th scope="row">Total, 6 policies</th>
-            <td class="w4"></td>
             <td class="bc-table__num"><span class="w2">1 548 000</span><span class="lt-w2">1.55 M</span></td>
             <td class="w3"><span class="bc-num">100 %</span></td>
             <td class="bc-table__num w4">5 000 000</td>
@@ -524,7 +597,24 @@
           </tr>
         </tfoot>
       </table>
-      <p class="bc-note h2">Two policies hold 60 % of the exposure. Seine Office Supply is under review, Hexa Sécurité expires on 31 Dec 2024.</p>
+      <div class="bc-fit bc-fit--kpis w2">
+      <ul class="bc-kpis bc-kpis--row bc-fit__item">
+        <li><span class="bc-label">Concentration</span><span>Top 2 policies carry 60 %</span></li>
+        <li><span class="bc-label">To watch</span><span>1 policy under review</span></li>
+        <li class="w3"><span class="bc-label">Expiring</span><span>Hexa Sécurité, 50 000</span></li>
+      </ul>
+      </div>
+      <p class="bc-label bc-fit-label h3">Limit movements</p>
+      <ul class="bc-list bc-fit h3 bc-list--cols">
+        @for (m of policyMoves; track m.date) {
+          <li class="bc-li bc-li--row bc-fit__item">
+            <span class="bc-num bc-ctx bc-li__date">{{ m.date }}</span>
+            <span class="bc-li__text">{{ m.policy }}</span>
+            <span class="bc-ctx">{{ m.text }}</span>
+          </li>
+        }
+        <li class="bc-fit__more bc-ctx" data-tpl="{n} older movements" hidden></li>
+      </ul>
     }
 
     <!-- ── Coverage ──────────────────────────────────────── -->
@@ -540,17 +630,57 @@
         </div>
       </div>
       <div class="bc-stack h2">
-        <p class="bc-label">Request history</p>
-        <ul class="bc-list">
-          @for (c of coverHistory; track c.date; let i = $index) {
-            <li [class]="'bc-li bc-li--row ' + rowLevel(i, 3, 1)">
-              <span class="bc-num bc-ctx">{{ c.date }}</span>
-              <span class="bc-num bc-li__amount w2">{{ c.granted }} / {{ c.requested }}</span>
-              <ds-badge [label]="c.outcome" [status]="c.status" />
-            </li>
-          }
-        </ul>
+        <span class="bc-li__top">
+          <span class="bc-label">Exposure against this cover</span>
+          <span class="bc-num bc-strong">1 548 000, 77 %</span>
+        </span>
+        <span class="bc-bullet" role="img" aria-label="Exposure is 77 % of the cover">
+          <span class="bc-bullet__fill bc-w-77"></span>
+        </span>
       </div>
+      <div class="bc-main h3">
+        <p class="bc-label">Exposure against the 2.00 M cover, 8 periods</p>
+        <div class="bc-chart">
+          <ds-chart [data]="exposureTrend" [xLabels]="sparseMonths" [yLabels]="['1.5 M', '1.0 M', '0.5 M']" tone="brand" />
+        </div>
+      </div>
+      <p class="bc-label bc-fit-label h2">Request history, granted / requested</p>
+      <ul class="bc-list bc-fit h2">
+        @for (c of coverHistory; track c.date) {
+          <li class="bc-li bc-li--row bc-fit__item">
+            <span class="bc-num bc-ctx bc-li__date">{{ c.date }}</span>
+            <span class="bc-num bc-li__text">{{ c.granted }} / {{ c.requested }}</span>
+            <ds-badge [label]="c.outcome" [status]="c.status" />
+          </li>
+        }
+        <li class="bc-fit__more bc-ctx" data-tpl="{n} older requests" hidden></li>
+      </ul>
+    }
+
+    <!-- ── Sanction screening ────────────────────────────── -->
+    @case ('sanction') {
+      <div class="bc-stack">
+        <span class="bc-value">1</span>
+        <span class="bc-ctx">hit to clear, namesake suspected</span>
+      </div>
+      <ul class="bc-list bc-fit bc-kv">
+        @for (f of sanctionKv; track f.label) {
+          <li class="bc-kv__row bc-fit__item"><span class="bc-label">{{ f.label }}</span><span class="bc-num">{{ f.value }}</span></li>
+        }
+      </ul>
+    }
+
+    <!-- ── Limit review ──────────────────────────────────── -->
+    @case ('limit-review') {
+      <div class="bc-stack">
+        <span class="bc-value">02 Dec</span>
+        <span class="bc-ctx">annual review of the 5.00 M limit, in 12 days</span>
+      </div>
+      <ul class="bc-list bc-fit bc-kv">
+        @for (f of reviewKv; track f.label) {
+          <li class="bc-kv__row bc-fit__item"><span class="bc-label">{{ f.label }}</span><span class="bc-num">{{ f.value }}</span></li>
+        }
+      </ul>
     }
 
     <!-- ── At a glance ───────────────────────────────────── -->
@@ -570,7 +700,7 @@
           <div class="bc-chart bc-chart--spark">
             <ds-chart [data]="exposureTrend" [showGrid]="false" [showDots]="false" tone="brand" />
           </div>
-          <span class="bc-ctx">31 % of limit, +232 000</span>
+          <span class="bc-ctx">31 % of the 5.00 M limit</span>
         </li>
         <li class="bc-tile w3">
           <span class="bc-label">On time</span>
@@ -579,12 +709,14 @@
             <span class="bc-stackbar__seg bc-stackbar__seg--positive bc-w-94"></span>
             <span class="bc-stackbar__seg bc-stackbar__seg--warning bc-w-6"></span>
           </span>
-          <span class="bc-delta bc-delta--good"><ds-icon name="arrow-up" [size]="12" />+2 pts</span>
+          <span class="bc-delta bc-delta--good"><ds-icon name="arrow-up" [size]="12" />+2 pts vs prior year</span>
+          <span class="bc-ctx">6 % late, 1 to 30 days</span>
         </li>
         <li class="bc-tile w4">
           <span class="bc-label">Overdue</span>
           <span class="bc-value">0</span>
           <span class="bc-ctx">none since Sep 23</span>
+          <span class="bc-ctx">Disputes: none</span>
         </li>
         <li class="bc-tile w5">
           <span class="bc-label">Score</span>
@@ -598,6 +730,7 @@
           <span class="bc-label">Latest cover</span>
           <span class="bc-keyrow"><ds-badge label="Approved" status="success" variant="strong" /></span>
           <span class="bc-ctx bc-num">2.00 M, 11 Nov 2024</span>
+          <span class="bc-ctx">100 % of the request</span>
         </li>
       </ul>
     }

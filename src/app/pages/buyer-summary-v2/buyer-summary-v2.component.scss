@@ -32,7 +32,9 @@ $h4: 736px;   // 4 rows
   display:        flex;
   flex-direction: column;
   gap:            var(--semantic-measurement-spacing-m);
+  min-height:     100%;
   padding-bottom: var(--semantic-measurement-spacing-2xl);
+  background:     var(--semantic-color-static-background-main-secondary);
 }
 
 .bento-sr {
@@ -150,27 +152,111 @@ $h4: 736px;   // 4 rows
   background:    var(--semantic-color-static-background-main-alt-primary);
 }
 
-// Tools (edit mode): handle + menu, top right
-.bento-cell__tools {
-  position:    absolute;
-  top:         var(--semantic-measurement-spacing-s);
-  right:       var(--semantic-measurement-spacing-s);
-  z-index:     2;
-  display:     flex;
-  align-items: center;
-  gap:         var(--semantic-measurement-spacing-xs);
-  cursor:      default;
-  animation:   bento-tools-in 150ms cubic-bezier(0.2, 0, 0, 1);
+// ── Floating toolbar: copied as is from V1 (buyer-summary.component.scss,
+//    .bs-toolbar*), values included, so the two stay identical ─────────────
+.bs-toolbar {
+  position:      absolute;
+  top:           calc(-1 * var(--semantic-measurement-spacing-xl));
+  left:          50%;
+  transform:     translateX(-50%) translateY(4px);
+  z-index:       5;
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s); // breathing room between items
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  background:    var(--semantic-color-static-background-main-primary);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-m);
+  box-shadow:    var(--semantic-shadow-flyout);
+  opacity:       0;
+  visibility:    hidden;
+  // Smooth lift-in micro-interaction
+  transition:    opacity 160ms ease, visibility 160ms ease,
+                 transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  white-space:   nowrap;
 }
 
-.bento-cell__handle {
-  display:     inline-flex;
-  color:       var(--semantic-color-static-icon-main-tertiary);
-  cursor:      grab;
+// Show toolbar on hover (V1) and on keyboard focus : lifts into place
+.bento-cell:hover .bs-toolbar,
+.bento-cell:focus-within .bs-toolbar,
+.bento-cell--menu-open .bs-toolbar {
+  opacity:    1;
+  visibility: visible;
+  transform:  translateX(-50%) translateY(0);
 }
 
-.bento-cell--hl .bento-cell__handle { color: var(--semantic-color-static-icon-subtle-tertiary); }
+// Keyboard: the toolbar stays reachable with Tab (transparent, not hidden)
+.bento--editing .bs-toolbar { visibility: visible; pointer-events: none; }
+.bento-cell:hover .bs-toolbar,
+.bento-cell:focus-within .bs-toolbar,
+.bento-cell--menu-open .bs-toolbar { pointer-events: auto; }
 
+.bento--dragging .bs-toolbar { opacity: 0; visibility: hidden; }
+
+.bento-cell:hover, .bento-cell:focus-within { z-index: 15; }
+
+// Drag handle in the toolbar
+.bs-toolbar__handle {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           24px;
+  height:          24px;
+  padding:         0;
+  background:      none;
+  border:          none;
+  border-radius:   var(--semantic-border-radius-xs);
+  cursor:          grab;
+  color:           var(--semantic-color-interactive-text-strong-default);
+  &:hover  { background: var(--semantic-color-interactive-background-light-default); }
+  &:active { cursor: grabbing; }
+  &:focus-visible { outline: var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus); }
+}
+
+.bs-toolbar__sizes {
+  display: flex;
+  gap:     2px;
+}
+
+.bs-toolbar__size {
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border:        none;
+  border-radius: var(--semantic-border-radius-xs);
+  background:    transparent;
+  cursor:        pointer;
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-s);
+  font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+  color:         var(--semantic-color-static-text-main-secondary);
+  transition:    background 120ms ease, color 120ms ease;
+
+  &:hover:not(:disabled) { background: var(--semantic-color-interactive-background-light-default); }
+
+  &:disabled {
+    cursor: not-allowed;
+    color:  var(--semantic-color-interactive-text-medium-alt-disabled);
+  }
+
+  &--on {
+    background: var(--semantic-color-interactive-background-strong-default);
+    color:      var(--semantic-color-interactive-text-neutral-default);
+  }
+}
+
+.bs-toolbar__sep {
+  width:      1px;
+  height:     20px;
+  background: var(--semantic-color-static-border-subtle-tertiary);
+  margin:     0 2px;
+}
+
+// Keyboard pick-up: the card shows it is held
+.bento-cell--grabbed .bento-card {
+  box-shadow: var(--semantic-shadow-popover);
+  outline:    var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+}
+
+// Flyout under the toolbar (all formats, emphasis)
 .bento-menu {
   position:   absolute;
   top:        calc(100% + var(--semantic-measurement-spacing-xs));
@@ -179,15 +265,22 @@ $h4: 736px;   // 4 rows
   overflow-y: auto;
   border-radius: var(--semantic-border-radius-s);
   box-shadow: var(--semantic-shadow-flyout);
+  white-space: normal;
 }
 
-@keyframes bento-tools-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+// Emphasis swatch in the menu: the card background + its accent border
+.bento-swatch {
+  display:       inline-block;
+  flex-shrink:   0;
+  width:         var(--semantic-measurement-sizing-m);
+  height:        var(--semantic-measurement-sizing-m);
+  border-radius: var(--semantic-border-radius-xs);
+  border:        var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  background:    var(--semantic-color-static-background-main-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bento-cell__tools { animation: none; }
+  .bs-toolbar { transition: none; }
 }
 
 // =============================================================
@@ -216,7 +309,6 @@ $h4: 736px;   // 4 rows
   flex-shrink:     0;
 }
 
-.bento--editing .bc-head { padding-right: var(--semantic-measurement-sizing-2xl); }
 
 .bc-title {
   display:     inline-flex;
@@ -230,7 +322,6 @@ $h4: 736px;   // 4 rows
   white-space: nowrap;
 }
 
-.bc-title__star { color: var(--semantic-color-static-icon-favorite); flex-shrink: 0; }
 
 .bc-meta {
   flex-shrink: 0;
@@ -265,9 +356,126 @@ $h4: 736px;   // 4 rows
   margin:      0;
   font-size:   var(--semantic-font-text-style-size-s);
   line-height: var(--semantic-font-text-style-line-height-s);
-  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
   color:       var(--semantic-color-static-text-main-tertiary);
   white-space: nowrap;
+}
+
+.bc-strong { font-weight: var(--semantic-font-text-style-font-weight-semi-bold); }
+
+// Column that takes the room left (chart + caption)
+.bc-main {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  flex:           1 1 0;
+  min-width:      0;
+  min-height:     0;
+}
+
+// Fit area: shows as many items as the card holds (JS), then "+ n more"
+.bc-fit {
+  flex:       1 1 0;
+  min-height: 0;
+  overflow:   hidden;
+
+  [hidden] { display: none !important; }
+}
+
+.bc-fit__more {
+  padding-top: var(--semantic-measurement-spacing-xs);
+  list-style:  none;
+}
+
+.bc-foot-link { flex-shrink: 0; }
+
+// Facts on one line, label then value
+.bc-facts-inline {
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-l);
+  margin:     0;
+  padding:    var(--semantic-measurement-spacing-s) 0 0;
+  border-top: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  list-style: none;
+  font-size:  var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  flex-shrink: 0;
+
+  li { display: inline-flex; gap: var(--semantic-measurement-spacing-xs); }
+
+  &--end {
+    margin-left: auto;
+    padding:     0;
+    border-top:  0;
+  }
+}
+
+// Legend dot of a band (colour + its label next to it)
+.bc-dot {
+  display:       inline-block;
+  width:         var(--semantic-measurement-sizing-s);
+  height:        var(--semantic-measurement-sizing-s);
+  margin-right:  var(--semantic-measurement-spacing-xs);
+  border-radius: var(--semantic-border-radius-round);
+
+  &--positive { background: var(--semantic-color-static-background-functional-positive); }
+  &--warning  { background: var(--semantic-color-static-background-functional-warning); }
+  &--negative { background: var(--semantic-color-static-background-functional-negative); }
+}
+
+// Column chart (overdues per period)
+.bc-bars {
+  display:     flex;
+  align-items: flex-end;
+  gap:         var(--semantic-measurement-spacing-xs);
+  height:      var(--semantic-measurement-sizing-2xl);
+  border-bottom: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+}
+
+.bc-bars__col {
+  display:     flex;
+  align-items: flex-end;
+  flex:        1 1 0;
+  height:      100%;
+}
+
+.bc-bars__bar {
+  display:       block;
+  width:         100%;
+  min-height:    var(--semantic-border-size-m);
+  border-radius: var(--semantic-border-radius-xs) var(--semantic-border-radius-xs) 0 0;
+  background:    var(--semantic-color-static-background-functional-warning);
+
+  &.bc-hp-0 { background: var(--semantic-color-static-background-main-tertiary); }
+}
+
+@for $i from 0 through 100 {
+  .bc-hp-#{$i} { height: #{$i * 1%}; }
+}
+
+.bc-axis {
+  display:         flex;
+  justify-content: space-between;
+  font-size:       var(--semantic-font-text-style-size-s);
+  line-height:     var(--semantic-font-text-style-line-height-s);
+  color:           var(--semantic-color-static-text-main-tertiary);
+}
+
+// KPI row (label over value), separated from the table above
+.bc-kpis--row {
+  padding-top: var(--semantic-measurement-spacing-s);
+  border-top:  var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  gap:         var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-2xl);
+  flex-shrink: 0;
+}
+
+.bc-li__date { flex: 0 0 auto; min-width: var(--semantic-measurement-sizing-3xl); }
+.bc-li__bar  { flex: 1 1 auto; }
+
+.bc-band--sep {
+  padding-top: var(--semantic-measurement-spacing-xs);
+  border-top:  var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
 }
 
 .bc-note {
@@ -411,6 +619,19 @@ $h4: 736px;   // 4 rows
 
 .bc-li__amount { white-space: nowrap; }
 
+@container card (min-width: #{$w3}) {
+  .bc-list--cols {
+    display:               grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows:        min-content;
+    align-content:         start;
+    column-gap:            var(--semantic-measurement-spacing-l);
+
+    .bc-li:nth-child(2) { border-top: 0; padding-top: 0; }
+    .bc-fit__more { grid-column: 1 / -1; }
+  }
+}
+
 .bc-li__link { display: block; }
 
 // Payment bands: label, value, bar
@@ -432,7 +653,7 @@ $h4: 736px;   // 4 rows
 }
 
 .bc-band__label { color: var(--semantic-color-static-text-main-secondary); }
-.bc-band__bar   { grid-column: 1 / -1; }
+
 
 // Tables (financials, policies)
 .bc-table {
@@ -583,10 +804,10 @@ $h4: 736px;   // 4 rows
 
 // Data-driven widths and positions, as classes (no inline style)
 @for $i from 0 through 100 {
-  .bc-w-#{$i} { width: percentage(calc($i / 100)); }
-  .bc-l-#{$i} { left:  percentage(calc($i / 100)); }
+  .bc-w-#{$i} { width: #{$i * 1%}; }
+  .bc-l-#{$i} { left:  #{$i * 1%}; }
 }
-.bc-stackbar__seg[class*='bc-w-'] { flex: 0 0 auto; }
+.bc-stackbar__seg[class*='bc-w-'] { flex: 0 1 auto; min-width: 0; }
 
 // Properties panel inside cards: tabular values
 .bc ::ng-deep .ds-properties-panel__value { font-variant-numeric: tabular-nums; }
@@ -624,50 +845,273 @@ $h4: 736px;   // 4 rows
   .bc-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
-// Blocks: the key value gets the larger title size
-@container card (min-width: #{$w3}) and (min-height: #{$h2}) {
+// The key value steps up from 2 columns wide (title size L, 28 px)
+@container card (min-width: #{$w2}) {
   .bc-value { font-size: var(--semantic-font-title-size-l); line-height: var(--semantic-font-title-line-height-l); }
 }
 
 // =============================================================
-// Highlight: marine background, reversed text (benchmark 3.5)
+// Emphasis levels (contrasts measured on the Foundation values, see the
+// release note): brand subtle / strong, and status tones subtle / strong.
+// The tint never carries the meaning alone: icon + status label in the header.
 // =============================================================
 
-.bento-cell--hl {
+// $accent: 4 px stripe on the left of subtle tones (Figma "Emphasis levels",
+// option D, 10.33:1 against the page for brand). Proposal: Border/Size/L used
+// as an accent width; it departs from the DESIGN.md side-stripe rule, decided
+// in Figma on 2026-11-20 because a pale tint alone reads 1.13:1 on the page.
+@mixin bento-tone($bg, $border, $ink, $ink2, $line, $icon, $chart: null, $accent: null, $key: null) {
   .bento-card {
-    background:   var(--semantic-color-static-background-brand);
-    border-color: var(--semantic-color-static-background-brand);
+    background:   $bg;
+    border-color: $border;
+    @if $accent {
+      border-left: var(--semantic-border-size-l) solid $accent;
+    }
   }
 
-  .bc, .bc-value, .bc-table__holder, .bc-table tfoot th, .bc-table tfoot td {
-    color: var(--semantic-color-static-text-main-reversed);
+  @if $key {
+    .bc-value, .bc-emph { color: $key; }
   }
 
-  .bc-ctx, .bc-meta, .bc-label, .bc-note, .bc-unit, .bc-band__label,
-  .bc-delta, .bc-table thead th, .bc-table tbody th {
-    color: var(--semantic-color-static-text-subtle-tertiary);
+  .bc-status, .bc-status ds-icon { color: $ink; }
+  .bc-status ds-icon { color: $icon; }
+
+  .bc, .bc-value, .bc-title, .bc-table__holder, .bc-table tfoot th, .bc-table tfoot td, .bc-li__text {
+    color: $ink;
   }
 
-  .bc-delta--good, .bc-delta--bad { color: var(--semantic-color-static-text-main-reversed); }
-
-  .bc-title__star { color: var(--semantic-color-static-icon-favorite); }
-
-  .bc-li, .bc-table th, .bc-table td, .bc-tile {
-    border-color: var(--semantic-color-static-text-main-alt-tertiary);
+  .bc-ctx, .bc-meta, .bc-label, .bc-note, .bc-unit, .bc-band__label, .bc-axis,
+  .bc-delta, .bc-delta--good, .bc-delta--bad, .bc-table thead th, .bc-table tbody th {
+    color: $ink2;
   }
 
-  // Charts: white line on marine (ds-chart has no reversed tone yet)
-  ds-chart { --ds-chart-line: var(--semantic-color-static-text-main-reversed); }
+  .bc-li, .bc-table th, .bc-table td, .bc-tile, .bc-kv__row, .bc-facts-inline,
+  .bc-kpis--row, .bc-band--sep, .bc-bars {
+    border-color: $line;
+  }
 
-  .bc-bullet, .bc-stackbar { background: var(--semantic-color-static-text-main-alt-tertiary); }
-  .bc-bullet__fill { background: var(--semantic-color-static-text-main-reversed); }
-  .bc-bullet__mark, .bc-mark-key { background: var(--semantic-color-static-text-subtle-tertiary); }
+  .bc-emph { color: $ink; }
+  .bc-emph ds-icon { color: $icon; }
 
   ::ng-deep {
-    .ds-chart__axis-label { color: var(--semantic-color-static-text-subtle-tertiary); }
-    .ds-chart__grid       { stroke: var(--semantic-color-static-text-main-alt-tertiary); }
-    .ds-chart__dot        { border-color: var(--semantic-color-static-background-brand); }
-    .ds-properties-panel__label { color: var(--semantic-color-static-text-subtle-tertiary); }
-    .ds-properties-panel__value { color: var(--semantic-color-static-text-main-reversed); }
+    .ds-properties-panel__label { color: $ink2; }
+    .ds-properties-panel__value { color: $ink; }
+  }
+
+  @if $chart {
+    ds-chart { --ds-chart-line: #{$chart}; }
+    .bc-bullet, .bc-stackbar { background: $line; }
+    .bc-bullet__fill { background: $chart; }
+    .bc-bullet__mark, .bc-mark-key { background: $ink2; }
+
+    ::ng-deep {
+      .ds-chart__axis-label { color: $ink2; }
+      .ds-chart__grid       { stroke: $line; }
+      .ds-chart__dot        { border-color: $bg; }
+    }
   }
 }
+
+.bento-cell--e-subtle {
+  @include bento-tone(
+    var(--semantic-color-static-background-main-alt-secondary),
+    var(--semantic-color-static-background-main-alt-secondary),
+    var(--semantic-color-static-text-main-primary),
+    var(--semantic-color-static-text-main-secondary),
+    var(--semantic-color-static-background-main-alt-tertiary),
+    var(--semantic-color-static-icon-brand),
+    $accent: var(--semantic-color-static-border-brand),
+    $key: var(--semantic-color-static-text-brand));
+}
+
+.bento-cell--e-strong {
+  @include bento-tone(
+    var(--semantic-color-static-background-brand),
+    var(--semantic-color-static-background-brand),
+    var(--semantic-color-static-text-main-reversed),
+    var(--semantic-color-static-text-subtle-tertiary),
+    var(--semantic-color-static-text-main-alt-tertiary),
+    var(--semantic-color-static-icon-favorite),
+    var(--semantic-color-static-text-main-reversed));
+}
+
+.bento-cell--e-positive {
+  @include bento-tone(
+    var(--semantic-color-static-background-functional-subtle-positive),
+    var(--semantic-color-static-background-functional-subtle-positive),
+    var(--semantic-color-static-text-main-primary),
+    var(--semantic-color-static-text-main-secondary),
+    var(--semantic-color-static-border-subtle-tertiary),
+    var(--semantic-color-static-icon-main-functional-positive),
+    $accent: var(--semantic-color-static-border-main-functional-positive));
+}
+
+.bento-cell--e-positive-strong {
+  @include bento-tone(
+    var(--semantic-color-static-background-functional-positive),
+    var(--semantic-color-static-background-functional-positive),
+    var(--semantic-color-static-text-main-reversed),
+    var(--semantic-color-static-text-main-reversed),
+    var(--semantic-color-static-text-subtle-functional-positive),
+    var(--semantic-color-static-text-main-reversed),
+    var(--semantic-color-static-text-main-reversed));
+}
+
+.bento-cell--e-warning {
+  @include bento-tone(
+    var(--semantic-color-static-background-functional-subtle-warning),
+    var(--semantic-color-static-background-functional-subtle-warning),
+    var(--semantic-color-static-text-main-primary),
+    var(--semantic-color-static-text-main-secondary),
+    var(--semantic-color-static-border-subtle-tertiary),
+    var(--semantic-color-static-icon-main-primary),
+    $accent: var(--semantic-color-static-border-main-functional-warning));
+}
+
+.bento-cell--e-warning-strong {
+  @include bento-tone(
+    var(--semantic-color-static-background-functional-warning),
+    var(--semantic-color-static-background-functional-warning),
+    var(--semantic-color-static-text-main-primary),
+    var(--semantic-color-static-text-main-primary),
+    var(--semantic-color-static-border-main-secondary),
+    var(--semantic-color-static-text-main-primary),
+    var(--semantic-color-static-text-main-primary));
+}
+
+.bento-cell--e-negative {
+  @include bento-tone(
+    var(--semantic-color-static-background-functional-subtle-negative),
+    var(--semantic-color-static-background-functional-subtle-negative),
+    var(--semantic-color-static-text-main-primary),
+    var(--semantic-color-static-text-main-secondary),
+    var(--semantic-color-static-border-subtle-tertiary),
+    var(--semantic-color-static-icon-main-functional-negative),
+    $accent: var(--semantic-color-static-border-main-functional-negative));
+}
+
+.bento-cell--e-negative-strong {
+  @include bento-tone(
+    var(--semantic-color-static-background-functional-negative),
+    var(--semantic-color-static-background-functional-negative),
+    var(--semantic-color-static-text-main-reversed),
+    var(--semantic-color-static-text-subtle-tertiary),
+    var(--semantic-color-static-text-subtle-functional-negative),
+    var(--semantic-color-static-text-main-reversed),
+    var(--semantic-color-static-text-main-reversed));
+}
+
+// Swatches in the emphasis menu
+.bento-swatch--subtle          { background: var(--semantic-color-static-background-main-alt-secondary); border-color: var(--semantic-color-static-border-brand); }
+.bento-swatch--strong          { background: var(--semantic-color-static-background-brand); border-color: var(--semantic-color-static-background-brand); }
+.bento-swatch--positive        { background: var(--semantic-color-static-background-functional-subtle-positive); border-color: var(--semantic-color-static-border-main-functional-positive); }
+.bento-swatch--positive-strong { background: var(--semantic-color-static-background-functional-positive); border-color: var(--semantic-color-static-background-functional-positive); }
+.bento-swatch--warning         { background: var(--semantic-color-static-background-functional-subtle-warning); border-color: var(--semantic-color-static-border-main-functional-warning); }
+.bento-swatch--warning-strong  { background: var(--semantic-color-static-background-functional-warning); border-color: var(--semantic-color-static-background-functional-warning); }
+.bento-swatch--negative        { background: var(--semantic-color-static-background-functional-subtle-negative); border-color: var(--semantic-color-static-border-main-functional-negative); }
+.bento-swatch--negative-strong { background: var(--semantic-color-static-background-functional-negative); border-color: var(--semantic-color-static-background-functional-negative); }
+
+// Status inside a card (icon + label): replaces light badges, which fail AA
+// on a pale tint of their own colour
+.bc-status {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xxs);
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  color:       var(--semantic-color-static-text-main-primary);
+
+  ds-icon { color: var(--semantic-color-static-icon-main-functional-positive); }
+}
+
+// Status in the header: icon + label, never the colour alone
+.bc-emph {
+  display:     inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap:         var(--semantic-measurement-spacing-xxs);
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  font-weight: var(--semantic-font-text-style-font-weight-semi-bold);
+  white-space: nowrap;
+}
+
+// =============================================================
+// Pass 3: cards that fill their size with real data
+// =============================================================
+
+.bc [hidden] { display: none !important; }
+
+// A full fit list spreads its rows: the last row sits on the bottom edge
+.bc-fit--full:not(.bc-facts) {
+  display:         flex;
+  flex-direction:  column;
+  justify-content: space-between;
+}
+
+@container card (min-width: #{$w3}) {
+  .bc-fit--full.bc-list--cols { display: grid; align-content: space-between; }
+}
+
+.bc-facts.bc-fit--full { align-content: space-between; }
+
+// Nothing fits: the area gives its room back to its neighbours
+.bc-fit--none { flex: 0 0 0; }
+
+// Label / value rows
+.bc-kv { gap: 0; }
+
+.bc-kv__row {
+  display:         flex;
+  align-items:     baseline;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-s);
+  padding:         var(--semantic-measurement-spacing-xxs) 0;
+  border-top:      var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  font-size:       var(--semantic-font-text-style-size-m);
+  line-height:     var(--semantic-font-text-style-line-height-m);
+
+  .bc-num { white-space: nowrap; }
+}
+
+// Columns that fill a 1-row card; from 2 rows the card has its own chart below
+.bc-cols--fill {
+  flex:               1 1 0;
+  min-height:         0;
+  grid-template-rows: minmax(0, 1fr);
+
+  > .bc-stack { min-height: 0; }
+}
+
+@container card (min-height: #{$h2}) {
+  .bc-cols--fill { flex: 0 0 auto; grid-template-rows: auto; }
+  .bc-chart--trend { flex: 0 0 var(--semantic-measurement-sizing-xl); }
+}
+
+@container card (min-width: #{$w3}) {
+  .bc-cols--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.bc-chart--trend { flex: 1 1 0; min-height: var(--semantic-measurement-sizing-xl); }
+
+.bc-fitwrap {
+  display:        flex;
+  flex-direction: column;
+  flex:           1 1 0;
+  min-height:     0;
+}
+
+// Overdue bars grow with the card
+.bc-stack--grow {
+  flex:       1 1 0;
+  min-height: 0;
+
+  .bc-bars { flex: 1 1 auto; height: auto; min-height: var(--semantic-measurement-sizing-2xl); }
+}
+
+.bc-table--policies tbody th { white-space: nowrap; }
+.bc-table--policies .bc-table__holder { display: inline; }
+
+
+.bc-fit--kpis { flex: 0 1 auto; }
