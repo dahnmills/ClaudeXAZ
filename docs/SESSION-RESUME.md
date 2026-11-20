@@ -4,6 +4,9 @@ Ce fichier est injecté automatiquement au démarrage et après chaque compactio
 
 Dernière mise à jour : 2026-11-16 09:45.
 
+## En cours (2026-11-20)
+- 10:10 : DEMANDE utilisateur : « Buyer Summary V2 », nouvelle version à part. FAIT sur main : copie iso de la V1 dans src/app/pages/buyer-summary-v2/ (BuyerSummaryV2Component, sélecteur app-buyer-summary-v2), route buyer-summary-v2/:id, entrée « Buyer Summary V2 » (0.1.0) dans screens.data.ts ; partage les stores de la V1 (../buyer-summary/*.store) ; aucun stockage navigateur ; pas de visite guidée (le tour vise le segment buyer-summary). V1 inchangée. Vérifié : http://localhost:4470/#/buyer-summary-v2/137381425 s'affiche comme la V1. En attente : ce que l'utilisateur veut changer dans la V2 ; note de version à ajouter au premier changement visible (hook pre-push).
+
 ## En cours (2026-11-18)
 - 15:05 : DEMANDE utilisateur : filtre de Coverbook (Policy) comme les autres pages : panneau à droite + filtres sauvegardés. FAIT dans le proto (main, commit c1aa69a9, non poussé) : ds-select des filtres enregistrés + bouton « Filter (n) » qui ouvre ds-filter-drawer (mécanique Reject Management), Clear ; une liste de cases par catégorie (Decision code, Cover status ; Cover code, Type sur Grade covers ; Policy color et Inforce BU côté Buyer seulement) ; 3 filtres d'exemple ; s'applique aux deux côtés. Vérifié dans le navigateur (port 4470) : filtre enregistré 26 -> 8 lignes, « Save my filters » ajoute « My Filters: date ». Note de version coverbook-filter-drawer-2026-11-18, versions écrans 1.1.0. POUSSÉ (dbe999f6, demande utilisateur), déploiement Pages OK. À faire si demandé : même chose dans le fichier Figma Coverbook.
 

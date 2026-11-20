@@ -9,6 +9,7 @@ import { SearchV2Component } from './pages/search-v2/search-v2.component';
 import { FiltersTestPageComponent } from './user-testing/filters/filters-test-page.component';
 import { AdminDataComponent } from './pages/admin-data/admin-data.component';
 import { BuyerSummaryComponent } from './pages/buyer-summary/buyer-summary.component';
+import { BuyerSummaryV2Component } from './pages/buyer-summary-v2/buyer-summary-v2.component';
 import { TagConfigurationComponent } from './pages/tag-configuration/tag-configuration.component';
 import { PortfolioManagementComponent } from './pages/portfolio-management/portfolio-management.component';
 import { GradeStoryComponent } from './pages/grade-story/grade-story.component';
@@ -44,6 +45,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'search-v2', component: SearchV2Component },
   { path: 'admin-data', component: AdminDataComponent },
   { path: 'buyer-summary/:id', component: BuyerSummaryComponent },
+  { path: 'buyer-summary-v2/:id', component: BuyerSummaryV2Component },
   { path: 'tag-configuration', component: TagConfigurationComponent },
   { path: 'portfolio-management', component: PortfolioManagementComponent },
   { path: 'reject-management', loadComponent: () => import('./pages/reject-management/reject-management.component').then(m => m.RejectManagementComponent) },

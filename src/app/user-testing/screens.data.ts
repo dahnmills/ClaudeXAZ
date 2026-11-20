@@ -29,6 +29,7 @@ export const SCREENS: Screen[] = [
   { path: 'spotlight', label: 'Spotlight', hint: 'Featured item', version: { major: 1, minor: 1, patch: 0 } },
   { path: 'notification-module', label: 'Notification Module', hint: 'Notification center', version: { major: 1, minor: 2, patch: 1 } },
   { path: 'buyer-summary/137381425', label: 'Buyer Summary', hint: 'Buyer profile', version: { major: 1, minor: 0, patch: 2 } },
+  { path: 'buyer-summary-v2/137381425', label: 'Buyer Summary V2', hint: 'Buyer profile, new version (work in progress)', version: { major: 0, minor: 1, patch: 0 } },
   { path: 'maintenance', label: 'Maintenance', hint: 'Product downtime state', version: { ...V1 } },
   { path: 'loading', label: 'Loading', hint: 'Initial app loading state', version: { ...V1 } },
   { path: 'keyboard-shortcuts', label: 'Keyboard Shortcuts', hint: 'Shortcut reference panel', version: { ...V1 } },

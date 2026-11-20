@@ -1,0 +1,1410 @@
+:host { display: block; }
+
+// Drawer width (matches ds-drawer panel: 6×3xl + xs ≈ 388px)
+$drawer-w: calc((var(--semantic-measurement-sizing-3xl) * 6) + var(--semantic-measurement-sizing-xs));
+
+.buyer-summary__body {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding-bottom: var(--semantic-measurement-spacing-xl);
+  // Push-content: board shrinks so the drawer never covers the last column
+  transition:     padding-right 320ms cubic-bezier(0.32, 0.72, 0, 1);
+
+  &--drawer-open { padding-right: $drawer-w; }
+}
+
+// ── Shared action bar ─────────────────────────────────────────────────────────
+.bs-action-bar {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-s);
+  padding:         0 var(--semantic-measurement-spacing-xl);
+
+  // Right-aligned variant: secondary → primary → dropdown (dropdown furthest right)
+  &--end { justify-content: flex-end; }
+}
+
+.bs-action-bar__select { width: 200px; }
+
+// ── Ready grid ────────────────────────────────────────────────────────────────
+.bs-grid {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   var(--semantic-measurement-spacing-m);
+  padding:               0 var(--semantic-measurement-spacing-xl);
+}
+
+.bs-grid ds-newsfeed { grid-column: span 2; }
+
+// Validated custom board: cells honour the configured size
+.bs-grid__cell {
+  position:  relative;
+  display:   flex;
+  min-width: 0;
+
+  // widget fills the cell; the menu overlay is positioned, not stretched
+  > ng-container, > ds-widget-card, > ds-list-widget, > ds-newsfeed { width: 100%; }
+
+  &--wide { grid-column: span 2; }
+  &--tall { grid-row: span 2; }
+}
+
+// Card context menu (3-dots): overlaps the widget header's action slot
+.bs-card-menu {
+  position: absolute;
+  top:      var(--semantic-measurement-spacing-l);   // align with widget title row
+  right:    var(--semantic-measurement-spacing-l);
+  z-index:  3;
+}
+
+.bs-card-menu__flyout {
+  position:  absolute;
+  top:       calc(100% + var(--semantic-measurement-spacing-xs));
+  right:     0;
+  z-index:   10;
+}
+
+.bs-grid__skeleton {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+  min-height:     200px;
+}
+
+// ── Loading ───────────────────────────────────────────────────────────────────
+.bs-loading {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-l);
+  padding:         var(--semantic-measurement-spacing-xl);
+  min-height:      360px;
+}
+
+.bs-loading__msg {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-xl);
+  font-weight: var(--semantic-font-text-style-font-weight-semibold);
+  color:       var(--semantic-color-static-text-main-primary);
+  text-align:  center;
+  transition:  opacity 250ms ease, transform 250ms ease;
+
+  &--out { opacity: 0; transform: translateY(-6px); }
+}
+
+.bs-loading__grid {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   var(--semantic-measurement-spacing-m);
+  width:                 100%;
+  padding:               0 var(--semantic-measurement-spacing-xl);
+  opacity:               0.45;
+}
+
+// ── Configure mode overlay ────────────────────────────────────────────────────
+// Scrim covers everything EXCEPT the action bar + slots (those sit at z 95).
+// pointer-events: none so it never blocks interactions.
+.bs-configure-overlay {
+  position:       fixed;
+  inset:          0;
+  z-index:        91;
+  background:     rgba(255, 255, 255, 0.50);
+  pointer-events: none;
+  animation:      overlay-in 200ms ease both;
+}
+
+// Slots grid surface above the overlay
+.bs-configure-surface {
+  position: relative;
+  z-index:  95;
+}
+
+// ── Floating action bar: board editor ───────────────────────────────────────
+// Light, elevated, anchored bottom-center. Persistent through edit mode.
+// Convention: Figma/Framer/Material 3 floating toolbar (light surface, strong
+// shadow, rounded). NOT a dark snackbar (which reads as a transient notice).
+.bs-floatbar {
+  position:        fixed;
+  bottom:          var(--semantic-measurement-spacing-xl);
+  left:            50%;
+  transform:       translateX(-50%);
+  z-index:         1100;
+  display:         flex;
+  align-items:     center;
+  gap:             var(--semantic-measurement-spacing-s);
+  padding:         var(--semantic-measurement-spacing-s);
+  background:      var(--semantic-color-static-background-main-primary);
+  border:          1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-m);
+  box-shadow:      var(--semantic-shadow-snackbar);
+  animation:       floatbar-rise 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+// Thin vertical divider between the add tool and the commit actions
+.bs-floatbar__sep {
+  width:      1px;
+  align-self: stretch;
+  margin:     var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-xs);
+  background: var(--semantic-color-static-border-subtle-tertiary);
+}
+
+// ── Configure: slot grid ─────────────────────────────────────────────────────
+// flex-wrap: 4 columns, cards span 1 or 2 cols / 1 or 2 rows.
+.bs-slots {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--semantic-measurement-spacing-m);
+  // top: clear the first-row card toolbar. bottom: clear the floating action bar.
+  padding:   var(--semantic-measurement-spacing-xl) var(--semantic-measurement-spacing-xl) var(--foundation-spacing-96);
+}
+
+// ── Slot card: matches Figma exactly ────────────────────────────────────────
+// bg: #f5f5f5 (surface-secondary), border: 1px dashed #d2d2d2, padding: 24px, radius: 4px
+.bs-slot {
+  --gap:     var(--semantic-measurement-spacing-m);
+  position:  relative;
+  // 1-col = 25% of 4-col row minus gap share
+  flex:      0 0 calc(25% - var(--gap) * 3 / 4);
+  // CRITICAL: prevent widget content (chart/list) from forcing the flex item wider
+  min-width: 0;
+  max-width: calc(25% - var(--gap) * 3 / 4);
+  display:   flex;
+  flex-direction: column;
+  gap:       var(--semantic-measurement-spacing-m);
+  padding:   var(--semantic-measurement-spacing-l);
+  background: var(--semantic-color-static-background-main-secondary);
+  border:    1px dashed var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-s);
+  box-sizing: border-box;
+  min-height: 262px;
+  // Micro-interaction: each slot fades + lifts in on insertion
+  animation: slot-in 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  // Smooth grow/shrink when size changes via toolbar or resize handle
+  transition: flex-basis 200ms cubic-bezier(0.22, 1, 0.36, 1),
+              max-width  200ms cubic-bezier(0.22, 1, 0.36, 1),
+              min-height 200ms cubic-bezier(0.22, 1, 0.36, 1),
+              height     200ms cubic-bezier(0.22, 1, 0.36, 1);
+
+
+  // 2-col wide (matches Figma 2×1 and 2×2 cards)
+  &--wide {
+    flex-basis: calc(50% - var(--gap) * 3 / 4);
+    max-width:  calc(50% - var(--gap) * 3 / 4);
+  }
+
+  // 2-row tall
+  &--tall { min-height: 540px; }
+
+  // "Add slot" variant
+  &--add {
+    align-items:     center;
+    justify-content: center;
+    background:      none;
+    border-style:    dashed;
+    border-color:    var(--semantic-color-interactive-border-strong-default);
+    color:           var(--semantic-color-interactive-text-strong-default);
+    font-family:     var(--semantic-font-family);
+    font-size:       var(--semantic-font-text-style-size-m);
+    font-weight:     var(--semantic-font-text-style-font-weight-semibold);
+    cursor:          pointer;
+    gap:             var(--semantic-measurement-spacing-xs);
+    transition:      background 140ms ease;
+
+    &:hover { background: var(--semantic-color-interactive-background-subtle-hover); }
+
+    &:focus-visible {
+      outline:        2px solid var(--semantic-color-interactive-border-strong-default);
+      outline-offset: 2px;
+    }
+  }
+
+  // The slot currently being dragged: faded in place
+  &--dragging {
+    opacity: 0.35;
+  }
+
+  // Insertion bar : blue rule on the left edge of the slot at the drop index
+  &--insert-before::before {
+    content:       '';
+    position:      absolute;
+    left:          calc(-1 * var(--semantic-measurement-spacing-m) / 2 - 1.5px);
+    top:           var(--semantic-measurement-spacing-xs);
+    bottom:        var(--semantic-measurement-spacing-xs);
+    width:         3px;
+    border-radius: 999px;
+    background:    var(--semantic-color-interactive-background-strong-default);
+    z-index:       6;
+  }
+
+  // Aiming an empty placeholder: full highlight (drop fills/replaces it)
+  &--drop-on {
+    border-style: solid;
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    background:   var(--semantic-color-interactive-background-subtle-default);
+    box-shadow:   inset 0 0 0 2px var(--semantic-color-interactive-border-strong-default);
+  }
+}
+
+// ── Slot: empty placeholder. Dashed, awaits a card ──────────────────────────
+.bs-slot--placeholder {
+  border-style: dashed;
+  border-color: var(--semantic-color-static-border-subtle-tertiary);
+  transition:   border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+// Targeted placeholder: the spot the next picked card will fill
+.bs-slot--targeted {
+  border-color: var(--semantic-color-interactive-border-strong-default);
+  background:   var(--semantic-color-interactive-background-light-default);
+  box-shadow:   0 0 0 1px var(--semantic-color-interactive-border-strong-default);
+  animation:    target-pulse 1.6s ease-in-out infinite;
+
+  .bs-slot__empty,
+  .bs-slot__empty-hint { color: var(--semantic-color-interactive-text-strong-default); }
+  .bs-slot__empty-icon { background: var(--semantic-color-interactive-background-subtle-default); }
+}
+
+
+// ── Slot: configured state. La vraie widget card remplit le slot ─────────────
+.bs-slot--configured {
+  padding:    0;
+  border:     none;
+  background: transparent;
+  // FIXED height so the widget can't stretch the slot. overflow stays visible
+  // so the floating toolbar can sit above the card; the widget clips itself.
+  height:     262px;
+  overflow:   visible;
+
+  &.bs-slot--tall { height: 540px; }
+
+  > ds-widget-card,
+  > ds-list-widget,
+  > ds-newsfeed {
+    display:       block;
+    width:         100%;
+    min-width:     0;
+    height:        100%;
+    overflow:      hidden;
+    border-radius: var(--semantic-border-radius-s);
+    animation:     widget-fade-in 260ms ease both; // crossfade in after the loader
+  }
+}
+
+// ── Floating toolbar (Dynatrace-style) ───────────────────────────────────────
+.bs-toolbar {
+  position:      absolute;
+  top:           calc(-1 * var(--semantic-measurement-spacing-xl));
+  left:          50%;
+  transform:     translateX(-50%) translateY(4px);
+  z-index:       5;
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s); // breathing room between items
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  background:    var(--semantic-color-static-background-main-primary);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-m);
+  box-shadow:    var(--semantic-shadow-flyout);
+  opacity:       0;
+  visibility:    hidden;
+  // Smooth lift-in micro-interaction
+  transition:    opacity 160ms ease, visibility 160ms ease,
+                 transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  white-space:   nowrap;
+}
+
+// Show toolbar on hover : lifts into place
+.bs-slot:hover .bs-toolbar {
+  opacity:    1;
+  visibility: visible;
+  transform:  translateX(-50%) translateY(0);
+}
+
+// Drag handle in the toolbar (native draggable trigger)
+.bs-toolbar__handle {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           24px;
+  height:          24px;
+  padding:         0;
+  background:      none;
+  border:          none;
+  border-radius:   var(--semantic-border-radius-xs);
+  cursor:          grab;
+  color:           var(--semantic-color-interactive-text-strong-default);
+  &:hover  { background: var(--semantic-color-interactive-background-light-default); }
+  &:active { cursor: grabbing; }
+}
+
+.bs-toolbar__sizes {
+  display: flex;
+  gap:     2px;
+}
+
+.bs-toolbar__size {
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border:        none;
+  border-radius: var(--semantic-border-radius-xs);
+  background:    transparent;
+  cursor:        pointer;
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-s);
+  font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+  color:         var(--semantic-color-static-text-main-secondary);
+  transition:    background 120ms ease, color 120ms ease;
+
+  &:hover:not(:disabled) { background: var(--semantic-color-interactive-background-light-default); }
+
+  // Size that would push the board onto a 3rd row
+  &:disabled {
+    cursor: not-allowed;
+    color:  var(--semantic-color-interactive-text-medium-alt-disabled);
+  }
+
+  &--on {
+    background: var(--semantic-color-interactive-background-strong-default);
+    color:      var(--semantic-color-interactive-text-neutral-default);
+  }
+}
+
+.bs-toolbar__sep {
+  width:      1px;
+  height:     20px;
+  background: var(--semantic-color-static-border-subtle-tertiary);
+  margin:     0 2px;
+}
+
+// ── Resize handle (bottom-right corner) ──────────────────────────────────────
+.bs-slot__resize {
+  position:   absolute;
+  right:      2px;
+  bottom:     2px;
+  width:      16px;
+  height:     16px;
+  padding:    0;
+  border:     none;
+  background: transparent;
+  cursor:     nwse-resize;
+  opacity:    0;
+  transition: opacity 120ms ease;
+  z-index:    4;
+
+  // Diagonal grip marks
+  &::after {
+    content:    '';
+    position:   absolute;
+    inset:      4px;
+    border-right:  2px solid var(--semantic-color-interactive-border-strong-default);
+    border-bottom: 2px solid var(--semantic-color-interactive-border-strong-default);
+  }
+}
+
+.bs-slot--configured:hover .bs-slot__resize { opacity: 1; }
+
+// ── Loading state ─────────────────────────────────────────────────────────────
+.bs-slot__loading-state {
+  flex:            1;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+
+// Loader cercle bleu gradient: Figma node 2529:116908
+// arc bleu (#008ED6 → lighter), rotation continue. Shared loading visual.
+.bs-loader {
+  display:       block;
+  width:         32px;
+  height:        32px;
+  border-radius: 50%;
+  border:        3px solid transparent;
+  border-top-color:   var(--foundation-color-blue-a-400);  // #008ED6
+  border-right-color: var(--foundation-color-blue-a-200);  // lighter
+  animation:     slot-loader-spin 0.8s linear infinite;
+
+  &--l {
+    width:  48px;
+    height: 48px;
+    border-width: 4px;
+  }
+}
+
+@keyframes slot-loader-spin {
+  to { transform: rotate(360deg); }
+}
+
+// Visually-hidden (screen-reader only)
+.bs-visually-hidden {
+  position:  absolute;
+  width:     1px;
+  height:    1px;
+  padding:   0;
+  margin:    -1px;
+  overflow:  hidden;
+  clip:      rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border:    0;
+}
+
+// "Choose a card" title: Figma Copy/Large(18)/Semibold
+// ── Empty slot: clickable empty state opening the picker ────────────────────
+.bs-slot__empty {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-xs);
+  flex:            1;
+  width:           100%;
+  padding:         var(--semantic-measurement-spacing-m);
+  background:      none;
+  border:          none;
+  border-radius:   var(--semantic-border-radius-s);
+  cursor:          pointer;
+  color:           var(--semantic-color-static-text-main-tertiary);
+  transition:      color 140ms ease, transform 140ms ease;
+
+  &:hover {
+    color:     var(--semantic-color-interactive-text-strong-default);
+    transform: translateY(-2px);
+  }
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-strong-default);
+    outline-offset: 2px;
+  }
+}
+
+.bs-slot__empty-icon {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           48px;
+  height:          48px;
+  border-radius:   var(--semantic-border-radius-m);
+  background:      var(--semantic-color-static-background-main-primary);
+  color:           var(--semantic-color-interactive-text-strong-default);
+  transition:      transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  .bs-slot__empty:hover & { transform: scale(1.08); }
+}
+
+.bs-slot__empty-title {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-title-size-xs);
+  font-weight: var(--semantic-font-text-style-font-weight-semibold);
+  color:       inherit;
+}
+
+.bs-slot__empty-hint {
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-s);
+  color:       var(--semantic-color-static-text-main-tertiary);
+}
+
+
+// ── Drawer content ────────────────────────────────────────────────────────────
+// Drawer body has no padding by default. Add consistent inset for both tabs
+.drawer-content {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  padding:        0 var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-m);
+  height:         100%;
+  min-height:     0;
+  box-sizing:     border-box;
+  // Views without an inner scroll area (boards, create) scroll here.
+  // Cards/layouts keep their own flex:1 overflow list, so this stays inert for them.
+  overflow-y:     auto;
+}
+
+.drawer-tabs {
+  display:       flex;
+  border-bottom: 1px solid var(--semantic-color-static-border-subtle-tertiary);
+}
+
+.drawer-tab {
+  flex:          1;
+  background:    none;
+  border:        none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding:       var(--semantic-measurement-spacing-s) 0;
+  cursor:        pointer;
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-m);
+  font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+  color:         var(--semantic-color-static-text-main-tertiary);
+  text-align:    center;
+  transition:    color 150ms ease, border-color 150ms ease;
+
+  &:hover   { color: var(--semantic-color-static-text-main-primary); }
+  &--active {
+    color:        var(--semantic-color-interactive-text-strong-default);
+    border-color: var(--semantic-color-interactive-border-strong-default);
+  }
+}
+
+.drawer-filter { display: block; }
+
+.drawer-hint {
+  display:     flex;
+  flex-wrap:   wrap;
+  align-items: center;
+  gap:         4px;
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-s);
+  color:       var(--semantic-color-static-text-main-tertiary);
+
+  ds-icon { color: var(--semantic-color-static-text-main-secondary); }
+}
+
+.drawer-cards {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  overflow-y:     auto;
+  min-height:     0;
+  flex:           1;
+}
+
+.drawer-empty {
+  margin:      0;
+  padding:     var(--semantic-measurement-spacing-m) 0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  color:       var(--semantic-color-static-text-main-tertiary);
+  text-align:  center;
+}
+
+.drawer-card {
+  display:         flex;
+  flex-direction:  column;
+  flex-shrink:     0; // never let the flex column compress the card
+  border:          1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-static-background-main-primary);
+  overflow:        hidden;
+  cursor:          grab;
+  transition:      border-color 120ms ease, box-shadow 120ms ease;
+
+  &:hover {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    box-shadow:   var(--semantic-shadow-card);
+  }
+  &:active { cursor: grabbing; }
+
+  // Mini live preview of the widget: real widget clipped into a fixed window
+  &__preview {
+    position:       relative;
+    height:         180px;
+    overflow:       hidden;
+    background:     var(--semantic-color-static-background-main-secondary);
+    pointer-events: none;
+
+    // Inner gives the widget the full window; widget fills + clips
+    &-inner {
+      position: absolute;
+      inset:    0;
+
+      > * {
+        display: block;
+        width:   100%;
+        height:  100%;
+      }
+    }
+  }
+
+  // "Drag" badge over the preview: signals the drag affordance, hover only
+  &__drag-badge {
+    position:      absolute;
+    top:           var(--semantic-measurement-spacing-xs);
+    left:          var(--semantic-measurement-spacing-xs);
+    display:       flex;
+    align-items:   center;
+    gap:           2px;
+    padding:       2px var(--semantic-measurement-spacing-xs);
+    border-radius: var(--semantic-border-radius-xs);
+    background:    var(--semantic-color-static-background-accent-primary);
+    color:         var(--semantic-color-static-text-subtle-primary);
+    font-family:   var(--semantic-font-family);
+    font-size:     var(--semantic-font-text-style-size-s);
+    font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+    opacity:       0;
+    transition:    opacity 120ms ease;
+  }
+  &:hover &__drag-badge { opacity: 0.92; }
+
+  &__foot {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    gap:             var(--semantic-measurement-spacing-s);
+    padding:         var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-m);
+    border-top:      1px solid var(--semantic-color-static-border-subtle-tertiary);
+  }
+
+  &__label {
+    flex:        1;
+    min-width:   0;
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-semibold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+}
+
+.drawer-layouts {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  overflow-y:     auto;
+  min-height:     0;
+  flex:           1;
+}
+
+// ── Modal action buttons: consistent spacing ────────────────────────────────
+.bs-modal-actions {
+  display:         flex;
+  align-items:     center;
+  gap:             var(--semantic-measurement-spacing-s);
+}
+
+// ── Discard confirm ───────────────────────────────────────────────────────────
+.bs-discard-text {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+// ── Create board (drawer view): layout picker ───────────────────────────────
+.create-board__sub {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+}
+
+.create-board__grid {
+  display:               grid;
+  grid-template-columns: 1fr; // narrow drawer → single column
+  gap:                   var(--semantic-measurement-spacing-m);
+}
+
+// Back link to the boards view
+
+// ── Boards list (drawer view) ─────────────────────────────────────────────────
+.manage-board__list {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-s);
+}
+
+.manage-board__item {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--semantic-measurement-spacing-s);
+  min-height:      48px;
+  box-sizing:      border-box;
+  padding:         var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border:          1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-static-background-main-primary);
+  transition:      border-color 120ms ease, background 120ms ease;
+
+  &--current { border-color: var(--semantic-color-interactive-border-strong-default); }
+}
+
+// Clickable name area = switch to that board
+.manage-board__pick {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-s);
+  flex:        1;
+  min-width:   0;
+  padding:     var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-xs);
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  text-align:  left;
+}
+
+.manage-board__check {
+  margin-left: auto;
+  color:       var(--semantic-color-interactive-text-strong-default);
+}
+
+.manage-board__item-name {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s);
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-m);
+  font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+  color:         var(--semantic-color-static-text-main-primary);
+  white-space:   nowrap;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+}
+
+// "Default" tag on built-in boards
+.manage-board__badge {
+  padding:       2px var(--semantic-measurement-spacing-xs);
+  border-radius: var(--semantic-border-radius-xs);
+  background:    var(--semantic-color-static-background-main-secondary);
+  font-size:     var(--semantic-font-text-style-size-s);
+  font-weight:   var(--semantic-font-text-style-font-weight-regular);
+  color:         var(--semantic-color-static-text-main-tertiary);
+}
+
+.manage-board__rename { flex: 1; }
+
+.manage-board__item-actions {
+  display:     flex;
+  gap:         var(--semantic-measurement-spacing-xs);
+  flex-shrink: 0;
+}
+
+.manage-board__create {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-s);
+  padding:         var(--semantic-measurement-spacing-m);
+  border:          1px dashed var(--semantic-color-interactive-border-strong-default);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-interactive-background-subtle-default);
+  cursor:          pointer;
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-m);
+  font-weight:     var(--semantic-font-text-style-font-weight-semibold);
+  color:           var(--semantic-color-interactive-text-strong-default);
+  width:           100%;
+  transition:      background 120ms ease;
+
+  &:hover { background: var(--semantic-color-interactive-background-subtle-hover); }
+
+  // Secondary CTA: custom card creation sits below the board CTA, quieter
+  &--alt {
+    background:   var(--semantic-color-static-background-main-primary);
+    border-style: solid;
+    border-color: var(--semantic-color-static-border-subtle-tertiary);
+    color:        var(--semantic-color-static-text-main-primary);
+
+    &:hover { background: var(--semantic-color-interactive-background-light-default); }
+  }
+}
+
+// ── Drawer: "Create a custom card" CTA ───────────────────────────────────────
+.drawer-build {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-s);
+  padding:         var(--semantic-measurement-spacing-s);
+  border:          1px dashed var(--semantic-color-interactive-border-strong-default);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-interactive-background-subtle-default);
+  cursor:          pointer;
+  font-family:     var(--semantic-font-family);
+  font-size:       var(--semantic-font-text-style-size-m);
+  font-weight:     var(--semantic-font-text-style-font-weight-semibold);
+  color:           var(--semantic-color-interactive-text-strong-default);
+  transition:      background 120ms ease;
+
+  &:hover { background: var(--semantic-color-interactive-background-subtle-hover); }
+}
+
+// "Custom" badge over a user-built card preview
+.drawer-card__custom-badge {
+  position:      absolute;
+  top:           var(--semantic-measurement-spacing-xs);
+  right:         var(--semantic-measurement-spacing-xs);
+  padding:       2px var(--semantic-measurement-spacing-xs);
+  border-radius: var(--semantic-border-radius-xs);
+  background:    var(--semantic-color-interactive-background-strong-default);
+  color:         var(--semantic-color-interactive-text-neutral-default);
+  font-family:   var(--semantic-font-family);
+  font-size:     var(--semantic-font-text-style-size-s);
+  font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+}
+
+// ── Custom card content (composed blocks) ────────────────────────────────────
+.bs-custom-card {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+}
+
+// One zone = an independent vertical stack of blocks
+.bs-zone {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-m);
+  min-width:      0;
+}
+
+// ── Zone layouts: shared by the real card AND the picker diagrams ───────────
+// Generic .bs-zone children placed by grid; nth-child spans handle full-width
+// header/hero rows. Skeletons drawn from BI tools (sidebar, split, hero banner).
+.bs-zones {
+  display: grid;
+  gap:     var(--semantic-measurement-spacing-m);
+
+  &--stack       { grid-template-columns: 1fr; }
+  &--two-col     { grid-template-columns: 1fr 1fr; }
+  &--three-col   { grid-template-columns: repeat(3, 1fr); }
+  &--sidebar     { grid-template-columns: 1fr 2fr; }
+  &--grid-2x2    { grid-template-columns: 1fr 1fr; }
+
+  // Full-width header over a two-column body
+  &--split-header {
+    grid-template-columns: 1fr 1fr;
+    > .bs-zone:nth-child(1) { grid-column: 1 / -1; }
+  }
+
+  // Focal banner over a row of three
+  &--hero-row {
+    grid-template-columns: repeat(3, 1fr);
+    > .bs-zone:nth-child(1) { grid-column: 1 / -1; }
+  }
+}
+
+.bs-block-heading {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+
+  &__text {
+    margin:      0;
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-title-size-xs);
+    font-weight: var(--semantic-font-text-style-font-weight-semibold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+}
+
+.bs-block-note {
+  margin:      0;
+  font-family: var(--semantic-font-family);
+  font-size:   var(--semantic-font-text-style-size-m);
+  line-height: var(--semantic-font-text-style-line-height-m);
+  color:       var(--semantic-color-static-text-main-secondary);
+  white-space: pre-wrap;
+}
+
+// ── Card builder: canvas (structure) + inspector (block content) ────────────
+.bs-builder2 {
+  display:               grid;
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows:    minmax(0, 1fr);
+  gap:                   var(--semantic-measurement-spacing-m);
+  height:                100%;
+  min-height:            0;
+  overflow:              hidden; // each column owns its own scroll
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    grid-template-rows:    none;
+    height:                auto;
+    overflow:              visible;
+  }
+}
+
+// Left column: the card is the editing surface for structure
+.bs-cv-canvas {
+  display:          flex;
+  flex-direction:   column;
+  gap:              var(--semantic-measurement-spacing-l);
+  min-height:       0;
+  overflow-y:       auto;
+  overscroll-behavior: contain;
+  padding:          var(--semantic-measurement-spacing-m);
+  background:       var(--semantic-color-static-background-main-secondary);
+  border-radius:    var(--semantic-border-radius-s);
+}
+
+.bs-cv-head {
+  display:        flex;
+  align-items:    flex-end;   // input has a label above → align baselines
+  gap:            var(--semantic-measurement-spacing-m);
+  flex-shrink:    0;
+}
+
+// Card-name field grows; the layout tag stays compact beside it
+.bs-cv-name { flex: 1; min-width: 0; }
+
+.bs-cv-layout-tag {
+  display:        flex;
+  align-items:    center;
+  gap:            var(--semantic-measurement-spacing-xs);
+  flex-shrink:    0;
+  margin-bottom:  var(--semantic-measurement-spacing-xs); // sit level with input box
+  padding:        var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border-radius:  var(--semantic-border-radius-round);
+  background:     var(--semantic-color-static-background-main-primary);
+  font-family:    var(--semantic-font-family);
+  font-size:      var(--semantic-font-text-style-size-s);
+  color:          var(--semantic-color-static-text-main-secondary);
+
+  ds-icon { color: var(--semantic-color-static-text-main-tertiary); }
+}
+
+// Footer hint explaining why Save is disabled
+.bs-builder-hint {
+  margin-right: auto;   // push commit buttons to the right
+  font-family:  var(--semantic-font-family);
+  font-size:    var(--semantic-font-text-style-size-s);
+  color:        var(--semantic-color-static-text-main-tertiary);
+}
+
+// The card fills the canvas column
+.bs-cv-stage {
+  flex-shrink: 0;
+  width:       100%;
+}
+
+// ── Inspector: edits the selected block, with room to breathe ───────────────
+.bs-inspector {
+  display:          flex;
+  flex-direction:   column;
+  gap:              var(--semantic-measurement-spacing-m);
+  min-height:       0;
+  overflow-y:       auto;
+  overscroll-behavior: contain;
+  padding:          var(--semantic-measurement-spacing-m);
+  border:           1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:    var(--semantic-border-radius-s);
+  background:       var(--semantic-color-static-background-main-primary);
+
+  &__header {
+    display:        flex;
+    align-items:    center;
+    gap:            var(--semantic-measurement-spacing-s);
+    padding-bottom: var(--semantic-measurement-spacing-s);
+    border-bottom:  1px solid var(--semantic-color-static-border-subtle-tertiary);
+
+    ds-icon { color: var(--semantic-color-interactive-text-strong-default); }
+  }
+
+  &__title {
+    font-family:    var(--semantic-font-family);
+    font-size:      var(--semantic-font-text-style-size-m);
+    font-weight:    var(--semantic-font-text-style-font-weight-semibold);
+    color:          var(--semantic-color-static-text-main-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__empty {
+    display:         flex;
+    flex-direction:  column;
+    align-items:     center;
+    justify-content: center;
+    gap:             var(--semantic-measurement-spacing-s);
+    flex:            1;
+    padding:         var(--semantic-measurement-spacing-xl);
+    text-align:      center;
+    color:           var(--semantic-color-static-text-main-tertiary);
+
+    p { margin: 0; font-family: var(--semantic-font-family); font-size: var(--semantic-font-text-style-size-m); }
+    ds-icon { color: var(--semantic-color-static-text-main-tertiary); }
+  }
+}
+
+// ── Canvas block wrapper: hover toolbar; click selects ──────────────────────
+.bs-custom-card--editable {
+  .bs-zone { gap: var(--semantic-measurement-spacing-s); }
+}
+
+.bs-cv-block {
+  position:      relative;
+  padding:       var(--semantic-measurement-spacing-xs);
+  border-radius: var(--semantic-border-radius-s);
+  border:        1px solid transparent;
+  cursor:        pointer;
+  transition:    border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+
+  &:hover { border-color: var(--semantic-color-static-border-subtle-tertiary); }
+
+  &--selected {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    background:   var(--semantic-color-static-background-main-primary);
+    box-shadow:   inset 0 0 0 1px var(--semantic-color-interactive-border-strong-default);
+  }
+}
+
+// Floating per-block toolbar: same convention as the board's bs-toolbar
+.bs-cv-toolbar {
+  position:      absolute;
+  top:           calc(-1 * var(--semantic-measurement-spacing-l));
+  right:         var(--semantic-measurement-spacing-xs);
+  z-index:       5;
+  display:       flex;
+  align-items:   center;
+  gap:           2px;
+  padding:       var(--semantic-measurement-spacing-xs);
+  background:    var(--semantic-color-static-background-main-primary);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius: var(--semantic-border-radius-m);
+  box-shadow:    var(--semantic-shadow-flyout);
+  opacity:       0;
+  visibility:    hidden;
+  transition:    opacity 140ms ease, visibility 140ms ease;
+}
+
+.bs-cv-block:hover .bs-cv-toolbar,
+.bs-cv-block--selected .bs-cv-toolbar {
+  opacity:    1;
+  visibility: visible;
+}
+
+// Add-block: a row of tiles, always visible, 1 click = add (no menu)
+.bs-cv-addrow {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   var(--semantic-measurement-spacing-xs);
+  margin-top:            var(--semantic-measurement-spacing-xs);
+}
+
+.bs-cv-tile {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-xs);
+  padding:         var(--semantic-measurement-spacing-s) var(--semantic-measurement-spacing-xs);
+  border:          1px dashed var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-static-background-main-primary);
+  cursor:          pointer;
+  transition:      color 120ms ease, border-color 120ms ease, background 120ms ease,
+                   transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  &__icon { color: var(--semantic-color-static-text-main-tertiary); transition: color 120ms ease; }
+
+  &__label {
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-s);
+    font-weight: var(--semantic-font-text-style-font-weight-semibold);
+    color:       var(--semantic-color-static-text-main-secondary);
+  }
+
+  &:hover {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    border-style: solid;
+    background:    var(--semantic-color-interactive-background-light-default);
+    transform:    translateY(-2px);
+
+    .bs-cv-tile__icon  { color: var(--semantic-color-interactive-text-strong-default); }
+    .bs-cv-tile__label { color: var(--semantic-color-interactive-text-strong-default); }
+  }
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-strong-default);
+    outline-offset: 2px;
+  }
+}
+
+// Placeholder text for empty chart/note blocks on the canvas
+.bs-block-note--placeholder { color: var(--semantic-color-static-text-main-tertiary); font-style: italic; }
+
+// Figures: catalogue scrolls in its own bounded window. overscroll-behavior
+// isolates it from the left column so the two scrolls don't chain (the cause of
+// the erratic feel): the column still scrolls for everything else.
+// ── Figures: selected "wells". Ordered list that drives the card order ──────
+// Pattern from Power BI / Metabase field wells: a separate ordered, reorderable,
+// removable list of the chosen fields (the catalogue below only adds to it).
+.bs-wells {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+  padding:        var(--semantic-measurement-spacing-s);
+  border:         1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:  var(--semantic-border-radius-s);
+  background:     var(--semantic-color-static-background-main-secondary);
+
+  &__title {
+    display:        flex;
+    align-items:    center;
+    gap:            var(--semantic-measurement-spacing-xs);
+    font-family:    var(--semantic-font-family);
+    font-size:      var(--semantic-font-text-style-size-s);
+    font-weight:    var(--semantic-font-text-style-font-weight-semibold);
+    color:          var(--semantic-color-static-text-main-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__count {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    min-width:       18px;
+    height:          18px;
+    padding:         0 var(--semantic-measurement-spacing-xs);
+    border-radius:   var(--semantic-border-radius-round);
+    background:      var(--semantic-color-interactive-background-strong-default);
+    color:           var(--semantic-color-interactive-text-neutral-default);
+    font-size:       var(--semantic-font-text-style-size-s);
+    letter-spacing:  0;
+  }
+
+  &__empty {
+    margin:      0;
+    padding:     var(--semantic-measurement-spacing-xs) 0;
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-s);
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+.bs-well {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s);
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border-radius: var(--semantic-border-radius-xs);
+  background:    var(--semantic-color-static-background-main-primary);
+  border:        1px solid var(--semantic-color-static-border-subtle-tertiary);
+
+  &__order {
+    display:         inline-flex;
+    align-items:     center;
+    justify-content: center;
+    width:           20px;
+    height:          20px;
+    flex-shrink:     0;
+    border-radius:   var(--semantic-border-radius-round);
+    background:      var(--semantic-color-static-background-main-secondary);
+    font-family:     var(--semantic-font-family);
+    font-size:       var(--semantic-font-text-style-size-s);
+    font-weight:     var(--semantic-font-text-style-font-weight-semibold);
+    color:           var(--semantic-color-static-text-main-secondary);
+  }
+
+  &__label {
+    flex:          1;
+    min-width:     0;
+    font-family:   var(--semantic-font-family);
+    font-size:     var(--semantic-font-text-style-size-m);
+    font-weight:   var(--semantic-font-text-style-font-weight-semibold);
+    color:         var(--semantic-color-static-text-main-primary);
+    white-space:   nowrap;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__value {
+    font-family:   var(--semantic-font-family);
+    font-size:     var(--semantic-font-text-style-size-s);
+    color:         var(--semantic-color-static-text-main-tertiary);
+    white-space:   nowrap;
+  }
+
+  &__controls {
+    display:     flex;
+    gap:         2px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Figures: field search picker. Type to filter, click to add ──────────────
+.bs-field-search {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+}
+
+.bs-field-results {
+  display:            flex;
+  flex-direction:     column;
+  gap:                2px;
+  max-height:         300px;
+  overflow-y:         auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter:   stable;
+
+  &__empty {
+    margin:      0;
+    padding:     var(--semantic-measurement-spacing-s);
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-s);
+    color:       var(--semantic-color-static-text-main-tertiary);
+    text-align:  center;
+  }
+}
+
+.bs-field-result {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--semantic-measurement-spacing-s);
+  width:         100%;
+  padding:       var(--semantic-measurement-spacing-xs) var(--semantic-measurement-spacing-s);
+  border:        none;
+  border-radius: var(--semantic-border-radius-xs);
+  background:    transparent;
+  cursor:        pointer;
+  text-align:    left;
+  transition:    background 120ms ease;
+
+  &:hover {
+    background: var(--semantic-color-interactive-background-light-default);
+    .bs-field-result__add { color: var(--semantic-color-interactive-text-strong-default); }
+  }
+
+  &__label {
+    flex:          1;
+    min-width:     0;
+    font-family:   var(--semantic-font-family);
+    font-size:     var(--semantic-font-text-style-size-m);
+    color:         var(--semantic-color-static-text-main-primary);
+    white-space:   nowrap;
+    overflow:      hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__cat {
+    flex-shrink:   0;
+    font-family:   var(--semantic-font-family);
+    font-size:     var(--semantic-font-text-style-size-s);
+    color:         var(--semantic-color-static-text-main-tertiary);
+  }
+
+  &__add {
+    flex-shrink: 0;
+    color:       var(--semantic-color-static-text-main-tertiary);
+    transition:  color 120ms ease;
+  }
+}
+
+// ── Step 1: layout picker ─────────────────────────────────────────────────────
+.bs-layout-pick {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-l);
+
+  &__sub {
+    margin:      0;
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-m);
+    color:       var(--semantic-color-static-text-main-secondary);
+  }
+
+  &__grid {
+    display:               grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap:                   var(--semantic-measurement-spacing-m);
+  }
+}
+
+.bs-layout-card {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     stretch;
+  gap:             var(--semantic-measurement-spacing-xs);
+  padding:         var(--semantic-measurement-spacing-m);
+  border:          1px solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-static-background-main-primary);
+  cursor:          pointer;
+  text-align:      left;
+  transition:      border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+
+  &:hover { border-color: var(--semantic-color-interactive-border-strong-default); }
+
+  &:focus-visible {
+    outline:        2px solid var(--semantic-color-interactive-border-strong-default);
+    outline-offset: 2px;
+  }
+
+  &--on {
+    border-color: var(--semantic-color-interactive-border-strong-default);
+    background:   var(--semantic-color-interactive-background-light-default);
+    box-shadow:   inset 0 0 0 1px var(--semantic-color-interactive-border-strong-default);
+  }
+
+  // The mini diagram reuses the real .bs-zones grid; zones are filled rectangles
+  &__diagram {
+    height:        72px;
+    padding:       var(--semantic-measurement-spacing-xs);
+    border-radius: var(--semantic-border-radius-xs);
+    background:    var(--semantic-color-static-background-main-secondary);
+    gap:           4px;
+
+    .bs-zone {
+      background:     var(--semantic-color-interactive-background-strong-default);
+      border-radius:  2px;
+      opacity:        0.85;
+      min-height:     0;
+    }
+  }
+
+  &__label {
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-m);
+    font-weight: var(--semantic-font-text-style-font-weight-semibold);
+    color:       var(--semantic-color-static-text-main-primary);
+  }
+
+  &__hint {
+    font-family: var(--semantic-font-family);
+    font-size:   var(--semantic-font-text-style-size-s);
+    color:       var(--semantic-color-static-text-main-tertiary);
+  }
+}
+
+// ── Keyframes ─────────────────────────────────────────────────────────────────
+@keyframes floatbar-rise {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// Slot insertion: fade + lift
+@keyframes slot-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// Drop-target placeholder: gentle pulse
+@keyframes placeholder-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+// Targeted "Pick a card": soft breathing ring
+@keyframes target-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px var(--semantic-color-interactive-border-strong-default); }
+  50%      { box-shadow: 0 0 0 3px var(--semantic-color-interactive-background-subtle-default); }
+}
+
+// loading → widget crossfade
+@keyframes widget-fade-in {
+  from { opacity: 0; transform: scale(0.99); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bs-floatbar,
+  .bs-configure-overlay,
+  .bs-slot,
+  .bs-slot--targeted { animation: none; }
+  .bs-loader { animation-duration: 1.5s; } // keep minimal spin for status feedback
+  .bs-loading__msg,
+  .drawer-tab,
+  .drawer-card,
+  .bs-slot--add { transition: none; }
+}
