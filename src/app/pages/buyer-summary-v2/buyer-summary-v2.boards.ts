@@ -4,6 +4,7 @@
 // 8 columns (1920 px): checked by the layout engine (holesOf).
 
 import { type BentoCard, type BentoKind, type EmphasisChoice, FORMAT_MAP, KINDS, EMPHASIS_MAP } from './buyer-summary-v2.data';
+import { normalize } from './buyer-summary-v2.status';
 
 export interface Board {
   id: string;
@@ -119,7 +120,7 @@ export interface StoredBoards {
 const validCard = (x: unknown): x is BentoCard => {
   const k = x as BentoCard;
   return !!k && typeof k.id === 'string' && k.kind in KINDS && k.format in FORMAT_MAP
-    && (k.emphasis === 'auto' || k.emphasis in EMPHASIS_MAP);
+    && (k.emphasis === 'auto' || k.emphasis === 'status' || k.emphasis === 'status-strong' || k.emphasis in EMPHASIS_MAP);
 };
 
 /** Saved boards, or null when nothing (or nothing readable) is stored. */
@@ -131,7 +132,7 @@ export function loadBoards(): StoredBoards | null {
     if (data?.v !== STORAGE_VERSION || !Array.isArray(data.boards)) return null;
     const boards = data.boards
       .filter(b => b && typeof b.id === 'string' && typeof b.name === 'string' && Array.isArray(b.cards))
-      .map(b => ({ ...b, template: b.template ?? null, cards: b.cards.filter(validCard) }));
+      .map(b => ({ ...b, template: b.template ?? null, cards: b.cards.filter(validCard).map(c => ({ ...c, emphasis: normalize(c.emphasis) })) }));
     // A template removed from the code is dropped; a new one is added
     for (const t of templateBoards()) {
       if (!boards.some(b => b.id === t.id)) boards.splice(TEMPLATES.findIndex(x => x.id === t.id), 0, t);

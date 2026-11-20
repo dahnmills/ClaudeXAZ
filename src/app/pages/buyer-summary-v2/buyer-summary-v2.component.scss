@@ -1729,3 +1729,31 @@ $dt-w: calc(var(--semantic-measurement-sizing-3xl) * 2 + var(--semantic-measurem
 
 // On a navy card the light skeleton is toned down
 .bento-cell--rev .bc-skel { opacity: 0.25; }
+
+// =============================================================
+// Computed status: icon colour on a card without background
+// (on a toned card the tone mixin sets it)
+// =============================================================
+
+.bc-emph { cursor: default; }
+.bc-emph--positive:not(.bc-emph--toned) ds-icon { color: var(--semantic-color-static-icon-main-functional-positive); }
+.bc-emph--warning:not(.bc-emph--toned)  ds-icon { color: var(--semantic-color-static-icon-main-functional-warning); }
+.bc-emph--negative:not(.bc-emph--toned) ds-icon { color: var(--semantic-color-static-icon-main-functional-negative); }
+
+// A brand highlight with a status: the status keeps its own colour
+.bento-cell--e-subtle .bc-emph--positive ds-icon { color: var(--semantic-color-static-icon-main-functional-positive); }
+.bento-cell--e-subtle .bc-emph--warning ds-icon  { color: var(--semantic-color-static-icon-main-functional-warning); }
+.bento-cell--e-subtle .bc-emph--negative ds-icon { color: var(--semantic-color-static-icon-main-functional-negative); }
+
+// Reason under "Auto" in the emphasis menu
+.bento-menu__note {
+  margin:      0;
+  padding:     0 var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-s) calc(var(--semantic-measurement-spacing-m) * 2 + var(--semantic-measurement-sizing-m));
+  max-width:   calc(var(--semantic-measurement-sizing-3xl) * 4);
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  color:       var(--semantic-color-static-text-main-secondary);
+  background:  var(--semantic-color-static-background-main-primary);
+}
+
+.bento-swatch--none { background: var(--semantic-color-static-background-main-primary); }

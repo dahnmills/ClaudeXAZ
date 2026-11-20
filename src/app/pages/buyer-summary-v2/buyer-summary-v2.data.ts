@@ -115,8 +115,10 @@ export const EMPHASES: EmphasisDef[] = [
 export const EMPHASIS_MAP: Record<Emphasis, EmphasisDef> =
   Object.fromEntries(EMPHASES.map(e => [e.id, e])) as Record<Emphasis, EmphasisDef>;
 
-/** What the analyst picked: a fixed emphasis, or 'auto' (business thresholds). */
-export type EmphasisChoice = Emphasis | 'auto';
+/** What the analyst picked: 'auto' (status from the business thresholds, see
+ *  buyer-summary-v2.status.ts), no background, the status always shown (pale or
+ *  strong), or a manual highlight (subtle, strong). */
+export type EmphasisChoice = 'auto' | 'none' | 'subtle' | 'strong' | 'status' | 'status-strong';
 
 export interface BentoCard {
   id: string;

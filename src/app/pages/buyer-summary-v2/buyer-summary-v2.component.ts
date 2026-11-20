@@ -36,6 +36,7 @@ import {
   SegmentedControlComponent,
   SkeletonItemComponent,
   FunctionalNoticeComponent,
+  TooltipDirective,
   TableRowComponent,
   CellComponent,
   CellHeaderComponent,
@@ -59,6 +60,11 @@ import {
   AS_OF, AS_OF_TIME, CARD_SOURCES, HAS_FIGURES, EXTERNAL_RATINGS, shortDate, type DetailTable,
 } from './buyer-summary-v2.data';
 import { type Placed, packCards, nearestFormat, stepFormat } from './bento-layout';
+import {
+  type Look, type Tone, type EmphasisOption, TONE_LABEL, MAX_AUTO_BACKGROUNDS,
+  autoBackgrounds, lookOf, normalize, emphasisOptions,
+} from './buyer-summary-v2.status';
+import { type IconName } from '../../shared/ui/icon/icon.component';
 import {
   type Board, type TemplateId, TEMPLATES, TEMPLATE_MAP,
   cloneCards, templateBoards, loadBoards, saveBoards, newId,
@@ -151,6 +157,7 @@ interface DragState {
     SegmentedControlComponent,
     SkeletonItemComponent,
     FunctionalNoticeComponent,
+    TooltipDirective,
     TableRowComponent,
     CellComponent,
     CellHeaderComponent,
@@ -772,10 +779,44 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.closeMenu();
     this.checkpoint();
     this.cards.update(arr => arr.map(c => (c.id === id ? { ...c, emphasis } : c)));
-    this.announce(`${this.titleOf(id)}: emphasis ${emphasis === 'auto' ? 'Auto' : EMPHASIS_MAP[emphasis].label}.`);
+    const kind = this.cards().find(c => c.id === id)?.kind;
+    this.announce(`${this.titleOf(id)}: ${kind ? this.emphasisLabel(kind, emphasis) : emphasis}.`);
   }
 
-  emphasisOf(e: EmphasisChoice) { return EMPHASIS_MAP[e === 'auto' ? 'none' : e]; }
+  // ── Emphasis: computed status (thresholds) + manual highlight ─────────────
+
+  readonly TONE_LABEL = TONE_LABEL;
+
+  /** Look of every card: the 2 most urgent automatic statuses get a background. */
+  looks = computed(() => {
+    const order = this.placed().map(p => p.card);
+    const bg = autoBackgrounds(order);
+    return new Map(this.cards().map(c => [c.id, lookOf(c, bg.has(c.id))]));
+  });
+
+  look(card: BentoCard): Look {
+    return this.looks().get(card.id) ?? lookOf(card, true);
+  }
+
+  statusIcon(tone: Tone): IconName {
+    return tone === 'positive' ? 'check-circle' : tone === 'warning' ? 'warning-triangle' : 'error-circle';
+  }
+
+  /** Reason of the status, in the tooltip and for screen readers. */
+  statusTip(card: BentoCard, em: Look): string {
+    if (!em.status) return '';
+    const how = normalize(card.emphasis) === 'auto' ? 'Automatic' : 'Shown on purpose';
+    const cap = em.capped ? ` No background: kept for the ${MAX_AUTO_BACKGROUNDS} most urgent cards of the board.` : '';
+    return `${how}: ${em.status.reason}. ${em.status.rule}.${cap}`;
+  }
+
+  emphasisMenu(kind: BentoKind): EmphasisOption[] {
+    return emphasisOptions(kind);
+  }
+
+  emphasisLabel(kind: BentoKind, e: EmphasisChoice): string {
+    return emphasisOptions(kind).find(o => o.value === normalize(e))?.label ?? e;
+  }
 
   duplicateCard(id: string): void {
     const arr = this.cards();
@@ -1137,10 +1178,15 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     return [...byReason].map(([r, f]) => `${f.join(', ')} (${r.charAt(0).toLowerCase() + r.slice(1)})`);
   });
 
-  emphasisOptions = computed<SelectOption[]>(() => [
-    { value: 'auto', label: 'Auto' },
-    ...EMPHASES.map(e => ({ value: e.id, label: e.label })),
-  ]);
+  emphasisOptions = computed<SelectOption[]>(() => {
+    const kind = this.galleryKind();
+    return kind ? emphasisOptions(kind).map(o => ({ value: o.value, label: o.label, disabled: o.disabled })) : [];
+  });
+
+  galleryEmphasisNote = computed(() => {
+    const kind = this.galleryKind();
+    return kind && this.galleryEmphasis() === 'auto' ? emphasisOptions(kind)[0].note ?? '' : '';
+  });
 
   setGalleryEmphasis(v: string): void {
     this.galleryEmphasis.set(v as EmphasisChoice);
@@ -1148,7 +1194,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
 
   /** Emphasis class actually drawn for a card. */
   emClass(card: BentoCard): Emphasis {
-    return card.emphasis === 'auto' ? 'none' : card.emphasis;
+    return this.look(card).cls;
   }
 
   slideIndex = computed(() => this.galleryFormats().findIndex(x => x.format.id === this.galleryFormat()));

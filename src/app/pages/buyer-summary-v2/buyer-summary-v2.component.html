@@ -102,7 +102,7 @@
         }
 
         @for (p of placed(); track p.card.id) {
-          @let em = emphasisOf(p.card.emphasis);
+          @let em = look(p.card);
           <section
             #cell
             class="bento-cell"
@@ -201,12 +201,15 @@
                         }
                       } @else {
                         <ds-flyout-menu-title label="Emphasis" />
-                        @for (e of EMPHASES; track e.id) {
-                          <ds-flyout-menu-item [label]="e.label" [selectable]="true"
-                            [selected]="p.card.emphasis === e.id"
-                            (clicked)="setEmphasis(p.card.id, e.id)">
-                            <span slot="icon" [class]="'bento-swatch bento-swatch--' + e.id" aria-hidden="true"></span>
+                        @for (e of emphasisMenu(p.card.kind); track e.value) {
+                          <ds-flyout-menu-item [label]="e.label" [selectable]="true" [disabled]="e.disabled"
+                            [selected]="p.card.emphasis === e.value"
+                            (clicked)="setEmphasis(p.card.id, e.value)">
+                            <span slot="icon" [class]="'bento-swatch bento-swatch--' + e.swatch" aria-hidden="true"></span>
                           </ds-flyout-menu-item>
+                          @if (e.note) {
+                            <p class="bento-menu__note">{{ e.note }}</p>
+                          }
                         }
                       }
                     </ds-flyout-menu>
@@ -396,7 +399,7 @@
               @for (k of [slideKey()]; track k) {
                 <div [class]="slideClass()">
                   <div [class]="'bento-cell bg-pv__cell bento-cell--e-' + emClass({ id: 'pv', kind: kind, format: galleryFormat(), emphasis: galleryEmphasis() })"
-                    [class.bento-cell--rev]="emphasisOf(galleryEmphasis()).reversed" aria-hidden="true">
+                    [class.bento-cell--rev]="look({ id: 'pv', kind: kind, format: galleryFormat(), emphasis: galleryEmphasis() }).reversed" aria-hidden="true">
                     <ng-container [ngTemplateOutlet]="cardTpl"
                       [ngTemplateOutletContext]="{ $implicit: { id: 'pv', kind: kind, format: galleryFormat(), emphasis: galleryEmphasis() }, pfx: 'pv-' }" />
                   </div>
@@ -440,6 +443,9 @@
 
           <ds-select label="Emphasis" [options]="emphasisOptions()" [value]="galleryEmphasis()"
             (selectionChange)="setGalleryEmphasis($event)" />
+          @if (galleryEmphasisNote()) {
+            <p class="bg-hint">{{ galleryEmphasisNote() }}</p>
+          }
           <p class="bg-hint">
             {{ replaceId() ? 'The card keeps its place on the board.' : targetHole() ? 'The card goes in the free space you picked.' : 'The card goes to the first free place that takes this format. You can also drag the preview onto the board.' }}
           </p>
@@ -481,7 +487,7 @@
 <!-- ═══ One card: header (question, status or unit) + body. Shared by the
      board and the gallery preview. ═══ -->
 <ng-template #cardTpl let-card let-pfx="pfx">
-  @let em = emphasisOf(card.emphasis);
+  @let em = look(card);
   <ds-card class="bento-card" [noPadding]="true" [loading]="pfx === 'bc-' && isLoading(card.id)">
     <div class="bc">
       <header class="bc-head">
@@ -499,16 +505,24 @@
           }
         </h3>
         <span class="bc-head__end">
-          @if (em.status) {
+          @if (em.status; as s) {
+            <!-- Computed status: icon + label, the reason in the tooltip -->
+            <span [class]="'bc-emph bc-emph--' + s.tone" [class.bc-emph--toned]="em.toned"
+              [dsTooltip]="statusTip(card, em)" dsTooltipPosition="bottom-right" [dsTooltipDelay]="300">
+              <ds-icon [name]="statusIcon(s.tone)" [size]="12" />
+              <span>{{ TONE_LABEL[s.tone] }}</span>
+              <span class="bento-sr">. {{ statusTip(card, em) }}</span>
+            </span>
+          } @else if (em.highlight) {
             <span class="bc-emph">
-              <ds-icon [name]="em.icon!" [size]="12" />
-              <span [class.w2]="card.emphasis === 'subtle' || card.emphasis === 'strong'">{{ em.status }}</span>
+              <ds-icon name="star-filled" [size]="12" />
+              <span class="w2">Highlighted</span>
             </span>
           } @else if (kindOf(card.kind).meta) {
             <span class="bc-meta">{{ kindOf(card.kind).meta }}</span>
           }
           @if (cardDate(card.kind); as d) {
-            <span class="bc-date" [attr.aria-label]="'Data of ' + d">{{ d }}</span>
+            <span class="bc-date" [class.w2]="!!em.status || em.highlight" [attr.aria-label]="'Data of ' + d">{{ d }}</span>
           }
         </span>
       </header>
