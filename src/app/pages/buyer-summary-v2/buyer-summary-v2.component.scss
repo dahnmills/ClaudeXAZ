@@ -9,6 +9,12 @@
 
 $gap: var(--semantic-measurement-spacing-m);
 
+// Validated 2026-11-20 (benchmark question 5): bento cards at radius M (8 px, existing
+// Semantic token) instead of the DS card radius S (4 px). Local to this page.
+$bento-radius: var(--semantic-border-radius-m);
+// Proposal: bar thickness for bullets and stacked bars = sizing XS (4 px) + XXS
+$bar-h: calc(var(--semantic-measurement-sizing-xs) + var(--semantic-measurement-sizing-xxs));
+
 // Content levels, measured on each card (container "card")
 // n columns (or rows) at the 172 px minimum unit: n × 172 + (n - 1) × 16
 $w2: 360px;   // 2 columns and more
@@ -94,7 +100,7 @@ $h4: 736px;   // 4 rows
 @for $i from 1 through 96 {
   .bento-cell--y#{$i} { grid-row-start: $i; }
 }
-@for $i from 1 through 4 {
+@for $i from 1 through 24 {
   .bento-cell--h#{$i} { grid-row-end: span $i; }
 }
 
@@ -110,8 +116,10 @@ $h4: 736px;   // 4 rows
 }
 
 .bento-card {
-  height:   100%;
-  overflow: hidden;
+  height:        100%;
+  overflow:      hidden;
+  border-radius: $bento-radius;
+  transition:    border-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 // Edit mode: the whole card is the grab area
@@ -138,7 +146,7 @@ $h4: 736px;   // 4 rows
 .bento-ghost {
   z-index:       0;
   border:        var(--semantic-border-size-m) dashed var(--semantic-color-static-border-main-tertiary);
-  border-radius: var(--semantic-border-radius-s);
+  border-radius: $bento-radius;
   background:    var(--semantic-color-static-background-main-alt-primary);
 }
 
@@ -524,6 +532,62 @@ $h4: 736px;   // 4 rows
   &:first-child { padding-left: 0; border-left: 0; }
 }
 
+// Bullet graph (Few): measure, comparative mark (previous period), on a track
+.bc-bullet {
+  position:      relative;
+  display:       block;
+  height:        $bar-h;
+  border-radius: var(--semantic-border-radius-round);
+  background:    var(--semantic-color-static-background-main-tertiary);
+}
+
+.bc-bullet__fill {
+  position:      absolute;
+  inset:         0 auto 0 0;
+  border-radius: inherit;
+  background:    var(--semantic-color-interactive-background-strong-default);
+}
+
+.bc-bullet__mark {
+  position:   absolute;
+  top:        calc(var(--semantic-measurement-spacing-xs) * -1);
+  bottom:     calc(var(--semantic-measurement-spacing-xs) * -1);
+  width:      var(--semantic-border-size-m);
+  background: var(--semantic-color-static-text-main-primary);
+}
+
+.bc-mark-key {
+  display:        inline-block;
+  width:          var(--semantic-border-size-m);
+  height:         var(--semantic-measurement-sizing-s);
+  vertical-align: middle;
+  background:     var(--semantic-color-static-text-main-primary);
+}
+
+// Stacked bar: share of a total, functional colours with labels next to it
+.bc-stackbar {
+  display:       flex;
+  gap:           var(--semantic-border-size-m);
+  height:        $bar-h;
+  overflow:      hidden;
+  border-radius: var(--semantic-border-radius-round);
+  background:    var(--semantic-color-static-background-main-tertiary);
+}
+
+.bc-stackbar__seg {
+  display: block;
+  &--positive { background: var(--semantic-color-static-background-functional-positive); }
+  &--warning  { background: var(--semantic-color-static-background-functional-warning); }
+  &--negative { background: var(--semantic-color-static-background-functional-negative); }
+}
+
+// Data-driven widths and positions, as classes (no inline style)
+@for $i from 0 through 100 {
+  .bc-w-#{$i} { width: percentage(calc($i / 100)); }
+  .bc-l-#{$i} { left:  percentage(calc($i / 100)); }
+}
+.bc-stackbar__seg[class*='bc-w-'] { flex: 0 0 auto; }
+
 // Properties panel inside cards: tabular values
 .bc ::ng-deep .ds-properties-panel__value { font-variant-numeric: tabular-nums; }
 
@@ -594,6 +658,10 @@ $h4: 736px;   // 4 rows
 
   // Charts: white line on marine (ds-chart has no reversed tone yet)
   ds-chart { --ds-chart-line: var(--semantic-color-static-text-main-reversed); }
+
+  .bc-bullet, .bc-stackbar { background: var(--semantic-color-static-text-main-alt-tertiary); }
+  .bc-bullet__fill { background: var(--semantic-color-static-text-main-reversed); }
+  .bc-bullet__mark, .bc-mark-key { background: var(--semantic-color-static-text-subtle-tertiary); }
 
   ::ng-deep {
     .ds-chart__axis-label { color: var(--semantic-color-static-text-subtle-tertiary); }

@@ -222,8 +222,11 @@
           <span class="bc-value">
             <span class="w2">1 548 000</span><span class="lt-w2">1.55 M</span>
           </span>
-          <ds-progress-bar [value]="31" size="m" />
-          <span class="bc-ctx">31 % of the granted limit</span>
+          <span class="bc-bullet" role="img" aria-label="31 % of the granted limit used, 26 % in May 24">
+            <span class="bc-bullet__fill bc-w-31"></span>
+            <span class="bc-bullet__mark bc-l-26"></span>
+          </span>
+          <span class="bc-ctx">31 % of limit, <span class="bc-mark-key"></span> 26 % in May 24</span>
         </div>
         <div class="bc-stack w2">
           <ds-properties-panel [sections]="exposureFacts" [columns]="1" variant="flat" layout="inline" density="compact" />
@@ -251,7 +254,10 @@
         <span class="bc-ctx">available of 5.00 M granted</span>
       </div>
       <div class="bc-stack">
-        <ds-progress-bar [value]="31" size="m" />
+        <span class="bc-bullet" role="img" aria-label="31 % used, 26 % in May 24">
+            <span class="bc-bullet__fill bc-w-31"></span>
+            <span class="bc-bullet__mark bc-l-26"></span>
+          </span>
         <span class="bc-ctx bc-num">31 % used, 1.55 M</span>
       </div>
       <div class="w2 h2">
@@ -267,6 +273,11 @@
       <div class="bc-cols">
         <div class="bc-stack">
           <span class="bc-value">94 %</span>
+          <span class="bc-stackbar" role="img" aria-label="94 % on time, 6 % 1 to 30 days late, 0 % more than 30 days late">
+            @for (b of paymentBands; track b.label) {
+              @if (b.value) { <span [class]="'bc-stackbar__seg bc-stackbar__seg--' + b.tone + ' bc-w-' + b.value"></span> }
+            }
+          </span>
           <span class="bc-ctx">paid on time, last 12 months</span>
           <span class="bc-delta bc-delta--good">
             <ds-icon name="arrow-up" [size]="12" />
@@ -549,16 +560,25 @@
           <span class="bc-label">Grade</span>
           <span class="bc-keyrow"><ds-grade type="automatic" [grade]="3" size="m" /></span>
           <span class="bc-delta bc-delta--good"><ds-icon name="arrow-up" [size]="12" />Up from A4</span>
+          <div class="bc-chart bc-chart--spark">
+            <ds-chart [data]="gradeHistory" [min]="1" [max]="10" [invertY]="true" [showGrid]="false" [showDots]="false" tone="positive" />
+          </div>
         </li>
         <li class="bc-tile w2">
           <span class="bc-label">Exposure</span>
           <span class="bc-value">1.55 M</span>
-          <ds-progress-bar [value]="31" size="s" />
-          <span class="bc-ctx">31 % of limit</span>
+          <div class="bc-chart bc-chart--spark">
+            <ds-chart [data]="exposureTrend" [showGrid]="false" [showDots]="false" tone="brand" />
+          </div>
+          <span class="bc-ctx">31 % of limit, +232 000</span>
         </li>
         <li class="bc-tile w3">
           <span class="bc-label">On time</span>
           <span class="bc-value">94 %</span>
+          <span class="bc-stackbar" aria-hidden="true">
+            <span class="bc-stackbar__seg bc-stackbar__seg--positive bc-w-94"></span>
+            <span class="bc-stackbar__seg bc-stackbar__seg--warning bc-w-6"></span>
+          </span>
           <span class="bc-delta bc-delta--good"><ds-icon name="arrow-up" [size]="12" />+2 pts</span>
         </li>
         <li class="bc-tile w4">
@@ -570,6 +590,9 @@
           <span class="bc-label">Score</span>
           <span class="bc-value">82<span class="bc-unit"> / 100</span></span>
           <span class="bc-delta"><ds-icon name="arrow-right" [size]="12" />Stable</span>
+          <div class="bc-chart bc-chart--spark">
+            <ds-chart [data]="scoreTrend" [min]="70" [max]="90" [showGrid]="false" [showDots]="false" tone="brand" />
+          </div>
         </li>
         <li class="bc-tile w6">
           <span class="bc-label">Latest cover</span>

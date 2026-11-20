@@ -34,6 +34,8 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       'The board follows its own width: 4 columns at 1024 px, 6 at 1280 and 1440, 8 at 1920, 12 at 2560, with square rows and no row limit',
       'Each card shows more as it grows: a 1 by 1 card gives the key figure and its context, larger formats add charts, tables and history',
       'Default board: grade and history, exposure, limit left, payment behaviour, overdues, financials over 3 years, jobs to do, news, score, risk figures, notes, company identity, recent decisions, exposure by policy, latest cover request and an at a glance strip',
+      'The board always ends on a clean edge: when a gap is left, a neighbouring card stretches to fill it and shows more of its content',
+      'Rounder cards, bullet bars that compare now with the previous period, a stacked bar for payment delays and sparklines in the at a glance strip',
       'Edit board: drag a card and the others move aside, then it settles in its new place',
       'Each card has a menu in edit mode: move before, after, to the start or the end, pick one of 14 formats, highlight it on a navy background',
       'Moves and format changes are announced to screen readers, and motion is reduced when the system asks for it',

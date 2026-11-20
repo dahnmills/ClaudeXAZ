@@ -99,8 +99,47 @@ export function packCards(cards: BentoCard[], cols: number): Placed[] {
       }
     }
   }
+  fillHoles(out, cols);
   // DOM in visual order: Tab and screen readers follow the eye
   return out.sort((a, b) => a.y - b.y || a.x - b.x);
+}
+
+/** Clean bottom edge: every free cell inside the board's bounding rectangle is
+ *  taken by stretching a neighbouring card (down first, then right, up, left).
+ *  The chosen format stays in the model; only the displayed span grows, and the
+ *  card's content follows through its container queries. */
+export function fillHoles(cards: Placed[], cols: number): void {
+  const rows = cards.reduce((m, p) => Math.max(m, p.y + p.h), 0);
+  const at = (x: number, y: number) =>
+    cards.find(p => x >= p.x && x < p.x + p.w && y >= p.y && y < p.y + p.h);
+  const rowFree = (x0: number, w: number, y: number) => {
+    if (y < 0 || y >= rows) return false;
+    for (let x = x0; x < x0 + w; x++) if (at(x, y)) return false;
+    return true;
+  };
+  const colFree = (x: number, y0: number, h: number) => {
+    if (x < 0 || x >= cols) return false;
+    for (let y = y0; y < y0 + h; y++) if (at(x, y)) return false;
+    return true;
+  };
+  let changed = true;
+  let guard = cols * rows * 4;
+  while (changed && guard-- > 0) {
+    changed = false;
+    for (let y = 0; y < rows && !changed; y++) {
+      for (let x = 0; x < cols && !changed; x++) {
+        if (at(x, y)) continue;
+        const above = at(x, y - 1);
+        if (above && above.y + above.h === y && rowFree(above.x, above.w, y)) { above.h++; changed = true; continue; }
+        const left = at(x - 1, y);
+        if (left && left.x + left.w === x && colFree(x, left.y, left.h)) { left.w++; changed = true; continue; }
+        const below = at(x, y + 1);
+        if (below && below.y === y + 1 && rowFree(below.x, below.w, y)) { below.y--; below.h++; changed = true; continue; }
+        const right = at(x + 1, y);
+        if (right && right.x === x + 1 && colFree(x, right.y, right.h)) { right.x--; right.w++; changed = true; continue; }
+      }
+    }
+  }
 }
 
 interface PressState { id: string; el: HTMLElement; x: number; y: number; }
