@@ -178,6 +178,8 @@ export const JOBS: JobItem[] = [
   { label: 'Annual review of the limit',          due: '02 Dec 2024', priority: 'Medium', status: 'warning' },
   { label: 'CLR',                                 due: '09 Dec 2024', priority: 'Low',    status: 'success' },
   { label: 'Ask for FY 2024 interim accounts',    due: '16 Dec 2024', priority: 'Low',    status: 'success' },
+  { label: 'Review policy 2590423690 at expiry',  due: '31 Dec 2024', priority: 'Medium', status: 'warning' },
+  { label: 'Check the BHV lease guarantee',       due: '06 Jan 2025', priority: 'Low',    status: 'success' },
 ];
 
 export interface NewsItem { date: string; headline: string; source: string; tone: string; status: BadgeStatus; }
@@ -374,7 +376,7 @@ export const CATALOG: CatalogEntry[] = [
   { kind: 'identity',        group: 'company',  line: 'SAS, real estate rental, founded 1987',        keywords: 'company identity legal form address group',    recommended: '2x1' },
   { kind: 'financials',      group: 'company',  line: 'Turnover 123 900 USD k, +4.6 %',               keywords: 'financials accounts turnover profit debt gearing balance', recommended: '2x3' },
   { kind: 'newsfeed',        group: 'company',  line: '10 articles, latest 11 Nov 2024',              keywords: 'news press newsfeed articles',                 recommended: '2x2' },
-  { kind: 'jobs',            group: 'work',     line: '6 open tasks, 2 high priority',                keywords: 'jobs tasks to do workflow',                    recommended: '1x3' },
+  { kind: 'jobs',            group: 'work',     line: '8 open tasks, 2 high priority',                keywords: 'jobs tasks to do workflow',                    recommended: '1x3' },
   { kind: 'decisions',       group: 'work',     line: '15 decisions, latest 11 Nov 2024',             keywords: 'decisions history cover grade',                recommended: '2x1' },
   { kind: 'notepad',         group: 'work',     line: '14 notes, latest 11 Nov 2024',                 keywords: 'notes notepad comments memo',                  recommended: '1x1' },
   { kind: 'glance',          group: 'summary',  line: 'Grade, exposure, payments, overdue, score, cover', keywords: 'glance summary overview kpi',             recommended: 'full', minW: 2, minReason: 'Too narrow for the key figures' },

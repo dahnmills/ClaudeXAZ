@@ -34,14 +34,25 @@
           <ds-icon name="move" [size]="16" />
           Drag a card to move it. Its toolbar changes the format and the emphasis.
         </p>
+        <!-- Edit bar (edit-flow benchmark 3.2): Add card, Undo, Reset layout, Cancel, Done -->
         <div class="bento-bar__actions">
           <ds-button type="secondary" (clicked)="openGallery()">
             <ds-icon slot="icon-left" name="plus" [size]="16" />
             Add card
           </ds-button>
+          <ds-button-icon type="secondary" tone="default" ariaLabel="Undo" [disabled]="!undoStack().length" (clicked)="undo()">
+            <ds-icon name="undo" [size]="16" />
+          </ds-button-icon>
+          <ds-button-icon type="secondary" tone="default" ariaLabel="Redo" [disabled]="!redoStack().length" (clicked)="redo()">
+            <ds-icon name="redo" [size]="16" />
+          </ds-button-icon>
           @if (canReset()) {
             <ds-button type="tertiary" (clicked)="resetBoard()">Reset layout</ds-button>
           }
+          <span class="bento-bar__count" aria-live="polite">
+            @if (changeCount()) { {{ changeCount() }} {{ changeCount() === 1 ? 'change' : 'changes' }} }
+          </span>
+          <ds-button type="secondary" (clicked)="cancelEditing()">Cancel</ds-button>
           <ds-button type="primary" (clicked)="stopEditing()">Done</ds-button>
         </div>
       } @else {
@@ -259,6 +270,13 @@
     }
   </ds-drawer>
 
+  <!-- Reversible actions: no confirmation, a snackbar with Undo -->
+  @if (snack(); as text) {
+    <ds-snackbar class="bento-snack" [text]="text">
+      <ds-link slot="action" tone="reversed" (click)="undoFromSnack($event)">Undo</ds-link>
+    </ds-snackbar>
+  }
+
   <!-- ═══ Card gallery (iOS widget gallery): non modal, the board stays visible ═══ -->
   <ds-drawer class="bento-gallery" [class.bento-gallery--dragging]="galleryDragging()"
     [title]="galleryView() === 'detail' && galleryKind() ? kindOf(galleryKind()!).short : (replaceId() ? 'Change card type' : 'Add a card')"
@@ -377,6 +395,13 @@
       contentHeight="500px" (closed)="closeDetails()">
       <ds-properties-panel [sections]="detailsSections" [columns]="2" variant="card" />
     </ds-modal>
+
+    <ds-confirm-dialog [open]="!!discardOpen()" tone="danger"
+      [title]="changeCount() > 1 ? 'Discard ' + changeCount() + ' changes?' : 'Discard your changes?'"
+      confirmLabel="Discard" cancelLabel="Keep editing"
+      (confirmed)="confirmDiscard()" (cancelled)="keepEditing()">
+      Your changes to “{{ currentBoard().name }}” won’t be saved. The board goes back to how it was.
+    </ds-confirm-dialog>
 
     <ds-confirm-dialog [open]="!!deleteTarget()" tone="danger"
       [title]="'Delete “' + (deleteTarget()?.name ?? '') + '”?'"

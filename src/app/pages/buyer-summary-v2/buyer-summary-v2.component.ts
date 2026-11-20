@@ -32,6 +32,7 @@ import {
   InlineEditComponent,
   InputSearchComponent,
   TagComponent,
+  SnackbarComponent,
   type SelectOption,
 } from '../../shared/ui';
 import { type BuyerCompany } from '../buyer-summary/buyer-summary.store';
@@ -81,10 +82,14 @@ const BOARD_NAME_MAX   = 40;   // characters (edit-flow benchmark 2.2)
 const DRAG_THRESHOLD   = 6;    // px before a press becomes a drag
 const DRAG_GRIP_PX     = 48;   // where a card from the gallery is held
 const FLASH_MS         = 700;  // fade of a card just added (benchmark 5.1)
+const SNACK_MS         = 8000; // time to undo a removal
 const MOVE_COOLDOWN_MS = 140;  // hysteresis between two reorders
 
 const sameOrder = (a: BentoCard[], b: BentoCard[]) =>
   a.length === b.length && a.every((c, i) => c === b[i]);
+const sameCards = (a: BentoCard[], b: BentoCard[]) =>
+  a.length === b.length && a.every((c, i) => c.id === b[i].id && c.kind === b[i].kind
+    && c.format === b[i].format && c.emphasis === b[i].emphasis);
 
 interface PressState { id: string; el: HTMLElement | null; x: number; y: number; add?: boolean; }
 interface DragState {
@@ -129,6 +134,7 @@ interface DragState {
     InlineEditComponent,
     InputSearchComponent,
     TagComponent,
+    SnackbarComponent,
     NgTemplateOutlet,
   ],
   templateUrl: './buyer-summary-v2.component.html',
@@ -407,19 +413,129 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
 
   // ── Edit mode ──────────────────────────────────────────────────────────────
 
+  /** Board as it was when edit mode started (Cancel goes back to it). */
+  private editOrigin = signal<BentoCard[]>([]);
+  discardOpen = signal<'cancel' | 'leave' | null>(null);
+  private leaveResolve: ((ok: boolean) => void) | null = null;
+
+  /** Changes since edit mode started (undo steps that still count). */
+  changeCount = computed(() => this.undoStack().length);
+  dirty = computed(() => this.editing() && !sameCards(this.cards(), this.editOrigin()));
+
   startEditing(): void {
+    this.editOrigin.set(this.cards());
+    this.undoStack.set([]);
+    this.redoStack.set([]);
     this.editing.set(true);
-    this.announce('Edit mode. Drag a card by its handle to move it. With the keyboard, focus the handle, press Space, then the arrow keys.');
+    this.announce('Edit mode. Drag a card to move it, or use its toolbar. Done saves, Cancel puts the board back.');
   }
 
+  /** Done: save the board and leave edit mode. */
   stopEditing(): void {
+    const changed = this.dirty();
+    this.exitEditing();
+    this.saveCurrentCards();
+    this.announce('Board saved.');
+    if (changed) this.toaster.show('Your board layout is saved', { tone: 'success', title: 'Board updated' });
+  }
+
+  /** Cancel: back to the board as it was, after a confirmation if work is lost. */
+  cancelEditing(): void {
+    if (this.dirty()) { this.discardOpen.set('cancel'); return; }
+    this.exitEditing();
+    this.announce('Edit mode closed, nothing changed.');
+  }
+
+  confirmDiscard(): void {
+    const reason = this.discardOpen();
+    this.discardOpen.set(null);
+    const origin = this.editOrigin();
+    this.exitEditing();
+    this.mutate(() => this.cards.set(origin));
+    this.announce('Changes discarded.');
+    if (reason === 'leave') this.settleLeave(true);
+  }
+
+  keepEditing(): void {
+    const reason = this.discardOpen();
+    this.discardOpen.set(null);
+    if (reason === 'leave') this.settleLeave(false);
+  }
+
+  private exitEditing(): void {
     this.cancelPress();
     this.closeMenu();
     this.keyGrab.set(null);
+    this.galleryOpen.set(false);
+    this.snack.set(null);
+    this.undoStack.set([]);
+    this.redoStack.set([]);
     this.editing.set(false);
-    this.saveCurrentCards();
-    this.announce('Board saved.');
-    this.toaster.show('Your board layout is saved', { tone: 'success', title: 'Board updated' });
+  }
+
+  /** Route guard: leaving the page in edit mode with changes asks first. */
+  canLeave(): boolean | Promise<boolean> {
+    if (!this.dirty()) return true;
+    this.discardOpen.set('leave');
+    return new Promise<boolean>(resolve => (this.leaveResolve = resolve));
+  }
+
+  private settleLeave(ok: boolean): void {
+    this.leaveResolve?.(ok);
+    this.leaveResolve = null;
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(ev: BeforeUnloadEvent): void {
+    if (this.dirty()) ev.preventDefault();
+  }
+
+  // ── Undo / redo (session stack, Ctrl+Z, Ctrl+Shift+Z) ─────────────────────
+
+  undo(): void {
+    const stack = this.undoStack();
+    if (!stack.length) return;
+    const prev = stack[stack.length - 1];
+    this.undoStack.set(stack.slice(0, -1));
+    this.redoStack.update(s => [...s, this.cards()]);
+    this.snack.set(null);
+    this.mutate(() => this.cards.set(prev));
+    this.announce('Undone.');
+  }
+
+  redo(): void {
+    const stack = this.redoStack();
+    if (!stack.length) return;
+    const next = stack[stack.length - 1];
+    this.redoStack.set(stack.slice(0, -1));
+    this.undoStack.update(s => [...s, this.cards()]);
+    this.mutate(() => this.cards.set(next));
+    this.announce('Redone.');
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onShortcut(ev: KeyboardEvent): void {
+    if (!this.editing() || !(ev.ctrlKey || ev.metaKey)) return;
+    const t = ev.target as HTMLElement | null;
+    if (t?.closest('input, textarea')) return;
+    const k = ev.key.toLowerCase();
+    if (k === 'z' && !ev.shiftKey) { ev.preventDefault(); this.undo(); }
+    else if ((k === 'z' && ev.shiftKey) || k === 'y') { ev.preventDefault(); this.redo(); }
+  }
+
+  // Reversible actions get a snackbar with Undo instead of a confirmation
+  snack = signal<string | null>(null);
+  private snackTimer: ReturnType<typeof setTimeout> | undefined;
+
+  private showSnack(text: string): void {
+    clearTimeout(this.snackTimer);
+    this.snack.set(text);
+    this.snackTimer = setTimeout(() => this.snack.set(null), SNACK_MS);
+  }
+
+  undoFromSnack(ev: Event): void {
+    ev.preventDefault();
+    this.undo();
   }
 
   /** Cards of the board's template (a copy), or null for a board started empty. */
@@ -434,7 +550,9 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.closeMenu();
     const cards = this.templateCards(this.currentBoard());
     if (!cards) return;
+    this.checkpoint();
     this.mutate(() => this.cards.set(cards));
+    this.showSnack('Layout reset to the template.');
     this.announce(`Board reset to the ${TEMPLATE_MAP[this.currentBoard().template!].name} template.`);
   }
 
@@ -618,14 +736,17 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
 
   setFormat(id: string, format: string): void {
     this.closeMenu();
+    if (this.cards().find(c => c.id === id)?.format === format) return;
+    this.checkpoint();
     this.mutate(() => this.cards.update(arr => arr.map(c => (c.id === id ? { ...c, format } : c))));
     this.announce(`${this.titleOf(id)} is now ${this.formatLabel(format)}.`);
   }
 
-  setEmphasis(id: string, emphasis: Emphasis): void {
+  setEmphasis(id: string, emphasis: EmphasisChoice): void {
     this.closeMenu();
+    this.checkpoint();
     this.cards.update(arr => arr.map(c => (c.id === id ? { ...c, emphasis } : c)));
-    this.announce(`${this.titleOf(id)}: emphasis ${EMPHASIS_MAP[emphasis].label}.`);
+    this.announce(`${this.titleOf(id)}: emphasis ${emphasis === 'auto' ? 'Auto' : EMPHASIS_MAP[emphasis].label}.`);
   }
 
   emphasisOf(e: EmphasisChoice) { return EMPHASIS_MAP[e === 'auto' ? 'none' : e]; }
@@ -635,14 +756,17 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     const i = arr.findIndex(c => c.id === id);
     if (i < 0) return;
     const copy: BentoCard = { ...arr[i], id: newId(arr[i].kind), emphasis: 'auto' };
+    this.checkpoint();
     this.mutate(() => this.cards.set([...arr.slice(0, i + 1), copy, ...arr.slice(i + 1)]));
     this.announce(`${this.titleOf(id)} duplicated.`);
   }
 
   removeCard(id: string): void {
     const name = this.titleOf(id);
+    this.checkpoint();
     this.mutate(() => this.cards.update(arr => arr.filter(c => c.id !== id)));
-    this.announce(`${name} removed. Reset layout brings it back.`);
+    this.showSnack(`${name} removed.`);
+    this.announce(`${name} removed. Undo brings it back.`);
   }
 
 
@@ -1033,8 +1157,10 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
       ev.preventDefault();
       if (grab?.id === id) {
         this.keyGrab.set(null);
+        if (sameOrder(grab.origin, this.cards())) this.dropCheckpoint();
         this.announce(`${this.titleOf(id)} dropped at position ${this.position(id)} of ${this.cards().length}.`);
       } else {
+        this.checkpoint();
         this.keyGrab.set({ id, origin: this.cards() });
         this.announce(`${this.titleOf(id)} picked up, position ${this.position(id)} of ${this.cards().length}. Use the arrow keys, then Space to drop.`);
       }
@@ -1044,6 +1170,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
       ev.preventDefault();
       ev.stopPropagation();
       this.keyGrab.set(null);
+      this.dropCheckpoint();
       this.mutate(() => this.cards.set(grab.origin));
       this.announce(`Move cancelled. ${this.titleOf(id)} is back at position ${this.position(id)}.`);
       this.focusHandle(id);

@@ -45,7 +45,9 @@ const PROTO_PAGES: Route[] = [
   { path: 'search-v2', component: SearchV2Component },
   { path: 'admin-data', component: AdminDataComponent },
   { path: 'buyer-summary/:id', component: BuyerSummaryComponent },
-  { path: 'buyer-summary-v2/:id', component: BuyerSummaryV2Component },
+  { path: 'buyer-summary-v2/:id', component: BuyerSummaryV2Component,
+    // Edit mode with changes: leaving the page asks first (Discard / Keep editing)
+    canDeactivate: [(c: BuyerSummaryV2Component) => c.canLeave()] },
   { path: 'tag-configuration', component: TagConfigurationComponent },
   { path: 'portfolio-management', component: PortfolioManagementComponent },
   { path: 'reject-management', loadComponent: () => import('./pages/reject-management/reject-management.component').then(m => m.RejectManagementComponent) },
