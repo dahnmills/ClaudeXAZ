@@ -23,6 +23,35 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'buyer-summary-v2-boards-gallery-2026-11-20',
+    date: '2026-11-20',
+    category: 'feature',
+    screens: ['buyer-summary-v2/137381425'],
+    title: 'Buyer Summary V2: several boards, a card gallery, resize, undo and automatic status',
+    description:
+      'Buyer Summary V2 gets back what V1 had, in Bento form: the three job boards and your own boards, a gallery to add any card with a real preview, corner resize, Done and Cancel with undo, a detail panel per card, loading and error states, and a status computed from business thresholds.',
+    changes: [
+      'Boards: Common, Credit Assessment and Credit Underwriting are rebuilt as Bento boards that end on a clean edge; pick one in the list next to Manage boards',
+      'Manage boards: open, duplicate, rename or delete your boards (after a confirmation), create one from a copy of the current board, a template or empty; templates can be edited and reset, not renamed or deleted',
+      'Your boards, their layout and the last board you opened are kept in this browser',
+      'Add card: a gallery on the right lists every card by business question, with search and an On board mark; each card shows a real preview with the buyer\'s data in the 14 formats, the recommended one first, and an emphasis choice',
+      'The card goes to the first free place, to a free space you pick on the board (Add a card here), or where you drop it when you drag the preview out of the gallery',
+      'Change card type from the card toolbar: the gallery replaces the card in place',
+      'Resize a card by its bottom right corner: it snaps to the 14 formats and the other cards move aside as you go; arrow keys on the handle do the same',
+      'Edit bar: Add card, Undo, Redo (Ctrl+Z, Ctrl+Shift+Z), Reset layout, the number of changes, Cancel and Done; Cancel and leaving the page ask before losing changes, Escape never leaves edit mode',
+      'Removing a card or resetting the layout asks nothing: a message offers Undo',
+      'Reading: the card title, or See figures and View data in the card menu, open a side panel with the card\'s data in tables, its source and date',
+      'Cards load with a skeleton at their final size, one after the other; a card that fails shows its error with Retry while the others stay usable; Claims shows a dated empty state',
+      'One date for the whole board ("Data as of"); a card shows its own date only when it differs',
+      'Automatic status: problem when a sanction hit is open, an overdue is older than 30 days, the limit review is past, more than 100 % of the limit is used or the latest request was refused; warning when any amount is overdue, the limit review is due within 30 days, more than 80 % of the limit or the cover is used, more than 10 % is paid late, a high-priority task is past due, the grade fell in the last 6 months, the score is under 65, the latest accounts show a pre-tax loss or a gearing above 2, or an agency rates below investment grade; on track when nothing is overdue',
+      'At most 2 automatic status backgrounds per board, the most urgent; the other cards keep the status icon and label, with the reason in a tooltip; never a full green background',
+      'Emphasis menu: Auto (default, with its reason), No background, status always shown (pale or strong), or a subtle or strong highlight, which stays a manual choice',
+      'New cards in the gallery: Claims and What do the agencies say?',
+      'Readability: 12 px only for dates, sources, axes and labels, 14 px for sentences and changes, tabular figures everywhere',
+      'Card toolbar: same look as V1, with design tokens only',
+    ],
+  },
+  {
     id: 'buyer-summary-v2-bento-2026-11-20',
     date: '2026-11-20',
     category: 'feature',

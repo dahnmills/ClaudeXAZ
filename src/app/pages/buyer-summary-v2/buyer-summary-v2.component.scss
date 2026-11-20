@@ -455,9 +455,9 @@ $h4: 736px;   // 4 rows
   &.bc-hp-0 { background: var(--semantic-color-static-background-main-tertiary); }
 }
 
-@for $i from 0 through 100 {
-  .bc-hp-#{$i} { height: #{$i * 1%}; }
-}
+// Overdue bars: empty or full (one late payment in the period)
+.bc-hp-0   { height: 0; }
+.bc-hp-100 { height: 100%; }
 
 .bc-axis {
   display:         flex;
