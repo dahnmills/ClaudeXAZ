@@ -330,3 +330,55 @@ export const STRETCH: Record<BentoKind, { v: boolean; h: boolean }> = {
   'claims':       { v: false, h: false },
   'external-rating': { v: false, h: false },
 };
+
+// ── Card gallery (edit-flow benchmark 1.3): groups by business question ─────
+
+export interface CatalogGroup { id: string; label: string; }
+export const CATALOG_GROUPS: CatalogGroup[] = [
+  { id: 'risk',     label: 'Is the buyer risky?' },
+  { id: 'exposure', label: 'How much are we exposed?' },
+  { id: 'payment',  label: 'Does the buyer pay?' },
+  { id: 'company',  label: 'Who is the company?' },
+  { id: 'work',     label: 'What is there to do?' },
+  { id: 'summary',  label: 'The whole picture' },
+];
+
+export interface CatalogEntry {
+  kind: BentoKind;
+  group: string;
+  /** One line of what the card holds, for this buyer. */
+  line: string;
+  /** Words an analyst may type (search). */
+  keywords: string;
+  /** Format preselected in the gallery. */
+  recommended: string;
+  /** Narrowest width that keeps the essential, with the reason shown. */
+  minW?: number;
+  minReason?: string;
+}
+
+export const CATALOG: CatalogEntry[] = [
+  { kind: 'grade',           group: 'risk',     line: 'A3, up from A4, with its history and reasons', keywords: 'grade rating risk history downgrade upgrade', recommended: '3x2' },
+  { kind: 'score',           group: 'risk',     line: '82 / 100, stable since May 24',                keywords: 'score scoring trend',                           recommended: '1x1' },
+  { kind: 'sanction',        group: 'risk',     line: '1 hit to clear, namesake suspected',           keywords: 'sanction screening compliance hit kyc',       recommended: '1x1' },
+  { kind: 'external-rating', group: 'risk',     line: 'Agency ratings next to our grade',             keywords: 'external rating agency moody standard poor fitch', recommended: '2x1' },
+  { kind: 'exposure',        group: 'exposure', line: '1 548 000 USD, 31 % of the limit',             keywords: 'exposure outstanding amount trend',            recommended: '3x1' },
+  { kind: 'limit',           group: 'exposure', line: '3 452 000 USD available of 5 000 000',         keywords: 'limit available granted used',                 recommended: '1x1' },
+  { kind: 'risk-figures',    group: 'exposure', line: '72 limits held on this buyer',                 keywords: 'risk figures limits market highest',           recommended: '1x1' },
+  { kind: 'policies',        group: 'exposure', line: '6 policies, top 2 carry 60 %',                 keywords: 'policy policies holder share concentration',   recommended: '4x2', minW: 2, minReason: 'Too narrow for the policy table' },
+  { kind: 'coverage',        group: 'exposure', line: 'Latest request approved, 2 000 000',           keywords: 'cover coverage request decision approved',     recommended: '2x2' },
+  { kind: 'limit-review',    group: 'exposure', line: 'Annual review due 02 Dec 2024',                keywords: 'limit review annual due',                      recommended: '1x1' },
+  { kind: 'payment',         group: 'payment',  line: '94 % paid on time over 12 months',             keywords: 'payment behaviour delay dso late on time',     recommended: '2x1' },
+  { kind: 'overdues',        group: 'payment',  line: 'No overdue open',                              keywords: 'overdue unpaid invoice late collection',       recommended: '1x2' },
+  { kind: 'claims',          group: 'payment',  line: 'No claim filed',                               keywords: 'claim claims loss indemnity',                  recommended: '1x1' },
+  { kind: 'identity',        group: 'company',  line: 'SAS, real estate rental, founded 1987',        keywords: 'company identity legal form address group',    recommended: '2x1' },
+  { kind: 'financials',      group: 'company',  line: 'Turnover 123 900 USD k, +4.6 %',               keywords: 'financials accounts turnover profit debt gearing balance', recommended: '2x3' },
+  { kind: 'newsfeed',        group: 'company',  line: '10 articles, latest 11 Nov 2024',              keywords: 'news press newsfeed articles',                 recommended: '2x2' },
+  { kind: 'jobs',            group: 'work',     line: '6 open tasks, 2 high priority',                keywords: 'jobs tasks to do workflow',                    recommended: '1x3' },
+  { kind: 'decisions',       group: 'work',     line: '15 decisions, latest 11 Nov 2024',             keywords: 'decisions history cover grade',                recommended: '2x1' },
+  { kind: 'notepad',         group: 'work',     line: '14 notes, latest 11 Nov 2024',                 keywords: 'notes notepad comments memo',                  recommended: '1x1' },
+  { kind: 'glance',          group: 'summary',  line: 'Grade, exposure, payments, overdue, score, cover', keywords: 'glance summary overview kpi',             recommended: 'full', minW: 2, minReason: 'Too narrow for the key figures' },
+];
+
+export const CATALOG_MAP: Record<BentoKind, CatalogEntry> =
+  Object.fromEntries(CATALOG.map(e => [e.kind, e])) as Record<BentoKind, CatalogEntry>;

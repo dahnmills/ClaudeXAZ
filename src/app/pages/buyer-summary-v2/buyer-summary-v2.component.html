@@ -35,6 +35,10 @@
           Drag a card to move it. Its toolbar changes the format and the emphasis.
         </p>
         <div class="bento-bar__actions">
+          <ds-button type="secondary" (clicked)="openGallery()">
+            <ds-icon slot="icon-left" name="plus" [size]="16" />
+            Add card
+          </ds-button>
           @if (canReset()) {
             <ds-button type="tertiary" (clicked)="resetBoard()">Reset layout</ds-button>
           }
@@ -72,12 +76,24 @@
           <div class="bento-ghost" [class]="'bento-ghost ' + cellClass(g)" aria-hidden="true"></div>
         }
 
+        <!-- Free spaces in edit mode: add a card exactly there -->
+        @for (h of holes(); track h.x + '-' + h.y) {
+          <div [class]="holeClass(h)">
+            <ds-button type="tertiary" (clicked)="openGallery(h)">
+              <ds-icon slot="icon-left" name="plus" [size]="16" />
+              Add a card here
+            </ds-button>
+            <span class="bento-hole__fits">Fits {{ h.w }} × {{ h.h }}</span>
+          </div>
+        }
+
         @for (p of placed(); track p.card.id) {
           @let em = emphasisOf(p.card.emphasis);
           <section
             #cell
             class="bento-cell"
-            [class]="'bento-cell ' + cellClass(p) + ' bento-cell--e-' + p.card.emphasis"
+            [class]="'bento-cell ' + cellClass(p) + ' bento-cell--e-' + emClass(p.card)"
+            [class.bento-cell--flash]="flashId() === p.card.id"
             [class.bento-cell--rev]="em.reversed"
             [class.bento-cell--lifted]="dragId() === p.card.id"
             [class.bento-cell--grabbed]="keyGrab()?.id === p.card.id"
@@ -86,28 +102,8 @@
             [attr.aria-labelledby]="'bc-' + p.card.id + '-title'"
             (pointerdown)="onCellPointerDown($event, p.card.id)"
           >
-            <ds-card class="bento-card" [noPadding]="true">
-              <div class="bc">
-                <header class="bc-head">
-                  <h3 class="bc-title" [id]="'bc-' + p.card.id + '-title'">
-                    <span class="lt-w2">{{ kindOf(p.card.kind).short }}</span>
-                    <span class="w2">{{ kindOf(p.card.kind).title }}</span>
-                  </h3>
-                  @if (em.status) {
-                    <span class="bc-emph">
-                      <ds-icon [name]="em.icon!" [size]="12" />
-                      <span [class.w2]="p.card.emphasis === 'subtle' || p.card.emphasis === 'strong'">{{ em.status }}</span>
-                    </span>
-                  } @else if (kindOf(p.card.kind).meta) {
-                    <span class="bc-meta">{{ kindOf(p.card.kind).meta }}</span>
-                  }
-                </header>
-
-                <ng-container
-                  [ngTemplateOutlet]="body"
-                  [ngTemplateOutletContext]="{ $implicit: p.card.kind, hl: em.reversed }" />
-              </div>
-            </ds-card>
+            <ng-container [ngTemplateOutlet]="cardTpl"
+              [ngTemplateOutletContext]="{ $implicit: p.card, pfx: 'bc-' }" />
 
             @if (editing()) {
               <!-- Floating toolbar: same markup and look as V1 (.bs-toolbar) -->
@@ -137,6 +133,9 @@
                   (keydown)="onHandleKey($event, p.card.id)">
                   <ds-icon name="move" [size]="16" />
                 </span>
+                <ds-button-icon type="plain" tone="default" ariaLabel="Change card type" (clicked)="changeCardType(p.card.id)">
+                  <ds-icon name="switch" [size]="16" />
+                </ds-button-icon>
                 <ds-button-icon type="plain" tone="default" ariaLabel="Duplicate card" (clicked)="duplicateCard(p.card.id)">
                   <ds-icon name="copy" [size]="16" />
                 </ds-button-icon>
@@ -250,6 +249,118 @@
     }
   </ds-drawer>
 
+  <!-- ═══ Card gallery (iOS widget gallery): non modal, the board stays visible ═══ -->
+  <ds-drawer class="bento-gallery" [class.bento-gallery--dragging]="galleryDragging()"
+    [title]="galleryView() === 'detail' && galleryKind() ? kindOf(galleryKind()!).short : (replaceId() ? 'Change card type' : 'Add a card')"
+    [open]="galleryOpen()" [showBack]="galleryView() === 'detail'" backLabel="All cards"
+    (back)="galleryView.set('list')" (closed)="closeGallery()">
+    @if (galleryView() === 'list') {
+      <div class="bg-pane">
+        @if (targetHole(); as h) {
+          <p class="bg-hint">Cards that fit the free {{ h.w }} × {{ h.h }} space.</p>
+        } @else if (replaceId()) {
+          <p class="bg-hint">Pick the new type. The card keeps its place.</p>
+        }
+        <ds-input-search placeholder="Search cards" [value]="gallerySearch()" (valueChange)="gallerySearch.set($event)" />
+        <p class="bento-sr" role="status">{{ galleryCount() }} cards</p>
+        @for (g of galleryGroups(); track g.group.id) {
+          <section class="bg-group" [attr.aria-labelledby]="'bg-g-' + g.group.id">
+            <h3 class="bg-group__title" [id]="'bg-g-' + g.group.id">{{ g.group.label }}</h3>
+            <ul class="bg-list">
+              @for (e of g.entries; track e.kind) {
+                <li class="bg-item">
+                  <span [class]="'bg-thumb bg-thumb--' + e.recommended" aria-hidden="true"></span>
+                  <div class="bg-item__text">
+                    <span class="bg-item__title">{{ kindOf(e.kind).title }}</span>
+                    <span class="bg-item__meta">
+                      {{ kindOf(e.kind).short }}
+                      @if (onBoardKinds().has(e.kind)) { <ds-badge label="On board" status="neutral" /> }
+                    </span>
+                    <span class="bg-item__line">{{ e.line }}</span>
+                  </div>
+                  <ds-button-icon type="secondary" tone="default"
+                    [ariaLabel]="'Formats of ' + kindOf(e.kind).short" (clicked)="showGalleryDetail(e.kind)">
+                    <ds-icon name="chevron-right" [size]="16" />
+                  </ds-button-icon>
+                </li>
+              }
+            </ul>
+          </section>
+        } @empty {
+          <p class="bg-hint">No card matches “{{ gallerySearch() }}”.</p>
+        }
+      </div>
+    } @else {
+      <div class="bg-pane">
+        @if (galleryKind(); as kind) {
+          <p class="bg-question">{{ kindOf(kind).title }}</p>
+          <!-- Carousel of real previews, the buyer's own data, one format at a time -->
+          <div class="bg-carousel" role="group" aria-roledescription="carousel"
+            [attr.aria-label]="'Formats of ' + kindOf(kind).short">
+            <div class="bg-stage" (pointerdown)="onGalleryPointerDown($event)"
+              [attr.aria-label]="'Preview, ' + formatLabel(galleryFormat()) + '. Drag it onto the board.'" role="img">
+              @for (k of [slideKey()]; track k) {
+                <div [class]="slideClass()">
+                  <div [class]="'bento-cell bg-pv__cell bento-cell--e-' + emClass({ id: 'pv', kind: kind, format: galleryFormat(), emphasis: galleryEmphasis() })"
+                    [class.bento-cell--rev]="emphasisOf(galleryEmphasis()).reversed" aria-hidden="true">
+                    <ng-container [ngTemplateOutlet]="cardTpl"
+                      [ngTemplateOutletContext]="{ $implicit: { id: 'pv', kind: kind, format: galleryFormat(), emphasis: galleryEmphasis() }, pfx: 'pv-' }" />
+                  </div>
+                </div>
+              }
+            </div>
+            <div class="bg-carousel__nav">
+              <ds-button-icon type="secondary" tone="default" ariaLabel="Previous format"
+                [disabled]="!canStep(-1)" (clicked)="stepGallery(-1)">
+                <ds-icon name="chevron-left" [size]="16" />
+              </ds-button-icon>
+              <p class="bg-caption" aria-live="polite">
+                <span class="bg-caption__format">{{ formatLabel(galleryFormat()) }}</span>
+                @if (isRecommended(galleryFormat())) { <ds-badge label="Recommended" status="info" /> }
+                <span>{{ slideIndex() + 1 }} of {{ galleryFormats().length }}</span>
+              </p>
+              <ds-button-icon type="secondary" tone="default" ariaLabel="Next format"
+                [disabled]="!canStep(1)" (clicked)="stepGallery(1)">
+                <ds-icon name="chevron-right" [size]="16" />
+              </ds-button-icon>
+            </div>
+          </div>
+
+          <p class="bm-label">Format</p>
+          <div class="bg-formats">
+            @for (grp of FORMAT_GROUPS; track grp) {
+              <div class="bg-formats__row" role="group" [attr.aria-label]="grp">
+                <span class="bg-formats__group">{{ grp }}</span>
+                @for (x of galleryFormats(); track x.format.id) {
+                  @if (x.format.group === grp) {
+                    <ds-tag type="select" [label]="x.format.label" [selected]="galleryFormat() === x.format.id"
+                      [disabled]="!!x.reason" (toggled)="pickGalleryFormat(x.format.id)" />
+                  }
+                }
+              </div>
+            }
+            @if (blockedReasons().length) {
+              <p class="bg-hint">Not offered: {{ blockedReasons().join('; ') }}.</p>
+            }
+          </div>
+
+          <ds-select label="Emphasis" [options]="emphasisOptions()" [value]="galleryEmphasis()"
+            (selectionChange)="setGalleryEmphasis($event)" />
+          <p class="bg-hint">
+            {{ replaceId() ? 'The card keeps its place on the board.' : targetHole() ? 'The card goes in the free space you picked.' : 'The card goes to the first free place that takes this format. You can also drag the preview onto the board.' }}
+          </p>
+        }
+      </div>
+    }
+    @if (galleryView() === 'detail') {
+      <div slot="footer" class="bm-footer">
+        <ds-button type="primary" (clicked)="addFromGallery()">
+          {{ replaceId() ? 'Change card type' : targetHole() ? 'Add here' : 'Add to board' }}
+        </ds-button>
+      </div>
+    }
+  </ds-drawer>
+
   <ng-container slot="modals">
     <ds-modal title="Full properties" size="medium" [open]="detailsModalOpen()"
       [footer]="false" [closeOnBackdrop]="true" [closeOnEscape]="true"
@@ -265,6 +376,34 @@
     </ds-confirm-dialog>
   </ng-container>
 </app-topbox-test-shell>
+
+<!-- ═══ One card: header (question, status or unit) + body. Shared by the
+     board and the gallery preview. ═══ -->
+<ng-template #cardTpl let-card let-pfx="pfx">
+  @let em = emphasisOf(card.emphasis);
+  <ds-card class="bento-card" [noPadding]="true">
+    <div class="bc">
+      <header class="bc-head">
+        <h3 class="bc-title" [id]="pfx + card.id + '-title'">
+          <span class="lt-w2">{{ kindOf(card.kind).short }}</span>
+          <span class="w2">{{ kindOf(card.kind).title }}</span>
+        </h3>
+        @if (em.status) {
+          <span class="bc-emph">
+            <ds-icon [name]="em.icon!" [size]="12" />
+            <span [class.w2]="card.emphasis === 'subtle' || card.emphasis === 'strong'">{{ em.status }}</span>
+          </span>
+        } @else if (kindOf(card.kind).meta) {
+          <span class="bc-meta">{{ kindOf(card.kind).meta }}</span>
+        }
+      </header>
+
+      <ng-container
+        [ngTemplateOutlet]="body"
+        [ngTemplateOutletContext]="{ $implicit: card.kind, hl: em.reversed }" />
+    </div>
+  </ds-card>
+</ng-template>
 
 <!-- ═══ Card bodies. Base styles = smallest level; container queries add layers:
      w2 / w3 / w4 / w5 / w6 show from 2 / 3 / 4 / 5 / 6 columns wide,

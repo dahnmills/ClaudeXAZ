@@ -30,6 +30,8 @@ import {
   RadioCardComponent,
   ConfirmDialogComponent,
   InlineEditComponent,
+  InputSearchComponent,
+  TagComponent,
   type SelectOption,
 } from '../../shared/ui';
 import { type BuyerCompany } from '../buyer-summary/buyer-summary.store';
@@ -46,6 +48,7 @@ import {
   PAYMENT_BANDS, FIN_YEARS, FINANCIALS, TURNOVER_TREND, TURNOVER_YEARS, JOBS, NEWS,
   NOTES, IDENTITY, DECISIONS, POLICIES, COVER_HISTORY,
   OVERDUE_PERIODS, OVERDUE_EVENTS, PAYMENT_MONTHS, POLICY_MOVES,
+  CATALOG, CATALOG_GROUPS, CATALOG_MAP,
 } from './buyer-summary-v2.data';
 import { type Placed, packCards } from './bento-layout';
 import {
@@ -76,9 +79,14 @@ const LAND_MS          = 280;
 const LAND_EASE        = 'cubic-bezier(0.05, 0.7, 0.1, 1)';
 const BOARD_NAME_MAX   = 40;   // characters (edit-flow benchmark 2.2)
 const DRAG_THRESHOLD   = 6;    // px before a press becomes a drag
+const DRAG_GRIP_PX     = 48;   // where a card from the gallery is held
+const FLASH_MS         = 700;  // fade of a card just added (benchmark 5.1)
 const MOVE_COOLDOWN_MS = 140;  // hysteresis between two reorders
 
-interface PressState { id: string; el: HTMLElement; x: number; y: number; }
+const sameOrder = (a: BentoCard[], b: BentoCard[]) =>
+  a.length === b.length && a.every((c, i) => c === b[i]);
+
+interface PressState { id: string; el: HTMLElement | null; x: number; y: number; add?: boolean; }
 interface DragState {
   id: string;
   el: HTMLElement;
@@ -86,6 +94,7 @@ interface DragState {
   lastX: number; lastY: number;
   origin: BentoCard[];             // order before the drag (Escape restores it)
   lastMove: number;
+  fromGallery: boolean;            // a new card dragged out of the gallery
 }
 
 @Component({
@@ -118,6 +127,8 @@ interface DragState {
     RadioCardComponent,
     ConfirmDialogComponent,
     InlineEditComponent,
+    InputSearchComponent,
+    TagComponent,
     NgTemplateOutlet,
   ],
   templateUrl: './buyer-summary-v2.component.html',
@@ -129,6 +140,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   private viewed   = inject(ViewedBuyersStore);
   private toaster  = inject(ToasterService);
   private injector = inject(Injector);
+  private host     = inject(ElementRef);
 
   company  = this.store.current;
   routeId  = signal<string>('');
@@ -328,8 +340,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   }
 
   private fitLists(): void {
-    const grid = this.gridRef()?.nativeElement;
-    if (!grid) return;
+    const grid = this.host.nativeElement as HTMLElement;
     for (const fit of Array.from(grid.querySelectorAll<HTMLElement>('.bc-fit'))) {
       const items = Array.from(fit.querySelectorAll<HTMLElement>('.bc-fit__item'));
       const more = fit.querySelector<HTMLElement>('.bc-fit__more');
@@ -363,7 +374,8 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   // ── Template helpers ───────────────────────────────────────────────────────
 
   cellClass(p: Placed): string {
-    return `bento-cell--x${p.x + 1} bento-cell--y${p.y + 1} bento-cell--w${p.w} bento-cell--h${p.h}`;
+    const edge = p.w >= 2 ? '' : p.x === 0 ? ' bento-cell--start' : p.x + p.w === this.cols() ? ' bento-cell--end' : '';
+    return `bento-cell--x${p.x + 1} bento-cell--y${p.y + 1} bento-cell--w${p.w} bento-cell--h${p.h}${edge}`;
   }
 
   gridClass(): string {
@@ -630,6 +642,314 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   }
 
 
+  // ── Resize by the corner handle (point 3) ────────────────────────────────
+  resizeId = signal<string | null>(null);
+  private resize: { id: string } | null = null;
+  private resizeMove(_ev: PointerEvent): void {}
+  private resizeEnd(): void {}
+
+  // ── Card detail panel (point 5) and loading states (point 6) ──────────────
+  detailOpen = signal<boolean>(false);
+  private markLoading(_id: string): void {}
+
+  // ── Undo steps (one per action or gesture, edit mode only) ─────────────────
+
+  undoStack = signal<BentoCard[][]>([]);
+  redoStack = signal<BentoCard[][]>([]);
+
+  /** Remember the board before an action (call once per action). */
+  private checkpoint(): void {
+    if (!this.editing()) return;
+    this.undoStack.update(s => [...s, this.cards()]);
+    this.redoStack.set([]);
+  }
+
+  /** The action did nothing in the end: forget its step. */
+  private dropCheckpoint(): void {
+    this.undoStack.update(s => s.slice(0, -1));
+  }
+
+  // ── Card gallery (iOS widget gallery): list, detail, add ──────────────────
+
+  readonly CATALOG_GROUPS = CATALOG_GROUPS;
+  galleryOpen   = signal<boolean>(false);
+  galleryView   = signal<'list' | 'detail'>('list');
+  gallerySearch = signal<string>('');
+  galleryKind   = signal<BentoKind | null>(null);
+  galleryFormat = signal<string>('1x1');
+  galleryEmphasis = signal<EmphasisChoice>('auto');
+  /** Change card type: the card whose kind is replaced. */
+  replaceId     = signal<string | null>(null);
+  /** "Add a card here": the hole the card goes to. */
+  targetHole    = signal<{ x: number; y: number; w: number; h: number } | null>(null);
+  galleryDragging = signal<boolean>(false);
+  /** Last card added: its background fades out (700 ms). */
+  flashId       = signal<string | null>(null);
+  private slideDir = signal<'next' | 'prev'>('next');
+  slideKey = signal<number>(0);
+  private pendingAdd: { x: number; y: number; dropped?: boolean } | null = null;
+  private galleryReturnFocus: HTMLElement | null = null;
+
+  onBoardKinds = computed(() => new Set(this.cards().map(c => c.kind)));
+
+  galleryGroups = computed(() => {
+    const q = this.gallerySearch().trim().toLowerCase();
+    const hole = this.targetHole();
+    return CATALOG_GROUPS.map(g => ({
+      group: g,
+      entries: CATALOG.filter(e => e.group === g.id).filter(e => {
+        if (hole && (e.minW ?? 1) > hole.w) return false;
+        if (!q) return true;
+        const k = KINDS[e.kind];
+        return `${k.title} ${k.short} ${e.keywords} ${e.line} ${g.label}`.toLowerCase().includes(q);
+      }),
+    })).filter(g => g.entries.length);
+  });
+
+  galleryCount = computed(() => this.galleryGroups().reduce((n, g) => n + g.entries.length, 0));
+
+  /** Formats of the carousel, in the four groups' order. */
+  galleryFormats = computed(() => FORMATS.map(f => ({ format: f, reason: this.formatBlock(f) })));
+
+  /** Why a format can't be picked in the gallery ('' = allowed). */
+  private formatBlock(f: BentoFormat): string {
+    const kind = this.galleryKind();
+    const cols = this.cols();
+    const w = f.w === 'full' ? cols : f.w;
+    if (w > cols) return `The board has ${cols} columns`;
+    const hole = this.targetHole();
+    if (hole && (w > hole.w || f.h > hole.h)) return `Does not fit the ${hole.w} × ${hole.h} space`;
+    const e = kind ? CATALOG_MAP[kind] : null;
+    if (e?.minW && w < e.minW) return e.minReason ?? 'Too narrow';
+    return '';
+  }
+
+  blockedReasons = computed(() => {
+    const byReason = new Map<string, string[]>();
+    for (const x of this.galleryFormats()) {
+      if (!x.reason) continue;
+      byReason.set(x.reason, [...(byReason.get(x.reason) ?? []), x.format.label]);
+    }
+    return [...byReason].map(([r, f]) => `${f.join(', ')} (${r.charAt(0).toLowerCase() + r.slice(1)})`);
+  });
+
+  emphasisOptions = computed<SelectOption[]>(() => [
+    { value: 'auto', label: 'Auto' },
+    ...EMPHASES.map(e => ({ value: e.id, label: e.label })),
+  ]);
+
+  setGalleryEmphasis(v: string): void {
+    this.galleryEmphasis.set(v as EmphasisChoice);
+  }
+
+  /** Emphasis class actually drawn for a card. */
+  emClass(card: BentoCard): Emphasis {
+    return card.emphasis === 'auto' ? 'none' : card.emphasis;
+  }
+
+  slideIndex = computed(() => this.galleryFormats().findIndex(x => x.format.id === this.galleryFormat()));
+
+  openGallery(hole: { x: number; y: number; w: number; h: number } | null = null, replaceId: string | null = null): void {
+    this.galleryReturnFocus = document.activeElement as HTMLElement | null;
+    this.closeMenu();
+    this.drawerOpen.set(false);
+    this.detailOpen.set(false);
+    if (!this.editing()) this.startEditing();
+    this.targetHole.set(hole);
+    this.replaceId.set(replaceId);
+    this.gallerySearch.set('');
+    this.galleryView.set('list');
+    this.galleryOpen.set(true);
+  }
+
+  closeGallery(): void {
+    this.galleryOpen.set(false);
+    this.targetHole.set(null);
+    this.replaceId.set(null);
+    const back = this.galleryReturnFocus;
+    this.galleryReturnFocus = null;
+    if (back?.isConnected) afterNextRender(() => back.focus(), { injector: this.injector });
+  }
+
+  showGalleryDetail(kind: BentoKind): void {
+    this.galleryKind.set(kind);
+    const rec = CATALOG_MAP[kind].recommended;
+    const replaced = this.cards().find(c => c.id === this.replaceId());
+    const wanted = replaced?.format ?? rec;
+    const ok = (id: string) => !this.formatBlock(FORMAT_MAP[id]);
+    const first = this.galleryFormats().find(x => !x.reason)?.format.id ?? '1x1';
+    this.galleryFormat.set(ok(wanted) ? wanted : ok(rec) ? rec : first);
+    this.galleryEmphasis.set(replaced?.emphasis ?? 'auto');
+    this.galleryView.set('detail');
+    this.slideKey.update(k => k + 1);
+    this.scheduleFit();
+  }
+
+  isRecommended(format: string): boolean {
+    const kind = this.galleryKind();
+    return !!kind && CATALOG_MAP[kind].recommended === format;
+  }
+
+  pickGalleryFormat(id: string): void {
+    const from = this.slideIndex();
+    const to = this.galleryFormats().findIndex(x => x.format.id === id);
+    if (to < 0 || this.galleryFormats()[to].reason) return;
+    this.slideDir.set(to < from ? 'prev' : 'next');
+    this.galleryFormat.set(id);
+    this.slideKey.update(k => k + 1);
+    this.scheduleFit();
+  }
+
+  /** Carousel: previous / next allowed format. */
+  stepGallery(dir: 1 | -1): void {
+    const list = this.galleryFormats();
+    for (let i = this.slideIndex() + dir; i >= 0 && i < list.length; i += dir) {
+      if (!list[i].reason) { this.pickGalleryFormat(list[i].format.id); return; }
+    }
+  }
+
+  canStep(dir: 1 | -1): boolean {
+    const list = this.galleryFormats();
+    for (let i = this.slideIndex() + dir; i >= 0 && i < list.length; i += dir) if (!list[i].reason) return true;
+    return false;
+  }
+
+  slideClass(): string {
+    return `bg-slide bg-slide--${this.slideDir()} bg-pv--${this.galleryFormat()}`;
+  }
+
+  private galleryCard(): BentoCard {
+    const kind = this.galleryKind()!;
+    return { id: newId(kind), kind, format: this.galleryFormat(), emphasis: this.galleryEmphasis() };
+  }
+
+  /** Where the new card goes: in the hole asked for, or the first free slot
+   *  that takes its format (end of the list = first free slot, reading order). */
+  private insertIndex(card: BentoCard): number {
+    const cards = this.cards();
+    const hole = this.targetHole();
+    if (!hole) return cards.length;
+    const cols = this.cols();
+    let best = cards.length;
+    let bestDist = Infinity;
+    for (let i = 0; i <= cards.length; i++) {
+      const order = [...cards.slice(0, i), card, ...cards.slice(i)];
+      const p = packCards(order, cols, false).find(q => q.card.id === card.id)!;
+      const d = Math.abs(p.x - hole.x) + Math.abs(p.y - hole.y);
+      if (d < bestDist) { best = i; bestDist = d; }
+      if (d === 0) break;
+    }
+    return best;
+  }
+
+  addFromGallery(): void {
+    if (!this.galleryKind()) return;
+    const replaceId = this.replaceId();
+    this.checkpoint();
+    if (replaceId) {
+      const kind = this.galleryKind()!;
+      const name = this.titleOf(replaceId);
+      this.mutate(() => this.cards.update(arr => arr.map(c => (c.id === replaceId
+        ? { ...c, kind, format: this.galleryFormat(), emphasis: this.galleryEmphasis() } : c))));
+      this.closeGallery();
+      this.announce(`${name} changed to ${KINDS[kind].short}.`);
+      this.afterAdd(replaceId, false);
+      return;
+    }
+    const card = this.galleryCard();
+    const i = this.insertIndex(card);
+    this.mutate(() => this.cards.update(arr => [...arr.slice(0, i), card, ...arr.slice(i)]));
+    this.targetHole.set(null);
+    this.afterAdd(card.id);
+  }
+
+  /** After a card lands: back to the list, scroll to it, fade, announce. */
+  private afterAdd(id: string, toList = true): void {
+    if (toList) this.galleryView.set('list');
+    this.flashId.set(id);
+    setTimeout(() => { if (this.flashId() === id) this.flashId.set(null); }, FLASH_MS);
+    this.markLoading(id);
+    afterNextRender(() => {
+      const el = this.cellEl(id);
+      el?.scrollIntoView({ block: 'nearest', behavior: this.reducedMotion ? 'auto' : 'smooth' });
+      const p = this.placed().find(q => q.card.id === id);
+      if (p) this.announce(`${this.titleOf(id)} added, position ${this.position(id)}, row ${p.y + 1}.`);
+    }, { injector: this.injector });
+  }
+
+  /** Change card type (V1 "Change card type"): the gallery replaces the kind. */
+  changeCardType(id: string): void {
+    this.openGallery(null, id);
+  }
+
+  // Drag a card out of the gallery onto the board (always doubled by the button)
+  onGalleryPointerDown(ev: PointerEvent): void {
+    if (ev.button !== 0 || !this.galleryKind()) return;
+    ev.preventDefault();
+    this.press = { id: '', el: null, x: ev.clientX, y: ev.clientY, add: true };
+  }
+
+  private startGalleryDrag(ev: PointerEvent): void {
+    const card = this.galleryCard();
+    const origin = this.cards();
+    this.press = null;
+    this.pendingAdd = { x: ev.clientX, y: ev.clientY };
+    this.galleryDragging.set(true);
+    this.checkpoint();
+    this.mutate(() => this.cards.set([...origin, card]), card.id, () => {
+      const pending = this.pendingAdd;
+      this.pendingAdd = null;
+      const el = this.cellEl(card.id);
+      if (!el || !pending) { this.galleryDragging.set(false); return; }
+      const r = el.getBoundingClientRect();
+      this.drag = {
+        id: card.id, el,
+        offX: Math.min(r.width / 2, DRAG_GRIP_PX), offY: DRAG_GRIP_PX / 2,
+        lastX: pending.x, lastY: pending.y,
+        origin, lastMove: 0, fromGallery: true,
+      };
+      this.dragId.set(card.id);
+      this.announce(`${KINDS[card.kind].short} picked up from the gallery. Drop it on the board.`);
+      this.followPointer();
+      this.hitTest(pending.x, pending.y);
+      if (pending.dropped) this.onPointerUp(new PointerEvent('pointerup', { clientX: pending.x, clientY: pending.y }));
+    });
+  }
+
+  private overGallery(x: number, y: number): boolean {
+    const panel = document.querySelector('.bento-gallery .ds-drawer__panel');
+    if (!panel) return false;
+    const r = panel.getBoundingClientRect();
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  }
+
+  /** Free cells in edit mode, merged into rectangles ("Add a card here"). */
+  holes = computed(() => {
+    if (!this.editing() || this.dragId() !== null || this.resizeId() !== null) return [];
+    const placed = this.placed();
+    const cols = this.cols();
+    const rows = this.rowCount();
+    const taken = Array.from({ length: rows }, () => Array<boolean>(cols).fill(false));
+    for (const p of placed) for (let y = p.y; y < p.y + p.h; y++) for (let x = p.x; x < p.x + p.w; x++) taken[y][x] = true;
+    const out: { x: number; y: number; w: number; h: number }[] = [];
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (taken[y][x]) continue;
+        let w = 1;
+        while (x + w < cols && !taken[y][x + w]) w++;
+        let h = 1;
+        while (y + h < rows && taken[y + h].slice(x, x + w).every(t => !t)) h++;
+        for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) taken[yy][xx] = true;
+        out.push({ x, y, w, h });
+      }
+    }
+    return out;
+  });
+
+  holeClass(h: { x: number; y: number; w: number; h: number }): string {
+    return `bento-hole bento-cell--x${h.x + 1} bento-cell--y${h.y + 1} bento-cell--w${h.w} bento-cell--h${h.h}`;
+  }
+
   // ── Keyboard move on the handle (no extra UI) ──────────────────────────────
   // Space or Enter picks the card up, arrows move it one place in the reading
   // order, Space or Enter drops it, Escape puts it back.
@@ -749,18 +1069,23 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
 
   @HostListener('document:pointermove', ['$event'])
   onPointerMove(ev: PointerEvent): void {
+    if (this.resize) { ev.preventDefault(); this.resizeMove(ev); return; }
+    // A card from the gallery is being inserted: wait for its cell
+    if (this.pendingAdd) { this.pendingAdd.x = ev.clientX; this.pendingAdd.y = ev.clientY; return; }
     const p = this.press;
-    if (!p) return;
     if (!this.drag) {
+      if (!p) return;
       if (Math.hypot(ev.clientX - p.x, ev.clientY - p.y) < DRAG_THRESHOLD) return;
-      const rect = p.el.getBoundingClientRect();
+      if (p.add) { this.startGalleryDrag(ev); return; }
+      const rect = p.el!.getBoundingClientRect();
       this.drag = {
-        id: p.id, el: p.el,
+        id: p.id, el: p.el!,
         offX: p.x - rect.left, offY: p.y - rect.top,
         lastX: ev.clientX, lastY: ev.clientY,
-        origin: this.cards(), lastMove: 0,
+        origin: this.cards(), lastMove: 0, fromGallery: false,
       };
       this.dragId.set(p.id);
+      this.checkpoint();
       this.announce(`${this.titleOf(p.id)} picked up, position ${this.position(p.id)} of ${this.cards().length}.`);
     }
     ev.preventDefault();
@@ -771,16 +1096,24 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.hitTest(ev.clientX, ev.clientY);
   }
 
-  @HostListener('document:pointerup')
-  @HostListener('document:pointercancel')
-  onPointerUp(): void {
+  @HostListener('document:pointerup', ['$event'])
+  @HostListener('document:pointercancel', ['$event'])
+  onPointerUp(ev?: PointerEvent): void {
+    if (this.resize) { this.resizeEnd(); return; }
+    if (this.pendingAdd) { this.pendingAdd.dropped = true; return; }
     const d = this.drag;
     this.press = null;
     if (!d) return;
+    // Dropped back on the gallery: the card is not added
+    if (d.fromGallery && ev && this.overGallery(ev.clientX, ev.clientY)) {
+      this.cancelDrag();
+      return;
+    }
     this.drag = null;
     const from = d.el.style.transform;
     d.el.style.transform = '';
     this.dragId.set(null);
+    this.galleryDragging.set(false);
     if (!this.reducedMotion && from) {
       // Land on the slot, with a slight settle
       d.el.animate(
@@ -792,6 +1125,12 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
         { duration: LAND_MS, easing: LAND_EASE },
       );
     }
+    if (d.fromGallery) {
+      this.afterAdd(d.id);
+      return;
+    }
+    // No real move: no undo step
+    if (sameOrder(d.origin, this.cards())) this.dropCheckpoint();
     this.announce(`${this.titleOf(d.id)} dropped at position ${this.position(d.id)} of ${this.cards().length}.`);
   }
 
@@ -807,8 +1146,11 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.press = null;
     d.el.style.transform = '';
     this.dragId.set(null);
+    this.galleryDragging.set(false);
+    this.dropCheckpoint();
+    const name = this.titleOf(d.id);
     this.mutate(() => this.cards.set(d.origin));
-    this.announce(`Move cancelled. ${this.titleOf(d.id)} is back at position ${this.position(d.id)}.`);
+    this.announce(d.fromGallery ? `${name} not added.` : `Move cancelled. ${name} is back at position ${this.position(d.id)}.`);
   }
 
   /** The lifted card follows the pointer, relative to its current slot. */
