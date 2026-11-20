@@ -71,6 +71,7 @@
         [class]="'bento ' + gridClass()"
         [class.bento--editing]="editing()"
         [class.bento--dragging]="dragId() !== null"
+        [class.bento--resizing]="resizeId() !== null"
       >
         @if (ghost(); as g) {
           <div class="bento-ghost" [class]="'bento-ghost ' + cellClass(g)" aria-hidden="true"></div>
@@ -106,6 +107,15 @@
               [ngTemplateOutletContext]="{ $implicit: p.card, pfx: 'bc-' }" />
 
             @if (editing()) {
+              <!-- Corner handle: snaps to the 14 formats; arrows with the keyboard -->
+              <span class="bento-resize" role="button" tabindex="0"
+                [attr.aria-label]="'Resize ' + kindOf(p.card.kind).short + ', ' + formatLabel(p.card.format) + '. Arrow keys: wider, narrower, taller, shorter.'"
+                (pointerdown)="onResizeDown($event, p.card.id)" (keydown)="onResizeKey($event, p.card.id)">
+                <span class="bento-resize__grip" aria-hidden="true"></span>
+              </span>
+              @if (resizeId() === p.card.id) {
+                <span class="bento-resize__label" aria-hidden="true">{{ formatLabel(p.card.format) }}</span>
+              }
               <!-- Floating toolbar: same markup and look as V1 (.bs-toolbar) -->
               <div class="bs-toolbar" (click)="$event.stopPropagation()" (pointerdown)="$event.stopPropagation()">
                 <div class="bs-toolbar__sizes" role="group" aria-label="Card size">

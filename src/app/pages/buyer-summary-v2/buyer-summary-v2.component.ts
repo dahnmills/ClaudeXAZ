@@ -50,7 +50,7 @@ import {
   OVERDUE_PERIODS, OVERDUE_EVENTS, PAYMENT_MONTHS, POLICY_MOVES,
   CATALOG, CATALOG_GROUPS, CATALOG_MAP,
 } from './buyer-summary-v2.data';
-import { type Placed, packCards } from './bento-layout';
+import { type Placed, packCards, nearestFormat, stepFormat } from './bento-layout';
 import {
   type Board, type TemplateId, TEMPLATES, TEMPLATE_MAP,
   cloneCards, templateBoards, loadBoards, saveBoards, newId,
@@ -282,7 +282,10 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   announcement = signal<string>('');
 
   // While dragging, no settling swaps: the lifted card's spot stays predictable
-  placed   = computed(() => packCards(this.cards(), this.cols(), this.dragId() === null));
+  // While dragging or resizing, no settling swaps (the spot stays predictable)
+  // and no stretching while resizing (the card shows the format it snaps to)
+  placed   = computed(() => packCards(this.cards(), this.cols(),
+    this.dragId() === null && this.resizeId() === null, this.resizeId() === null));
   ghost    = computed(() => this.placed().find(p => p.card.id === this.dragId()) ?? null);
   rowCount = computed(() => this.placed().reduce((m, p) => Math.max(m, p.y + p.h), 0));
 
@@ -606,6 +609,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
+    if (this.resize) { this.resizeEnd(true); return; }
     if (this.drag) { this.cancelDrag(); return; }
     if (this.openMenuId() !== null) {
       this.closeMenu();
@@ -643,10 +647,78 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
 
 
   // ── Resize by the corner handle (point 3) ────────────────────────────────
+  // The corner handle only stops on the fourteen formats; the neighbours move
+  // aside live with the same FLIP engine. Keyboard: arrows on the handle.
   resizeId = signal<string | null>(null);
-  private resize: { id: string } | null = null;
-  private resizeMove(_ev: PointerEvent): void {}
-  private resizeEnd(): void {}
+  private resize: { id: string; el: HTMLElement; origin: BentoCard[]; from: string } | null = null;
+
+  onResizeDown(ev: PointerEvent, id: string): void {
+    if (ev.button !== 0) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    const el = this.cellEl(id);
+    const card = this.cards().find(c => c.id === id);
+    if (!el || !card) return;
+    this.closeMenu();
+    this.checkpoint();
+    this.resize = { id, el, origin: this.cards(), from: card.format };
+    this.resizeId.set(id);
+    this.announce(`Resizing ${this.titleOf(id)}, ${this.formatLabel(card.format)}.`);
+  }
+
+  private resizeMove(ev: PointerEvent): void {
+    const r = this.resize;
+    const grid = this.gridRef()?.nativeElement;
+    if (!r || !grid) return;
+    const g = grid.getBoundingClientRect();
+    const cols = this.cols();
+    const gap = this.gapPx();
+    const step = (g.width - (cols - 1) * gap) / cols + gap;
+    const left = g.left + r.el.offsetLeft;
+    const top = g.top + r.el.offsetTop;
+    const w = Math.max(1, Math.min(cols, Math.round((ev.clientX - left + gap) / step)));
+    const h = Math.max(1, Math.round((ev.clientY - top + gap) / step));
+    const format = nearestFormat(w, h, cols);
+    const card = this.cards().find(c => c.id === r.id);
+    if (!card || card.format === format) return;
+    this.mutate(() => this.cards.update(arr => arr.map(c => (c.id === r.id ? { ...c, format } : c))));
+  }
+
+  private resizeEnd(cancel = false): void {
+    const r = this.resize;
+    if (!r) return;
+    this.resize = null;
+    this.resizeId.set(null);
+    const card = this.cards().find(c => c.id === r.id);
+    if (cancel) {
+      this.mutate(() => this.cards.set(r.origin));
+      this.dropCheckpoint();
+      this.announce(`Resize cancelled. ${this.titleOf(r.id)} is back to ${this.formatLabel(r.from)}.`);
+      return;
+    }
+    if (!card || card.format === r.from) { this.dropCheckpoint(); return; }
+    // Holes close again (stretching was off during the gesture)
+    this.mutate(() => this.cards.update(arr => [...arr]));
+    this.announce(`${this.titleOf(r.id)} is now ${this.formatLabel(card.format)}.`);
+  }
+
+  onResizeKey(ev: KeyboardEvent, id: string): void {
+    const d: Record<string, [number, number]> = {
+      ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1],
+    };
+    const step = d[ev.key];
+    if (!step) return;
+    ev.preventDefault();
+    const card = this.cards().find(c => c.id === id);
+    if (!card) return;
+    const format = stepFormat(card.format, step[0], step[1], this.cols());
+    if (format === card.format) {
+      this.announce(`${this.titleOf(id)} stays ${this.formatLabel(format)}: no format that way.`);
+      return;
+    }
+    this.setFormat(id, format);
+    afterNextRender(() => this.cellEl(id)?.querySelector<HTMLElement>('.bento-resize')?.focus(), { injector: this.injector });
+  }
 
   // ── Card detail panel (point 5) and loading states (point 6) ──────────────
   detailOpen = signal<boolean>(false);

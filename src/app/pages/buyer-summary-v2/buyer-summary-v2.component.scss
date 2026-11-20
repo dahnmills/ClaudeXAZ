@@ -1502,3 +1502,70 @@ $pv-h:    240px;
 
 // While a card is dragged, no toolbar shows (not even on the hovered card)
 .bento--dragging .bento-cell .bs-toolbar { opacity: 0; visibility: hidden; }
+
+// =============================================================
+// Resize by the corner handle (24 × 24 px target, WCAG 2.5.8)
+// =============================================================
+
+.bento-resize {
+  position:        absolute;
+  right:           0;
+  bottom:          0;
+  z-index:         6;
+  display:         inline-flex;
+  align-items:     flex-end;
+  justify-content: flex-end;
+  width:           var(--semantic-measurement-sizing-l);
+  height:          var(--semantic-measurement-sizing-l);
+  padding:         var(--semantic-measurement-spacing-xs);
+  box-sizing:      border-box;
+  border-radius:   var(--semantic-border-radius-xs) 0 $bento-radius 0;
+  cursor:          nwse-resize;
+  touch-action:    none;
+  opacity:         0;
+  transition:      opacity 150ms cubic-bezier(0.2, 0, 0, 1);
+
+  &:focus-visible { outline: var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus); opacity: 1; }
+}
+
+.bento-cell:hover .bento-resize { opacity: 1; }
+.bento--resizing .bento-resize { opacity: 0; }
+.bento-cell:has(.bento-resize__label) .bento-resize { opacity: 1; }
+.bento--dragging .bento-resize { opacity: 0; }
+
+// Two strokes of the corner grip, drawn with borders
+.bento-resize__grip {
+  display:       block;
+  width:         var(--semantic-measurement-sizing-s);
+  height:        var(--semantic-measurement-sizing-s);
+  border-right:  var(--semantic-border-size-m) solid var(--semantic-color-interactive-text-strong-default);
+  border-bottom: var(--semantic-border-size-m) solid var(--semantic-color-interactive-text-strong-default);
+  border-bottom-right-radius: var(--semantic-border-radius-xs);
+}
+
+.bento-cell--rev .bento-resize__grip { border-color: var(--semantic-color-static-text-main-reversed); }
+
+.bento--resizing, .bento--resizing * { cursor: nwse-resize !important; user-select: none; }
+.bento--resizing .bento-cell .bs-toolbar { opacity: 0; visibility: hidden; }
+
+// Format reached, next to the handle
+.bento-resize__label {
+  position:      absolute;
+  right:         var(--semantic-measurement-spacing-l);
+  bottom:        var(--semantic-measurement-spacing-l);
+  z-index:       6;
+  padding:       var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-s);
+  border-radius: var(--semantic-border-radius-s);
+  background:    var(--semantic-color-static-background-accent-primary);
+  color:         var(--semantic-color-static-text-main-reversed);
+  font-size:     var(--semantic-font-text-style-size-m);
+  line-height:   var(--semantic-font-text-style-line-height-m);
+  font-weight:   var(--semantic-font-text-style-font-weight-semi-bold);
+  font-variant-numeric: tabular-nums;
+  box-shadow:    var(--semantic-shadow-flyout);
+}
+
+.bento-cell:has(.bento-resize__label) { z-index: 25; }
+.bento-cell:has(.bento-resize__label) .bento-card {
+  outline: var(--semantic-border-size-m) solid var(--semantic-color-interactive-border-focus);
+}
