@@ -658,6 +658,7 @@
 
   .bc-value, .bc-table__holder, .bc-table tfoot th, .bc-table tfoot td, .bc-li__text { color: var(--bc-ink); }
 
+  .bc-empty { color: var(--bc-ink2); }
   .bc-ctx, .bc-label, .bc-note, .bc-unit, .bc-band__label, .bc-axis,
   .bc-delta, .bc-delta--good, .bc-delta--bad, .bc-table thead th, .bc-table tbody th {
     color: var(--bc-ink2);
@@ -680,10 +681,18 @@
   .bc-bullet, .bc-stackbar { background: var(--bc-line); }
   .bc-bullet__fill { background: var(--bc-chart); }
   .bc-bullet__mark, .bc-mark-key { background: var(--bc-ink2); }
+  .bc-bars__bar:not(.bc-hp-0) { background: var(--bc-chart); }
+  .bc-empty ds-icon, .bc-status ds-icon { color: var(--bc-chart); }
 
   ::ng-deep {
     .ds-chart__axis-label { color: var(--bc-ink2); }
     .ds-chart__grid       { stroke: var(--bc-line); }
     .ds-chart__dot        { border-color: var(--bc-bg); }
   }
+}
+
+// A mark in the card's own colour would vanish on its strong background
+:host([data-tone='warning-strong']) :is(.bc-dot--warning, .bc-stackbar__seg--warning),
+:host([data-tone='negative-strong']) :is(.bc-dot--negative, .bc-stackbar__seg--negative) {
+  background: var(--bc-chart);
 }

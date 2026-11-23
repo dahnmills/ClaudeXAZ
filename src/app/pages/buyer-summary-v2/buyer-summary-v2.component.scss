@@ -355,15 +355,19 @@
   --bc-line: var(--semantic-color-static-text-subtle-functional-positive); --bc-icon: var(--semantic-color-static-text-main-reversed);
   --bc-chart: var(--semantic-color-static-text-main-reversed);
 }
+// Warning follows the Badge (light / strong): a contrast exception owned by
+// the DS (2026-11-23). Subtle: orange label and icon on Subtle/Warning.
+// Strong: everything white on Functional/Warning, like Problem strong.
 .bento-cell--e-warning {
-  --bc-bg: var(--semantic-color-static-background-functional-subtle-warning); --bc-ink: var(--semantic-color-static-text-main-primary); --bc-ink2: var(--semantic-color-static-text-main-secondary);
-  --bc-line: var(--semantic-color-static-border-subtle-tertiary); --bc-icon: var(--semantic-color-static-icon-main-primary);
+  --bc-bg: var(--semantic-color-static-background-subtle-functional-warning); --bc-ink: var(--semantic-color-static-text-main-primary); --bc-ink2: var(--semantic-color-static-text-main-secondary);
+  --bc-line: var(--semantic-color-static-border-subtle-tertiary); --bc-icon: var(--semantic-color-static-icon-main-functional-warning);
+  --bc-status: var(--semantic-color-static-text-main-functional-warning);
   --bc-accent: var(--semantic-color-static-border-main-functional-warning);
 }
 .bento-cell--e-warning-strong {
-  --bc-bg: var(--semantic-color-static-background-functional-warning); --bc-ink: var(--semantic-color-static-text-main-primary); --bc-ink2: var(--semantic-color-static-text-main-primary);
-  --bc-line: var(--semantic-color-static-border-main-secondary); --bc-icon: var(--semantic-color-static-text-main-primary);
-  --bc-chart: var(--semantic-color-static-text-main-primary);
+  --bc-bg: var(--semantic-color-static-background-functional-warning); --bc-ink: var(--semantic-color-static-text-subtle-primary); --bc-ink2: var(--semantic-color-static-text-subtle-primary);
+  --bc-line: var(--semantic-color-static-text-subtle-functional-warning); --bc-icon: var(--semantic-color-static-icon-subtle-primary);
+  --bc-chart: var(--semantic-color-static-text-subtle-primary);
 }
 .bento-cell--e-negative {
   --bc-bg: var(--semantic-color-static-background-functional-subtle-negative); --bc-ink: var(--semantic-color-static-text-main-primary); --bc-ink2: var(--semantic-color-static-text-main-secondary);
@@ -378,8 +382,9 @@
 
 .bento-cell:is(.bento-cell--e-subtle, .bento-cell--e-strong, .bento-cell--e-positive, .bento-cell--e-positive-strong, .bento-cell--e-warning, .bento-cell--e-warning-strong, .bento-cell--e-negative, .bento-cell--e-negative-strong) {
   .bento-card { background: var(--bc-bg); border-color: var(--bc-bg); }
-  .bc, .bc-title, .bc-emph { color: var(--bc-ink); }
-  .bc-meta { color: var(--bc-ink2); }
+  .bc, .bc-title { color: var(--bc-ink); }
+  .bc-emph { color: var(--bc-status, var(--bc-ink)); }
+  .bc-meta, .bc-date { color: var(--bc-ink2); }
   .bc-emph ds-icon { color: var(--bc-icon); }
 }
 
@@ -393,7 +398,7 @@
 .bento-swatch--strong          { background: var(--semantic-color-static-background-brand); border-color: var(--semantic-color-static-background-brand); }
 .bento-swatch--positive        { background: var(--semantic-color-static-background-functional-subtle-positive); border-color: var(--semantic-color-static-border-main-functional-positive); }
 .bento-swatch--positive-strong { background: var(--semantic-color-static-background-functional-positive); border-color: var(--semantic-color-static-background-functional-positive); }
-.bento-swatch--warning         { background: var(--semantic-color-static-background-functional-subtle-warning); border-color: var(--semantic-color-static-border-main-functional-warning); }
+.bento-swatch--warning         { background: var(--semantic-color-static-background-subtle-functional-warning); border-color: var(--semantic-color-static-border-main-functional-warning); }
 .bento-swatch--warning-strong  { background: var(--semantic-color-static-background-functional-warning); border-color: var(--semantic-color-static-background-functional-warning); }
 .bento-swatch--negative        { background: var(--semantic-color-static-background-functional-subtle-negative); border-color: var(--semantic-color-static-border-main-functional-negative); }
 .bento-swatch--negative-strong { background: var(--semantic-color-static-background-functional-negative); border-color: var(--semantic-color-static-background-functional-negative); }
@@ -584,8 +589,23 @@
 
 .bc-error { flex-shrink: 0; }
 
-// On a navy card the light skeleton is toned down
-.bento-cell--rev .bc-skel { opacity: 0.25; }
+// On a toned card the skeleton takes a tint of the card's own colours, so the
+// emphasis stays while the data loads: half the accent (pale tones) or half the
+// white ink (strong tones, no accent), mixed into the background at the overlay
+// opacity token. The shimmer band goes back halfway to the background.
+// No tone: DS default.
+.bento-cell:not(.bento-cell--e-none) .bc-skel {
+  --bc-skel: color-mix(in srgb, color-mix(in srgb, var(--bc-accent, var(--bc-ink)), var(--bc-bg)) calc(var(--semantic-measurement-opacity-overlay) * 100%), var(--bc-bg));
+  --bc-skel-band: color-mix(in srgb, var(--bc-skel), var(--bc-bg));
+
+  ds-skeleton-item { background-color: var(--bc-skel); }
+  ds-skeleton-item::after {
+    background: linear-gradient(90deg, var(--bc-skel) 0%, var(--bc-skel-band) 25%, var(--bc-skel-band) 65%, var(--bc-skel) 100%);
+  }
+}
+
+// Focus stays visible on a strong card: the blue ring turns white there
+.bento-cell--rev .bento-resize:focus-visible { outline-color: var(--semantic-color-static-text-main-reversed); }
 
 // =============================================================
 // Computed status: icon colour on a card without background

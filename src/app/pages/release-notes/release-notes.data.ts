@@ -23,6 +23,24 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'buyer-summary-v2-states-warning-2026-11-23',
+    date: '2026-11-23',
+    category: 'fix',
+    screens: ['buyer-summary-v2/137381425'],
+    title: 'Buyer Summary V2: loading and editing keep the emphasis, Warning follows the Badge',
+    description:
+      'A highlighted or status card keeps its colour while it loads and while you edit the board, with a skeleton tinted to its background. Warning now uses the Badge colours: orange label and icon on the pale card, white content on the strong card.',
+    changes: [
+      'Loading: the skeleton takes a tint of the card\'s own colours on every emphasis (subtle, strong, on track, warning and problem, pale or strong), instead of a grey block faded on dark cards',
+      'Warning, pale: the status label and icon are orange, as on a light Badge',
+      'Warning, strong: title, figures, status, links and charts are white on orange, as on a strong Badge and like Problem strong; no more black text on orange',
+      'On a strong warning or problem card, bars and marks in the card\'s own colour turn white so they stay visible',
+      'Edit mode: the corner resize handle shows a white focus ring on strong cards',
+      'Error: a card that fails to load shows no status and no background, so the error and Retry read as everywhere else (there is no data to judge)',
+      'Empty: Claims keeps its emphasis, its text and icon follow the card\'s colours',
+    ],
+  },
+  {
     id: 'buyer-summary-v2-boards-gallery-2026-11-20',
     date: '2026-11-20',
     category: 'feature',

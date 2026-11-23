@@ -107,7 +107,7 @@ export const EMPHASES: EmphasisDef[] = [
   { id: 'positive',        label: 'On track',            reversed: false, icon: 'check-circle', status: 'On track' },
   { id: 'positive-strong', label: 'On track, strong',    reversed: true,  icon: 'check-circle', status: 'On track' },
   { id: 'warning',         label: 'Warning',             reversed: false, icon: 'warning-triangle', status: 'Warning' },
-  { id: 'warning-strong',  label: 'Warning, strong',     reversed: false, icon: 'warning-triangle', status: 'Warning' },
+  { id: 'warning-strong',  label: 'Warning, strong',     reversed: true,  icon: 'warning-triangle', status: 'Warning' },
   { id: 'negative',        label: 'Problem',             reversed: false, icon: 'error-circle', status: 'Problem' },
   { id: 'negative-strong', label: 'Problem, strong',     reversed: true,  icon: 'error-circle', status: 'Problem' },
 ];

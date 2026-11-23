@@ -704,7 +704,10 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   });
 
   look(card: BentoCard): Look {
-    return this.looks().get(card.id) ?? lookOf(card, true);
+    const l = this.looks().get(card.id) ?? lookOf(card, true);
+    // Error: no data, so no status and no background. The neutral card lets the
+    // error notice and Retry read as they do everywhere (DS functional notice).
+    return this.isError(card.id) ? { ...l, cls: 'none', reversed: false, status: null, toned: false, capped: false, highlight: false } : l;
   }
 
   statusIcon(tone: Tone): IconName {
