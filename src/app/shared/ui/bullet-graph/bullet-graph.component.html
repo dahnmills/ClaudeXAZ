@@ -1,0 +1,9 @@
+<span class="ds-bullet-graph__track" aria-hidden="true">
+  @for (r of rangePcts(); track r.level) {
+    <span [class]="'ds-bullet-graph__range ds-bullet-graph__range--' + r.level" [style.width.%]="r.width"></span>
+  }
+  <span class="ds-bullet-graph__bar" [style.width.%]="valuePct()"></span>
+</span>
+@if (targetPct() !== null) {
+  <span class="ds-bullet-graph__mark" aria-hidden="true" [style.left.%]="targetPct()"></span>
+}

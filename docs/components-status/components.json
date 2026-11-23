@@ -58,7 +58,7 @@
       "designOnly": 5,
       "vibecodedOnly": 5
     },
-    "mismatchesCount": 76
+    "mismatchesCount": 79
   },
   "components": [
     {
@@ -102,12 +102,14 @@
         "State"
       ],
       "variantsSource": "figma",
-      "usedBy": 11,
+      "usedBy": 13,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "card-builder-lab",
         "coverbook",
+        "login",
         "manual-underwriting",
         "notification-module",
         "portfolio-management",
@@ -211,10 +213,11 @@
         "Focus"
       ],
       "variantsSource": "figma",
-      "usedBy": 8,
+      "usedBy": 9,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "card-builder-lab",
         "manual-underwriting",
         "notification-module",
@@ -466,9 +469,10 @@
         "State"
       ],
       "variantsSource": "figma",
-      "usedBy": 5,
+      "usedBy": 6,
       "usedByPages": [
         "admin-data",
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting",
         "reject-management",
@@ -518,10 +522,11 @@
         ".Specs of each Link"
       ],
       "variantsSource": "figma",
-      "usedBy": 10,
+      "usedBy": 11,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting",
         "notification-module",
@@ -575,10 +580,11 @@
         "Current Page"
       ],
       "variantsSource": "figma",
-      "usedBy": 10,
+      "usedBy": 11,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting",
         "notification-module",
@@ -695,8 +701,9 @@
         ".Content › Icon"
       ],
       "variantsSource": "figma",
-      "usedBy": 1,
+      "usedBy": 2,
       "usedByPages": [
+        "buyer-summary-v2",
         "portfolio-management"
       ],
       "visual": {
@@ -746,8 +753,10 @@
         ".Options › Type"
       ],
       "variantsSource": "figma",
-      "usedBy": 0,
-      "usedByPages": [],
+      "usedBy": 1,
+      "usedByPages": [
+        "buyer-summary-v2"
+      ],
       "visual": {
         "figmaNodeId": "102:558",
         "fileKey": "xCeEJPn6fliEshuE9fnrqs"
@@ -893,9 +902,10 @@
         "# Items (v2.0.0)"
       ],
       "variantsSource": "figma",
-      "usedBy": 7,
+      "usedBy": 8,
       "usedByPages": [
         "buyer-summary",
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting",
         "notification-module",
@@ -950,9 +960,10 @@
         "Focus"
       ],
       "variantsSource": "figma",
-      "usedBy": 7,
+      "usedBy": 8,
       "usedByPages": [
         "buyer-summary",
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting",
         "notification-module",
@@ -1005,8 +1016,9 @@
         "# Items (v2.0.0)"
       ],
       "variantsSource": "figma",
-      "usedBy": 1,
+      "usedBy": 2,
       "usedByPages": [
+        "buyer-summary-v2",
         "coverbook"
       ],
       "visual": {
@@ -1158,11 +1170,13 @@
         ".Append › Type"
       ],
       "variantsSource": "figma",
-      "usedBy": 8,
+      "usedBy": 10,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "card-builder-lab",
+        "login",
         "manual-underwriting",
         "notification-module",
         "reject-management",
@@ -1320,9 +1334,10 @@
         ".Append/Icon"
       ],
       "variantsSource": "figma",
-      "usedBy": 4,
+      "usedBy": 5,
       "usedByPages": [
         "buyer-summary",
+        "buyer-summary-v2",
         "card-builder-lab",
         "portfolio-management",
         "tag-configuration"
@@ -1594,10 +1609,11 @@
         ".Tags › More"
       ],
       "variantsSource": "figma",
-      "usedBy": 8,
+      "usedBy": 9,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting",
         "notification-module",
@@ -1659,9 +1675,8 @@
         ".Tags › More"
       ],
       "variantsSource": "figma",
-      "usedBy": 2,
+      "usedBy": 1,
       "usedByPages": [
-        "coverbook",
         "manual-underwriting"
       ],
       "visual": {
@@ -1819,8 +1834,9 @@
         "Border Focus"
       ],
       "variantsSource": "figma",
-      "usedBy": 1,
+      "usedBy": 2,
       "usedByPages": [
+        "buyer-summary-v2",
         "card-builder-lab"
       ],
       "visual": {
@@ -1976,9 +1992,10 @@
         "Slot"
       ],
       "variantsSource": "figma",
-      "usedBy": 3,
+      "usedBy": 4,
       "usedByPages": [
         "admin-data",
+        "buyer-summary-v2",
         "portfolio-management",
         "tag-configuration"
       ],
@@ -2437,11 +2454,13 @@
         "Action"
       ],
       "variantsSource": "figma",
-      "usedBy": 8,
+      "usedBy": 10,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "coverbook",
+        "login",
         "manual-underwriting",
         "portfolio-management",
         "reject-management",
@@ -2555,8 +2574,9 @@
         ".Table Cell Text › Second Line"
       ],
       "variantsSource": "figma",
-      "usedBy": 4,
+      "usedBy": 5,
       "usedByPages": [
+        "buyer-summary-v2",
         "coverbook",
         "notification-module",
         "portfolio-management",
@@ -2617,8 +2637,9 @@
         ".Table Cell Text › Second Line"
       ],
       "variantsSource": "figma",
-      "usedBy": 4,
+      "usedBy": 5,
       "usedByPages": [
+        "buyer-summary-v2",
         "coverbook",
         "notification-module",
         "portfolio-management",
@@ -2679,8 +2700,9 @@
         ".Table Cell Text › Second Line"
       ],
       "variantsSource": "figma",
-      "usedBy": 4,
+      "usedBy": 5,
       "usedByPages": [
+        "buyer-summary-v2",
         "coverbook",
         "notification-module",
         "portfolio-management",
@@ -2912,10 +2934,11 @@
         "(icon)"
       ],
       "variantsSource": "figma",
-      "usedBy": 4,
+      "usedBy": 5,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting"
       ],
@@ -3081,8 +3104,9 @@
         "Score"
       ],
       "variantsSource": "figma",
-      "usedBy": 1,
+      "usedBy": 2,
       "usedByPages": [
+        "buyer-summary-v2",
         "coverbook"
       ],
       "visual": {
@@ -3602,9 +3626,10 @@
         "X labels"
       ],
       "variantsSource": "figma",
-      "usedBy": 2,
+      "usedBy": 3,
       "usedByPages": [
         "buyer-summary",
+        "buyer-summary-v2",
         "card-builder-lab"
       ],
       "visual": {
@@ -3703,10 +3728,11 @@
         "density"
       ],
       "variantsSource": "code",
-      "usedBy": 6,
+      "usedBy": 7,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "card-builder-lab",
         "coverbook",
         "manual-underwriting",
@@ -3815,8 +3841,9 @@
         ".Content Properties › Label"
       ],
       "variantsSource": "figma",
-      "usedBy": 6,
+      "usedBy": 7,
       "usedByPages": [
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting",
         "notification-module",
@@ -3912,9 +3939,10 @@
         "State"
       ],
       "variantsSource": "figma",
-      "usedBy": 2,
+      "usedBy": 3,
       "usedByPages": [
         "buyer-summary",
+        "buyer-summary-v2",
         "manual-underwriting"
       ],
       "visual": {
@@ -4013,10 +4041,11 @@
         "Loading"
       ],
       "variantsSource": "figma",
-      "usedBy": 9,
+      "usedBy": 10,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "card-builder-lab",
         "manual-underwriting",
         "portfolio-management",
@@ -4124,9 +4153,11 @@
         "Close"
       ],
       "variantsSource": "figma",
-      "usedBy": 5,
+      "usedBy": 7,
       "usedByPages": [
+        "buyer-summary-v2",
         "card-builder-lab",
+        "login",
         "manual-underwriting",
         "portfolio-management",
         "reject-management",
@@ -4282,9 +4313,10 @@
         ".Content › Slot"
       ],
       "variantsSource": "figma",
-      "usedBy": 7,
+      "usedBy": 8,
       "usedByPages": [
         "admin-data",
+        "buyer-summary-v2",
         "card-builder-lab",
         "portfolio-management",
         "reject-management",
@@ -4491,10 +4523,11 @@
         ".Topbox Content › High Risk, SRU, Sanction"
       ],
       "variantsSource": "figma",
-      "usedBy": 10,
+      "usedBy": 11,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting",
         "notification-module",
@@ -4553,10 +4586,11 @@
         "actionHref"
       ],
       "variantsSource": "code",
-      "usedBy": 8,
+      "usedBy": 9,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "coverbook",
         "manual-underwriting",
         "notification-module",
@@ -4614,10 +4648,11 @@
         "Footer › Tertiary CTA"
       ],
       "variantsSource": "figma",
-      "usedBy": 10,
+      "usedBy": 11,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "card-builder-lab",
         "coverbook",
         "manual-underwriting",
@@ -4827,9 +4862,10 @@
         "To be defined"
       ],
       "variantsSource": "figma",
-      "usedBy": 1,
+      "usedBy": 2,
       "usedByPages": [
-        "buyer-summary"
+        "buyer-summary",
+        "buyer-summary-v2"
       ],
       "visual": {
         "figmaNodeId": "2471:14923",
@@ -4882,8 +4918,9 @@
         "currentFilters"
       ],
       "variantsSource": "code",
-      "usedBy": 2,
+      "usedBy": 3,
       "usedByPages": [
+        "coverbook",
         "reject-management",
         "tag-configuration"
       ],
@@ -5365,10 +5402,11 @@
         "size"
       ],
       "variantsSource": "code",
-      "usedBy": 13,
+      "usedBy": 14,
       "usedByPages": [
         "admin-data",
         "buyer-summary",
+        "buyer-summary-v2",
         "card-builder-lab",
         "coverbook",
         "home",
@@ -5427,9 +5465,10 @@
         "markOnly"
       ],
       "variantsSource": "code",
-      "usedBy": 2,
+      "usedBy": 3,
       "usedByPages": [
         "loading",
+        "login",
         "maintenance"
       ],
       "visual": {
@@ -5477,9 +5516,10 @@
         "tone"
       ],
       "variantsSource": "code",
-      "usedBy": 3,
+      "usedBy": 4,
       "usedByPages": [
         "buyer-summary",
+        "buyer-summary-v2",
         "notification-module",
         "portfolio-management"
       ],
@@ -7110,7 +7150,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-06",
+      "lastChange": "2026-11-18",
       "commentary": "Local to the Qirin · Coverbook Figma file (v1.0, Ready for dev); implemented inside src/app/pages/coverbook, no story and no doc by design (not a library component).",
       "variants": [],
       "variantsSource": "none",
@@ -7154,7 +7194,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-06",
+      "lastChange": "2026-11-18",
       "commentary": "Local to the Qirin · Coverbook Figma file (v1.0, Ready for dev); implemented inside src/app/pages/coverbook, no story and no doc by design (not a library component).",
       "variants": [],
       "variantsSource": "none",
@@ -7198,7 +7238,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-06",
+      "lastChange": "2026-11-18",
       "commentary": "Local to the Qirin · Coverbook Figma file (v1.0, Ready for dev); implemented inside src/app/pages/coverbook, no story and no doc by design (not a library component).",
       "variants": [],
       "variantsSource": "none",
@@ -7242,7 +7282,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-06",
+      "lastChange": "2026-11-18",
       "commentary": "Local to the Qirin · Coverbook Figma file (v1.0, Ready for dev); implemented inside src/app/pages/coverbook, no story and no doc by design (not a library component).",
       "variants": [],
       "variantsSource": "none",
@@ -7286,7 +7326,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-06",
+      "lastChange": "2026-11-18",
       "commentary": "Local to the Qirin · Coverbook Figma file (v1.0, Ready for dev); implemented inside src/app/pages/coverbook, no story and no doc by design (not a library component).",
       "variants": [],
       "variantsSource": "none",
@@ -7330,7 +7370,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-06",
+      "lastChange": "2026-11-18",
       "commentary": "Local to the Qirin · Coverbook Figma file (v1.0, Ready for dev); implemented inside src/app/pages/coverbook, no story and no doc by design (not a library component).",
       "variants": [],
       "variantsSource": "none",
@@ -7374,7 +7414,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-06",
+      "lastChange": "2026-11-18",
       "commentary": "Local to the Qirin · Coverbook Figma file (v1.0, Ready for dev); implemented inside src/app/pages/coverbook, no story and no doc by design (not a library component).",
       "variants": [],
       "variantsSource": "none",
@@ -7418,7 +7458,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-06",
+      "lastChange": "2026-11-18",
       "commentary": "Local to the Qirin · Coverbook Figma file (v1.0, Ready for dev); implemented inside src/app/pages/coverbook, no story and no doc by design (not a library component).",
       "variants": [],
       "variantsSource": "none",
@@ -7462,7 +7502,7 @@
       },
       "version": "1.0.0",
       "state": "in-review",
-      "lastChange": "2026-11-06",
+      "lastChange": "2026-11-18",
       "commentary": "Local to the Qirin · Coverbook Figma file (v1.0, Ready for dev); implemented inside src/app/pages/coverbook, no story and no doc by design (not a library component).",
       "variants": [],
       "variantsSource": "none",
@@ -8488,6 +8528,21 @@
     }
   ],
   "mismatches": [
+    {
+      "kind": "code-not-in-status",
+      "ref": "ds-bullet-graph",
+      "detail": "Selector present in shared/ui but missing from this file."
+    },
+    {
+      "kind": "code-not-in-status",
+      "ref": "ds-group-heading",
+      "detail": "Selector present in shared/ui but missing from this file."
+    },
+    {
+      "kind": "code-not-in-status",
+      "ref": "ds-sparkline",
+      "detail": "Selector present in shared/ui but missing from this file."
+    },
     {
       "kind": "figma-only",
       "ref": "button-load-more",

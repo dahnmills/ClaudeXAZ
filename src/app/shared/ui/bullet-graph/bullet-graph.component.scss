@@ -1,0 +1,64 @@
+// =============================================================
+// Bullet graph: atom. Track, qualitative ranges (one hue), measure bar,
+// comparative mark that overhangs the track.
+// =============================================================
+
+:host {
+  --ds-bullet-graph-track:   var(--semantic-color-static-background-main-tertiary);
+  --ds-bullet-graph-range-1: var(--semantic-color-static-border-subtle-tertiary);
+  --ds-bullet-graph-range-2: var(--semantic-color-static-border-main-tertiary);
+  --ds-bullet-graph-bar:     var(--semantic-color-interactive-background-strong-default);
+  --ds-bullet-graph-mark:    var(--semantic-color-static-text-main-primary);
+  // Bar thickness: sizing XS + XXS, the mark overhangs by spacing XS on each side
+  --ds-bullet-graph-height:  calc(var(--semantic-measurement-sizing-xs) + var(--semantic-measurement-sizing-xxs));
+
+  position:  relative;
+  display:   block;
+  width:     100%;
+  min-width: 0;
+  height:    var(--ds-bullet-graph-height);
+}
+
+:host.ds-bullet-graph--tone-positive { --ds-bullet-graph-bar: var(--semantic-color-static-background-functional-positive); }
+:host.ds-bullet-graph--tone-warning  { --ds-bullet-graph-bar: var(--semantic-color-static-background-functional-warning); }
+:host.ds-bullet-graph--tone-negative { --ds-bullet-graph-bar: var(--semantic-color-static-background-functional-negative); }
+
+// On a strong background: white bar and mark on a veil of white
+:host.ds-bullet-graph--reversed {
+  --ds-bullet-graph-track:   color-mix(in srgb, var(--semantic-color-static-text-main-reversed) calc(var(--semantic-measurement-opacity-overlay) * 100%), transparent);
+  --ds-bullet-graph-range-1: color-mix(in srgb, var(--semantic-color-static-text-main-reversed) calc(var(--semantic-measurement-opacity-disabled) * 100%), transparent);
+  --ds-bullet-graph-range-2: color-mix(in srgb, var(--semantic-color-static-text-main-reversed) calc(var(--semantic-measurement-opacity-disabled) * 100%), var(--ds-bullet-graph-range-1));
+  --ds-bullet-graph-bar:     var(--semantic-color-static-text-main-reversed);
+  --ds-bullet-graph-mark:    var(--semantic-color-static-text-subtle-secondary);
+}
+
+.ds-bullet-graph__track {
+  position:      absolute;
+  inset:         0;
+  overflow:      hidden;
+  border-radius: var(--semantic-border-radius-round);
+  background:    var(--ds-bullet-graph-track);
+}
+
+.ds-bullet-graph__range,
+.ds-bullet-graph__bar {
+  position: absolute;
+  inset:    0 auto 0 0;
+}
+
+.ds-bullet-graph__range--1 { background: var(--ds-bullet-graph-range-1); }
+.ds-bullet-graph__range--2 { background: var(--ds-bullet-graph-range-2); }
+
+.ds-bullet-graph__bar {
+  border-radius: var(--semantic-border-radius-round);
+  background:    var(--ds-bullet-graph-bar);
+}
+
+.ds-bullet-graph__mark {
+  position:   absolute;
+  top:        calc(var(--semantic-measurement-spacing-xs) * -1);
+  bottom:     calc(var(--semantic-measurement-spacing-xs) * -1);
+  width:      var(--semantic-border-size-m);
+  transform:  translateX(-50%);
+  background: var(--ds-bullet-graph-mark);
+}

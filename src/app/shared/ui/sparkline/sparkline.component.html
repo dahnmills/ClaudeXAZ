@@ -1,0 +1,9 @@
+<svg class="ds-sparkline__svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+  @if (bandRect(); as b) {
+    <rect class="ds-sparkline__band" x="0" width="100" [attr.y]="b.y" [attr.height]="b.h" />
+  }
+  <polyline class="ds-sparkline__line" [attr.points]="points()" />
+</svg>
+@if (lastValue() && last(); as p) {
+  <span class="ds-sparkline__dot" aria-hidden="true" [style.left.%]="p.left" [style.top.%]="p.top"></span>
+}

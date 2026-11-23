@@ -1,0 +1,10 @@
+<ng-template #label><ng-content /></ng-template>
+@switch (level()) {
+  @case (3) { <h3 class="ds-group-heading__label"><ng-container [ngTemplateOutlet]="label" /></h3> }
+  @case (5) { <h5 class="ds-group-heading__label"><ng-container [ngTemplateOutlet]="label" /></h5> }
+  @case (6) { <h6 class="ds-group-heading__label"><ng-container [ngTemplateOutlet]="label" /></h6> }
+  @default  { <h4 class="ds-group-heading__label"><ng-container [ngTemplateOutlet]="label" /></h4> }
+}
+@if (meta()) {
+  <span class="ds-group-heading__meta">{{ meta() }}</span>
+}

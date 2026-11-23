@@ -105,3 +105,6 @@ export * from './policy-criteria/policy-criteria.model';
 export * from './policy-result-card/policy-result-card.component';
 export * from './search-bar-scoped/search-bar-scoped.component';
 export * from './multi-select/multi-select.component';
+export * from './sparkline/sparkline.component';
+export * from './bullet-graph/bullet-graph.component';
+export * from './group-heading/group-heading.component';
