@@ -34,7 +34,6 @@ import {
   SegmentedControlComponent,
   SkeletonItemComponent,
   FunctionalNoticeComponent,
-  TooltipDirective,
   type SelectOption,
 } from '../../shared/ui';
 import { type BuyerCompany } from '../buyer-summary/buyer-summary.store';
@@ -153,7 +152,6 @@ interface DragState {
     SegmentedControlComponent,
     SkeletonItemComponent,
     FunctionalNoticeComponent,
-    TooltipDirective,
     NgTemplateOutlet,
     BentoCardBodyComponent,
     BentoDetailTableComponent,
@@ -714,7 +712,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     return tone === 'positive' ? 'check-circle' : tone === 'warning' ? 'warning-triangle' : 'error-circle';
   }
 
-  /** Reason of the status, in the tooltip and for screen readers. */
+  /** Reason of an On track status, for screen readers (Warning and Problem show it as text). */
   statusTip(card: BentoCard, em: Look): string {
     if (!em.status) return '';
     const how = normalize(card.emphasis) === 'auto' ? 'Automatic' : 'Shown on purpose';

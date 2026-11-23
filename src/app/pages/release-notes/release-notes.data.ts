@@ -23,6 +23,23 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'buyer-summary-v2-card-kit-research-2026-11-23',
+    date: '2026-11-23',
+    category: 'design',
+    screens: ['buyer-summary-v2/137381425'],
+    title: 'Buyer Summary V2: status reasons in plain text, new data atoms, no more side stripe',
+    description:
+      'A card in Warning or Problem now says why under its title, for everyone, keyboard and touch included. Sparklines, bullet graphs and group headings are design system atoms. Pale status cards lose their coloured left stripe for a full border in the tone.',
+    changes: [
+      'Warning and Problem: the reason of the computed status ("Review due in 12 days", "1 screening hit to clear") shows under the card title, on every card with that status, never cut; the tooltip on the status label is gone. On track shows no reason (screen readers still get it)',
+      'New atoms ds-sparkline and ds-bullet-graph, driven by the data, with a description in words for screen readers; they replace the hand-drawn trend lines and limit bars of the cards (white on strong cards)',
+      'New atom ds-group-heading (12 px semi-bold, secondary text, one line, heading level 4) for cards with several groups: Grade changes, Month by month, History, Limit movements, Request history',
+      'Pale status cards (on track, warning, problem): tint plus a 1 px border in the tone, no more 4 px stripe on the left; the subtle highlight keeps the neutral border',
+      'Exposure: the change since May 24 moves under the value and the limit bar sits at the bottom of its column, so the three columns end on the same line; At a glance and Payments align their last line the same way',
+      'Density check by script: at most 15 % empty space per card, 25 % per column as an indication',
+    ],
+  },
+  {
     id: 'buyer-summary-v2-states-warning-2026-11-23',
     date: '2026-11-23',
     category: 'fix',

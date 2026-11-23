@@ -230,6 +230,7 @@
   min-height: var(--semantic-measurement-sizing-xl);
 
   ds-chart { height: 100% !important; }
+  ds-sparkline { flex: 1 1 auto; }
 
   &--spark { flex: 0 0 var(--semantic-measurement-sizing-xl); }
 }
@@ -433,30 +434,8 @@
   &:first-child { padding-left: 0; border-left: 0; }
 }
 
-// Bullet graph (Few): measure, comparative mark (previous period), on a track
-.bc-bullet {
-  position:      relative;
-  display:       block;
-  height:        $bar-h;
-  border-radius: var(--semantic-border-radius-round);
-  background:    var(--semantic-color-static-background-main-tertiary);
-}
-
-.bc-bullet__fill {
-  position:      absolute;
-  inset:         0 auto 0 0;
-  border-radius: inherit;
-  background:    var(--semantic-color-interactive-background-strong-default);
-}
-
-.bc-bullet__mark {
-  position:   absolute;
-  top:        calc(var(--semantic-measurement-spacing-xs) * -1);
-  bottom:     calc(var(--semantic-measurement-spacing-xs) * -1);
-  width:      var(--semantic-border-size-m);
-  background: var(--semantic-color-static-text-main-primary);
-}
-
+// Bullet graphs and sparklines are DS atoms (ds-bullet-graph, ds-sparkline).
+// Key of the bullet graph's comparative mark, inline in the caption
 .bc-mark-key {
   display:        inline-block;
   width:          var(--semantic-border-size-m);
@@ -482,10 +461,9 @@
   &--negative { background: var(--semantic-color-static-background-functional-negative); }
 }
 
-// Data-driven widths and positions, as classes (no inline style)
+// Data-driven widths, as classes (no inline style)
 @for $i from 0 through 100 {
   .bc-w-#{$i} { width: #{$i * 1%}; }
-  .bc-l-#{$i} { left:  #{$i * 1%}; }
 }
 .bc-stackbar__seg[class*='bc-w-'] { flex: 0 1 auto; min-width: 0; }
 
@@ -619,6 +597,19 @@
   .bc-bars { flex: 1 1 auto; height: auto; min-height: var(--semantic-measurement-sizing-2xl); }
 }
 
+// Exposure: the limit bar and its caption sit at the bottom of the first column
+// when the columns fill the card (they line up with the trend's caption)
+.bc-cols--exposure > .bc-stack:first-child { justify-content: space-between; }
+.bc-stack--end { gap: var(--semantic-measurement-spacing-xs); }
+
+// Payments: the change against the prior year closes the first column
+.bc-cols--two.bc-cols--fill > .bc-stack:first-child > :last-child { margin-top: auto; }
+
+// At a glance: sparklines take the tile's height, the last line of every tile
+// sits on the same bottom line (density check, 25 % per column)
+.bc-tile .bc-chart--spark { flex: 1 1 var(--semantic-measurement-sizing-xl); }
+.bc-tile > :last-child { margin-top: auto; }
+
 .bc-table--policies tbody th { white-space: nowrap; }
 .bc-table--policies .bc-table__holder { display: inline; }
 
@@ -659,6 +650,8 @@
   .bc-value, .bc-table__holder, .bc-table tfoot th, .bc-table tfoot td, .bc-li__text { color: var(--bc-ink); }
 
   .bc-empty { color: var(--bc-ink2); }
+  // The sparkline's last dot is ringed with the card's own background
+  ds-sparkline { --ds-sparkline-halo: var(--bc-bg); }
   .bc-ctx, .bc-label, .bc-note, .bc-unit, .bc-band__label, .bc-axis,
   .bc-delta, .bc-delta--good, .bc-delta--bad, .bc-table thead th, .bc-table tbody th {
     color: var(--bc-ink2);
@@ -678,9 +671,8 @@
 // Strong tones: charts and bars go light
 :host([data-tone$='strong']) {
   ds-chart { --ds-chart-line: var(--bc-chart); }
-  .bc-bullet, .bc-stackbar { background: var(--bc-line); }
-  .bc-bullet__fill { background: var(--bc-chart); }
-  .bc-bullet__mark, .bc-mark-key { background: var(--bc-ink2); }
+  .bc-stackbar { background: var(--bc-line); }
+  .bc-mark-key { background: var(--semantic-color-static-text-subtle-secondary); }
   .bc-bars__bar:not(.bc-hp-0) { background: var(--bc-chart); }
   .bc-empty ds-icon, .bc-status ds-icon { color: var(--bc-chart); }
 

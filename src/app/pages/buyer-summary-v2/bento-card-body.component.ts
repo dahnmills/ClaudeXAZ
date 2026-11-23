@@ -1,6 +1,7 @@
 import { Component, input } from '@angular/core';
 import {
   ChartComponent, PropertiesPanelComponent, IconComponent, BadgeComponent, GradeComponent, LinkComponent,
+  SparklineComponent, BulletGraphComponent, GroupHeadingComponent,
 } from '../../shared/ui';
 import {
   type BentoKind, AS_OF,
@@ -11,13 +12,19 @@ import {
 } from './buyer-summary-v2.data';
 import * as F from './buyer-summary-v2.facts';
 
+/** 1548 (thousands) → "1 548 000". */
+const thousands = (k: number) => String(k * 1000).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
 /** What a Bento card shows, by kind; its size picks the content level
  *  (container queries on the cell). Host in `display: contents`: the content
  *  lays out directly in the card's column. */
 @Component({
   selector: 'app-bento-card-body',
   standalone: true,
-  imports: [ChartComponent, PropertiesPanelComponent, IconComponent, BadgeComponent, GradeComponent, LinkComponent],
+  imports: [
+    ChartComponent, PropertiesPanelComponent, IconComponent, BadgeComponent, GradeComponent, LinkComponent,
+    SparklineComponent, BulletGraphComponent, GroupHeadingComponent,
+  ],
   templateUrl: './bento-card-body.component.html',
   styleUrl: './bento-card-body.component.scss',
   host: { '[attr.data-tone]': 'tone()' },
@@ -54,6 +61,14 @@ export class BentoCardBodyComponent {
   readonly paymentMonths = PAYMENT_MONTHS;
   readonly policyMoves = POLICY_MOVES;
   readonly ratings = EXTERNAL_RATINGS;
+
+  // Trends in words, for the sparklines (the drawing is hidden from screen readers)
+  readonly gradeTrendLabel =
+    `Grade over ${GRADE_HISTORY.length} periods: from A${GRADE_HISTORY[0]} to A${GRADE_HISTORY[GRADE_HISTORY.length - 1]}, 1 = best`;
+  readonly exposureTrendLabel =
+    `Exposure over ${EXPOSURE_TREND.length} periods: from ${thousands(EXPOSURE_TREND[0])} to ${thousands(EXPOSURE_TREND[EXPOSURE_TREND.length - 1])}`;
+  readonly scoreTrendLabel =
+    `Score over ${SCORE_TREND.length} periods: from ${SCORE_TREND[0]} to ${SCORE_TREND[SCORE_TREND.length - 1]} / 100`;
 
   readonly limitKv = F.limitKv;
   readonly riskKv = F.riskKv;

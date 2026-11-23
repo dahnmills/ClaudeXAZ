@@ -485,12 +485,14 @@
         </h3>
         <span class="bc-head__end">
           @if (em.status; as s) {
-            <!-- Computed status: icon + label, the reason in the tooltip -->
-            <span [class]="'bc-emph bc-emph--' + s.tone" [class.bc-emph--toned]="em.toned"
-              [dsTooltip]="statusTip(card, em)" dsTooltipPosition="bottom-right" [dsTooltipDelay]="300">
+            <!-- Computed status: icon + label. Warning and Problem show their
+                 reason under the title; On track keeps it for screen readers. -->
+            <span [class]="'bc-emph bc-emph--' + s.tone" [class.bc-emph--toned]="em.toned">
               <ds-icon [name]="statusIcon(s.tone)" [size]="12" />
               <span>{{ TONE_LABEL[s.tone] }}</span>
-              <span class="bento-sr">. {{ statusTip(card, em) }}</span>
+              @if (s.tone === 'positive') {
+                <span class="bento-sr">. {{ statusTip(card, em) }}</span>
+              }
             </span>
           } @else if (em.highlight) {
             <span class="bc-emph">
@@ -504,6 +506,12 @@
             <span class="bc-date" [class.w2]="!!em.status || em.highlight" [attr.aria-label]="'Data of ' + d">{{ d }}</span>
           }
         </span>
+        @if (em.status; as s) {
+          @if (s.tone !== 'positive') {
+            <!-- Reason of the status, always visible (never a tooltip only) -->
+            <p class="bc-reason" [id]="pfx + card.id + '-reason'">{{ s.reason }}</p>
+          }
+        }
       </header>
 
       @if (pfx === 'bc-' && isLoading(card.id)) {

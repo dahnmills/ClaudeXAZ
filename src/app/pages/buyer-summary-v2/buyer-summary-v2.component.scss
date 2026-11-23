@@ -286,12 +286,26 @@
   line-height:    var(--semantic-font-text-style-line-height-m);
 }
 
+// Title then status; on a narrow card the status goes to the next row instead
+// of colliding with the title. The reason always takes a row of its own.
 .bc-head {
   display:         flex;
+  flex-wrap:       wrap;
   align-items:     baseline;
   justify-content: space-between;
-  gap:             var(--semantic-measurement-spacing-s);
+  gap:             var(--semantic-measurement-spacing-xxs) var(--semantic-measurement-spacing-s);
   flex-shrink:     0;
+}
+
+// Reason of a Warning or Problem status: second row of the header, under the
+// title, never truncated (it wraps and the card body gives way)
+.bc-reason {
+  flex:        1 0 100%;
+  margin:      0;
+  font-size:   var(--semantic-font-text-style-size-s);
+  line-height: var(--semantic-font-text-style-line-height-s);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  color:       var(--semantic-color-static-text-main-secondary);
 }
 
 
@@ -328,10 +342,11 @@
 // The tint never carries the meaning alone: icon + status label in the header.
 // =============================================================
 
-// $accent: 4 px stripe on the left of subtle tones (Figma "Emphasis levels",
-// option D, 10.33:1 against the page for brand). Proposal: Border/Size/L used
-// as an accent width; it departs from the DESIGN.md side-stripe rule, decided
-// in Figma on 2026-11-20 because a pale tint alone reads 1.13:1 on the page.
+// No accent stripe (research 2026-11-23, question 4, DESIGN.md side-stripe
+// rule): pale status tones get their tint plus a full 1 px border in the tone
+// (--bc-border); the subtle brand highlight keeps the neutral card border (One
+// Blue Rule). The meaning is carried by the status in the header.
+// --bc-accent only tints the loading skeleton.
 // Each tone only sets variables; the rules that read them are written once
 // (here for the card and its header, in bento-card-body for the content).
 // --bc-chart exists on strong tones only (charts and bars go light).
@@ -339,6 +354,7 @@
   --bc-bg: var(--semantic-color-static-background-main-alt-secondary); --bc-ink: var(--semantic-color-static-text-main-primary); --bc-ink2: var(--semantic-color-static-text-main-secondary);
   --bc-line: var(--semantic-color-static-background-main-alt-tertiary); --bc-icon: var(--semantic-color-static-icon-brand);
   --bc-accent: var(--semantic-color-static-border-brand);
+  --bc-border: var(--semantic-color-static-border-subtle-tertiary);
 }
 .bento-cell--e-strong {
   --bc-bg: var(--semantic-color-static-background-brand); --bc-ink: var(--semantic-color-static-text-main-reversed); --bc-ink2: var(--semantic-color-static-text-subtle-tertiary);
@@ -349,6 +365,7 @@
   --bc-bg: var(--semantic-color-static-background-functional-subtle-positive); --bc-ink: var(--semantic-color-static-text-main-primary); --bc-ink2: var(--semantic-color-static-text-main-secondary);
   --bc-line: var(--semantic-color-static-border-subtle-tertiary); --bc-icon: var(--semantic-color-static-icon-main-functional-positive);
   --bc-accent: var(--semantic-color-static-border-main-functional-positive);
+  --bc-border: var(--bc-accent);
 }
 .bento-cell--e-positive-strong {
   --bc-bg: var(--semantic-color-static-background-functional-positive); --bc-ink: var(--semantic-color-static-text-main-reversed); --bc-ink2: var(--semantic-color-static-text-main-reversed);
@@ -363,6 +380,7 @@
   --bc-line: var(--semantic-color-static-border-subtle-tertiary); --bc-icon: var(--semantic-color-static-icon-main-functional-warning);
   --bc-status: var(--semantic-color-static-text-main-functional-warning);
   --bc-accent: var(--semantic-color-static-border-main-functional-warning);
+  --bc-border: var(--bc-accent);
 }
 .bento-cell--e-warning-strong {
   --bc-bg: var(--semantic-color-static-background-functional-warning); --bc-ink: var(--semantic-color-static-text-subtle-primary); --bc-ink2: var(--semantic-color-static-text-subtle-primary);
@@ -373,6 +391,7 @@
   --bc-bg: var(--semantic-color-static-background-functional-subtle-negative); --bc-ink: var(--semantic-color-static-text-main-primary); --bc-ink2: var(--semantic-color-static-text-main-secondary);
   --bc-line: var(--semantic-color-static-border-subtle-tertiary); --bc-icon: var(--semantic-color-static-icon-main-functional-negative);
   --bc-accent: var(--semantic-color-static-border-main-functional-negative);
+  --bc-border: var(--bc-accent);
 }
 .bento-cell--e-negative-strong {
   --bc-bg: var(--semantic-color-static-background-functional-negative); --bc-ink: var(--semantic-color-static-text-main-reversed); --bc-ink2: var(--semantic-color-static-text-subtle-tertiary);
@@ -381,17 +400,15 @@
 }
 
 .bento-cell:is(.bento-cell--e-subtle, .bento-cell--e-strong, .bento-cell--e-positive, .bento-cell--e-positive-strong, .bento-cell--e-warning, .bento-cell--e-warning-strong, .bento-cell--e-negative, .bento-cell--e-negative-strong) {
-  .bento-card { background: var(--bc-bg); border-color: var(--bc-bg); }
+  .bento-card { background: var(--bc-bg); border-color: var(--bc-border, var(--bc-bg)); }
   .bc, .bc-title { color: var(--bc-ink); }
   .bc-emph { color: var(--bc-status, var(--bc-ink)); }
-  .bc-meta, .bc-date { color: var(--bc-ink2); }
+  .bc-meta, .bc-date, .bc-reason { color: var(--bc-ink2); }
   .bc-emph ds-icon { color: var(--bc-icon); }
 }
 
-// 4 px stripe on the left of pale tones
-.bento-cell:is(.bento-cell--e-subtle, .bento-cell--e-positive, .bento-cell--e-warning, .bento-cell--e-negative) .bento-card {
-  border-left: var(--semantic-border-size-l) solid var(--bc-accent);
-}
+// Warning subtle: the reason takes the orange of the status label (Badge convention)
+.bento-cell--e-warning .bc-reason { color: var(--bc-status); }
 
 // Swatches in the emphasis menu
 .bento-swatch--subtle          { background: var(--semantic-color-static-background-main-alt-secondary); border-color: var(--semantic-color-static-border-brand); }

@@ -18,8 +18,8 @@
           <span class="bc-ctx w2">since Jul 24, 1 = best, 10 = worst</span>
         </div>
         <div class="bc-chart lt-h2">
-          <ds-chart [data]="gradeHistory" [min]="1" [max]="10" [invertY]="true"
-            [showGrid]="false" [showDots]="false" [tone]="hl() ? 'brand' : 'positive'" />
+          <ds-sparkline [values]="gradeHistory" [min]="1" [max]="10" [invertY]="true"
+            [tone]="hl() ? 'brand' : 'positive'" [reversed]="hl()" [ariaLabel]="gradeTrendLabel" />
         </div>
         <div class="bc-chart h2">
           <ds-chart [data]="gradeHistory" [xLabels]="sparseMonths" [yLabels]="gradeY" [min]="1" [max]="10"
@@ -32,7 +32,7 @@
           <li><span class="bc-label">Score</span><span class="bc-num bc-strong">82 / 100</span></li>
           <li><span class="bc-label">Next review</span><span class="bc-num bc-strong">12 May 2025</span></li>
         </ul>
-        <p class="bc-label bc-fit-label h2">Grade changes</p>
+        <ds-group-heading class="bc-fit-label h2" [reversed]="hl()">Grade changes</ds-group-heading>
         <ul class="bc-list bc-fit h2">
           @for (c of gradeChanges; track $index) {
             <li class="bc-li bc-fit__item">
@@ -54,16 +54,23 @@
 
   <!-- ── Exposure ──────────────────────────────────────── -->
   @case ('exposure') {
-    <div class="bc-cols bc-cols--fill">
+    <!-- Column balance (density check, 25 % per column): from 3 columns the
+         change since May 24 sits under the value, the trend keeps the third
+         column, and the limit bar goes to the bottom of the first. -->
+    <div class="bc-cols bc-cols--fill bc-cols--exposure">
       <div class="bc-stack">
         <span class="bc-value">
           <span class="w2">1 548 000</span><span class="lt-w2">1.55 M</span>
         </span>
-        <span class="bc-bullet" role="img" aria-label="31 % of the granted limit used, 26 % in May 24">
-          <span class="bc-bullet__fill bc-w-31"></span>
-          <span class="bc-bullet__mark bc-l-26"></span>
+        <span class="bc-delta w3">
+          <ds-icon name="arrow-up" [size]="12" />
+          +232 000 since May 24
         </span>
-        <span class="bc-ctx">31 % of limit, <span class="bc-mark-key"></span> 26 % in May 24</span>
+        <span class="bc-stack bc-stack--end">
+          <ds-bullet-graph [value]="31" [target]="26" [reversed]="hl()"
+            ariaLabel="31 % of the granted limit used, 26 % in May 24" />
+          <span class="bc-ctx">31 % of limit, <span class="bc-mark-key"></span> 26 % in May 24</span>
+        </span>
       </div>
       <div class="bc-stack w2">
         <ul class="bc-list bc-fit bc-kv">
@@ -73,12 +80,8 @@
     </ul>
       </div>
       <div class="bc-stack w3">
-        <span class="bc-delta">
-          <ds-icon name="arrow-up" [size]="12" />
-          +232 000 since May 24
-        </span>
         <div class="bc-chart bc-chart--trend">
-          <ds-chart [data]="exposureTrend" [showGrid]="false" [showDots]="false" tone="brand" />
+          <ds-sparkline [values]="exposureTrend" [reversed]="hl()" [ariaLabel]="exposureTrendLabel" />
         </div>
         <span class="bc-ctx">Exposure, last 8 periods</span>
       </div>
@@ -96,10 +99,7 @@
       <span class="bc-ctx">available of 5.00 M granted</span>
     </div>
     <div class="bc-stack">
-      <span class="bc-bullet" role="img" aria-label="31 % used, 26 % in May 24">
-        <span class="bc-bullet__fill bc-w-31"></span>
-        <span class="bc-bullet__mark bc-l-26"></span>
-      </span>
+      <ds-bullet-graph [value]="31" [target]="26" [reversed]="hl()" ariaLabel="31 % used, 26 % in May 24" />
       <span class="bc-ctx bc-num">31 % used, 1.55 M</span>
     </div>
     <ul class="bc-list bc-fit bc-kv">
@@ -141,7 +141,7 @@
         </div>
       </div>
     </div>
-    <p class="bc-label bc-fit-label h2">Month by month, on time</p>
+    <ds-group-heading class="bc-fit-label h2" [reversed]="hl()" meta="% on time">Month by month</ds-group-heading>
     <ul class="bc-list bc-fit bc-list--cols h2">
       @for (m of paymentMonths; track m.month) {
         <li class="bc-li bc-li--row bc-fit__item">
@@ -180,7 +180,7 @@
       </div>
       <span class="bc-axis"><span>May 23</span><span>Jul 24</span></span>
     </div>
-    <p class="bc-label bc-fit-label h2">History</p>
+    <ds-group-heading class="bc-fit-label h2" [reversed]="hl()">History</ds-group-heading>
     <ul class="bc-list bc-fit h2">
       @for (e of overdueEvents; track e.date) {
         <li class="bc-li bc-fit__item">
@@ -293,7 +293,7 @@
       </span>
     </div>
     <div class="bc-chart bc-chart--spark">
-      <ds-chart [data]="scoreTrend" [min]="70" [max]="90" [showGrid]="false" [showDots]="false" tone="brand" />
+      <ds-sparkline [values]="scoreTrend" [min]="70" [max]="90" [reversed]="hl()" [ariaLabel]="scoreTrendLabel" />
     </div>
     <ul class="bc-list bc-fit bc-kv">
       @for (f of scoreKv; track f.label) {
@@ -393,10 +393,9 @@
             </td>
             <td class="w3">
               <span class="bc-share">
-                <span class="bc-bullet bc-share__bar" aria-hidden="true">
-                  <span [class]="'bc-bullet__fill bc-w-' + r.share"></span>
-                </span>
-                <span class="bc-num">{{ r.share }} %</span>
+                <ds-bullet-graph class="bc-share__bar" [value]="r.share" [reversed]="hl()"
+                  [ariaLabel]="r.share + ' % of the exposure'" />
+                <span class="bc-num" aria-hidden="true">{{ r.share }} %</span>
               </span>
             </td>
             <td class="bc-table__num w4">{{ r.limit }}</td>
@@ -423,7 +422,7 @@
       <li class="w3"><span class="bc-label">Expiring</span><span>Hexa Sécurité, 50 000</span></li>
     </ul>
     </div>
-    <p class="bc-label bc-fit-label h3">Limit movements</p>
+    <ds-group-heading class="bc-fit-label h3" [reversed]="hl()">Limit movements</ds-group-heading>
     <ul class="bc-list bc-fit h3 bc-list--cols">
       @for (m of policyMoves; track m.date) {
         <li class="bc-li bc-li--row bc-fit__item">
@@ -453,9 +452,7 @@
         <span class="bc-label">Exposure against this cover</span>
         <span class="bc-num bc-strong">1 548 000, 77 %</span>
       </span>
-      <span class="bc-bullet" role="img" aria-label="Exposure is 77 % of the cover">
-        <span class="bc-bullet__fill bc-w-77"></span>
-      </span>
+      <ds-bullet-graph [value]="77" [reversed]="hl()" ariaLabel="Exposure is 77 % of the cover" />
     </div>
     <div class="bc-main h3">
       <p class="bc-label">Exposure against the 2.00 M cover, 8 periods</p>
@@ -463,7 +460,7 @@
         <ds-chart [data]="exposureTrend" [xLabels]="sparseMonths" [yLabels]="['1.5 M', '1.0 M', '0.5 M']" tone="brand" />
       </div>
     </div>
-    <p class="bc-label bc-fit-label h2">Request history, granted / requested</p>
+    <ds-group-heading class="bc-fit-label h2" [reversed]="hl()" meta="granted / requested">Request history</ds-group-heading>
     <ul class="bc-list bc-fit h2">
       @for (c of coverHistory; track c.date) {
         <li class="bc-li bc-li--row bc-fit__item">
@@ -538,14 +535,14 @@
         <span class="bc-keyrow"><ds-grade type="automatic" [grade]="3" size="m" /></span>
         <span class="bc-delta bc-delta--good"><ds-icon name="arrow-up" [size]="12" />Up from A4</span>
         <div class="bc-chart bc-chart--spark">
-          <ds-chart [data]="gradeHistory" [min]="1" [max]="10" [invertY]="true" [showGrid]="false" [showDots]="false" tone="positive" />
+          <ds-sparkline [values]="gradeHistory" [min]="1" [max]="10" [invertY]="true" [tone]="hl() ? 'brand' : 'positive'" [reversed]="hl()" [ariaLabel]="gradeTrendLabel" />
         </div>
       </li>
       <li class="bc-tile w2">
         <span class="bc-label">Exposure</span>
         <span class="bc-value">1.55 M</span>
         <div class="bc-chart bc-chart--spark">
-          <ds-chart [data]="exposureTrend" [showGrid]="false" [showDots]="false" tone="brand" />
+          <ds-sparkline [values]="exposureTrend" [reversed]="hl()" [ariaLabel]="exposureTrendLabel" />
         </div>
         <span class="bc-ctx">31 % of the 5.00 M limit</span>
       </li>
@@ -570,7 +567,7 @@
         <span class="bc-value">82<span class="bc-unit"> / 100</span></span>
         <span class="bc-delta"><ds-icon name="arrow-right" [size]="12" />Stable</span>
         <div class="bc-chart bc-chart--spark">
-          <ds-chart [data]="scoreTrend" [min]="70" [max]="90" [showGrid]="false" [showDots]="false" tone="brand" />
+          <ds-sparkline [values]="scoreTrend" [min]="70" [max]="90" [reversed]="hl()" [ariaLabel]="scoreTrendLabel" />
         </div>
       </li>
       <li class="bc-tile w6">
