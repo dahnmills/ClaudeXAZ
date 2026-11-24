@@ -606,6 +606,18 @@
 
 .bc-error { flex-shrink: 0; }
 
+// Compact notice in a one-column card: no vertical padding and the message at
+// text size S, so the message and Retry hold in a 1 × 1 card
+@container card (max-width: #{$w2 - 0.02px}) {
+  .bc-error ::ng-deep {
+    .ds-functional-notice { align-items: flex-start; padding: 0; }
+    .ds-functional-notice__message {
+      font-size:   var(--semantic-font-text-style-size-s);
+      line-height: var(--semantic-font-text-style-line-height-s);
+    }
+  }
+}
+
 // On a toned card the skeleton takes a tint of the card's own colours, so the
 // emphasis stays while the data loads: half the accent (pale tones) or half the
 // white ink (strong tones, no accent), mixed into the background at the overlay

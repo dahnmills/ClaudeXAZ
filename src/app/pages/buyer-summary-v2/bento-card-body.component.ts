@@ -76,6 +76,7 @@ export class BentoCardBodyComponent {
   readonly exposureKv = F.exposureKv;
   readonly reviewKv = F.reviewKv;
   readonly sanctionKv = F.sanctionKv;
+  readonly claimsKv = F.claimsKv;
   readonly paymentKv = F.paymentKv;
   readonly overdueFacts = F.overdueFacts;
   readonly coverFacts = F.coverFacts;

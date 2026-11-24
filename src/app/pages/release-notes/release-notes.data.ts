@@ -37,6 +37,10 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       'Pale status cards (on track, warning, problem): tint plus a 1 px border in the tone, no more 4 px stripe on the left; the subtle highlight keeps the neutral border',
       'Exposure: the change since May 24 moves under the value and the limit bar sits at the bottom of its column, so the three columns end on the same line; At a glance and Payments align their last line the same way',
       'Density check by script: at most 15 % empty space per card, 25 % per column as an indication',
+      'Error state at every size: in a one-column card the notice drops its padding and sets its message at text size S, so the message and Retry hold in a 1 × 1 card',
+      'Decisions in two columns (cards of 3 columns and more): each decision takes two lines, date and outcome then what was decided and its amount, so a label never runs into its amount',
+      'Claims with no claim filed: "No claim filed" then Open, Claims over 24 months and the date of the check on the bottom edge, so a 1 × 1 card stays full',
+      'Common board: Company placed before Notes and By policy at 3 × 2, so at 8 columns (1920 px) Jobs to do stays 1 × 4, Coverage 2 × 2 and Notes 1 × 2; Credit Underwriting: Grade at 2 × 2, so at 8 columns Jobs to do stays 1 × 3 and Decisions grows to 3 × 2 with more of the existing decisions. Every board still ends on a clean bottom edge at 6 and 8 columns',
     ],
   },
   {

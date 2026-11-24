@@ -348,7 +348,7 @@
   @case ('decisions') {
     <ul class="bc-list bc-fit bc-list--cols">
       @for (d of decisions; track d.date + d.label) {
-        <li class="bc-li bc-li--row bc-fit__item">
+        <li class="bc-li bc-li--row bc-li--dec bc-fit__item">
           <span class="bc-num bc-ctx bc-li__date w2">{{ d.date }}</span>
           <span class="bc-li__text">{{ d.label }}</span>
           <span class="bc-num bc-li__amount w3">{{ d.amount }}</span>
@@ -503,9 +503,15 @@
   @case ('claims') {
     <p class="bc-empty">
       <ds-icon name="check-circle" [size]="16" />
-      <span>No claim filed on this buyer as of {{ AS_OF }}</span>
+      <span>No claim filed<span class="w2"> on this buyer</span></span>
     </p>
     <p class="bc-ctx h2">Claims of the last 5 years show here with their amount and status.</p>
+    <!-- The counts sit on the bottom edge: a small card stays full -->
+    <ul class="bc-list bc-fit bc-kv bc-kv--end">
+      @for (f of claimsKv; track f.label) {
+        <li class="bc-kv__row bc-fit__item"><span class="bc-label">{{ f.label }}</span><span class="bc-num">{{ f.value }}</span></li>
+      }
+    </ul>
   }
 
   <!-- ── External ratings ──────────────────────────────── -->

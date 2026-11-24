@@ -313,6 +313,24 @@
   }
 }
 
+// Decisions in two columns: a column is too narrow for date, label, amount and
+// badge on one line, so each decision takes two lines (date and outcome, then
+// what was decided and its amount) and nothing collides
+@container card (min-width: #{$w3}) {
+  .bc-li--dec {
+    display:               grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:   "date badge" "text amount";
+    align-items:           center;
+    row-gap:               var(--semantic-measurement-spacing-xxs);
+
+    .bc-li__date   { grid-area: date; }
+    .bc-li__text   { grid-area: text; }
+    .bc-li__amount { grid-area: amount; }
+    ds-badge       { grid-area: badge; justify-self: end; }
+  }
+}
+
 .bc-li__link { display: block; }
 
 // Payment bands: label, value, bar
@@ -548,6 +566,10 @@
 
 // Label / value rows
 .bc-kv { gap: 0; }
+
+// Rows on the card's bottom edge (the auto margin drops to 0 on overflow, so
+// the fit still hides the rows that do not hold)
+.bc-kv--end > :first-child { margin-top: auto; }
 
 .bc-kv__row {
   display:         flex;

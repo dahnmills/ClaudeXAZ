@@ -3,6 +3,7 @@
 // Moved as is from the page component.
 
 import { type PropertySection } from '../../shared/ui/properties-panel/properties-panel.component';
+import { AS_OF } from './buyer-summary-v2.data';
 
 // Label / value lists that show as many rows as their card holds
 export const limitKv = [
@@ -29,6 +30,11 @@ export const reviewKv = [
 export const sanctionKv = [
   { label: 'List', value: 'EU' }, { label: 'Screened', value: '28 Oct 2024' },
   { label: 'Status', value: 'Proof asked' }, { label: 'Owner', value: 'J. Petit' },
+];
+// Claims: the counts the board already has (no open claim, the overdue card's
+// "Claims, 24 m") and the date of the check
+export const claimsKv = [
+  { label: 'Open', value: '0' }, { label: 'Claims, 24 m', value: '0' }, { label: 'Checked', value: AS_OF },
 ];
 export const paymentKv = [
   { label: 'Average delay', value: '3 days' }, { label: 'DSO', value: '47 days' },
