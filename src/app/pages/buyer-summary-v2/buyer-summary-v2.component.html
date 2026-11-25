@@ -34,7 +34,7 @@
           <ds-icon name="move" [size]="16" />
           Drag a card to move it. Its toolbar changes the format and the emphasis.
         </p>
-        <!-- Edit bar (edit-flow benchmark 3.2): Add card, Undo, Reset layout, Cancel, Done -->
+        <!-- Edit bar (edit-flow benchmark 3.2): Add card, Undo, Redo, Cancel, Done -->
         <div class="bento-bar__actions">
           <ds-button type="secondary" (clicked)="openGallery()">
             <ds-icon slot="icon-left" name="plus" [size]="16" />
@@ -46,9 +46,6 @@
           <ds-button-icon type="secondary" tone="default" ariaLabel="Redo" [disabled]="!redoStack().length" (clicked)="redo()">
             <ds-icon name="redo" [size]="16" />
           </ds-button-icon>
-          @if (canReset()) {
-            <ds-button type="tertiary" (clicked)="resetBoard()">Reset layout</ds-button>
-          }
           <span class="bento-bar__count" aria-live="polite">
             @if (changeCount()) { {{ changeCount() }} {{ changeCount() === 1 ? 'change' : 'changes' }} }
           </span>
@@ -116,29 +113,8 @@
             [attr.aria-labelledby]="'bc-' + p.card.id + '-title'"
             (pointerdown)="onCellPointerDown($event, p.card.id)"
           >
-            <ng-container [ngTemplateOutlet]="cardTpl"
-              [ngTemplateOutletContext]="{ $implicit: p.card, pfx: 'bc-' }" />
+            <ng-container [ngTemplateOutlet]="cardTpl" [ngTemplateOutletContext]="{ $implicit: p.card }" />
 
-            @if (!editing()) {
-              <!-- Read menu (V1): See figures, View data, Edit board -->
-              <div class="bc-readmenu" (click)="$event.stopPropagation()">
-                <ds-button-icon type="plain" tone="default" [reversed]="em.reversed"
-                  [ariaLabel]="kindOf(p.card.kind).short + ' options'" (clicked)="toggleMenu(p.card.id, 'read')">
-                  <ds-icon name="context-vertical" [size]="16" />
-                </ds-button-icon>
-                @if (openMenuId() === p.card.id && menuView() === 'read') {
-                  <div class="bento-menu">
-                    <ds-flyout-menu>
-                      @if (HAS_FIGURES.includes(p.card.kind)) {
-                        <ds-flyout-menu-item label="See figures" icon="chart" (clicked)="openDetail(p.card.id, 'figures')" />
-                      }
-                      <ds-flyout-menu-item label="View data" icon="info-circle" (clicked)="openDetail(p.card.id, 'data')" />
-                      <ds-flyout-menu-item label="Edit board" icon="sliders" (clicked)="closeMenu(); startEditing()" />
-                    </ds-flyout-menu>
-                  </div>
-                }
-              </div>
-            }
             @if (editing()) {
               <!-- Corner handle: snaps to the 14 formats; arrows with the keyboard -->
               <span class="bento-resize" role="button" tabindex="0"
@@ -223,51 +199,36 @@
     </div>
   </div>
 
-  <!-- ═══ Manage boards (V1 panel): list, open, duplicate, rename, delete, create ═══ -->
+  <!-- ═══ Manage boards: templates to open, your boards to open, rename, delete ═══ -->
   <ds-drawer [title]="drawerView() === 'create' ? 'New board' : 'Boards'" [open]="drawerOpen()"
     [showBack]="drawerView() === 'create'" backLabel="Boards"
     (back)="drawerView.set('boards')" (closed)="closeDrawer()">
     @if (drawerView() === 'boards') {
       <div class="bm-pane">
-      <ul class="bm-list" aria-label="Your boards">
-        @for (b of boards(); track b.id) {
-          <li class="bm-row" [class.bm-row--current]="b.id === currentBoardId()">
-            <span class="bm-row__check" aria-hidden="true">
-              @if (b.id === currentBoardId()) { <ds-icon name="check" [size]="16" /> }
-            </span>
-            <div class="bm-row__main">
-              @if (b.builtin) {
-                <span class="bm-row__name">{{ b.name }}</span>
-              } @else {
-                <ds-inline-edit class="bm-row__edit" [value]="b.name" [deletable]="false"
-                  [ariaLabel]="'Rename ' + b.name" (saved)="renameBoard(b, $event)" />
+        <section class="bm-section" aria-labelledby="bm-t-templates">
+          <h3 class="bm-section__title" id="bm-t-templates">Templates</h3>
+          <ul class="bm-list">
+            @for (b of templateList(); track b.id) {
+              <ng-container [ngTemplateOutlet]="boardRow" [ngTemplateOutletContext]="{ $implicit: b }" />
+            }
+          </ul>
+        </section>
+        <section class="bm-section" aria-labelledby="bm-t-own">
+          <h3 class="bm-section__title" id="bm-t-own">Your boards</h3>
+          @if (ownBoards().length) {
+            <ul class="bm-list">
+              @for (b of ownBoards(); track b.id) {
+                <ng-container [ngTemplateOutlet]="boardRow" [ngTemplateOutletContext]="{ $implicit: b }" />
               }
-              <span class="bm-row__meta">
-                @if (b.builtin) { <ds-badge label="Template" status="neutral" /> }
-                <span>{{ b.cards.length }} {{ b.cards.length === 1 ? 'card' : 'cards' }}@if (b.id === currentBoardId()) {, open}</span>
-              </span>
-            </div>
-            <div class="bm-row__actions">
-              @if (b.id !== currentBoardId()) {
-                <ds-button type="tertiary" (clicked)="selectBoard(b.id)">Open</ds-button>
-              }
-              <ds-button-icon type="plain" tone="default" [ariaLabel]="'Duplicate ' + b.name" (clicked)="duplicateBoard(b)">
-                <ds-icon name="copy" [size]="16" />
-              </ds-button-icon>
-              @if (!b.builtin) {
-                <ds-button-icon type="plain" tone="default" [ariaLabel]="'Delete ' + b.name" (clicked)="askDeleteBoard(b)">
-                  <ds-icon name="trash" [size]="16" />
-                </ds-button-icon>
-              }
-            </div>
-          </li>
-        }
-      </ul>
-      <p class="bm-note">Templates can be edited and reset, not renamed or deleted.</p>
-      <ds-button type="secondary" (clicked)="openCreateBoard()">
-        <ds-icon slot="icon-left" name="plus" [size]="16" />
-        New board
-      </ds-button>
+            </ul>
+          } @else {
+            <p class="bm-note">No board of your own yet.</p>
+          }
+          <ds-button type="secondary" (clicked)="openCreateBoard()">
+            <ds-icon slot="icon-left" name="plus" [size]="16" />
+            New board
+          </ds-button>
+        </section>
       </div>
     } @else {
       <div class="bm-create">
@@ -275,9 +236,6 @@
           [error]="!!newBoardNameError()" [errorMessage]="newBoardNameError()" />
         <p class="bm-label" id="bm-from">Start from</p>
         <div class="bm-choices" role="radiogroup" aria-labelledby="bm-from">
-          <ds-radio-card label="Copy of the current board"
-            [sublabel]="currentBoard().name + ', ' + cards().length + ' cards, as you set it'"
-            [selected]="newBoardFrom() === 'current'" (selectedChange)="pickNewBoardSource('current')" />
           @for (t of TEMPLATES; track t.id) {
             <ds-radio-card [label]="t.name + ' template'" [sublabel]="t.purpose + ', ' + t.cards.length + ' cards'"
               [selected]="newBoardFrom() === t.id" (selectedChange)="pickNewBoardSource(t.id)" />
@@ -295,149 +253,53 @@
     }
   </ds-drawer>
 
-  <!-- ═══ Card detail: the same data, larger and in tables (V1 See figures / View data) ═══ -->
-  <ds-drawer class="bento-detail" [title]="detailCard() ? kindOf(detailCard()!.kind).title : 'Card'"
-    [open]="detailOpen()" (closed)="closeDetail()">
-    @if (detailCard(); as c) {
-      <div class="dt-pane">
-        <p class="dt-meta">
-          {{ detailSource()?.source }}, data of {{ detailSource()?.updated }}@if (kindOf(c.kind).meta) {, in {{ kindOf(c.kind).meta }}}.
-        </p>
-        @if (HAS_FIGURES.includes(c.kind)) {
-          <ds-segmented-control [options]="detailTabs()" [selected]="detailTab()" ariaLabel="Show"
-            (selectedChange)="setDetailTab($event)" />
-        }
-        @for (t of detailTables(); track t.title) {
-          <app-bento-detail-table [table]="t" />
-        }
-        <ds-link href="#" (click)="openFullPage($event)">
-          Open the {{ detailSource()?.page }}
-          <ds-icon slot="icon-right" name="arrow-right" [size]="16" />
-        </ds-link>
-      </div>
-    }
-  </ds-drawer>
-
   <!-- Reversible actions: no confirmation, a snackbar with Undo -->
-  @if (snack(); as text) {
-    <ds-snackbar class="bento-snack" [text]="text">
+  @if (snack(); as s) {
+    <ds-snackbar class="bento-snack" [text]="s.text">
       <ds-link slot="action" tone="reversed" (click)="undoFromSnack($event)">Undo</ds-link>
     </ds-snackbar>
   }
 
-  <!-- ═══ Card gallery (iOS widget gallery): non modal, the board stays visible ═══ -->
+  <!-- ═══ Card gallery: vignettes by topic, a click adds, a drag places ═══ -->
   <ds-drawer class="bento-gallery" [class.bento-gallery--dragging]="galleryDragging()"
-    [title]="galleryView() === 'detail' && galleryKind() ? kindOf(galleryKind()!).short : (replaceId() ? 'Change card type' : 'Add a card')"
-    [open]="galleryOpen()" [showBack]="galleryView() === 'detail'" backLabel="All cards"
-    (back)="galleryView.set('list')" (closed)="closeGallery()">
-    @if (galleryView() === 'list') {
-      <div class="bg-pane">
-        @if (targetHole(); as h) {
-          <p class="bg-hint">Cards that fit the free {{ h.w }} × {{ h.h }} space.</p>
-        } @else if (replaceId()) {
-          <p class="bg-hint">Pick the new type. The card keeps its place.</p>
+    [title]="replaceId() ? 'Change card type' : 'Add a card'"
+    [open]="galleryOpen()" (closed)="closeGallery()">
+    <div class="bg-pane">
+      <ds-input-search placeholder="Search cards" [value]="gallerySearch()" (valueChange)="gallerySearch.set($event)" />
+      <p class="bg-hint" id="bg-how">
+        @if (replaceId()) {
+          Pick the new type. The card keeps its place.
+        } @else if (targetHole()) {
+          Cards that fit the free {{ targetHole()!.w }} × {{ targetHole()!.h }} space.
+        } @else {
+          Click a card to add it, or drag it onto the board.
         }
-        <ds-input-search placeholder="Search cards" [value]="gallerySearch()" (valueChange)="gallerySearch.set($event)" />
-        <p class="bento-sr" role="status">{{ galleryCount() }} cards</p>
-        @for (g of galleryGroups(); track g.group.id) {
-          <section class="bg-group" [attr.aria-labelledby]="'bg-g-' + g.group.id">
-            <h3 class="bg-group__title" [id]="'bg-g-' + g.group.id">{{ g.group.label }}</h3>
-            <ul class="bg-list">
-              @for (e of g.entries; track e.kind) {
-                <li class="bg-item">
-                  <span [class]="'bg-thumb bg-thumb--' + e.recommended" aria-hidden="true"></span>
-                  <div class="bg-item__text">
-                    <span class="bg-item__title">{{ kindOf(e.kind).title }}</span>
-                    <span class="bg-item__meta">
-                      {{ kindOf(e.kind).short }}
-                      @if (onBoardKinds().has(e.kind)) { <ds-badge label="On board" status="neutral" /> }
-                    </span>
-                    <span class="bg-item__line">{{ e.line }}</span>
-                  </div>
-                  <ds-button-icon type="secondary" tone="default"
-                    [ariaLabel]="'Formats of ' + kindOf(e.kind).short" (clicked)="showGalleryDetail(e.kind)">
-                    <ds-icon name="chevron-right" [size]="16" />
-                  </ds-button-icon>
-                </li>
-              }
-            </ul>
-          </section>
-        } @empty {
-          <p class="bg-hint">No card matches “{{ gallerySearch() }}”.</p>
-        }
-      </div>
-    } @else {
-      <div class="bg-pane">
-        @if (galleryKind(); as kind) {
-          <p class="bg-question">{{ kindOf(kind).title }}</p>
-          <!-- Carousel of real previews, the buyer's own data, one format at a time -->
-          <div class="bg-carousel" role="group" aria-roledescription="carousel"
-            [attr.aria-label]="'Formats of ' + kindOf(kind).short">
-            <div class="bg-stage" (pointerdown)="onGalleryPointerDown($event)"
-              [attr.aria-label]="'Preview, ' + formatLabel(galleryFormat()) + '. Drag it onto the board.'" role="img">
-              @for (k of [slideKey()]; track k) {
-                <div [class]="slideClass()">
-                  <div [class]="'bento-cell bg-pv__cell bento-cell--e-' + emClass({ id: 'pv', kind: kind, format: galleryFormat(), emphasis: galleryEmphasis() })"
-                    [class.bento-cell--rev]="look({ id: 'pv', kind: kind, format: galleryFormat(), emphasis: galleryEmphasis() }).reversed" aria-hidden="true">
-                    <ng-container [ngTemplateOutlet]="cardTpl"
-                      [ngTemplateOutletContext]="{ $implicit: { id: 'pv', kind: kind, format: galleryFormat(), emphasis: galleryEmphasis() }, pfx: 'pv-' }" />
-                  </div>
-                </div>
-              }
-            </div>
-            <div class="bg-carousel__nav">
-              <ds-button-icon type="secondary" tone="default" ariaLabel="Previous format"
-                [disabled]="!canStep(-1)" (clicked)="stepGallery(-1)">
-                <ds-icon name="chevron-left" [size]="16" />
-              </ds-button-icon>
-              <p class="bg-caption" aria-live="polite">
-                <span class="bg-caption__format">{{ formatLabel(galleryFormat()) }}</span>
-                @if (isRecommended(galleryFormat())) { <ds-badge label="Recommended" status="info" /> }
-                <span>{{ slideIndex() + 1 }} of {{ galleryFormats().length }}</span>
-              </p>
-              <ds-button-icon type="secondary" tone="default" ariaLabel="Next format"
-                [disabled]="!canStep(1)" (clicked)="stepGallery(1)">
-                <ds-icon name="chevron-right" [size]="16" />
-              </ds-button-icon>
-            </div>
-          </div>
-
-          <p class="bm-label">Format</p>
-          <div class="bg-formats">
-            @for (grp of FORMAT_GROUPS; track grp) {
-              <div class="bg-formats__row" role="group" [attr.aria-label]="grp">
-                <span class="bg-formats__group">{{ grp }}</span>
-                @for (x of galleryFormats(); track x.format.id) {
-                  @if (x.format.group === grp) {
-                    <ds-tag type="select" [label]="x.format.label" [selected]="galleryFormat() === x.format.id"
-                      [disabled]="!!x.reason" (toggled)="pickGalleryFormat(x.format.id)" />
+      </p>
+      <p class="bento-sr" role="status">{{ galleryCount() }} {{ galleryCount() === 1 ? 'card' : 'cards' }}</p>
+      @for (g of galleryGroups(); track g.group.id) {
+        <section class="bg-group" [attr.aria-labelledby]="'bg-g-' + g.group.id">
+          <h3 class="bg-group__title" [id]="'bg-g-' + g.group.id">{{ g.group.label }}</h3>
+          <ul class="bg-grid">
+            @for (e of g.entries; track e.kind) {
+              <li class="bg-grid__item">
+                <button type="button" class="bg-tile" [class.bg-tile--on]="onBoardKinds().has(e.kind)"
+                  [attr.aria-label]="tileLabel(e)" aria-describedby="bg-how"
+                  (click)="pickGalleryCard(e.kind)" (pointerdown)="onGalleryPointerDown($event, e.kind)"
+                  (keydown)="onTileKey($event)">
+                  <app-bento-thumb [kind]="e.thumb" />
+                  <span class="bg-tile__name">{{ kindOf(e.kind).short }}</span>
+                  @if (onBoardKinds().has(e.kind)) {
+                    <ds-icon class="bg-tile__on" name="check-circle" [size]="16" />
                   }
-                }
-              </div>
+                </button>
+              </li>
             }
-            @if (blockedReasons().length) {
-              <p class="bg-hint">Not offered: {{ blockedReasons().join('; ') }}.</p>
-            }
-          </div>
-
-          <ds-select label="Emphasis" [options]="emphasisOptions()" [value]="galleryEmphasis()"
-            (selectionChange)="setGalleryEmphasis($event)" />
-          @if (galleryEmphasisNote()) {
-            <p class="bg-hint">{{ galleryEmphasisNote() }}</p>
-          }
-          <p class="bg-hint">
-            {{ replaceId() ? 'The card keeps its place on the board.' : targetHole() ? 'The card goes in the free space you picked.' : 'The card goes to the first free place that takes this format. You can also drag the preview onto the board.' }}
-          </p>
-        }
-      </div>
-    }
-    @if (galleryView() === 'detail') {
-      <div slot="footer" class="bm-footer">
-        <ds-button type="primary" (clicked)="addFromGallery()">
-          {{ replaceId() ? 'Change card type' : targetHole() ? 'Add here' : 'Add to board' }}
-        </ds-button>
-      </div>
-    }
+          </ul>
+        </section>
+      } @empty {
+        <p class="bg-hint">No card matches “{{ gallerySearch() }}”.</p>
+      }
+    </div>
   </ds-drawer>
 
   <ng-container slot="modals">
@@ -453,34 +315,49 @@
       (confirmed)="confirmDiscard()" (cancelled)="keepEditing()">
       Your changes to “{{ currentBoard().name }}” won’t be saved. The board goes back to how it was.
     </ds-confirm-dialog>
-
-    <ds-confirm-dialog [open]="!!deleteTarget()" tone="danger"
-      [title]="'Delete “' + (deleteTarget()?.name ?? '') + '”?'"
-      confirmLabel="Delete board" cancelLabel="Keep it"
-      (confirmed)="confirmDeleteBoard()" (closed)="deleteTarget.set(null)">
-      Its {{ deleteTarget()?.cards?.length ?? 0 }} cards and their layout will be removed. Templates stay available.
-    </ds-confirm-dialog>
   </ng-container>
 </app-topbox-test-shell>
 
-<!-- ═══ One card: header (question, status or unit) + body. Shared by the
-     board and the gallery preview. ═══ -->
-<ng-template #cardTpl let-card let-pfx="pfx">
+<!-- ═══ One row of Manage boards: a template opens, your board also renames and deletes ═══ -->
+<ng-template #boardRow let-b>
+  <li class="bm-row" [class.bm-row--current]="b.id === currentBoardId()">
+    <span class="bm-row__check" aria-hidden="true">
+      @if (b.id === currentBoardId()) { <ds-icon name="check" [size]="16" /> }
+    </span>
+    <div class="bm-row__main">
+      @if (b.builtin) {
+        <span class="bm-row__name">{{ b.name }}</span>
+      } @else {
+        <ds-inline-edit class="bm-row__edit" [value]="b.name" [deletable]="false"
+          [ariaLabel]="'Rename ' + b.name" (saved)="renameBoard(b, $event)" />
+      }
+      <span class="bm-row__meta">{{ b.cards.length }} {{ b.cards.length === 1 ? 'card' : 'cards' }}@if (b.id === currentBoardId()) {, open}</span>
+    </div>
+    <div class="bm-row__actions">
+      @if (b.id !== currentBoardId()) {
+        <ds-button type="tertiary" (clicked)="selectBoard(b.id)">Open</ds-button>
+      }
+      @if (!b.builtin) {
+        <ds-button-icon type="plain" tone="default" [ariaLabel]="'Delete ' + b.name" (clicked)="deleteBoard(b)">
+          <ds-icon name="trash" [size]="16" />
+        </ds-button-icon>
+      }
+    </div>
+  </li>
+</ng-template>
+
+<!-- ═══ One card: header (question, status or unit) + body ═══ -->
+<ng-template #cardTpl let-card>
   @let em = look(card);
-  <ds-card class="bento-card" [noPadding]="true" [loading]="pfx === 'bc-' && isLoading(card.id)">
+  <ds-card class="bento-card" [noPadding]="true" [loading]="isLoading(card.id)">
     <div class="bc">
       <header class="bc-head">
-        <h3 class="bc-title" [id]="pfx + card.id + '-title'">
-          @if (pfx === 'bc-' && !editing()) {
-            <!-- The title opens the card's data in the side panel -->
-            <ds-link class="bc-title__link" [tone]="em.reversed ? 'reversed' : 'neutral'" weight="semi-bold"
-              (click)="openDetail(card.id, 'data'); $event.preventDefault()">
-              <span class="lt-w2">{{ kindOf(card.kind).short }}</span>
-              <span class="w2">{{ kindOf(card.kind).title }}</span>
-            </ds-link>
-          } @else {
-            <span class="lt-w2">{{ kindOf(card.kind).short }}</span>
-            <span class="w2">{{ kindOf(card.kind).title }}</span>
+        <h3 class="bc-title" [id]="'bc-' + card.id + '-title'">
+          <span class="lt-w2">{{ kindOf(card.kind).short }}</span>
+          <span class="w2">{{ kindOf(card.kind).title }}</span>
+          @if (em.highlight) {
+            <!-- The background says the emphasis; screen readers get it in words -->
+            <span class="bento-sr">, emphasized</span>
           }
         </h3>
         <span class="bc-head__end">
@@ -494,27 +371,22 @@
                 <span class="bento-sr">. {{ statusTip(card, em) }}</span>
               }
             </span>
-          } @else if (em.highlight) {
-            <span class="bc-emph">
-              <ds-icon name="star-filled" [size]="12" />
-              <span class="w2">Highlighted</span>
-            </span>
           } @else if (kindOf(card.kind).meta) {
             <span class="bc-meta">{{ kindOf(card.kind).meta }}</span>
           }
           @if (cardDate(card.kind); as d) {
-            <span class="bc-date" [class.w2]="!!em.status || em.highlight" [attr.aria-label]="'Data of ' + d">{{ d }}</span>
+            <span class="bc-date" [class.w2]="!!em.status" [attr.aria-label]="'Data of ' + d">{{ d }}</span>
           }
         </span>
         @if (em.status; as s) {
           @if (s.tone !== 'positive') {
             <!-- Reason of the status, always visible (never a tooltip only) -->
-            <p class="bc-reason" [id]="pfx + card.id + '-reason'">{{ s.reason }}</p>
+            <p class="bc-reason" [id]="'bc-' + card.id + '-reason'">{{ s.reason }}</p>
           }
         }
       </header>
 
-      @if (pfx === 'bc-' && isLoading(card.id)) {
+      @if (isLoading(card.id)) {
         <!-- Skeleton at the card's final size: value, context, bar, then more rows -->
         <div class="bc-skel" aria-hidden="true">
           <ds-skeleton-item width="45%" height="var(--semantic-measurement-sizing-l)" radius="var(--semantic-border-radius-xs)" />
@@ -523,7 +395,7 @@
           <ds-skeleton-item class="bc-skel__fill" width="100%" height="100%" radius="var(--semantic-border-radius-s)" />
         </div>
         <span class="bento-sr">Loading</span>
-      } @else if (pfx === 'bc-' && isError(card.id)) {
+      } @else if (isError(card.id)) {
         <ds-functional-notice class="bc-error" status="error" emphasis="low"
           message="No answer from the rating provider.">
           <ds-button type="tertiary" (clicked)="retryCard(card.id)">Retry</ds-button>

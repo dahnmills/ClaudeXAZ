@@ -1,0 +1,147 @@
+// Gallery vignette: a mini card in neutral shapes. The button around it can
+// tint the shapes through --bt-ink (key marks) and --bt-soft (the rest).
+
+:host {
+  --bt-ink:  var(--semantic-color-static-icon-main-tertiary);
+  --bt-soft: var(--semantic-color-static-icon-subtle-tertiary);
+
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--semantic-measurement-spacing-xs);
+  box-sizing:     border-box;
+  width:          100%;
+  aspect-ratio:   4 / 3;
+  padding:        var(--semantic-measurement-spacing-s);
+  overflow:       hidden;
+  border:         var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+  border-radius:  var(--semantic-border-radius-m);
+  background:     var(--semantic-color-static-background-main-primary);
+}
+
+%bt-shape {
+  display:       block;
+  flex-shrink:   0;
+  border-radius: var(--semantic-border-radius-xs);
+  background:    var(--bt-soft);
+}
+
+// Card title
+.bt__title {
+  @extend %bt-shape;
+  width:  45%;
+  height: var(--semantic-measurement-sizing-xs);
+  margin-bottom: var(--semantic-measurement-spacing-xxs);
+  background: var(--bt-ink);
+  opacity: var(--semantic-measurement-opacity-overlay);
+}
+
+// Big figure
+.bt__big {
+  @extend %bt-shape;
+  width:      55%;
+  height:     var(--semantic-measurement-sizing-m);
+  background: var(--bt-ink);
+}
+.bt__big--small { width: 40%; height: var(--semantic-measurement-sizing-s); }
+
+// Line of text
+.bt__text {
+  @extend %bt-shape;
+  width:  50%;
+  height: var(--semantic-measurement-sizing-xs);
+}
+.bt__text--wide { width: 80%; }
+
+// Curve: an area under a rising line
+.bt__area {
+  flex:       1 1 0;
+  background: var(--bt-soft);
+  clip-path:  polygon(0 100%, 0 70%, 14% 58%, 28% 66%, 42% 44%, 57% 50%, 71% 30%, 85% 36%, 100% 12%, 100% 100%);
+  border-bottom: var(--semantic-border-size-m) solid var(--bt-ink);
+}
+
+// Bars
+.bt__bars {
+  display:     flex;
+  flex:        1 1 0;
+  align-items: flex-end;
+  gap:         var(--semantic-measurement-spacing-xs);
+}
+.bt__bar {
+  @extend %bt-shape;
+  flex: 1 1 0;
+}
+.bt__bar--2 { height: 50%; }
+.bt__bar--3 { height: 75%; }
+.bt__bar--4 { height: 100%; background: var(--bt-ink); }
+
+// List: a dot (badge) and a line per row
+.bt__row {
+  display:     flex;
+  align-items: center;
+  gap:         var(--semantic-measurement-spacing-xs);
+  flex:        1 1 0;
+  min-height:  0;
+  border-top:  var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+
+  &:first-of-type { border-top: 0; }
+}
+.bt__dot {
+  @extend %bt-shape;
+  width:         var(--semantic-measurement-sizing-s);
+  height:        var(--semantic-measurement-sizing-s);
+  border-radius: var(--semantic-border-radius-round);
+  background:    var(--bt-ink);
+}
+
+// Table: a header row and three rows of three cells
+.bt__trow {
+  display: flex;
+  gap:     var(--semantic-measurement-spacing-xs);
+  flex:    1 1 0;
+  align-items: center;
+  border-top: var(--semantic-border-size-s) solid var(--semantic-color-static-border-subtle-tertiary);
+}
+.bt__trow--head { border-top: 0; }
+.bt__cell {
+  @extend %bt-shape;
+  flex:   1 1 0;
+  height: var(--semantic-measurement-sizing-xs);
+
+  &:first-child { flex-grow: 2; }
+}
+.bt__trow--head .bt__cell { background: var(--bt-ink); }
+
+// Gauge: a half ring, about two thirds filled
+.bt__gauge {
+  display:       block;
+  align-self:    center;
+  box-sizing:    border-box;
+  width:         60%;
+  aspect-ratio:  2 / 1;
+  margin-top:    auto;
+  border:        var(--semantic-border-size-l) solid var(--bt-soft);
+  border-bottom: 0;
+  border-color:  var(--bt-ink) var(--bt-soft) transparent var(--bt-ink);
+  border-radius: var(--semantic-border-radius-round) var(--semantic-border-radius-round) 0 0;
+}
+.bt--gauge .bt__text { align-self: center; margin-bottom: auto; }
+
+// Key figures: three tiles side by side
+.bt__kpis {
+  display: flex;
+  flex:    1 1 0;
+  gap:     var(--semantic-measurement-spacing-xs);
+}
+.bt__kpi {
+  display:         flex;
+  flex-direction:  column;
+  justify-content: center;
+  gap:             var(--semantic-measurement-spacing-xs);
+  flex:            1 1 0;
+  padding:         var(--semantic-measurement-spacing-xs);
+  border-radius:   var(--semantic-border-radius-s);
+  background:      var(--semantic-color-static-background-main-secondary);
+
+  .bt__text, .bt__big { width: 80%; }
+}

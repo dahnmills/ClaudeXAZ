@@ -93,23 +93,22 @@ export type Emphasis =
 export interface EmphasisDef {
   id: Emphasis;
   label: string;
-  /** Status shown next to the title (never the colour alone). */
-  status?: string;
-  icon?: 'check-circle' | 'warning-triangle' | 'error-circle' | 'star-filled';
   /** Text is white on this background. */
   reversed: boolean;
 }
 
+// Subtle and strong say the emphasis by their background alone: no label and
+// no icon in the card header (user feedback of 2026-11-25).
 export const EMPHASES: EmphasisDef[] = [
-  { id: 'none',            label: 'None',                reversed: false },
-  { id: 'subtle',          label: 'Subtle',              reversed: false, icon: 'star-filled', status: 'Highlighted' },
-  { id: 'strong',          label: 'Strong',              reversed: true,  icon: 'star-filled', status: 'Highlighted' },
-  { id: 'positive',        label: 'On track',            reversed: false, icon: 'check-circle', status: 'On track' },
-  { id: 'positive-strong', label: 'On track, strong',    reversed: true,  icon: 'check-circle', status: 'On track' },
-  { id: 'warning',         label: 'Warning',             reversed: false, icon: 'warning-triangle', status: 'Warning' },
-  { id: 'warning-strong',  label: 'Warning, strong',     reversed: true,  icon: 'warning-triangle', status: 'Warning' },
-  { id: 'negative',        label: 'Problem',             reversed: false, icon: 'error-circle', status: 'Problem' },
-  { id: 'negative-strong', label: 'Problem, strong',     reversed: true,  icon: 'error-circle', status: 'Problem' },
+  { id: 'none',            label: 'None',             reversed: false },
+  { id: 'subtle',          label: 'Subtle',           reversed: false },
+  { id: 'strong',          label: 'Strong',           reversed: true },
+  { id: 'positive',        label: 'On track',         reversed: false },
+  { id: 'positive-strong', label: 'On track, strong', reversed: true },
+  { id: 'warning',         label: 'Warning',          reversed: false },
+  { id: 'warning-strong',  label: 'Warning, strong',  reversed: true },
+  { id: 'negative',        label: 'Problem',          reversed: false },
+  { id: 'negative-strong', label: 'Problem, strong',  reversed: true },
 ];
 
 export const EMPHASIS_MAP: Record<Emphasis, EmphasisDef> =
@@ -335,102 +334,96 @@ export const STRETCH: Record<BentoKind, { v: boolean; h: boolean }> = {
   'external-rating': { v: false, h: false },
 };
 
-// ── Card gallery (edit-flow benchmark 1.3): groups by business question ─────
+/// ── Card gallery (user feedback 2026-11-25): short groups by business topic,
+// one schematic vignette per card, no figure and no description ─────────────
 
 export interface CatalogGroup { id: string; label: string; }
 export const CATALOG_GROUPS: CatalogGroup[] = [
-  { id: 'risk',     label: 'Is the buyer risky?' },
-  { id: 'exposure', label: 'How much are we exposed?' },
-  { id: 'payment',  label: 'Does the buyer pay?' },
-  { id: 'company',  label: 'Who is the company?' },
-  { id: 'work',     label: 'What is there to do?' },
-  { id: 'summary',  label: 'The whole picture' },
+  { id: 'risk',     label: 'Risk' },
+  { id: 'exposure', label: 'Exposure' },
+  { id: 'payment',  label: 'Payments' },
+  { id: 'company',  label: 'Company' },
+  { id: 'work',     label: 'Follow-up' },
+  { id: 'summary',  label: 'Overview' },
 ];
+
+/** Content drawn by the gallery vignette (bento-thumb.component). */
+export type ThumbKind = 'figure' | 'line' | 'bars' | 'list' | 'table' | 'gauge' | 'kpis';
 
 export interface CatalogEntry {
   kind: BentoKind;
   group: string;
-  /** One line of what the card holds, for this buyer. */
-  line: string;
+  /** Schematic vignette of the card in the gallery. */
+  thumb: ThumbKind;
+  /** What the card shows, in words: completes the vignette's accessible name. */
+  shows: string;
   /** Words an analyst may type (search). */
   keywords: string;
-  /** Format preselected in the gallery. */
+  /** Format of a card added from the gallery (then changed with its toolbar). */
   recommended: string;
-  /** Narrowest width that keeps the essential, with the reason shown. */
+  /** Narrowest width that keeps the essential. */
   minW?: number;
-  minReason?: string;
 }
 
 export const CATALOG: CatalogEntry[] = [
-  { kind: 'grade',           group: 'risk',     line: 'A3, up from A4, with its history and reasons', keywords: 'grade rating risk history downgrade upgrade', recommended: '3x2' },
-  { kind: 'score',           group: 'risk',     line: '82 / 100, stable since May 24',                keywords: 'score scoring trend',                           recommended: '1x1' },
-  { kind: 'sanction',        group: 'risk',     line: '1 hit to clear, namesake suspected',           keywords: 'sanction screening compliance hit kyc',       recommended: '1x1' },
-  { kind: 'external-rating', group: 'risk',     line: 'Agency ratings next to our grade',             keywords: 'external rating agency moody standard poor fitch', recommended: '2x1' },
-  { kind: 'exposure',        group: 'exposure', line: '1 548 000 USD, 31 % of the limit',             keywords: 'exposure outstanding amount trend',            recommended: '3x1' },
-  { kind: 'limit',           group: 'exposure', line: '3 452 000 USD available of 5 000 000',         keywords: 'limit available granted used',                 recommended: '1x1' },
-  { kind: 'risk-figures',    group: 'exposure', line: '72 limits held on this buyer',                 keywords: 'risk figures limits market highest',           recommended: '1x1' },
-  { kind: 'policies',        group: 'exposure', line: '6 policies, top 2 carry 60 %',                 keywords: 'policy policies holder share concentration',   recommended: '4x2', minW: 2, minReason: 'Too narrow for the policy table' },
-  { kind: 'coverage',        group: 'exposure', line: 'Latest request approved, 2 000 000',           keywords: 'cover coverage request decision approved',     recommended: '2x2' },
-  { kind: 'limit-review',    group: 'exposure', line: 'Annual review due 02 Dec 2024',                keywords: 'limit review annual due',                      recommended: '1x1' },
-  { kind: 'payment',         group: 'payment',  line: '94 % paid on time over 12 months',             keywords: 'payment behaviour delay dso late on time',     recommended: '2x1' },
-  { kind: 'overdues',        group: 'payment',  line: 'No overdue open',                              keywords: 'overdue unpaid invoice late collection',       recommended: '1x2' },
-  { kind: 'claims',          group: 'payment',  line: 'No claim filed',                               keywords: 'claim claims loss indemnity',                  recommended: '1x1' },
-  { kind: 'identity',        group: 'company',  line: 'SAS, real estate rental, founded 1987',        keywords: 'company identity legal form address group',    recommended: '2x1' },
-  { kind: 'financials',      group: 'company',  line: 'Turnover 123 900 USD k, +4.6 %',               keywords: 'financials accounts turnover profit debt gearing balance', recommended: '2x3' },
-  { kind: 'newsfeed',        group: 'company',  line: '10 articles, latest 11 Nov 2024',              keywords: 'news press newsfeed articles',                 recommended: '2x2' },
-  { kind: 'jobs',            group: 'work',     line: '8 open tasks, 2 high priority',                keywords: 'jobs tasks to do workflow',                    recommended: '1x3' },
-  { kind: 'decisions',       group: 'work',     line: '15 decisions, latest 11 Nov 2024',             keywords: 'decisions history cover grade',                recommended: '2x1' },
-  { kind: 'notepad',         group: 'work',     line: '14 notes, latest 11 Nov 2024',                 keywords: 'notes notepad comments memo',                  recommended: '1x1' },
-  { kind: 'glance',          group: 'summary',  line: 'Grade, exposure, payments, overdue, score, cover', keywords: 'glance summary overview kpi',             recommended: 'full', minW: 2, minReason: 'Too narrow for the key figures' },
+  { kind: 'grade',           group: 'risk',     thumb: 'line',   shows: 'grade and its history',            keywords: 'grade rating risk history downgrade upgrade', recommended: '3x2' },
+  { kind: 'score',           group: 'risk',     thumb: 'gauge',  shows: 'score out of 100 and its trend',   keywords: 'score scoring trend',                           recommended: '1x1' },
+  { kind: 'sanction',        group: 'risk',     thumb: 'figure', shows: 'screening hits to clear',          keywords: 'sanction screening compliance hit kyc',       recommended: '1x1' },
+  { kind: 'external-rating', group: 'risk',     thumb: 'list',   shows: 'agency ratings next to our grade', keywords: 'external rating agency moody standard poor fitch', recommended: '2x1' },
+  { kind: 'exposure',        group: 'exposure', thumb: 'line',   shows: 'exposure and its trend',           keywords: 'exposure outstanding amount trend',            recommended: '3x1' },
+  { kind: 'limit',           group: 'exposure', thumb: 'gauge',  shows: 'limit used and left',              keywords: 'limit available granted used',                 recommended: '1x1' },
+  { kind: 'risk-figures',    group: 'exposure', thumb: 'figure', shows: 'limits held on the market',        keywords: 'risk figures limits market highest',           recommended: '1x1' },
+  { kind: 'policies',        group: 'exposure', thumb: 'table',  shows: 'exposure by policy',               keywords: 'policy policies holder share concentration',   recommended: '4x2', minW: 2 },
+  { kind: 'coverage',        group: 'exposure', thumb: 'bars',   shows: 'latest cover request and history', keywords: 'cover coverage request decision approved',     recommended: '2x2' },
+  { kind: 'limit-review',    group: 'exposure', thumb: 'figure', shows: 'next limit review date',           keywords: 'limit review annual due',                      recommended: '1x1' },
+  { kind: 'payment',         group: 'payment',  thumb: 'bars',   shows: 'share paid on time and late',      keywords: 'payment behaviour delay dso late on time',     recommended: '2x1' },
+  { kind: 'overdues',        group: 'payment',  thumb: 'bars',   shows: 'open overdues and their history',  keywords: 'overdue unpaid invoice late collection',       recommended: '1x2' },
+  { kind: 'claims',          group: 'payment',  thumb: 'figure', shows: 'claims filed on the buyer',        keywords: 'claim claims loss indemnity',                  recommended: '1x1' },
+  { kind: 'identity',        group: 'company',  thumb: 'list',   shows: 'company identity',                 keywords: 'company identity legal form address group',    recommended: '2x1' },
+  { kind: 'financials',      group: 'company',  thumb: 'table',  shows: 'key accounts over three years',    keywords: 'financials accounts turnover profit debt gearing balance', recommended: '2x3' },
+  { kind: 'newsfeed',        group: 'company',  thumb: 'list',   shows: 'latest press articles',            keywords: 'news press newsfeed articles',                 recommended: '2x2' },
+  { kind: 'jobs',            group: 'work',     thumb: 'list',   shows: 'open tasks by due date',           keywords: 'jobs tasks to do workflow',                    recommended: '1x3' },
+  { kind: 'decisions',       group: 'work',     thumb: 'list',   shows: 'latest decisions',                 keywords: 'decisions history cover grade',                recommended: '2x1' },
+  { kind: 'notepad',         group: 'work',     thumb: 'list',   shows: 'analyst notes',                    keywords: 'notes notepad comments memo',                  recommended: '1x1' },
+  { kind: 'glance',          group: 'summary',  thumb: 'kpis',   shows: 'key figures of the buyer',         keywords: 'glance summary overview kpi',                  recommended: 'full', minW: 2 },
 ];
 
 export const CATALOG_MAP: Record<BentoKind, CatalogEntry> =
   Object.fromEntries(CATALOG.map(e => [e.kind, e])) as Record<BentoKind, CatalogEntry>;
 
-// ── Card detail panel: source, date of the data, full page ─────────────────
+// ── Date of the data ────────────────────────────────────────────────────────
 // The board carries one date (AS_OF); a card shows its own date only when it
 // differs (edit-flow benchmark 5.2).
 
 export const AS_OF = '20 Nov 2024';
 export const AS_OF_TIME = '09:42';
 
-export interface CardSource { source: string; updated: string; page: string; }
-export const CARD_SOURCES: Record<BentoKind, CardSource> = {
-  'grade':           { source: 'Qirin grading',              updated: '12 Jul 2024', page: 'grade history' },
-  'exposure':        { source: 'Policy administration',      updated: AS_OF,         page: 'exposure details' },
-  'limit':           { source: 'Policy administration',      updated: AS_OF,         page: 'limit details' },
-  'payment':         { source: 'Payment experience',         updated: '31 Oct 2024', page: 'payment experience' },
-  'overdues':        { source: 'Overdue notifications',      updated: AS_OF,         page: 'overdue history' },
-  'financials':      { source: 'Filed accounts, FY 2023',    updated: '30 Jun 2024', page: 'financial statements' },
-  'jobs':            { source: 'Qirin workflow',             updated: AS_OF,         page: 'task list' },
-  'newsfeed':        { source: 'Press monitoring',           updated: '11 Nov 2024', page: 'newsfeed' },
-  'score':           { source: 'Qirin scoring',              updated: '11 Nov 2024', page: 'score details' },
-  'risk-figures':    { source: 'Policy administration',      updated: AS_OF,         page: 'risk figures' },
-  'notepad':         { source: 'Analyst notes',              updated: AS_OF,         page: 'notepad' },
-  'identity':        { source: 'Company register',           updated: '11 Nov 2024', page: 'full properties' },
-  'decisions':       { source: 'Qirin decisions',            updated: AS_OF,         page: 'decision history' },
-  'policies':        { source: 'Policy administration',      updated: AS_OF,         page: 'policy list' },
-  'coverage':        { source: 'Cover requests',             updated: '11 Nov 2024', page: 'cover request' },
-  'glance':          { source: 'Several sources',            updated: AS_OF,         page: 'buyer profile' },
-  'sanction':        { source: 'Sanction screening',         updated: '28 Oct 2024', page: 'screening case' },
-  'limit-review':    { source: 'Qirin workflow',             updated: AS_OF,         page: 'limit review' },
-  'claims':          { source: 'Claims management',          updated: AS_OF,         page: 'claims' },
-  'external-rating': { source: 'Rating agencies',            updated: '04 Nov 2024', page: 'external ratings' },
+/** Date of each card's data. */
+export const CARD_UPDATED: Record<BentoKind, string> = {
+  'grade':           '12 Jul 2024',
+  'exposure':        AS_OF,
+  'limit':           AS_OF,
+  'payment':         '31 Oct 2024',
+  'overdues':        AS_OF,
+  'financials':      '30 Jun 2024',
+  'jobs':            AS_OF,
+  'newsfeed':        '11 Nov 2024',
+  'score':           '11 Nov 2024',
+  'risk-figures':    AS_OF,
+  'notepad':         AS_OF,
+  'identity':        '11 Nov 2024',
+  'decisions':       AS_OF,
+  'policies':        AS_OF,
+  'coverage':        '11 Nov 2024',
+  'glance':          AS_OF,
+  'sanction':        '28 Oct 2024',
+  'limit-review':    AS_OF,
+  'claims':          AS_OF,
+  'external-rating': '04 Nov 2024',
 };
 
 /** Short date for a card header ("12 Jul"), only when it differs from the board's. */
 export const shortDate = (d: string) => d.slice(0, 6);
-
-// Kinds whose card holds a chart: the menu offers "See figures"
-export const HAS_FIGURES: BentoKind[] = ['grade', 'exposure', 'payment', 'overdues', 'financials', 'score', 'coverage'];
-
-export interface DetailTable {
-  title: string;
-  columns: { label: string; num?: boolean; wide?: boolean }[];
-  rows: string[][];
-  /** Shown instead of the rows when there are none. */
-  empty?: string;
-}
 
 // External ratings (new for the gallery card "What do the agencies say?")
 export interface AgencyRating { agency: string; rating: string; outlook: string; date: string; }

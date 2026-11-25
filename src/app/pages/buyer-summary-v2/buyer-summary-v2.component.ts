@@ -16,7 +16,6 @@ import {
   ButtonComponent,
   ButtonIconComponent,
   IconComponent,
-  BadgeComponent,
   LinkComponent,
   FlyoutMenuComponent,
   FlyoutMenuItemComponent,
@@ -29,9 +28,7 @@ import {
   ConfirmDialogComponent,
   InlineEditComponent,
   InputSearchComponent,
-  TagComponent,
   SnackbarComponent,
-  SegmentedControlComponent,
   SkeletonItemComponent,
   FunctionalNoticeComponent,
   type SelectOption,
@@ -44,19 +41,14 @@ import { ToasterService } from '../../shared/ui/toaster/toaster.service';
 import { BuyerSummaryStore } from '../buyer-summary/buyer-summary.store';
 import { ViewedBuyersStore } from '../buyer-summary/viewed-buyers.store';
 import {
-  type BentoCard, type BentoFormat, type BentoKind, type Emphasis, type EmphasisChoice, EMPHASES, EMPHASIS_MAP,
+  type BentoCard, type BentoFormat, type BentoKind, type CatalogEntry, type Emphasis, type EmphasisChoice,
   FORMATS, FORMAT_GROUPS, FORMAT_MAP, KINDS,
-  MONTHS, GRADE_HISTORY, GRADE_Y, GRADE_CHANGES, EXPOSURE_TREND, SCORE_TREND,
-  PAYMENT_BANDS, FIN_YEARS, FINANCIALS, TURNOVER_TREND, TURNOVER_YEARS, JOBS, NEWS,
-  NOTES, IDENTITY, DECISIONS, POLICIES, COVER_HISTORY,
-  OVERDUE_PERIODS, OVERDUE_EVENTS, PAYMENT_MONTHS, POLICY_MOVES,
   CATALOG, CATALOG_GROUPS, CATALOG_MAP,
-  AS_OF, AS_OF_TIME, CARD_SOURCES, HAS_FIGURES, EXTERNAL_RATINGS, shortDate, type DetailTable,
+  AS_OF, AS_OF_TIME, CARD_UPDATED, shortDate,
 } from './buyer-summary-v2.data';
 import { type Placed, packCards, nearestFormat, stepFormat } from './bento-layout';
-import * as F from './buyer-summary-v2.facts';
 import { BentoCardBodyComponent } from './bento-card-body.component';
-import { BentoDetailTableComponent } from './bento-detail-table.component';
+import { BentoThumbComponent } from './bento-thumb.component';
 import {
   type Look, type Tone, type EmphasisOption, TONE_LABEL, MAX_AUTO_BACKGROUNDS,
   autoBackgrounds, lookOf, normalize, emphasisOptions,
@@ -98,9 +90,6 @@ const BOOT_STEP_MS     = 50;
 const ADD_LOAD_MS      = 600;  // a card just added or retried
 const MOVE_COOLDOWN_MS = 140;  // hysteresis between two reorders
 
-/** 1548000 → "1 548 000" (space as thousands separator, as everywhere in Qirin). */
-const groupDigits = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-
 const sameOrder = (a: BentoCard[], b: BentoCard[]) =>
   a.length === b.length && a.every((c, i) => c === b[i]);
 const sameCards = (a: BentoCard[], b: BentoCard[]) =>
@@ -134,7 +123,6 @@ interface DragState {
     ButtonComponent,
     ButtonIconComponent,
     IconComponent,
-    BadgeComponent,
     LinkComponent,
     FlyoutMenuComponent,
     FlyoutMenuItemComponent,
@@ -147,14 +135,12 @@ interface DragState {
     ConfirmDialogComponent,
     InlineEditComponent,
     InputSearchComponent,
-    TagComponent,
     SnackbarComponent,
-    SegmentedControlComponent,
     SkeletonItemComponent,
     FunctionalNoticeComponent,
     NgTemplateOutlet,
     BentoCardBodyComponent,
-    BentoDetailTableComponent,
+    BentoThumbComponent,
   ],
   templateUrl: './buyer-summary-v2.component.html',
   styleUrls: ['./buyer-summary-v2.component.scss', './buyer-summary-v2.panels.scss'],
@@ -184,19 +170,11 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   readonly detailsSections: PropertySection[] = SECTIONS;
 
   // ── Data exposed to the template ───────────────────────────────────────────
-  readonly KINDS = KINDS;
   readonly FORMAT_GROUPS = FORMAT_GROUPS;
 
-  // Label / value lists of the cards (also shown in the detail panel)
-  readonly exposureKv = F.exposureKv;
-  readonly limitKv = F.limitKv;
-  readonly paymentKv = F.paymentKv;
-  readonly overdueFacts = F.overdueFacts;
-  readonly scoreKv = F.scoreKv;
-  readonly riskKv = F.riskKv;
-  readonly coverFacts = F.coverFacts;
-  readonly sanctionKv = F.sanctionKv;
-  readonly reviewKv = F.reviewKv;
+  readonly AS_OF = AS_OF;
+  readonly AS_OF_TIME = AS_OF_TIME;
+
   // ── Boards (templates + personal boards), saved in localStorage ───────────
   readonly TEMPLATES = TEMPLATES;
   private stored = loadBoards();
@@ -204,13 +182,16 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   currentBoardId = signal<string>(this.stored?.current ?? 'common');
   currentBoard   = computed(() => this.boards().find(b => b.id === this.currentBoardId()) ?? this.boards()[0]);
   boardOptions   = computed<SelectOption[]>(() => this.boards().map(b => ({ value: b.id, label: b.name })));
+  /** Manage boards: the job templates on top, the analyst's own boards below. */
+  templateList   = computed(() => this.boards().filter(b => b.builtin));
+  ownBoards      = computed(() => this.boards().filter(b => !b.builtin));
 
-  // Manage boards drawer (V1 "Manage boards" panel)
+  // Manage boards drawer: templates open as they are, your boards also rename
+  // and delete; a new board starts from a template or empty
   drawerOpen   = signal<boolean>(false);
   drawerView   = signal<'boards' | 'create'>('boards');
   newBoardName = signal<string>('');
-  newBoardFrom = signal<'current' | 'empty' | TemplateId>('current');
-  deleteTarget = signal<Board | null>(null);
+  newBoardFrom = signal<'empty' | TemplateId>('common');
 
   // ── Board model: working copy of the current board's cards ────────────────
   cards   = signal<BentoCard[]>(cloneCards(this.currentBoard()?.cards ?? []));
@@ -218,7 +199,7 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   editing = signal<boolean>(false);
   dragId  = signal<string | null>(null);
   openMenuId = signal<string | null>(null);
-  menuView   = signal<'format' | 'emphasis' | 'read'>('format');
+  menuView   = signal<'format' | 'emphasis'>('format');
   announcement = signal<string>('');
 
   // While dragging, no settling swaps: the lifted card's spot stays predictable
@@ -337,14 +318,6 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     return this.placed().findIndex(p => p.card.id === id) + 1;
   }
 
-  /** Visibility class of the i-th item of a list, by card height. */
-  rowLevel(i: number, base: number, perStep: number): string {
-    if (i < base) return '';
-    if (i < base + perStep) return 'h2';
-    if (i < base + perStep * 2) return 'h3';
-    return 'h4';
-  }
-
   // ── Edit mode ──────────────────────────────────────────────────────────────
 
   /** Board as it was when edit mode started (Cancel goes back to it). */
@@ -458,39 +431,23 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   }
 
   // Reversible actions get a snackbar with Undo instead of a confirmation
-  snack = signal<string | null>(null);
+  snack = signal<{ text: string; undo: () => void } | null>(null);
   private snackTimer: ReturnType<typeof setTimeout> | undefined;
 
-  private showSnack(text: string): void {
+  private showSnack(text: string, undo: () => void = () => this.undo()): void {
     clearTimeout(this.snackTimer);
-    this.snack.set(text);
+    this.snack.set({ text, undo });
     this.snackTimer = setTimeout(() => this.snack.set(null), SNACK_MS);
   }
 
   undoFromSnack(ev: Event): void {
     ev.preventDefault();
-    this.undo();
+    const undo = this.snack()?.undo;
+    this.snack.set(null);
+    undo?.();
   }
 
-  /** Cards of the board's template (a copy), or null for a board started empty. */
-  private templateCards(board: Board | undefined): BentoCard[] | null {
-    const t = board?.template ? TEMPLATE_MAP[board.template] : null;
-    return t ? cloneCards(t.cards) : null;
-  }
-
-  canReset = computed(() => !!this.currentBoard()?.template);
-
-  resetBoard(): void {
-    this.closeMenu();
-    const cards = this.templateCards(this.currentBoard());
-    if (!cards) return;
-    this.checkpoint();
-    this.mutate(() => this.cards.set(cards));
-    this.showSnack('Layout reset to the template.');
-    this.announce(`Board reset to the ${TEMPLATE_MAP[this.currentBoard().template!].name} template.`);
-  }
-
-  // ── Boards: switch, create, duplicate, rename, delete ──────────────────────
+  // ── Boards: switch, create, rename, delete ─────────────────────────────────
 
   private persist(): void {
     saveBoards(this.currentBoardId(), this.boards());
@@ -533,18 +490,16 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     return `${base} ${n}`;
   }
 
+  /** New board: from a template (the current board's, or Common) or empty. */
   openCreateBoard(): void {
-    this.newBoardFrom.set('current');
-    this.newBoardName.set(this.uniqueName(`Copy of ${this.currentBoard().name}`));
+    this.pickNewBoardSource(this.currentBoard().template ?? 'common');
     this.drawerView.set('create');
     this.drawerOpen.set(true);
   }
 
-  pickNewBoardSource(from: 'current' | 'empty' | TemplateId): void {
+  pickNewBoardSource(from: 'empty' | TemplateId): void {
     this.newBoardFrom.set(from);
-    const name = from === 'current' ? `Copy of ${this.currentBoard().name}`
-      : from === 'empty' ? 'My board' : `My ${TEMPLATE_MAP[from].name}`;
-    this.newBoardName.set(this.uniqueName(name));
+    this.newBoardName.set(this.uniqueName(from === 'empty' ? 'My board' : `My ${TEMPLATE_MAP[from].name}`));
   }
 
   newBoardNameError = computed(() => {
@@ -558,13 +513,12 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   createBoard(): void {
     if (this.newBoardNameError()) return;
     const from = this.newBoardFrom();
-    const source = from === 'current' ? this.cards()
-      : from === 'empty' ? [] : TEMPLATE_MAP[from].cards;
+    const source = from === 'empty' ? [] : TEMPLATE_MAP[from].cards;
     const board: Board = {
       id: newId('board'),
       name: this.newBoardName().trim(),
       builtin: false,
-      template: from === 'current' ? this.currentBoard().template : from === 'empty' ? null : from,
+      template: from === 'empty' ? null : from,
       cards: source.map(c => ({ ...c, id: newId(c.kind) })),
     };
     this.boards.update(arr => [...arr, board]);
@@ -577,23 +531,6 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.announce(`${board.name} created.`);
     // An empty board goes straight to edit mode: there is nothing to read yet
     if (!board.cards.length) this.startEditing();
-  }
-
-  duplicateBoard(board: Board): void {
-    const copy: Board = {
-      ...board,
-      id: newId('board'),
-      name: this.uniqueName(`Copy of ${board.name}`),
-      builtin: false,
-      cards: (board.id === this.currentBoardId() ? this.cards() : board.cards).map(c => ({ ...c, id: newId(c.kind) })),
-    };
-    const i = this.boards().findIndex(b => b.id === board.id);
-    this.boards.update(arr => [...arr.slice(0, i + 1), copy, ...arr.slice(i + 1)]);
-    this.currentBoardId.set(copy.id);
-    this.cards.set(cloneCards(copy.cards));
-    this.loadBoard();
-    this.persist();
-    this.announce(`${copy.name} created and opened.`);
   }
 
   renameError(board: Board, name: string): string {
@@ -617,34 +554,39 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.announce(`Board renamed ${name.trim()}.`);
   }
 
-  askDeleteBoard(board: Board): void {
-    this.deleteTarget.set(board);
-  }
-
-  confirmDeleteBoard(): void {
-    const board = this.deleteTarget();
-    this.deleteTarget.set(null);
-    if (!board || board.builtin) return;
-    const i = this.boards().findIndex(b => b.id === board.id);
+  /** Delete one of your boards at once: no confirmation, Undo in the snackbar. */
+  deleteBoard(board: Board): void {
+    if (board.builtin) return;
+    const before = this.boards();
+    const wasCurrent = this.currentBoardId();
+    const i = before.findIndex(b => b.id === board.id);
     this.boards.update(arr => arr.filter(b => b.id !== board.id));
-    if (this.currentBoardId() === board.id) {
+    if (wasCurrent === board.id) {
       // Back to the previous board, or Common
-      const next = this.boards()[Math.max(0, i - 1)] ?? this.boards()[0];
-      this.currentBoardId.set(next.id);
-      this.cards.set(cloneCards(next.cards));
-      this.loadBoard();
+      this.openBoard(this.boards()[Math.max(0, i - 1)] ?? this.boards()[0]);
     }
     this.persist();
-    this.toaster.show(`“${board.name}” was deleted`, { tone: 'success', title: 'Board deleted' });
+    this.showSnack(`“${board.name}” deleted.`, () => {
+      this.boards.set(before);
+      if (wasCurrent === board.id) this.openBoard(board);
+      this.persist();
+      this.announce(`${board.name} is back.`);
+    });
+    this.announce(`${board.name} deleted. Undo brings it back.`);
+  }
+
+  private openBoard(board: Board): void {
+    this.currentBoardId.set(board.id);
+    this.cards.set(cloneCards(board.cards));
+    this.loadBoard();
   }
 
   // ── Card toolbar (V1 floating toolbar): formats, emphasis, handle ──────────
 
   /** Formats offered as segments, as in V1; the 14 are in the "More" list. */
   readonly QUICK_FORMATS = ['1x1', '2x1', '2x2'];
-  readonly EMPHASES = EMPHASES;
 
-  toggleMenu(id: string, view: 'format' | 'emphasis' | 'read'): void {
+  toggleMenu(id: string, view: 'format' | 'emphasis'): void {
     const open = this.openMenuId() === id && this.menuView() === view;
     this.openMenuId.set(open ? null : id);
     this.menuView.set(view);
@@ -658,15 +600,13 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   onDocumentClick(ev: MouseEvent): void {
     if (this.openMenuId() === null) return;
     // composedPath: the clicked item may already be gone (menu re-render)
-    const inside = ev.composedPath().some(n => n instanceof HTMLElement
-      && (n.classList.contains('bs-toolbar') || n.classList.contains('bc-readmenu')));
+    const inside = ev.composedPath().some(n => n instanceof HTMLElement && n.classList.contains('bs-toolbar'));
     if (inside) return;
     this.closeMenu();
   }
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
-    if (this.detailOpen() && this.openMenuId() === null) return; // the drawer closes itself
     if (this.resize) { this.resizeEnd(true); return; }
     if (this.drag) { this.cancelDrag(); return; }
     if (this.openMenuId() !== null) {
@@ -821,143 +761,10 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     afterNextRender(() => this.cellEl(id)?.querySelector<HTMLElement>('.bento-resize')?.focus(), { injector: this.injector });
   }
 
-  // ── Card detail panel: the card's data in tables (V1 See figures / View data)
-
-  detailOpen = signal<boolean>(false);
-  detailId   = signal<string | null>(null);
-  detailTab  = signal<'figures' | 'data'>('data');
-  readonly HAS_FIGURES = HAS_FIGURES;
-  readonly AS_OF = AS_OF;
-  readonly AS_OF_TIME = AS_OF_TIME;
-
-  detailCard = computed(() => this.cards().find(c => c.id === this.detailId()) ?? null);
-  detailSource = computed(() => {
-    const c = this.detailCard();
-    return c ? CARD_SOURCES[c.kind] : null;
-  });
-  detailTabs = computed(() => [{ value: 'figures', label: 'Figures' }, { value: 'data', label: 'Data' }]);
-  detailTables = computed<DetailTable[]>(() => {
-    const c = this.detailCard();
-    if (!c) return [];
-    const t = this.tablesFor(c.kind);
-    if (!HAS_FIGURES.includes(c.kind)) return t.data;
-    return this.detailTab() === 'figures' ? t.figures : t.data;
-  });
-
-  /** Read menu: "See figures" (charts) or "View data"; the title opens the data. */
-  openDetail(id: string, tab: 'figures' | 'data' = 'data'): void {
-    if (this.editing()) return;
-    this.closeMenu();
-    this.drawerOpen.set(false);
-    this.detailReturnFocus = document.activeElement as HTMLElement | null;
-    this.detailId.set(id);
-    const kind = this.cards().find(c => c.id === id)?.kind;
-    this.detailTab.set(kind && HAS_FIGURES.includes(kind) ? tab : 'data');
-    this.detailOpen.set(true);
-  }
-
-  private detailReturnFocus: HTMLElement | null = null;
-
-  closeDetail(): void {
-    this.detailOpen.set(false);
-    const back = this.detailReturnFocus;
-    this.detailReturnFocus = null;
-    if (back?.isConnected) afterNextRender(() => back.focus(), { injector: this.injector });
-  }
-
-  setDetailTab(v: string): void {
-    this.detailTab.set(v === 'figures' ? 'figures' : 'data');
-  }
-
-  openFullPage(ev: Event): void {
-    ev.preventDefault();
-    const s = this.detailSource();
-    this.toaster.show(`The ${s?.page ?? 'full'} page is not part of this prototype.`, { tone: 'info', title: 'Open full page' });
-  }
-
   /** Card date in its header, only when it differs from the board's date. */
   cardDate(kind: BentoKind): string {
-    const d = CARD_SOURCES[kind].updated;
+    const d = CARD_UPDATED[kind];
     return d === AS_OF ? '' : shortDate(d);
-  }
-
-  private tablesFor(kind: BentoKind): { figures: DetailTable[]; data: DetailTable[] } {
-    const kv = (title: string, rows: { label: string; value: string }[]): DetailTable =>
-      ({ title, columns: [{ label: 'Item', wide: true }, { label: 'Value', num: true }], rows: rows.map(r => [r.label, r.value]) });
-    const series = (title: string, label: string, unit: string, xs: string[], vs: (string | number)[]): DetailTable =>
-      ({ title, columns: [{ label }, { label: unit, num: true }], rows: xs.map((x, i) => [x, String(vs[i])]) });
-    const usd = (k: number) => groupDigits(Math.round(k * 1000));
-    switch (kind) {
-      case 'grade': return {
-        figures: [series('Grade over 8 periods', 'Period', 'Grade, 1 = best', MONTHS, GRADE_HISTORY.map(g => `A${g}`))],
-        data: [{ title: 'Grade changes', columns: [{ label: 'Date' }, { label: 'Change' }, { label: 'Reason', wide: true }],
-          rows: GRADE_CHANGES.map(g => [g.date, g.from ? `${g.from} to ${g.to}` : g.to, g.reason]) }],
-      };
-      case 'exposure': return {
-        figures: [series('Exposure over 8 periods', 'Period', 'Exposure, USD', MONTHS, EXPOSURE_TREND.map(usd))],
-        data: [kv('Exposure and limit, USD', [{ label: 'Exposure', value: '1 548 000' }, ...this.exposureKv])],
-      };
-      case 'limit': return { figures: [], data: [kv('Limit, USD', [{ label: 'Available', value: '3 452 000' }, ...this.limitKv])] };
-      case 'payment': return {
-        figures: [{ title: 'Paid on time, month by month', columns: [{ label: 'Month' }, { label: 'On time', num: true }, { label: '1 to 30 days late', num: true }],
-          rows: PAYMENT_MONTHS.map(m => [m.month, `${m.onTime} %`, `${m.late} %`]) }],
-        data: [
-          { title: 'Payment delays, last 12 months', columns: [{ label: 'Delay', wide: true }, { label: 'Share', num: true }], rows: PAYMENT_BANDS.map(b => [b.label, `${b.value} %`]) },
-          kv('Payment behaviour', this.paymentKv),
-        ],
-      };
-      case 'overdues': return {
-        figures: [series('Overdue per period', 'Period', 'Overdue, USD', OVERDUE_PERIODS.map(o => o.label), OVERDUE_PERIODS.map(o => usd(o.value)))],
-        data: [
-          kv('Open overdues', [{ label: 'Open overdue, USD', value: '0' }, ...this.overdueFacts[0].rows.map(r => ({ label: r.label, value: String(r.value) }))]),
-          { title: 'History', columns: [{ label: 'Date' }, { label: 'Event', wide: true }, { label: 'Outcome' }], rows: OVERDUE_EVENTS.map(e => [e.date, e.text, e.outcome]) },
-        ],
-      };
-      case 'financials': return {
-        figures: [series('Turnover over 5 years', 'Year', 'Turnover, USD M', TURNOVER_YEARS, TURNOVER_TREND)],
-        data: [{ title: 'Key figures, USD k', columns: [{ label: 'Indicator', wide: true }, ...FIN_YEARS.map(y => ({ label: y, num: true })), { label: 'Change', num: true }],
-          rows: FINANCIALS.map(r => [r.label, ...r.values, r.delta]) }],
-      };
-      case 'jobs': return { figures: [], data: [{ title: 'Open tasks, by due date', columns: [{ label: 'Task', wide: true }, { label: 'Due' }, { label: 'Priority' }],
-        rows: JOBS.map(j => [j.label, j.due, j.priority]) }] };
-      case 'newsfeed': return { figures: [], data: [{ title: 'Articles', columns: [{ label: 'Date' }, { label: 'Headline', wide: true }, { label: 'Source' }, { label: 'Tone' }],
-        rows: NEWS.map(n => [n.date, n.headline, n.source, n.tone]) }] };
-      case 'score': return {
-        figures: [series('Score over 8 periods', 'Period', 'Score, out of 100', MONTHS, SCORE_TREND)],
-        data: [kv('Score', [{ label: 'Score', value: '82 / 100' }, ...this.scoreKv])],
-      };
-      case 'risk-figures': return { figures: [], data: [kv('Risk figures', [{ label: 'Limits held', value: '72' }, ...this.riskKv])] };
-      case 'notepad': return { figures: [], data: [{ title: 'Notes', columns: [{ label: 'Date' }, { label: 'Note', wide: true }, { label: 'Author' }],
-        rows: NOTES.map(n => [n.date, n.text, n.author]) }] };
-      case 'identity': return { figures: [], data: [kv('Company', IDENTITY)] };
-      case 'decisions': return { figures: [], data: [{ title: 'Decisions', columns: [{ label: 'Date' }, { label: 'Decision', wide: true }, { label: 'Amount, USD', num: true }, { label: 'Outcome' }],
-        rows: DECISIONS.map(d => [d.date, d.label, d.amount || '—', d.outcome]) }] };
-      case 'policies': return { figures: [], data: [
-        { title: 'Exposure by policy, USD', columns: [{ label: 'Policy holder', wide: true }, { label: 'Policy' }, { label: 'Exposure', num: true }, { label: 'Share', num: true }, { label: 'Limit', num: true }, { label: 'Status' }],
-          rows: POLICIES.map(p => [p.holder, p.policy, p.exposure, `${p.share} %`, p.limit, p.status]) },
-        { title: 'Limit movements', columns: [{ label: 'Date' }, { label: 'Policy holder', wide: true }, { label: 'Movement', wide: true }],
-          rows: POLICY_MOVES.map(m => [m.date, m.policy, m.text]) },
-      ] };
-      case 'coverage': return {
-        figures: [series('Exposure against the 2 000 000 cover', 'Period', 'Exposure, USD', MONTHS, EXPOSURE_TREND.map(usd))],
-        data: [
-          kv('Latest request, USD', this.coverFacts[0].rows.map(r => ({ label: r.label, value: String(r.value) }))),
-          { title: 'Request history, USD', columns: [{ label: 'Date' }, { label: 'Requested', num: true }, { label: 'Granted', num: true }, { label: 'Outcome' }],
-            rows: COVER_HISTORY.map(c => [c.date, c.requested, c.granted, c.outcome]) },
-        ],
-      };
-      case 'glance': return { figures: [], data: [kv('Key figures', [
-        { label: 'Grade', value: 'A3, up from A4' }, { label: 'Exposure, USD', value: '1 548 000' },
-        { label: 'Paid on time', value: '94 %' }, { label: 'Overdue', value: '0' },
-        { label: 'Score', value: '82 / 100' }, { label: 'Latest cover', value: 'Approved, 2 000 000' },
-      ])] };
-      case 'sanction': return { figures: [], data: [kv('Screening', [{ label: 'Hits to clear', value: '1' }, ...this.sanctionKv])] };
-      case 'limit-review': return { figures: [], data: [kv('Limit review', [{ label: 'Due', value: '02 Dec 2024' }, ...this.reviewKv])] };
-      case 'claims': return { figures: [], data: [{ title: 'Claims', columns: [{ label: 'Date' }, { label: 'Claim', wide: true }, { label: 'Amount, USD', num: true }],
-        rows: [], empty: `No claim filed on this buyer as of ${AS_OF}.` }] };
-      case 'external-rating': return { figures: [], data: [{ title: 'Agency ratings', columns: [{ label: 'Agency', wide: true }, { label: 'Rating' }, { label: 'Outlook' }, { label: 'Date' }],
-        rows: EXTERNAL_RATINGS.map(r => [r.agency, r.rating, r.outlook, r.date]) }] };
-    }
   }
 
   // ── Loading states (point 6) ───────────────────────────────────────────────
@@ -1019,15 +826,12 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.undoStack.update(s => s.slice(0, -1));
   }
 
-  // ── Card gallery (iOS widget gallery): list, detail, add ──────────────────
+  // ── Card gallery: vignettes by topic, a click adds, a drag places ─────────
+  // A card lands in its default format at the first free place (or in the
+  // free space picked); its toolbar then changes the format and the emphasis.
 
-  readonly CATALOG_GROUPS = CATALOG_GROUPS;
   galleryOpen   = signal<boolean>(false);
-  galleryView   = signal<'list' | 'detail'>('list');
   gallerySearch = signal<string>('');
-  galleryKind   = signal<BentoKind | null>(null);
-  galleryFormat = signal<string>('1x1');
-  galleryEmphasis = signal<EmphasisChoice>('auto');
   /** Change card type: the card whose kind is replaced. */
   replaceId     = signal<string | null>(null);
   /** "Add a card here": the hole the card goes to. */
@@ -1035,8 +839,10 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   galleryDragging = signal<boolean>(false);
   /** Last card added: its background fades out (700 ms). */
   flashId       = signal<string | null>(null);
-  private slideDir = signal<'next' | 'prev'>('next');
-  slideKey = signal<number>(0);
+  /** Kind of the vignette pressed, until the press becomes a drag. */
+  private pressKind: BentoKind | null = null;
+  /** A drag out of the gallery just ended: the click that follows adds nothing. */
+  private suppressClick = false;
   private pendingAdd: { x: number; y: number; dropped?: boolean } | null = null;
   private galleryReturnFocus: HTMLElement | null = null;
 
@@ -1051,50 +857,17 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
         if (hole && (e.minW ?? 1) > hole.w) return false;
         if (!q) return true;
         const k = KINDS[e.kind];
-        return `${k.title} ${k.short} ${e.keywords} ${e.line} ${g.label}`.toLowerCase().includes(q);
+        return `${k.title} ${k.short} ${e.keywords} ${e.shows} ${g.label}`.toLowerCase().includes(q);
       }),
     })).filter(g => g.entries.length);
   });
 
   galleryCount = computed(() => this.galleryGroups().reduce((n, g) => n + g.entries.length, 0));
 
-  /** Formats of the carousel, in the four groups' order. */
-  galleryFormats = computed(() => FORMATS.map(f => ({ format: f, reason: this.formatBlock(f) })));
-
-  /** Why a format can't be picked in the gallery ('' = allowed). */
-  private formatBlock(f: BentoFormat): string {
-    const kind = this.galleryKind();
-    const cols = this.cols();
-    const w = f.w === 'full' ? cols : f.w;
-    if (w > cols) return `The board has ${cols} columns`;
-    const hole = this.targetHole();
-    if (hole && (w > hole.w || f.h > hole.h)) return `Does not fit the ${hole.w} × ${hole.h} space`;
-    const e = kind ? CATALOG_MAP[kind] : null;
-    if (e?.minW && w < e.minW) return e.minReason ?? 'Too narrow';
-    return '';
-  }
-
-  blockedReasons = computed(() => {
-    const byReason = new Map<string, string[]>();
-    for (const x of this.galleryFormats()) {
-      if (!x.reason) continue;
-      byReason.set(x.reason, [...(byReason.get(x.reason) ?? []), x.format.label]);
-    }
-    return [...byReason].map(([r, f]) => `${f.join(', ')} (${r.charAt(0).toLowerCase() + r.slice(1)})`);
-  });
-
-  emphasisOptions = computed<SelectOption[]>(() => {
-    const kind = this.galleryKind();
-    return kind ? emphasisOptions(kind).map(o => ({ value: o.value, label: o.label, disabled: o.disabled })) : [];
-  });
-
-  galleryEmphasisNote = computed(() => {
-    const kind = this.galleryKind();
-    return kind && this.galleryEmphasis() === 'auto' ? emphasisOptions(kind)[0].note ?? '' : '';
-  });
-
-  setGalleryEmphasis(v: string): void {
-    this.galleryEmphasis.set(v as EmphasisChoice);
+  /** Accessible name of a vignette: its name, what it shows, and if it is on the board. */
+  tileLabel(e: CatalogEntry): string {
+    const on = this.onBoardKinds().has(e.kind) ? ', already on the board' : '';
+    return `${KINDS[e.kind].short}: ${e.shows}${on}`;
   }
 
   /** Emphasis class actually drawn for a card. */
@@ -1102,18 +875,37 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     return this.look(card).cls;
   }
 
-  slideIndex = computed(() => this.galleryFormats().findIndex(x => x.format.id === this.galleryFormat()));
+  /** The format can hold a card of this kind, on this board and in the free space picked. */
+  private fits(kind: BentoKind, f: BentoFormat): boolean {
+    const cols = this.cols();
+    const w = f.w === 'full' ? cols : f.w;
+    if (w > cols) return false;
+    const hole = this.targetHole();
+    if (hole && (w > hole.w || f.h > hole.h)) return false;
+    return w >= Math.min(CATALOG_MAP[kind].minW ?? 1, cols);
+  }
+
+  /** Format of a card from the gallery: the one asked for, else its default, else the closest that fits. */
+  private formatFor(kind: BentoKind, wanted?: string): string {
+    const ok = (id: string | undefined) => !!id && !!FORMAT_MAP[id] && this.fits(kind, FORMAT_MAP[id]);
+    const rec = CATALOG_MAP[kind].recommended;
+    if (ok(wanted)) return wanted!;
+    if (ok(rec)) return rec;
+    const hole = this.targetHole();
+    const f = FORMAT_MAP[rec];
+    const near = nearestFormat(hole?.w ?? (f.w === 'full' ? this.cols() : f.w), hole?.h ?? f.h, this.cols());
+    if (ok(near)) return near;
+    return FORMATS.find(x => this.fits(kind, x))?.id ?? '1x1';
+  }
 
   openGallery(hole: { x: number; y: number; w: number; h: number } | null = null, replaceId: string | null = null): void {
     this.galleryReturnFocus = document.activeElement as HTMLElement | null;
     this.closeMenu();
     this.drawerOpen.set(false);
-    this.detailOpen.set(false);
     if (!this.editing()) this.startEditing();
     this.targetHole.set(hole);
     this.replaceId.set(replaceId);
     this.gallerySearch.set('');
-    this.galleryView.set('list');
     this.galleryOpen.set(true);
   }
 
@@ -1126,56 +918,8 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     if (back?.isConnected) afterNextRender(() => back.focus(), { injector: this.injector });
   }
 
-  showGalleryDetail(kind: BentoKind): void {
-    this.galleryKind.set(kind);
-    const rec = CATALOG_MAP[kind].recommended;
-    const replaced = this.cards().find(c => c.id === this.replaceId());
-    const wanted = replaced?.format ?? rec;
-    const ok = (id: string) => !this.formatBlock(FORMAT_MAP[id]);
-    const first = this.galleryFormats().find(x => !x.reason)?.format.id ?? '1x1';
-    this.galleryFormat.set(ok(wanted) ? wanted : ok(rec) ? rec : first);
-    this.galleryEmphasis.set(replaced?.emphasis ?? 'auto');
-    this.galleryView.set('detail');
-    this.slideKey.update(k => k + 1);
-    this.scheduleFit();
-  }
-
-  isRecommended(format: string): boolean {
-    const kind = this.galleryKind();
-    return !!kind && CATALOG_MAP[kind].recommended === format;
-  }
-
-  pickGalleryFormat(id: string): void {
-    const from = this.slideIndex();
-    const to = this.galleryFormats().findIndex(x => x.format.id === id);
-    if (to < 0 || this.galleryFormats()[to].reason) return;
-    this.slideDir.set(to < from ? 'prev' : 'next');
-    this.galleryFormat.set(id);
-    this.slideKey.update(k => k + 1);
-    this.scheduleFit();
-  }
-
-  /** Carousel: previous / next allowed format. */
-  stepGallery(dir: 1 | -1): void {
-    const list = this.galleryFormats();
-    for (let i = this.slideIndex() + dir; i >= 0 && i < list.length; i += dir) {
-      if (!list[i].reason) { this.pickGalleryFormat(list[i].format.id); return; }
-    }
-  }
-
-  canStep(dir: 1 | -1): boolean {
-    const list = this.galleryFormats();
-    for (let i = this.slideIndex() + dir; i >= 0 && i < list.length; i += dir) if (!list[i].reason) return true;
-    return false;
-  }
-
-  slideClass(): string {
-    return `bg-slide bg-slide--${this.slideDir()} bg-pv--${this.galleryFormat()}`;
-  }
-
-  private galleryCard(): BentoCard {
-    const kind = this.galleryKind()!;
-    return { id: newId(kind), kind, format: this.galleryFormat(), emphasis: this.galleryEmphasis() };
+  private galleryCard(kind: BentoKind): BentoCard {
+    return { id: newId(kind), kind, format: this.formatFor(kind), emphasis: 'auto' };
   }
 
   /** Where the new card goes: in the hole asked for, or the first free slot
@@ -1197,30 +941,29 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     return best;
   }
 
-  addFromGallery(): void {
-    if (!this.galleryKind()) return;
+  /** Click or Enter on a vignette: add the card, or change the type of the card asked for. */
+  pickGalleryCard(kind: BentoKind): void {
+    if (this.suppressClick) { this.suppressClick = false; return; }
     const replaceId = this.replaceId();
     this.checkpoint();
     if (replaceId) {
-      const kind = this.galleryKind()!;
+      const old = this.cards().find(c => c.id === replaceId);
       const name = this.titleOf(replaceId);
-      this.mutate(() => this.cards.update(arr => arr.map(c => (c.id === replaceId
-        ? { ...c, kind, format: this.galleryFormat(), emphasis: this.galleryEmphasis() } : c))));
+      const format = this.formatFor(kind, old?.format);
+      this.mutate(() => this.cards.update(arr => arr.map(c => (c.id === replaceId ? { ...c, kind, format } : c))));
       this.closeGallery();
-      this.announce(`${name} changed to ${KINDS[kind].short}.`);
-      this.afterAdd(replaceId, false);
+      this.afterAdd(replaceId, `${name} changed to ${KINDS[kind].short}.`);
       return;
     }
-    const card = this.galleryCard();
+    const card = this.galleryCard(kind);
     const i = this.insertIndex(card);
     this.mutate(() => this.cards.update(arr => [...arr.slice(0, i), card, ...arr.slice(i)]));
     this.targetHole.set(null);
     this.afterAdd(card.id);
   }
 
-  /** After a card lands: back to the list, scroll to it, fade, announce. */
-  private afterAdd(id: string, toList = true): void {
-    if (toList) this.galleryView.set('list');
+  /** After a card lands: scroll to it, fade, announce. */
+  private afterAdd(id: string, message?: string): void {
     this.flashId.set(id);
     setTimeout(() => { if (this.flashId() === id) this.flashId.set(null); }, FLASH_MS);
     this.markLoading(id);
@@ -1228,7 +971,8 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
       const el = this.cellEl(id);
       el?.scrollIntoView({ block: 'nearest', behavior: this.reducedMotion ? 'auto' : 'smooth' });
       const p = this.placed().find(q => q.card.id === id);
-      if (p) this.announce(`${this.titleOf(id)} added, position ${this.position(id)}, row ${p.y + 1}.`);
+      if (message) this.announce(message);
+      else if (p) this.announce(`${this.titleOf(id)} added, position ${this.position(id)}, row ${p.y + 1}.`);
     }, { injector: this.injector });
   }
 
@@ -1237,17 +981,54 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     this.openGallery(null, id);
   }
 
-  // Drag a card out of the gallery onto the board (always doubled by the button)
-  onGalleryPointerDown(ev: PointerEvent): void {
-    if (ev.button !== 0 || !this.galleryKind()) return;
+  /** Arrow keys move between the vignettes (up and down by position), Home and End go to the ends. */
+  onTileKey(ev: KeyboardEvent): void {
+    const tiles = Array.from(this.host.nativeElement.querySelectorAll('.bg-tile') as NodeListOf<HTMLElement>);
+    const from = tiles.indexOf(ev.currentTarget as HTMLElement);
+    if (from < 0) return;
+    let to = -1;
+    if (ev.key === 'ArrowRight') to = Math.min(tiles.length - 1, from + 1);
+    else if (ev.key === 'ArrowLeft') to = Math.max(0, from - 1);
+    else if (ev.key === 'Home') to = 0;
+    else if (ev.key === 'End') to = tiles.length - 1;
+    else if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+      const down = ev.key === 'ArrowDown';
+      const r = tiles[from].getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      let best = Infinity;
+      tiles.forEach((t, i) => {
+        const q = t.getBoundingClientRect();
+        const dy = down ? q.top - r.bottom : r.top - q.bottom;
+        if (dy < 0) return;
+        const d = dy * 1000 + Math.abs(q.left + q.width / 2 - cx);
+        if (d < best) { best = d; to = i; }
+      });
+    } else return;
     ev.preventDefault();
+    if (to >= 0 && to !== from) {
+      tiles[to].focus();
+      tiles[to].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  // Drag a vignette out of the gallery onto the board (a click does the same)
+  onGalleryPointerDown(ev: PointerEvent, kind: BentoKind): void {
+    this.suppressClick = false;
+    if (ev.button !== 0) return;
+    // No text selection while the vignette is dragged; the click still fires
+    ev.preventDefault();
+    (ev.currentTarget as HTMLElement).focus({ preventScroll: true });
+    this.pressKind = kind;
     this.press = { id: '', el: null, x: ev.clientX, y: ev.clientY, add: true };
   }
 
   private startGalleryDrag(ev: PointerEvent): void {
-    const card = this.galleryCard();
+    const kind = this.pressKind;
+    if (!kind) return;
+    const card = this.galleryCard(kind);
     const origin = this.cards();
     this.press = null;
+    this.suppressClick = true;
     this.pendingAdd = { x: ev.clientX, y: ev.clientY };
     this.galleryDragging.set(true);
     this.checkpoint();
@@ -1462,6 +1243,8 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     const d = this.drag;
     this.press = null;
     if (!d) return;
+    // The click that ends a drag out of the gallery adds nothing
+    if (d.fromGallery) setTimeout(() => (this.suppressClick = false));
     // Dropped back on the gallery: the card is not added
     if (d.fromGallery && ev && this.overGallery(ev.clientX, ev.clientY)) {
       this.cancelDrag();

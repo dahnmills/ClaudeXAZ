@@ -1,0 +1,48 @@
+<span class="bt__title"></span>
+@switch (kind()) {
+  @case ('figure') {
+    <span class="bt__big"></span>
+    <span class="bt__text bt__text--wide"></span>
+    <span class="bt__text"></span>
+  }
+  @case ('line') {
+    <span class="bt__big bt__big--small"></span>
+    <span class="bt__area"></span>
+  }
+  @case ('bars') {
+    <span class="bt__bars">
+      @for (h of bars; track $index) {
+        <span [class]="'bt__bar bt__bar--' + h"></span>
+      }
+    </span>
+  }
+  @case ('list') {
+    @for (r of rows; track r) {
+      <span class="bt__row">
+        <span class="bt__dot"></span>
+        <span class="bt__text" [class.bt__text--wide]="r % 2 === 0"></span>
+      </span>
+    }
+  }
+  @case ('table') {
+    @for (r of rows; track r) {
+      <span class="bt__trow" [class.bt__trow--head]="r === 0">
+        @for (c of cols; track c) { <span class="bt__cell"></span> }
+      </span>
+    }
+  }
+  @case ('gauge') {
+    <span class="bt__gauge"></span>
+    <span class="bt__text"></span>
+  }
+  @case ('kpis') {
+    <span class="bt__kpis">
+      @for (c of cols; track c) {
+        <span class="bt__kpi">
+          <span class="bt__text"></span>
+          <span class="bt__big bt__big--small"></span>
+        </span>
+      }
+    </span>
+  }
+}

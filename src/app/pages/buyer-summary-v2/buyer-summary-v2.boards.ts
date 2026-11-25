@@ -9,9 +9,9 @@ import { normalize } from './buyer-summary-v2.status';
 export interface Board {
   id: string;
   name: string;
-  /** Job template: can be edited and reset, not renamed or deleted (as in V1). */
+  /** Job template: opened from Manage boards, never renamed or deleted. */
   builtin: boolean;
-  /** Template the board started from, for "Reset to template". */
+  /** Template the board started from (null: started empty). */
   template: TemplateId | null;
   cards: BentoCard[];
 }

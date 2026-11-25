@@ -23,6 +23,24 @@ export const CATEGORY_LABELS: Record<ReleaseCategory, string> = {
 // out of scope for this changelog: it's about Qirin, not the test harness.
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    id: 'buyer-summary-v2-user-feedback-2026-11-25',
+    date: '2026-11-25',
+    category: 'design',
+    screens: ['buyer-summary-v2/137381425'],
+    title: 'Buyer Summary V2: a visual card gallery, simpler boards, no detail panel',
+    description:
+      'Adding a card is now a matter of picking a vignette: each card is drawn as a small schematic with a short name, by topic. The card detail panel is gone, the Highlighted label and its star too, and Manage boards keeps only what it needs: templates to open, your boards to rename or delete.',
+    changes: [
+      'Add a card: a search field, then short groups (Risk, Exposure, Payments, Company, Follow-up, Overview) of vignettes that show the kind of content (big figure, curve, bars, list, table, gauge, key figures), never a real value; a short name under each',
+      'A click or Enter adds the card in its default format at the first free place (or in the free space picked); it can still be dragged onto the board; format and emphasis change afterwards with the card toolbar. No more carousel, format list or emphasis choice in the gallery',
+      'A card already on the board keeps its vignette, with a small check; each vignette is a button named after the card and what it shows, arrow keys move between vignettes, Home and End go to the ends',
+      'No more card detail panel: the title is plain text again, the card menu (See figures, View data) is gone, and so is the "Open all jobs" link, which led nowhere in the prototype',
+      'Subtle and strong cards say their emphasis by the background only: no "Highlighted" label and no star in the header (screen readers still hear "emphasized"); the emphasis menu says Subtle background and Strong background',
+      'Manage boards: Templates on top (open only, never renamed or deleted), Your boards below (open, rename, delete at once with Undo in the snackbar); no Duplicate and no Reset to template, the Reset layout button leaves the edit bar',
+      'New board stays in Manage boards and starts from a template or empty (no copy of the current board)',
+    ],
+  },
+  {
     id: 'buyer-summary-v2-card-kit-research-2026-11-23',
     date: '2026-11-23',
     category: 'design',

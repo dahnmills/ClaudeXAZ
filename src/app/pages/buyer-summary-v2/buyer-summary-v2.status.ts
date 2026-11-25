@@ -230,7 +230,7 @@ export function emphasisOptions(kind: BentoKind): EmphasisOption[] {
     { value: 'status', label: `${tone}, always shown`, swatch: s?.tone ?? 'none', disabled: !s },
     { value: 'status-strong', label: `${tone}, strong`, swatch: s && s.tone !== 'positive' ? `${s.tone}-strong` as Emphasis : 'none',
       disabled: !s || s.tone === 'positive' },
-    { value: 'subtle', label: 'Highlight, subtle', swatch: 'subtle', disabled: false },
-    { value: 'strong', label: 'Highlight, strong', swatch: 'strong', disabled: false },
+    { value: 'subtle', label: 'Subtle background', swatch: 'subtle', disabled: false },
+    { value: 'strong', label: 'Strong background', swatch: 'strong', disabled: false },
   ];
 }

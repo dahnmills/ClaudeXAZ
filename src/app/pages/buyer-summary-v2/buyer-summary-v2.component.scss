@@ -526,10 +526,8 @@
 .bento-snack { z-index: 500; }
 
 // =============================================================
-// Reading: title link, read menu, card date, detail panel
+// Reading: card header end, card date
 // =============================================================
-
-.bc-title__link { min-width: 0; }
 
 .bc-head__end {
   display:     inline-flex;
@@ -548,38 +546,6 @@
 }
 
 .bento-cell--rev .bc-date { color: var(--semantic-color-static-text-subtle-tertiary); }
-
-// Read menu: top right, shown on hover, on keyboard focus and when open
-.bc-readmenu {
-  position:   absolute;
-  top:        var(--semantic-measurement-spacing-s);
-  right:      var(--semantic-measurement-spacing-s);
-  z-index:    5;
-  opacity:    0;
-  transition: opacity 150ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-.bento-cell:hover .bc-readmenu,
-.bento-cell:focus-within .bc-readmenu,
-.bento-cell--menu-open .bc-readmenu { opacity: 1; }
-
-// The menu button takes the place of the header's end while it shows
-.bento:not(.bento--editing) .bento-cell:is(:hover, :focus-within, .bento-cell--menu-open) .bc-head__end { opacity: 0; }
-
-.dt-pane {
-  display:        flex;
-  flex-direction: column;
-  align-items:    flex-start;
-  gap:            var(--semantic-measurement-spacing-m);
-  padding:        0 var(--semantic-measurement-spacing-m) var(--semantic-measurement-spacing-m);
-}
-
-.dt-meta {
-  margin:      0;
-  font-size:   var(--semantic-font-text-style-size-m);
-  line-height: var(--semantic-font-text-style-line-height-m);
-  color:       var(--semantic-color-static-text-main-secondary);
-}
 
 // =============================================================
 // States: board date, skeleton, error, empty
