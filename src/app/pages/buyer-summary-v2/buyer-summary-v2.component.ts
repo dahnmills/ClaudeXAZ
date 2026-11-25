@@ -92,6 +92,9 @@ const MOVE_COOLDOWN_MS = 140;  // hysteresis between two reorders
 
 const sameOrder = (a: BentoCard[], b: BentoCard[]) =>
   a.length === b.length && a.every((c, i) => c === b[i]);
+/** Where a new board starts: a template, a copy of an existing board, or nothing. */
+type NewBoardSource = 'template' | 'board' | 'empty';
+
 const sameCards = (a: BentoCard[], b: BentoCard[]) =>
   a.length === b.length && a.every((c, i) => c.id === b[i].id && c.kind === b[i].kind
     && c.format === b[i].format && c.emphasis === b[i].emphasis);
@@ -186,12 +189,18 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   templateList   = computed(() => this.boards().filter(b => b.builtin));
   ownBoards      = computed(() => this.boards().filter(b => !b.builtin));
 
-  // Manage boards drawer: templates open as they are, your boards also rename
-  // and delete; a new board starts from a template or empty
+  // Manage boards drawer: templates open as they are (read-only), your boards
+  // also rename and delete; a new board starts from a template, from a copy of
+  // an existing board, or empty
   drawerOpen   = signal<boolean>(false);
   drawerView   = signal<'boards' | 'create'>('boards');
   newBoardName = signal<string>('');
-  newBoardFrom = signal<'empty' | TemplateId>('common');
+  newBoardFrom = signal<NewBoardSource>('template');
+  newBoardTemplate = signal<TemplateId>('common');
+  newBoardSourceId = signal<string>('common');
+  /** The name was typed by hand: changing the source no longer rewrites it. */
+  private newBoardNameTouched = false;
+  templateOptions = TEMPLATES.map<SelectOption>(t => ({ value: t.id, label: t.name }));
 
   // ── Board model: working copy of the current board's cards ────────────────
   cards   = signal<BentoCard[]>(cloneCards(this.currentBoard()?.cards ?? []));
@@ -330,6 +339,8 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   dirty = computed(() => this.editing() && !sameCards(this.cards(), this.editOrigin()));
 
   startEditing(): void {
+    // Templates are read-only: Duplicate makes a board of your own to edit
+    if (this.currentBoard().builtin) return;
     this.editOrigin.set(this.cards());
     this.undoStack.set([]);
     this.redoStack.set([]);
@@ -456,7 +467,8 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
   private saveCurrentCards(): void {
     const id = this.currentBoardId();
     const cards = cloneCards(this.cards());
-    this.boards.update(arr => arr.map(b => (b.id === id ? { ...b, cards } : b)));
+    // A template is never changed, not even by mistake
+    this.boards.update(arr => arr.map(b => (b.id === id && !b.builtin ? { ...b, cards } : b)));
     this.persist();
   }
 
@@ -490,16 +502,78 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
     return `${base} ${n}`;
   }
 
-  /** New board: from a template (the current board's, or Common) or empty. */
+  /** New board: from a template, from a copy of an existing board, or empty.
+   *  The open board preselects the template or the board to copy. */
   openCreateBoard(): void {
-    this.pickNewBoardSource(this.currentBoard().template ?? 'common');
+    const cur = this.currentBoard();
+    this.newBoardNameTouched = false;
+    this.newBoardTemplate.set(cur.template ?? 'common');
+    this.newBoardSourceId.set(cur.id);
+    this.pickNewBoardSource(cur.builtin ? 'template' : 'board');
     this.drawerView.set('create');
     this.drawerOpen.set(true);
   }
 
-  pickNewBoardSource(from: 'empty' | TemplateId): void {
+  pickNewBoardSource(from: NewBoardSource): void {
     this.newBoardFrom.set(from);
-    this.newBoardName.set(this.uniqueName(from === 'empty' ? 'My board' : `My ${TEMPLATE_MAP[from].name}`));
+    this.suggestBoardName();
+  }
+
+  pickNewBoardTemplate(id: string): void {
+    if (!(id in TEMPLATE_MAP)) return;
+    this.newBoardTemplate.set(id as TemplateId);
+    this.suggestBoardName();
+  }
+
+  pickNewBoardCopy(id: string): void {
+    if (!this.boards().some(b => b.id === id)) return;
+    this.newBoardSourceId.set(id);
+    this.suggestBoardName();
+  }
+
+  typeNewBoardName(name: string): void {
+    this.newBoardNameTouched = true;
+    this.newBoardName.set(name);
+  }
+
+  /** Default name, editable: "Copy of Common", "New board". */
+  private suggestBoardName(): void {
+    if (this.newBoardNameTouched) return;
+    const from = this.newBoardFrom();
+    const base = from === 'empty' ? 'New board'
+      : `Copy of ${from === 'template' ? TEMPLATE_MAP[this.newBoardTemplate()].name : this.boardById(this.newBoardSourceId())?.name ?? 'board'}`;
+    this.newBoardName.set(this.uniqueName(base).slice(0, BOARD_NAME_MAX));
+  }
+
+  /** What the new board will hold, under the choices. */
+  newBoardSummary = computed(() => {
+    const from = this.newBoardFrom();
+    if (from === 'empty') return 'No card yet.';
+    if (from === 'template') {
+      const t = TEMPLATE_MAP[this.newBoardTemplate()];
+      return `${t.purpose}, ${t.cards.length} cards.`;
+    }
+    const n = this.boardById(this.newBoardSourceId())?.cards.length ?? 0;
+    return `${n} ${n === 1 ? 'card' : 'cards'}, as saved.`;
+  });
+
+  private boardById(id: string): Board | undefined {
+    return this.boards().find(b => b.id === id);
+  }
+
+  /** Cards and template of the source picked in New board. */
+  private newBoardSource(): { cards: BentoCard[]; template: TemplateId | null } {
+    const from = this.newBoardFrom();
+    if (from === 'template') {
+      const t = TEMPLATE_MAP[this.newBoardTemplate()];
+      return { cards: t.cards, template: t.id };
+    }
+    if (from === 'board') {
+      const b = this.boardById(this.newBoardSourceId()) ?? this.currentBoard();
+      // The open board: its saved state (edits are only saved by Done)
+      return { cards: b.cards, template: b.template };
+    }
+    return { cards: [], template: null };
   }
 
   newBoardNameError = computed(() => {
@@ -512,25 +586,35 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
 
   createBoard(): void {
     if (this.newBoardNameError()) return;
-    const from = this.newBoardFrom();
-    const source = from === 'empty' ? [] : TEMPLATE_MAP[from].cards;
+    const { cards, template } = this.newBoardSource();
+    this.addOwnBoard(this.newBoardName().trim(), cards, template, 'Board created');
+  }
+
+  /** Duplicate the open board (template or yours): the copy opens in edit mode. */
+  duplicateBoard(): void {
+    if (this.editing()) return;
+    const src = this.currentBoard();
+    const name = this.uniqueName(`Copy of ${src.name}`).slice(0, BOARD_NAME_MAX);
+    this.addOwnBoard(name, src.cards, src.template, 'Board duplicated');
+  }
+
+  /** A new board of your own, opened at once in edit mode: it is made to be changed. */
+  private addOwnBoard(name: string, source: BentoCard[], template: TemplateId | null, title: string): void {
     const board: Board = {
       id: newId('board'),
-      name: this.newBoardName().trim(),
+      name,
       builtin: false,
-      template: from === 'empty' ? null : from,
+      template,
       cards: source.map(c => ({ ...c, id: newId(c.kind) })),
     };
+    this.closeMenu();
     this.boards.update(arr => [...arr, board]);
     this.drawerOpen.set(false);
-    this.currentBoardId.set(board.id);
-    this.cards.set(cloneCards(board.cards));
-    this.loadBoard();
+    this.openBoard(board);
     this.persist();
-    this.toaster.show(`“${board.name}” is ready`, { tone: 'success', title: 'Board created' });
-    this.announce(`${board.name} created.`);
-    // An empty board goes straight to edit mode: there is nothing to read yet
-    if (!board.cards.length) this.startEditing();
+    this.toaster.show(`You are editing “${board.name}”, one of your boards`, { tone: 'success', title });
+    this.startEditing();
+    this.announce(`${board.name} created. Edit mode: drag a card to move it, or use its toolbar. Done saves.`);
   }
 
   renameError(board: Board, name: string): string {

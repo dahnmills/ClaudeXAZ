@@ -9,7 +9,7 @@ import { normalize } from './buyer-summary-v2.status';
 export interface Board {
   id: string;
   name: string;
-  /** Job template: opened from Manage boards, never renamed or deleted. */
+  /** Job template: read-only (never edited, renamed or deleted); duplicate it to change it. */
   builtin: boolean;
   /** Template the board started from (null: started empty). */
   template: TemplateId | null;
@@ -107,9 +107,13 @@ export function templateBoards(): Board[] {
 }
 
 // ── Storage (localStorage, key of its own: the V1 never reads it) ───────────
+// Templates live in the code and are read-only: only the analyst's own boards
+// and the last board opened are stored. Version 1 also stored the templates,
+// which could be edited then: a template saved with changes comes back as a
+// board of your own, "Common (edited)", instead of being lost.
 
 export const STORAGE_KEY = 'qirin.buyer-summary-v2.boards';
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;
 
 export interface StoredBoards {
   v: number;
@@ -123,30 +127,62 @@ const validCard = (x: unknown): x is BentoCard => {
     && (k.emphasis === 'auto' || k.emphasis === 'status' || k.emphasis === 'status-strong' || k.emphasis in EMPHASIS_MAP);
 };
 
-/** Saved boards, or null when nothing (or nothing readable) is stored. */
+/** Same cards in the same order, formats and emphases (ids aside). */
+const sameLayout = (a: BentoCard[], b: BentoCard[]) =>
+  a.length === b.length && a.every((c, i) => c.kind === b[i].kind && c.format === b[i].format
+    && normalize(c.emphasis) === normalize(b[i].emphasis));
+
+/** "Common (edited)", then "Common (edited) 2"... */
+const freeName = (base: string, boards: Board[]) => {
+  const taken = new Set(boards.map(b => b.name.toLowerCase()));
+  if (!taken.has(base.toLowerCase())) return base;
+  let n = 2;
+  while (taken.has(`${base} ${n}`.toLowerCase())) n++;
+  return `${base} ${n}`;
+};
+
+/** Templates (from the code) then your saved boards; null when nothing readable is stored. */
 export function loadBoards(): StoredBoards | null {
   try {
     const raw = typeof localStorage === 'undefined' ? null : localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const data = JSON.parse(raw) as StoredBoards;
-    if (data?.v !== STORAGE_VERSION || !Array.isArray(data.boards)) return null;
-    const boards = data.boards
+    if ((data?.v !== 1 && data?.v !== STORAGE_VERSION) || !Array.isArray(data.boards)) return null;
+    const saved = data.boards
       .filter(b => b && typeof b.id === 'string' && typeof b.name === 'string' && Array.isArray(b.cards))
       .map(b => ({ ...b, template: b.template ?? null, cards: b.cards.filter(validCard).map(c => ({ ...c, emphasis: normalize(c.emphasis) })) }));
-    // A template removed from the code is dropped; a new one is added
-    for (const t of templateBoards()) {
-      if (!boards.some(b => b.id === t.id)) boards.splice(TEMPLATES.findIndex(x => x.id === t.id), 0, t);
+    let current = data.current;
+    const own: Board[] = [];
+    for (const b of saved) {
+      if (!b.builtin) { own.push(b); continue; }
+      // Version 1 stored the templates. Unchanged, the code's version is
+      // enough; changed, it becomes a board of your own so the work is kept.
+      const t = TEMPLATE_MAP[b.id as TemplateId];
+      if (!t || !b.cards.length || sameLayout(b.cards, t.cards)) continue;
+      const edited: Board = {
+        id: newId('board'),
+        name: freeName(`${t.name} (edited)`, [...templateBoards(), ...saved, ...own]),
+        builtin: false,
+        template: t.id,
+        cards: b.cards,
+      };
+      own.push(edited);
+      if (current === b.id) current = edited.id;
     }
-    const current = boards.some(b => b.id === data.current) ? data.current : boards[0].id;
+    const boards = [...templateBoards(), ...own];
+    if (!boards.some(b => b.id === current)) current = boards[0].id;
+    // The migrated state is written once, in the new format
+    if (data.v !== STORAGE_VERSION) saveBoards(current, boards);
     return { v: STORAGE_VERSION, current, boards };
   } catch {
     return null;
   }
 }
 
+/** Saves your boards and the board opened; the templates never. */
 export function saveBoards(current: string, boards: Board[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ v: STORAGE_VERSION, current, boards }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ v: STORAGE_VERSION, current, boards: boards.filter(b => !b.builtin) }));
   } catch {
     // Private mode or full storage: the board still works for this visit
   }

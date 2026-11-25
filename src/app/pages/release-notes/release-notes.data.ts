@@ -27,9 +27,9 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     date: '2026-11-25',
     category: 'design',
     screens: ['buyer-summary-v2/137381425'],
-    title: 'Buyer Summary V2: a visual card gallery, simpler boards, no detail panel',
+    title: 'Buyer Summary V2: a visual card gallery, read-only templates, no detail panel',
     description:
-      'Adding a card is now a matter of picking a vignette: each card is drawn as a small schematic with a short name, by topic. The card detail panel is gone, the Highlighted label and its star too, and Manage boards keeps only what it needs: templates to open, your boards to rename or delete.',
+      'Adding a card is now a matter of picking a vignette: each card is drawn as a small schematic with a short name, by topic. The card detail panel is gone, the Highlighted label and its star too, and Manage boards keeps only what it needs: templates to open, your boards to rename or delete. Templates are read-only: Duplicate makes a board of your own to change.',
     changes: [
       'Add a card: a search field, then short groups (Risk, Exposure, Payments, Company, Follow-up, Overview) of vignettes that show the kind of content (big figure, curve, bars, list, table, gauge, key figures), never a real value; a short name under each',
       'A click or Enter adds the card in its default format at the first free place (or in the free space picked); it can still be dragged onto the board; format and emphasis change afterwards with the card toolbar. No more carousel, format list or emphasis choice in the gallery',
@@ -37,7 +37,10 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       'No more card detail panel: the title is plain text again, the card menu (See figures, View data) is gone, and so is the "Open all jobs" link, which led nowhere in the prototype',
       'Subtle and strong cards say their emphasis by the background only: no "Highlighted" label and no star in the header (screen readers still hear "emphasized"); the emphasis menu says Subtle background and Strong background',
       'Manage boards: Templates on top (open only, never renamed or deleted), Your boards below (open, rename, delete at once with Undo in the snackbar); no Duplicate and no Reset to template, the Reset layout button leaves the edit bar',
-      'New board stays in Manage boards and starts from a template or empty (no copy of the current board)',
+      'Templates are read-only: no Edit board on a template, "Duplicate to edit" instead, which creates a board of your own ("Copy of Common") and opens it in edit mode; your boards keep Edit board, plus Duplicate, and still rename and delete in Manage boards',
+      'New board starts from a template, from a copy of an existing board (a template or one of yours) or empty, with a default name you can change ("Copy of Common", "New board"); the new board opens in edit mode',
+      'Templates are no longer saved in the browser, only your boards are: a template changed with an earlier version comes back as a board of your own, "Common (edited)", instead of being lost',
+      'The background button of the card toolbar uses a paint bucket instead of a star (in Qirin the star means favourite only); its name and its menu title say Background',
     ],
   },
   {

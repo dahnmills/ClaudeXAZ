@@ -78,7 +78,7 @@ export const ByCategory: Story = {
     props: {
       categories: [
         { label: 'Action', icons: ['search','filter','settings','save','download','upload','export-share','launch','refresh','archive','share','clock','clock-back','switch','bolt','location','user','users','buyers','tenant','lock','lock-open','bookmark','flag','eye','eye-off','calendar','calendar-add','calendar-checked','shield','credit-card','in-progress','play','pause','file-new','file-text','tools','contract','checklist','chart','qr-code','heart'] },
-        { label: 'Editing', icons: ['plus','plus-circle','minus','minus-circle','edit','edit-compose','trash','duplicate','paperclip','link','pin','undo','redo','image'] },
+        { label: 'Editing', icons: ['plus','plus-circle','minus','minus-circle','edit','edit-compose','trash','duplicate','paperclip','link','pin','undo','redo','image','paint-bucket'] },
         { label: 'Navigation', icons: ['home','burger','grid','context-vertical','context-horizontal','close','close-circle','minimize','maximize','arrow-left','arrow-right','arrow-up','arrow-down','arrow-first','arrow-last','chevron-left','chevron-right','chevron-up','chevron-down','chevron-double-left','chevron-double-right','unfold'] },
         { label: 'Communication', icons: ['phone','speech-bubble','mail','bell','bell-off','microphone','globe','smartphone'] },
         { label: 'Signal', icons: ['warning-triangle','info-circle','check','check-circle','error-circle','help','not-allowed'] },

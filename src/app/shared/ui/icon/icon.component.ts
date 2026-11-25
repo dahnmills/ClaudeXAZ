@@ -503,6 +503,16 @@ const ICON_PATHS: Record<string, string> = {
     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
           stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`,
 
+  // Background / fill of a surface (paint bucket). Never a star: in Qirin the
+  // star means favourite only.
+  'paint-bucket': `
+    <path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2a2 2 0 0 0 2.8 0L19 11Z"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="m5 2 5 5M2 13h15"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"
+          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+
   'sliders': `
     <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"
           stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`,

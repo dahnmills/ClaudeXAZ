@@ -32,7 +32,7 @@
       @if (editing()) {
         <p class="bento-bar__hint">
           <ds-icon name="move" [size]="16" />
-          Drag a card to move it. Its toolbar changes the format and the emphasis.
+          Drag a card to move it. Its toolbar changes the format and the background.
         </p>
         <!-- Edit bar (edit-flow benchmark 3.2): Add card, Undo, Redo, Cancel, Done -->
         <div class="bento-bar__actions">
@@ -56,10 +56,22 @@
         <!-- One date for the whole board; a card shows its own only when it differs -->
         <p class="bento-bar__asof">Data as of {{ AS_OF }}, {{ AS_OF_TIME }}</p>
         <div class="bento-bar__actions">
-          <ds-button type="secondary" (clicked)="startEditing()">
-            <ds-icon slot="icon-left" name="sliders" [size]="16" />
-            Edit board
-          </ds-button>
+          <!-- A template is read-only: Duplicate makes your own copy, opened in edit mode -->
+          @if (currentBoard().builtin) {
+            <ds-button type="secondary" (clicked)="duplicateBoard()">
+              <ds-icon slot="icon-left" name="copy" [size]="16" />
+              Duplicate to edit
+            </ds-button>
+          } @else {
+            <ds-button type="secondary" (clicked)="startEditing()">
+              <ds-icon slot="icon-left" name="sliders" [size]="16" />
+              Edit board
+            </ds-button>
+            <ds-button type="secondary" (clicked)="duplicateBoard()">
+              <ds-icon slot="icon-left" name="copy" [size]="16" />
+              Duplicate
+            </ds-button>
+          }
           <!-- V1 order: Manage boards, then the board list furthest right -->
           <ds-button type="secondary" (clicked)="openBoardsDrawer()">
             <ds-icon slot="icon-left" name="settings" [size]="16" />
@@ -140,9 +152,9 @@
                     aria-label="All formats">{{ QUICK_FORMATS.includes(p.card.format) ? 'More' : formatLabel(p.card.format) }}</button>
                 </div>
                 <span class="bs-toolbar__sep" aria-hidden="true"></span>
-                <ds-button-icon type="plain" tone="default" ariaLabel="Emphasis"
+                <ds-button-icon type="plain" tone="default" ariaLabel="Background"
                   (clicked)="toggleMenu(p.card.id, 'emphasis')">
-                  <ds-icon name="star" [size]="16" />
+                  <ds-icon name="paint-bucket" [size]="16" />
                 </ds-button-icon>
                 <span class="bs-toolbar__sep" aria-hidden="true"></span>
                 <!-- Drag handle: keyboard move (Space, arrows, Space) -->
@@ -176,7 +188,7 @@
                           }
                         }
                       } @else {
-                        <ds-flyout-menu-title label="Emphasis" />
+                        <ds-flyout-menu-title label="Background" />
                         @for (e of emphasisMenu(p.card.kind); track e.value) {
                           <ds-flyout-menu-item [label]="e.label" [selectable]="true" [disabled]="e.disabled"
                             [selected]="p.card.emphasis === e.value"
@@ -232,17 +244,25 @@
       </div>
     } @else {
       <div class="bm-create">
-        <ds-input-text label="Board name" [value]="newBoardName()" (valueChange)="newBoardName.set($event)"
-          [error]="!!newBoardNameError()" [errorMessage]="newBoardNameError()" />
         <p class="bm-label" id="bm-from">Start from</p>
         <div class="bm-choices" role="radiogroup" aria-labelledby="bm-from">
-          @for (t of TEMPLATES; track t.id) {
-            <ds-radio-card [label]="t.name + ' template'" [sublabel]="t.purpose + ', ' + t.cards.length + ' cards'"
-              [selected]="newBoardFrom() === t.id" (selectedChange)="pickNewBoardSource(t.id)" />
-          }
+          <ds-radio-card label="A template" sublabel="Common, Credit Assessment or Credit Underwriting"
+            [selected]="newBoardFrom() === 'template'" (selectedChange)="pickNewBoardSource('template')" />
+          <ds-radio-card label="An existing board" sublabel="A copy of a template or of one of your boards"
+            [selected]="newBoardFrom() === 'board'" (selectedChange)="pickNewBoardSource('board')" />
           <ds-radio-card label="Empty board" sublabel="Start from nothing and add cards one by one"
             [selected]="newBoardFrom() === 'empty'" (selectedChange)="pickNewBoardSource('empty')" />
         </div>
+        @if (newBoardFrom() === 'template') {
+          <ds-select label="Template" [options]="templateOptions"
+            [value]="newBoardTemplate()" (selectionChange)="pickNewBoardTemplate($event)" />
+        } @else if (newBoardFrom() === 'board') {
+          <ds-select label="Board to copy" [options]="boardOptions()"
+            [value]="newBoardSourceId()" (selectionChange)="pickNewBoardCopy($event)" />
+        }
+        <ds-input-text label="Board name" [value]="newBoardName()" (valueChange)="typeNewBoardName($event)"
+          [error]="!!newBoardNameError()" [errorMessage]="newBoardNameError()" />
+        <p class="bm-note">{{ newBoardSummary() }} The new board opens in edit mode.</p>
       </div>
     }
     @if (drawerView() === 'create') {
