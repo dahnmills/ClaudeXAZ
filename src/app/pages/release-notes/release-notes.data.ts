@@ -41,6 +41,8 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       'New board starts from a template, from a copy of an existing board (a template or one of yours) or empty, with a default name you can change ("Copy of Common", "New board"); the new board opens in edit mode',
       'Templates are no longer saved in the browser, only your boards are: a template changed with an earlier version comes back as a board of your own, "Common (edited)", instead of being lost',
       'The background button of the card toolbar uses a paint bucket instead of a star (in Qirin the star means favourite only); its name and its menu title say Background',
+      'The page behind the board is white again (main background), not grey',
+      'The board selector grows with the board name and a long name no longer runs out of the field under its arrow: it ends with an ellipsis and shows in full on hover',
     ],
   },
   {
