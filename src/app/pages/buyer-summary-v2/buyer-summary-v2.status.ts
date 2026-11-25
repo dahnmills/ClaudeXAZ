@@ -6,7 +6,7 @@
 // - at most 2 automatic status backgrounds per board (the most urgent), the
 //   other cards keep their status label without a background; never a full
 //   green background;
-// - the analyst can hide the background ("No background") or force it, pale or
+// - the analyst can hide the background ("None") or force it, pale or
 //   strong; "Auto" is the default; subtle and strong highlights stay manual.
 
 import {
@@ -226,7 +226,7 @@ export function emphasisOptions(kind: BentoKind): EmphasisOption[] {
   return [
     { value: 'auto', label: s ? `Auto, ${tone.toLowerCase()}` : 'Auto', swatch: s?.tone ?? 'none', disabled: false,
       note: s ? `${s.reason}. ${s.rule}.` : noRuleReason(kind) },
-    { value: 'none', label: 'No background', swatch: 'none', disabled: false },
+    { value: 'none', label: 'None', swatch: 'none', disabled: false },
     { value: 'status', label: `${tone}, always shown`, swatch: s?.tone ?? 'none', disabled: !s },
     { value: 'status-strong', label: `${tone}, strong`, swatch: s && s.tone !== 'positive' ? `${s.tone}-strong` as Emphasis : 'none',
       disabled: !s || s.tone === 'positive' },

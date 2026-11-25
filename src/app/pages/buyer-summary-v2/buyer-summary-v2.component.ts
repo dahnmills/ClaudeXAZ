@@ -672,12 +672,50 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
 
   toggleMenu(id: string, view: 'format' | 'emphasis'): void {
     const open = this.openMenuId() === id && this.menuView() === view;
-    this.openMenuId.set(open ? null : id);
+    if (open) { this.closeMenu(); return; }
+    const active = document.activeElement;
+    this.menuTrigger = active instanceof HTMLElement && active.closest('.bs-toolbar') ? active : null;
+    this.openMenuId.set(id);
     this.menuView.set(view);
+    // Keyboard: the menu sits at the end of the toolbar, so focus goes to the
+    // selected option (or the first one) as soon as it opens.
+    afterNextRender(() => {
+      const menu = this.cellEl(id)?.querySelector('.bento-menu');
+      const target = menu?.querySelector<HTMLElement>('[aria-selected="true"]:not([aria-disabled="true"])')
+        ?? this.menuItems(menu)[0];
+      target?.focus();
+    }, { injector: this.injector });
   }
 
+  /** Button that opened the card menu: focus comes back to it on close. */
+  private menuTrigger: HTMLElement | null = null;
+
   closeMenu(): void {
+    const trigger = this.menuTrigger;
+    this.menuTrigger = null;
+    const active = document.activeElement;
+    const focusInMenu = !active || active === document.body || !!active.closest('.bento-menu');
     this.openMenuId.set(null);
+    if (trigger?.isConnected && focusInMenu) afterNextRender(() => trigger.focus(), { injector: this.injector });
+  }
+
+  private menuItems(menu: Element | null | undefined): HTMLElement[] {
+    return menu ? Array.from(menu.querySelectorAll<HTMLElement>('ds-flyout-menu-item[tabindex="0"]')) : [];
+  }
+
+  /** Up and Down arrows, Home and End move between the options of the card menu. */
+  onMenuKey(ev: KeyboardEvent): void {
+    const items = this.menuItems(ev.currentTarget as HTMLElement);
+    if (!items.length) return;
+    const i = items.indexOf(document.activeElement as HTMLElement);
+    let next = -1;
+    if (ev.key === 'ArrowDown') next = i < 0 ? 0 : (i + 1) % items.length;
+    else if (ev.key === 'ArrowUp') next = i <= 0 ? items.length - 1 : i - 1;
+    else if (ev.key === 'Home') next = 0;
+    else if (ev.key === 'End') next = items.length - 1;
+    if (next < 0) return;
+    ev.preventDefault();
+    items[next].focus();
   }
 
   @HostListener('document:click', ['$event'])
@@ -746,6 +784,12 @@ export class BuyerSummaryV2Component implements OnInit, OnDestroy {
 
   emphasisMenu(kind: BentoKind): EmphasisOption[] {
     return emphasisOptions(kind);
+  }
+
+  /** Name of the toolbar swatch button: "Background: <current value>". */
+  backgroundLabel(card: BentoCard, em: Look): string {
+    const value = this.emphasisLabel(card.kind, card.emphasis);
+    return em.capped ? `Background: ${value}, without background` : `Background: ${value}`;
   }
 
   emphasisLabel(kind: BentoKind, e: EmphasisChoice): string {

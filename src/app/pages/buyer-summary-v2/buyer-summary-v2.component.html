@@ -152,9 +152,11 @@
                     aria-label="All formats">{{ QUICK_FORMATS.includes(p.card.format) ? 'More' : formatLabel(p.card.format) }}</button>
                 </div>
                 <span class="bs-toolbar__sep" aria-hidden="true"></span>
-                <ds-button-icon type="plain" tone="default" ariaLabel="Background"
+                <!-- Background: a swatch of the card's current background, menu below -->
+                <ds-button-icon type="plain" tone="default" [ariaLabel]="backgroundLabel(p.card, em)"
+                  [attr.aria-expanded]="openMenuId() === p.card.id && menuView() === 'emphasis'"
                   (clicked)="toggleMenu(p.card.id, 'emphasis')">
-                  <ds-icon name="paint-bucket" [size]="16" />
+                  <span [class]="'bento-swatch bento-swatch--' + em.cls" aria-hidden="true"></span>
                 </ds-button-icon>
                 <span class="bs-toolbar__sep" aria-hidden="true"></span>
                 <!-- Drag handle: keyboard move (Space, arrows, Space) -->
@@ -175,7 +177,7 @@
                 </ds-button-icon>
 
                 @if (openMenuId() === p.card.id) {
-                  <div class="bento-menu">
+                  <div class="bento-menu" (keydown)="onMenuKey($event)">
                     <ds-flyout-menu>
                       @if (menuView() === 'format') {
                         @for (group of FORMAT_GROUPS; track group; let first = $first) {
