@@ -16,7 +16,8 @@
     <input
       class="ds-input-text__input"
       [id]="inputId()"
-      type="text"
+      [type]="type()"
+      [attr.autocomplete]="autocomplete()"
       [attr.inputmode]="inputmode() !== 'text' ? inputmode() : null"
       [placeholder]="placeholder()"
       [disabled]="disabled()"

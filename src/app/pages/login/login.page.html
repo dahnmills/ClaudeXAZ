@@ -1,0 +1,47 @@
+<main class="login" role="main">
+  <ds-card class="login__card">
+    <form class="login__body" novalidate (submit)="$event.preventDefault()" (keydown.enter)="submit()">
+      <ds-logo />
+
+      <div class="login__heading">
+        <h1 class="login__title">Sign in to the Qirin prototype</h1>
+        <p class="login__intro">Access is restricted. Your session lasts {{ sessionHours }} hours.</p>
+      </div>
+
+      @if (expired && !failed()) {
+        <ds-functional-notice
+          status="warning"
+          emphasis="medium"
+          message="Your session has expired. Sign in again to continue."
+        />
+      }
+      @if (failed()) {
+        <ds-functional-notice
+          status="error"
+          emphasis="medium"
+          message="Login or password is incorrect."
+        />
+      }
+
+      <ds-input-text
+        label="Login"
+        autocomplete="username"
+        [(value)]="username"
+        [error]="failed()"
+      />
+      <ds-input-text
+        label="Password"
+        type="password"
+        autocomplete="current-password"
+        [(value)]="password"
+        [error]="failed()"
+      />
+
+      <ds-button [fullWidth]="true" [disabled]="!canSubmit()" [loading]="busy()" (clicked)="submit()">
+        Sign in
+      </ds-button>
+
+      <p class="login__help">No access? Contact the design team at <span class="login__mail">qirin_design&#64;allianz-trade.com</span></p>
+    </form>
+  </ds-card>
+</main>

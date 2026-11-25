@@ -30,6 +30,8 @@ import { UserTestingShellComponent } from './user-testing/isolated/user-testing-
 import { UserTestingHomePage } from './user-testing/isolated/user-testing-home.page';
 import { DeadEndPage } from './user-testing/isolated/dead-end.page';
 import { lockIsolatedGuard } from './user-testing/isolated/lock.guard';
+import { LoginPage } from './pages/login/login.page';
+import { authGuard } from './shared/auth/auth.guard';
 
 /**
  * Pages du proto, partagées entre les routes de dev (root) et l'espace
@@ -63,7 +65,7 @@ const PROTO_PAGES: Route[] = [
   { path: 'coverbook/policy/:id', loadComponent: () => import('./pages/coverbook/coverbook.page').then(m => m.CoverbookPage), data: { side: 'policy' } },
 ];
 
-export const appRoutes: Routes = [
+const ROUTES: Routes = [
   // ── Hub d'accueil : aiguille vers les quatre zones ──────────────────────
   { path: '', component: HubPage },
   { path: 'unlock/:key', component: UnlockPage },
@@ -113,10 +115,31 @@ export const appRoutes: Routes = [
       // Chaque écran est verrouillé : le guard annule toute navigation qui
       // changerait de chemin (clic interne → autre page, retour à l'index…).
       ...PROTO_PAGES.map((r) => ({ ...r, canDeactivate: [lockIsolatedGuard] })),
-      { path: '', component: UserTestingHomePage },
+      // La home liste les URLs privées des tests : réservée à l'équipe.
+      { path: '', component: UserTestingHomePage, canActivate: [authGuard] },
       { path: '**', component: DeadEndPage },
     ],
   },
 
   { path: '**', redirectTo: '' },
+];
+
+/**
+ * Accès protégé : toute route passe par authGuard (connexion + expiration de session),
+ * sauf la page de connexion et les univers isolés Useberry (/user-testing), ouverts
+ * aux participants externes qui n'ont pas de mot de passe.
+ */
+const PUBLIC_PATHS = new Set(['user-testing', '**']);
+
+export const appRoutes: Routes = [
+  { path: 'login', component: LoginPage },
+  ...ROUTES.map((r): Route =>
+    PUBLIC_PATHS.has(r.path ?? '')
+      ? r
+      : {
+          ...r,
+          canActivate: [authGuard, ...(r.canActivate ?? [])],
+          ...(r.children ? { canActivateChild: [authGuard, ...(r.canActivateChild ?? [])] } : {}),
+        },
+  ),
 ];

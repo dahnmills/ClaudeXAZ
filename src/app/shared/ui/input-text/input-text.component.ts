@@ -14,6 +14,10 @@ export class InputTextComponent {
   placeholder = input<string>('');
   inputmode   = input<'text' | 'numeric' | 'decimal' | 'email' | 'tel' | 'url' | 'search' | 'none'>('text');
   variant     = input<'default' | 'inline'>('default');
+  /** Champ masqué (mot de passe) : seul le type natif change, le style est le même. */
+  type        = input<'text' | 'password'>('text');
+  /** Indice d'autoremplissage du navigateur (username, current-password…). */
+  autocomplete = input<string | null>(null);
   optional    = input<boolean>(false);
   disabled    = input<boolean>(false);
   readonly    = input<boolean>(false);

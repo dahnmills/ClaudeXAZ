@@ -1,0 +1,59 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--semantic-color-static-background-main-primary);
+}
+
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--semantic-measurement-spacing-l);
+}
+
+.login__card {
+  width: 100%;
+  // Largeur de lecture d'un formulaire court, en unités de texte.
+  max-width: 28rem;
+}
+
+.login__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-l);
+  padding: var(--semantic-measurement-spacing-m);
+}
+
+.login__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--semantic-measurement-spacing-xs);
+}
+
+.login__title {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-title-size-m);
+  font-weight: var(--semantic-font-title-font-weight-m);
+  line-height: var(--semantic-font-title-line-height-m);
+  color: var(--semantic-color-static-text-main-primary);
+  text-wrap: balance;
+}
+
+.login__intro,
+.login__help {
+  margin: 0;
+  font-family: var(--semantic-font-family);
+  font-size: var(--semantic-font-text-style-size-m);
+  font-weight: var(--semantic-font-text-style-font-weight-regular);
+  color: var(--semantic-color-static-text-main-secondary);
+}
+
+.login__help {
+  color: var(--semantic-color-static-text-main-tertiary);
+}
+
+.login__mail {
+  white-space: nowrap;
+}
