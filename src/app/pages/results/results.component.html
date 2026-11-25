@@ -8,7 +8,7 @@
         </svg>
       </span>
       <span class="vb-brand__name">Echo</span>
-      <span class="vb-brand__tag">{{ usingSupabase ? 'Live · Supabase' : 'Local' }}</span>
+      <span class="vb-brand__tag">{{ usingSupabase ? 'Live - Supabase' : 'Local' }}</span>
     </div>
     <div class="vb-top__actions">
       <button class="vb-btn vb-btn--ghost" type="button" (click)="load()">
@@ -49,9 +49,9 @@
             }
           </div>
           <div class="room__legend">
-            <span><i class="room__dot room__dot--pos"></i>{{ stats().likes }} positive · {{ stats().likePct }}%</span>
-            <span><i class="room__dot room__dot--conf"></i>{{ stats().confused }} confused · {{ stats().confusedPct }}%</span>
-            <span><i class="room__dot room__dot--neg"></i>{{ stats().dislikes }} negative · {{ stats().dislikePct }}%</span>
+            <span><i class="room__dot room__dot--pos"></i>{{ stats().likes }} positive - {{ stats().likePct }}%</span>
+            <span><i class="room__dot room__dot--conf"></i>{{ stats().confused }} confused - {{ stats().confusedPct }}%</span>
+            <span><i class="room__dot room__dot--neg"></i>{{ stats().dislikes }} negative - {{ stats().dislikePct }}%</span>
           </div>
         }
       </div>
@@ -166,7 +166,7 @@
                   <span class="card__quote">{{ e.comment }}</span>
                 } @else {
                   <span class="card__kind">{{ kindLabel(e.kind) }}
-                    @if (reactionLabel(e.reaction); as rl) { <span class="card__kind-r">· {{ rl }}</span> }
+                    @if (reactionLabel(e.reaction); as rl) { <span class="card__kind-r">- {{ rl }}</span> }
                   </span>
                 }
                 <span class="card__meta">

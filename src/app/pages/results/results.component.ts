@@ -205,7 +205,7 @@ export class ResultsComponent {
     if (conf >= 30) {
       return { headline: 'Something is not clicking', tone: 'mixed', sub: `${conf}% of testers are lost.` };
     }
-    return { headline: 'Mixed signals', tone: 'mixed', sub: `${pos}% positive · ${neg}% negative · ${conf}% confused.` };
+    return { headline: 'Mixed signals', tone: 'mixed', sub: `${pos}% positive - ${neg}% negative - ${conf}% confused.` };
   });
 
   // ── Rendu ─────────────────────────────────────────────────────────────────

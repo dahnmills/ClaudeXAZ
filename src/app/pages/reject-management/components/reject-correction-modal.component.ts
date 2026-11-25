@@ -174,8 +174,8 @@ export class RejectCorrectionModalComponent {
 
   /** Nom technique du champ, dans l'infobulle du « i » à côté du libellé. */
   techInfo(f: RejectField): string {
-    const tech = f.tech && f.tech !== '-' ? ` · ${f.tech}` : '';
-    return `#${f.n}${tech} · max ${f.length}`;
+    const tech = f.tech && f.tech !== '-' ? ` - ${f.tech}` : '';
+    return `#${f.n}${tech} - max ${f.length}`;
   }
 
   setValue(n: number, value: string): void {

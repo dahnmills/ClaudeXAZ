@@ -701,9 +701,8 @@
         ".Content › Icon"
       ],
       "variantsSource": "figma",
-      "usedBy": 2,
+      "usedBy": 1,
       "usedByPages": [
-        "buyer-summary-v2",
         "portfolio-management"
       ],
       "visual": {
@@ -753,10 +752,8 @@
         ".Options › Type"
       ],
       "variantsSource": "figma",
-      "usedBy": 1,
-      "usedByPages": [
-        "buyer-summary-v2"
-      ],
+      "usedBy": 0,
+      "usedByPages": [],
       "visual": {
         "figmaNodeId": "102:558",
         "fileKey": "xCeEJPn6fliEshuE9fnrqs"

@@ -14,7 +14,7 @@ function fillSteps(): WalkthroughStep[] {
   return BOARD_CARDS.flatMap((card, i) => [
     {
       element: '.bs-slot__empty',
-      title: `Fill a spot · ${BOARD_CARDS.length - i} left`,
+      title: `Fill a spot - ${BOARD_CARDS.length - i} left`,
       description: i === 0
         ? 'Click an empty spot to choose the card that goes in it.'
         : 'Click the next empty spot.',

@@ -284,7 +284,7 @@ export class CardBuilderLabPage {
 
   formatLabel = computed(() => {
     const f = FORMATS.find(x => x.id === this.formatId())!;
-    return `${f.name} · values ${f.display}`;
+    return `${f.name} - values ${f.display}`;
   });
 
   // Figures a format holds, said under its drawing

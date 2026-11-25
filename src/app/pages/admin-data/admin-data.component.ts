@@ -244,7 +244,7 @@ originOptions = computed<SelectOption[]>(() => {
     if (!this.statusFormValid()) return;
     const originLabel = this.originOptions().find(o => o.value === this.newOrigin())?.label ?? '';
     this.toaster.show(
-      `Status changed to: ${this.newStatus()} · Origin: ${originLabel}`,
+      `Status changed to: ${this.newStatus()} - Origin: ${originLabel}`,
       { tone: 'success' },
     );
     this.statusModalOpen.set(false);

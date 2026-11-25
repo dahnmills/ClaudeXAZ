@@ -50,7 +50,7 @@
           @if (entry.screens.length > 0) {
             <div class="rn__tags">
               @for (path of entry.screens; track path) {
-                <span class="rn__tag">{{ screenLabel(path) }} · {{ screenVersion(path) }}</span>
+                <span class="rn__tag">{{ screenLabel(path) }} - {{ screenVersion(path) }}</span>
               }
             </div>
           }

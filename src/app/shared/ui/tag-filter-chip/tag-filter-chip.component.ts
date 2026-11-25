@@ -46,7 +46,7 @@ export class TagFilterChipComponent implements SingleOpenFlyout, OnDestroy {
 
   count     = computed(() => this.selected().size);
   active    = computed(() => this.count() > 0);
-  chipLabel = computed(() => this.active() ? `${this.label()} · ${this.count()}` : this.label());
+  chipLabel = computed(() => this.active() ? `${this.label()} (${this.count()})` : this.label());
   fieldValue = computed(() => {
     const opts = this.options();
     const sel = this.selected();

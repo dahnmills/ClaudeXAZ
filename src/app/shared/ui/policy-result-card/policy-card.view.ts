@@ -23,11 +23,11 @@ const DRAFT_TONES: Record<DraftStatus, BadgeStatus> = {
 export interface PolicyDateBlock { label: string; value: string; alert: boolean; }
 export interface PolicyDetailRow { label: string; value: string; }
 
-/** La clé telle que Qirin l'affiche et que l'utilisateur la copie : 'AT UK · 7730012 · 0234'. */
+/** La clé telle que Qirin l'affiche et que l'utilisateur la copie : 'AT UK - 7730012 - 0234'. */
 export function policyKeyLabel(p: PolicyResultData): string {
   const parts = [p.buCode, p.policyNumber];
   if (p.extension !== null) parts.push(p.extension);
-  return parts.join(' · ');
+  return parts.join(' - ');
 }
 
 /** Produit puis assuré ; un draft y ajoute son nombre de versions, signe qu'il a
@@ -35,14 +35,14 @@ export function policyKeyLabel(p: PolicyResultData): string {
 export function policySecondLine(p: PolicyResultData): string {
   const parts = [p.product, p.insuredName];
   if (p.kind === 'draft') parts.push(`${p.versionCount} ${p.versionCount === 1 ? 'version' : 'versions'}`);
-  return parts.filter(Boolean).join(' · ');
+  return parts.filter(Boolean).join(' - ');
 }
 
 /** Draft : l'étape atteinte d'abord (« s'il est que applicant, il faut que tu le
- *  saches »), puis le statut de sa dernière version : 'NBI · Pending'. */
+ *  saches »), puis le statut de sa dernière version : 'NBI - Pending'. */
 export function policyBadge(p: PolicyResultData): { label: string; status: BadgeStatus } {
   return p.kind === 'draft'
-    ? { label: `${p.draftStage.toUpperCase()} · ${DRAFT_STATUS_LABELS[p.status]}`, status: DRAFT_TONES[p.status] }
+    ? { label: `${p.draftStage.toUpperCase()} - ${DRAFT_STATUS_LABELS[p.status]}`, status: DRAFT_TONES[p.status] }
     : { label: POLICY_STATUS_LABELS[p.status], status: POLICY_TONES[p.status] };
 }
 
@@ -82,7 +82,7 @@ export function policyDateBlock(p: PolicyResultData, today: Date): PolicyDateBlo
 /** Les infos secondaires du dépliage, dans l'ordre de lecture. Mêmes champs pour
  *  un draft et une police, comme dans Qirin. */
 export function policyDetailRows(p: PolicyResultData): PolicyDetailRow[] {
-  const broker = [p.brokerName, p.brokerCompanyId].filter(Boolean).join(' · ');
+  const broker = [p.brokerName, p.brokerCompanyId].filter(Boolean).join(' - ');
   return [
     { label: 'Insured Company ID', value: p.insuredCompanyId ?? EMPTY },
     { label: 'Insured country', value: p.insuredCountry ?? EMPTY },

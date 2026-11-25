@@ -78,7 +78,7 @@ export class RuleModalComponent {
   /** Création : la règle peut se poser après la dernière (N+1). Modification :
    *  elle se déplace parmi les N existantes. */
   maxPosition = computed(() => this.isEdit() ? Math.max(1, this.ruleCount()) : this.ruleCount() + 1);
-  positionHint = computed(() => `of ${this.maxPosition()} · rule 1 is evaluated first`);
+  positionHint = computed(() => `of ${this.maxPosition()} - rule 1 is evaluated first`);
 
   // editable local state (multi as Set<string>, single as string; '' or 'Any' = null)
   position        = signal<string>('1');

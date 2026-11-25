@@ -192,8 +192,8 @@ export class SelectPortfolioModalComponent {
   /** Ce qui situe le périmètre : de qui il s'agit, où, et à quelle échelle. */
   cardSublabel(scope: PortfolioScope): string {
     return this.mode() === 'user'
-      ? [scope.label, scope.teamName, scope.country].filter(Boolean).join(' · ')
-      : [scope.country, plural(scope.userCount, 'user')].join(' · ');
+      ? [scope.label, scope.teamName, scope.country].filter(Boolean).join(' - ')
+      : [scope.country, plural(scope.userCount, 'user')].join(' - ');
   }
 
   /**
@@ -203,7 +203,7 @@ export class SelectPortfolioModalComponent {
    */
   statsText(scope: PortfolioScope): string {
     if (!scope.portfolioCount) return 'No portfolio yet';
-    return `${plural(scope.portfolioCount, 'portfolio')} · ${plural(scope.buyerCount, 'buyer')}`;
+    return `${plural(scope.portfolioCount, 'portfolio')} - ${plural(scope.buyerCount, 'buyer')}`;
   }
 
   isCurrent(scope: PortfolioScope): boolean {

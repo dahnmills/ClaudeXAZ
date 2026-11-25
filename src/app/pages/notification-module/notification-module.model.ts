@@ -29,7 +29,7 @@ export interface Distribution {
   id:        string;
   label:     string;             // « Distribution 1 »
   status:    DistributionStatus;
-  mediaType: string;             // sous-info : « Email · Papermail »
+  mediaType: string;             // sous-info : « Email - Papermail »
   normal:    MediaDetail;
   backup:    MediaDetail;
 }

@@ -351,7 +351,7 @@ export class PortfolioManagementComponent {
     if (added.length) parts.push(`${added.length} buyer${added.length > 1 ? 's' : ''} added`);
     if (removed.length) parts.push(`${removed.length} removed`);
     if (takenFrom) parts.push(`${takenFrom} moved from another portfolio`);
-    this.toaster.show(parts.join(' · '), { tone: 'success' });
+    this.toaster.show(parts.join(' - '), { tone: 'success' });
   }
 
   /**
@@ -401,6 +401,6 @@ export class PortfolioManagementComponent {
     const parts = [`${batch.length} buyers assigned`];
     if (moved) parts.push(`${moved} moved from another portfolio`);
     if (created) parts.push(`${created} portfolio${created > 1 ? 's' : ''} created`);
-    this.toaster.show(parts.join(' · '), { tone: 'success' });
+    this.toaster.show(parts.join(' - '), { tone: 'success' });
   }
 }
