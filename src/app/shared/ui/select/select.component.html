@@ -15,6 +15,7 @@
     [attr.aria-invalid]="error() || null"
     [attr.aria-haspopup]="'listbox'"
     [attr.aria-expanded]="open()"
+    [attr.title]="selectedLabel() || null"
     (click)="$event.stopPropagation(); toggle()"
   >
     <span

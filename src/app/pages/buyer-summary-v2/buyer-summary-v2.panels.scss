@@ -9,8 +9,11 @@
 // =============================================================
 
 // Same width as the V1 board list: 3 × 64 + 8 = 200 px
+// La largeur suit le nom du board (jamais sous la largeur d'origine), plafonnée : au-delà, points de suspension + nom complet au survol.
 .bento-bar__select {
-  width: calc(var(--semantic-measurement-sizing-3xl) * 3 + var(--semantic-measurement-sizing-s));
+  width: max-content;
+  min-width: calc(var(--semantic-measurement-sizing-3xl) * 3 + var(--semantic-measurement-sizing-s));
+  max-width: calc(var(--semantic-measurement-sizing-3xl) * 5);
 }
 
 .bento-bar__actions { align-items: center; }
