@@ -303,3 +303,93 @@ cardkit-06-before|after).
 2. Ajouter un pot de peinture à la librairie d'icônes (NDBX / A1 Icons), puis swapper `.Card Toolbar` dessus et
    supprimer `.Glyph Paint Bucket` ; republier.
 3. Retirer `Tone=Highlighted` de `.Status` quand plus aucun fichier abonné ne l'utilise (passe 2, reste 1).
+
+## Passe 4 (2026-11-25) : pastille de couleur au lieu du pot de peinture
+
+Décision utilisateur : le bouton d'emphase n'est ni une étoile (favori) ni un pot de peinture, c'est une **pastille de
+couleur** qui montre le fond actuel de la card. Librairie Data Display seulement (`VpConH5AUGyCqtp8PMqj1i`), Bento non
+touché, rien publié, rien commité. Captures : `captures/figma-fb25/pass4/` (lib-widget-card-edit, lib-doc-anatomy,
+lib-dodont-never-star, lib-private-atoms).
+
+### A. Librairie Data Display : prête à publier
+
+- **Nouvel atome privé `.Swatch`** (set `2294:1500`, page `🆕 Widget Card`, section Private atoms, à la place du glyphe) :
+  propriété `Tone` = None (`2294:1497`, défaut), Subtle (`2294:1498`), Strong (`2294:1499`). Carré 16 x 16, rayon
+  Border/Radius/S, bord Border/Size/S en Color/Static/Border/Main/Tertiary (sur les trois tons, pour que le blanc reste
+  lisible sur la barre), fond Background/Main/Primary, Background/Main/Alt/Secondary et Background/Brand (les mêmes
+  variables que les variantes Emphasis None, Subtle et Strong de Widget Card). Description : fond actuel de la card,
+  jamais une étoile.
+- **`.Card Toolbar`** (`2243:204`) : le calque `Background` (`2243:953`, Button Icon Plain S) garde son nom, sa place et
+  sa taille ; son `Icon Functional` passe en `Type=Multicolor` (le Monochrome repeint tout en couleur d'icône) et le
+  `🔗 Icon` est swappé sur `.Swatch Tone=None`, calque renommé `Swatch`. Description mise à jour.
+- **Exposition** : Figma n'autorise l'exposition que des instances primaires ; `.Swatch` est dans l'Icon Functional d'un
+  Button Icon distant, donc pas exposable directement. Chaîne posée au plus près : `Background` exposé dans `.Card
+  Toolbar`, `.Card Toolbar` exposé dans la variante Edit de Widget Card (`2244:1258`), l'Icon Functional l'est déjà par
+  Button Icon. Le ton se change en sélectionnant `Swatch` dans l'instance (surcharge de variante, même set).
+- **Variante Edit** (`2244:1229`, Emphasis None) : la pastille montre None (défaut, rien surchargé).
+- **`.Glyph Paint Bucket`** (`2293:886`) : 0 instance dans le fichier après le swap, **supprimé**.
+- **Do/Don't** : le Don't (`2293:1340`) avait perdu son étoile au changement de variante de l'Icon Functional (surcharge
+  orpheline, cf. mémoire figma-nested-swap-overrides) : remis en Monochrome + Star Outline (NDBX `01a20999`). Le Do
+  (`2293:1305`) suit le maître (pastille None).
+- **Doc** : Anatomy item 5 `.Card Toolbar` (« colour swatch ») et nouvel item 6 `.Swatch` (`2294:3529`) ; note
+  « Background button (decision of 25 Nov 2026) » (`2293:1146`) réécrite (pastille, None, Subtle, Strong, jamais
+  d'étoile ni de pot de peinture, régler le Tone sur l'Emphasis de la card) ; règle renommée **« Never a star for the
+  emphasis: the swatch shows the current background »** (`2293:1211`), texte du Do réécrit.
+- Contrôles : 0 valeur brute sur `.Swatch` et le nouvel item d'anatomie (peintures, rayons, épaisseurs, gap, padding,
+  styles de texte liés) ; 0 « pot de peinture » restant dans les textes ; 0 tiret cadratin, 0 « · » dans les textes
+  ajoutés. Captures relues.
+- Hors périmètre, constaté : la vitrine `.Toolbar Size` (`2243:203`) de Private atoms est rognée (cadre du set trop
+  petit), défaut antérieur non touché.
+
+### B. À faire dans Bento après publication de Data Display
+
+1. Accepter seulement la mise à jour **Widget Card / .Card Toolbar / .Swatch** (Manage libraries > Updates), en laissant
+   les autres en attente.
+2. Relever avant/après les barres d'outils : Card kit 01 (Master) et 03 (Edit x3), écran 06 de Mockups : elles doivent
+   montrer la pastille, `Background` sans surcharge perdue, `mainComponent` de `Swatch` = `.Swatch` distant (pas un
+   maître local de même nom).
+3. Régler la pastille sur le fond de chaque card en édition : `Swatch` Tone = Subtle ou Strong là où la card est Subtle
+   ou Strong (cards Negative, Warning, Positive subtle : Subtle ; Negative et Warning strong : Strong), None ailleurs.
+4. Card kit, textes 03 (`94:1441`) et 04 (`95:1793`) : remplacer « Background (paint bucket, never a star) » par
+   « Background (colour swatch of the current background, never a star) ».
+5. Captures 06 et Card kit 03 avant/après ; contrôle 0 étoile et 0 pot de peinture dans les barres.
+6. Le point 2 du « Reste à faire » de la passe 3 (pot de peinture dans la librairie d'icônes) est **abandonné** : plus
+   de glyphe à déplacer.
+
+## Passe 5 (2026-11-26) : Bento suit la pastille publiée dans Data Display
+
+Data Display republiée le 2026-11-26 (`.Swatch` dans `.Card Toolbar`). Bento seulement (`XW7jVtIa6UWRTqKMDqOF5D`) ;
+librairie non modifiée, rien publié, rien commité ; Board · 1024 fold et la page archivée Edit flow non touchées (0
+instance de Widget Card ou de `.Card Toolbar` dans ces deux pages, la mise à jour ne les atteint pas). Captures :
+`captures/figma-fb25/pass5/` (cardkit-01-master-edit-before|after, cardkit-03-before|after, cardkit-04-after,
+mock-06-card-before|after).
+
+1. **Mise à jour acceptée** dans Figma web (Assets, Manage libraries, Updates, page Card kit) : bouton Update de
+   **Widget Card** ([Components] Data Display) seulement. Restent en attente, vérifié avec « Show updates for all
+   pages » : Feedback (Badge, 59 instances), Action (Button, 2 instances), Tokens (Semantic). Data Display n'apparaît
+   plus dans la liste.
+2. **Barres d'outils** (5, toutes visibles) : Card kit 01 Master (`Widget Card · Emphasis=None, State=Edit`), Card kit
+   03 Edit 1 x 1, 2 x 1, 2 x 2, Mockups 06 (Payments 2 x 1). Chacune montre la pastille à la place de l'étoile :
+   calque `Background` > `Swatch`, `mainComponent` = `.Swatch / Tone=None` **distant** (clé `486775b3…`), 0 maître
+   local `.Swatch` ou pot de peinture dans le fichier.
+3. **Ton de la pastille** : les 5 cards en édition sont en `Emphasis=None` avec le fond Background/Main/Primary, aucune
+   n'est une card de statut ; la pastille reste donc sur **None** (défaut, rien surchargé). Aucun écart de ton à noter.
+4. **Textes Card kit** : 03 (`94:1441`) « Background (colour swatch showing the current background, never a star) » ;
+   04 (`95:1793`) « Chosen with the Background button of the card toolbar in edit mode, a colour swatch showing the
+   current background. » Style de texte conservé, notes en hauteur auto, captures relues sans chevauchement.
+
+### Contrôles
+
+- 0 étoile visible sur Card kit et Mockups ; 0 « paint bucket » dans les textes de Read me, Card kit et Mockups.
+- 0 « · » et 0 tiret cadratin dans les textes de Card kit et Mockups (les noms de cadres et de sections ne sont pas
+  des textes).
+- 0 valeur brute ajoutée : seuls les caractères de deux textes ont changé, style lié conservé.
+- Diff des surcharges (empreinte des surcharges de toutes les instances, par écran de Mockups et par section de Card
+  kit, avant puis après) : **identique** sur les 13 écrans et les 8 sections. `Background` n'a perdu aucune surcharge.
+- Captures avant/après relues : seul le bouton entre More et le déplacement change (étoile, puis pastille blanche
+  bordée).
+
+### Reste ouvert
+
+1. Retirer `Tone=Highlighted` de `.Status` quand plus aucun fichier abonné ne l'utilise (passe 2, reste 1).
+2. Mises à jour Feedback, Action et Tokens laissées en attente dans Bento (hors demande).
